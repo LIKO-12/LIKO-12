@@ -6,8 +6,10 @@ function CMD.help()
   tout("COMMANDS <REQUIRED> [OPTIONAL]",13)
   --tout()
   tout("HELP: SHOW THIS HELP",7)
-  tout("LOAD [PATH]: LOADS THE SPRITESHEET",7)
-  tout("SAVE <PATH>: SAVES THE SPRITESHEET",7)
+  tout("NEW: CLEARS THE MEMORY",7)
+  tout("RELOAD: RELOADS THE EDITORSHEET",7)
+  tout("IMPORT <PATH>: IMPORTS A SPRITESHEET",7)
+  tout("EXPORT <PATH>: EXPORTS THE SPRITESHEET",7)
   tout("CLEAR: CLEARS THE SCREEN",7)
   tout("VERSION: SHOWS THE CONSOLE VERSION",7)
   --tout()
@@ -20,18 +22,24 @@ end
 
 function CMD.version() tout() tout("-[[liko12]]-") tout("V0.0.1 DEV",9) end
 
-function CMD.save(command,path)
+function CMD.new()
+  require("Editor.sprite"):load()
+  tout("CLEARED MEMORY",7)
+end
+
+function CMD.reload()
+  require("Editor").Sheet = SpriteSheet(Image("/editorsheet.png"),24,12)
+  tout("RELOADED EDITORSHEET",7)
+end
+
+function CMD.export(command,path)
   require("Editor.sprite"):save(path)
   tout("SAVED TO /"..path..".PNG",12)
 end
 
-function CMD.load(command,path)
+function CMD.import(command,path)
   require("Editor.sprite"):load(path)
-  if path then
-    tout("LOADED /"..path..".PNG",12)
-  else
-    tout("CLEARED THE SPRITESHEET",7)
-  end
+  tout("LOADED /"..path..".PNG",12)
 end
 
 

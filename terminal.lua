@@ -1,6 +1,6 @@
 local Terminal = {}
 
-local EditorSheet = SpriteSheet(Image("/editorsheet.png"),24,12)
+--local EditorSheet = SpriteSheet(Image("/editorsheet.png"),24,12)
 
 local blinktime = 0.5
 local blinktimer = 0
@@ -68,7 +68,7 @@ function Terminal:_redraw()
   for line,text in ipairs(self.textbuffer) do
     color(self.textcolors[line])
     if text == "-[[liko12]]-" then --THE SECRET PHASE
-      SpriteGroup(67,9,line*8,6,1,EditorSheet)
+      SpriteGroup(67,9,line*8,6,1,require("Editor").Sheet)
     else
       print_grid(text,2,line+1)
     end
@@ -94,9 +94,9 @@ function Terminal:_tinput(t)
   if self.textbuffer[self.currentLine]:len() < self.lengthLimit then self:tout(t,8,true) end
 end
 
-function Terminal:tpress()
+function Terminal:_tpress()
   --This means the user is using a touch device
-  self.linesLimit = 8
+  self.linesLimit = 7
   love.keyboard.setTextInput(true)
 end
 

@@ -28,6 +28,18 @@ function _auto_mrelease(x,y,b,it)
   if Active._mrelease then Active:_mrelease(x,y,b,it) end
 end
 
+function _auto_tpress(id,x,y,p)
+  if Active._tpress then Active:_tpress(id,x,y,p) end
+end
+
+function _auto_tmove(id,x,y,p)
+  if Active._tmove then Active:_tmove(id,x,y,p) end
+end
+
+function _auto_trelease(id,x,y,p)
+  if Active._trelease then Active:_trelease(id,x,y,p) end
+end
+
 function _auto_kpress(k,sc,ir)
   if k == "escape" then
     if EActive then Active = Terminal else Active = Editor end  EActive = not EActive

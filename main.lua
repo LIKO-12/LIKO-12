@@ -44,6 +44,7 @@ end
 
 --Internal Callbacks--
 function love.load()
+  --love.keyboard.setTextInput(true)
   SetCursor("normal")
   _ScreenCanvas = love.graphics.newCanvas(192,128)
   _ScreenCanvas:setFilter("nearest")
