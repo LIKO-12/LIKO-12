@@ -123,7 +123,7 @@ end
 function cedit:_tpress()
   --This means the user is using a touch device
   self.lineLimit = 7
-  love.keyboard.setTextInput(true)
+  showkeyboard(true)
 end
 
 return cedit

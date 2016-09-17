@@ -1,17 +1,17 @@
-local ScreenScale = 3
+_ScreenScale = 3
 
 function love.conf(t)
     t.identity = ".liko12"              -- The name of the save directory (string)
     t.version = "0.10.1"                -- The LÖVE version this game was made for (string)
-    t.console = false                   -- Attach a console (boolean, Windows only)
+    t.console = true                   -- Attach a console (boolean, Windows only)
     t.accelerometerjoystick = false     -- Enable the accelerometer on iOS and Android by exposing it as a Joystick (boolean)
     t.externalstorage = true            -- True to save files (and read from the save directory) in external storage on Android (boolean) 
     t.gammacorrect = false              -- Enable gamma-correct rendering, when supported by the system (boolean)
  
     t.window.title = "Liko 12"          -- The window title (string)
     t.window.icon = nil                 -- Filepath to an image to use as the window's icon (string)
-    t.window.width = 192*ScreenScale    -- The window width (number)
-    t.window.height = 128*ScreenScale   -- The window height (number)
+    t.window.width = 192*_ScreenScale    -- The window width (number)
+    t.window.height = 128*_ScreenScale   -- The window height (number)
     t.window.borderless = false         -- Remove all border visuals from the window (boolean)
     t.window.resizable = true           -- Let the window be user-resizable (boolean)
     t.window.minwidth = 1               -- Minimum window width if the window is resizable (number)

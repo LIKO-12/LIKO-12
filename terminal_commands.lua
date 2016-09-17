@@ -28,7 +28,8 @@ function CMD.new()
 end
 
 function CMD.reload()
-  require("Editor").Sheet = SpriteSheet(Image("/editorsheet.png"),24,12)
+  EditorSheet = SpriteSheet(Image("/editorsheet.png"),24,12)
+  loadDefaultCursors()
   tout("RELOADED EDITORSHEET",7)
 end
 

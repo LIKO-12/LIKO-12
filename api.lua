@@ -1,17 +1,14 @@
 class = require("class")
-require("offsets")
+require("Offsets")
 --Cursors--
 if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
 love.mouse.newCursor = function() end
 love.mouse.setCursor = function() end
 end
-_Cursors = {
-normal = love.mouse.newCursor("/cursor_normal.png",3,3)
-}
 
-function SetCursor(name)
+--[[function SetCursor(name)
   love.mouse.setCursor(_Cursors[name or ""] or _Cursors["normal"])
-end
+end]]
 
 --Internal Variables--
 _Font = love.graphics.newImageFont("/font.png",'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"\'`-_/1234567890!?[](){}.,;:<>+=%#^*~ ',1)
@@ -81,7 +78,14 @@ function _ScreenToLiko(x,y)
 end
 
 function _GetColor(c) return _ColorSet[c or 1] end
-function _GetColorID(r,g,b) local c = {r,g,b,255} for id,col in ipairs(_ColorSet) do if col == c then return id end end return false end
+function _GetColorID(r,g,b,a)
+  for id,col in pairs(_ColorSet) do
+    if col[1] == r and col[2] == g and col[3] == b and col[4] == (a or 255) then
+      return id
+    end
+  end
+  return false
+end
 
 --API Functions--
 --Graphics Section--
@@ -144,12 +148,14 @@ function rect_line(x,y,w,h,c)
   _ShouldDraw = true
 end
 
+cprint = print --Console Print
+
 function print(text,lx,ly)
-  love.graphics.print(text, (lx or 1)+_goffset.printX, (ly or 1)+_goffset.printY) --_goffset.rectX
+  love.graphics.print(text, (lx or 1)+_goffset.printX, (ly or 1)+_goffset.printY) _ShouldDraw = true --_goffset.rectX
 end
 
 function print_grid(text,lx,ly)
-  love.graphics.print(text, ((lx or 1)*8-6)+_goffset.printX, ((ly or 1)*8-6)+_goffset.printY)
+  love.graphics.print(text, ((lx or 1)*8-6)+_goffset.printX, ((ly or 1)*8-6)+_goffset.printY) _ShouldDraw = true
 end
 
 --Image Section--
@@ -167,13 +173,33 @@ function ImageData:initialize(w,h) if h then self.imageData = love.image.newImag
 function ImageData:size() return self.imageData:getDimensions() end
 function ImageData:getPixel(x,y) return self.imageData:getPixel((x or 1)-1,(y or 1)-1) end
 function ImageData:setPixel(x,y,c) self.imageData:setPixel((x or 1)-1,(y or 1)-1,unpack(_GetColor(c))) return self end
-function ImageData:map(func) self.imageData:mapPixel(function(x,y,r,g,b,a) return unpack(_GetColor(func(x,y,_GetColorID(r,g,b)) or 0)) end) return self end
+function ImageData:map(mf)
+  self.imageData:mapPixel(
+    function(x,y,r,g,b,a)
+      local newCol = mf(x+1,y+1,_GetColorID(r,g,b,a))
+      newCol = newCol and _GetColor(newCol) or {r,g,b,a}
+      return unpack(newCol)
+    end)
+  return self
+end
 function ImageData:height() return self.imageData:getHeight() end
 function ImageData:width() return self.imageData:getWidth() end
-function ImageData:paste(sprData,dx,dy,sx,sy,sw,sh) self.imageData:paste(sprData.imageData,(dx or 1)-1,(dy or 1)-1,(sx or 1)-1,(sy or 1)-1,sw or sprData:width(), sh or sprData:height()) end
+function ImageData:paste(sprData,dx,dy,sx,sy,sw,sh) self.imageData:paste(sprData.imageData,(dx or 1)-1,(dy or 1)-1,(sx or 1)-1,(sy or 1)-1,sw or sprData:width(), sh or sprData:height()) return self end
 function ImageData:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
 function ImageData:image() return Image(self) end
-function ImageData:export(filename) self.imageData:encode("png",filename..".png") end
+function ImageData:export(filename) self.imageData:encode("png",filename..".png") return self end
+function ImageData:enlarge(scale)
+  local scale = floor(scale or 1)
+  if scale <= 0 then scale = 1 end --Protection
+  if scale == 1 then return self end
+  local newData = ImageData(self:width()*scale,self:height()*scale)
+  self:map(function(x,y,c)
+    for iy=1, scale do for ix=1, scale do
+      newData:setPixel((x-1)*scale + ix,(y-1)*scale + iy,c)
+    end end
+  end)
+  return newData
+end
 
 SpriteSheet = class("Liko12.spriteSheet")
 function SpriteSheet:initialize(img,w,h)
@@ -188,9 +214,38 @@ function SpriteSheet:data() return self.img:data() end
 function SpriteSheet:quad(id) return self.quads[id] end
 function SpriteSheet:rect(id) local x,y,w,h = self.quads[id]:getViewport() return x+1,y+1,w,h end
 function SpriteSheet:draw(id,x,y,r,sx,sy) self.img:draw(x,y,r,sx,sy,self.quads[id]) _ShouldDraw = true return self end
+function SpriteSheet:extract(id) return ImageData(8,8):paste(self:data(),1,1,self:rect(id)) end
 
 function Sprite(id,x,y,r,sx,sy,sheet) (sheet or SpriteMap):draw(id,x,y,r,sx,sy) end
 function SpriteGroup(id,x,y,w,h,sheet) for spry = 1, h or 1 do for sprx = 1, w or 1 do (sheet or SpriteMap):draw((id-1)+sprx+(spry*24-24),x+(sprx*8-8),y+(spry*8-8)) end end end
+
+EditorSheet = SpriteSheet(Image("/editorsheet.png"),24,12)
+
+--Cursor Section--
+_CurrentCursor = "normal"
+_Cursors = {}
+_CachedCursors = {}
+
+function newCursor(data,name,hotx,hoty)
+  _Cursors[name] = {data = data, hotx = hotx or 1, hoty = hoty or 1}
+  _CachedCursors[name or "custom"] = love.mouse.newCursor(_Cursors[name].data:enlarge(_ScreenScale).imageData,(_Cursors[name].hotx-1)*_ScreenScale,(_Cursors[name].hoty-1)*_ScreenScale)
+end
+
+function loadDefaultCursors()
+  newCursor(EditorSheet:extract(1),"normal",2,2)
+  newCursor(EditorSheet:extract(2),"handrelease",3,2)
+  newCursor(EditorSheet:extract(3),"handpress",3,4)
+  newCursor(EditorSheet:extract(4),"hand",5,5)
+  newCursor(EditorSheet:extract(5),"cross",4,4)
+  setCursor(_CurrentCursor)
+end
+
+function setCursor(name)
+ if not _CachedCursors[name] then _CachedCursors[name or "custom"] = love.mouse.newCursor(_Cursors[name].data:enlarge(_ScreenScale).imageData,(_Cursors[name].hotx-1)*_ScreenScale,(_Cursors[name].hoty-1)*_ScreenScale) end
+ love.mouse.setCursor(_CachedCursors[name]) _CurrentCursor = name or "custom"
+end
+
+function clearCursorsCache() _CachedCursors = {} setCursor(_CurrentCursor) end
 
 --Math Section--
 function rand_seed(newSeed)
@@ -223,6 +278,7 @@ end
 
 --Misc Functions--
 function keyrepeat(state) love.keyboard.setKeyRepeat(state) end
+function showkeyboard(state) love.keyboard.setTextInput(state) end
 
 --Spritesheet--
 SpriteMap = SpriteSheet(ImageData(24*8,12*8):image(),24,12)

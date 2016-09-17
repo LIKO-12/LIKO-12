@@ -1,3 +1,4 @@
+io.stdout:setvbuf("no")
 require("api")
 
 function love.mousepressed(x,y,button,istouch)
@@ -45,7 +46,7 @@ end
 --Internal Callbacks--
 function love.load()
   --love.keyboard.setTextInput(true)
-  SetCursor("normal")
+  loadDefaultCursors()
   _ScreenCanvas = love.graphics.newCanvas(192,128)
   _ScreenCanvas:setFilter("nearest")
   love.graphics.clear(0,0,0,255)
@@ -74,12 +75,13 @@ function love.resize(w,h)
   _ScreenWidth, _ScreenHeight = w, h
   local TSX, TSY = w/192, h/128 --TestScaleX, TestScaleY
   if TSX < TSY then
-    _ScreenScaleX, _ScreenScaleY = w/192, w/192
+    _ScreenScaleX, _ScreenScaleY, _ScreenScale = w/192, w/192, w/192
     _ScreenX, _ScreenY = 0, (_ScreenHeight-128*_ScreenScaleY)/2
   else
-    _ScreenScaleX, _ScreenScaleY = h/128, h/128
+    _ScreenScaleX, _ScreenScaleY, _ScreenScale = h/128, h/128, h/128
     _ScreenX, _ScreenY = (_ScreenWidth-192*_ScreenScaleX)/2, 0
   end
+  clearCursorsCache()
   _ShouldDraw = true
 end
 
