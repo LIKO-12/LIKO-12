@@ -1,5 +1,5 @@
 class = require("class")
-require("Offsets")
+require("offsets")
 --Cursors--
 if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
 love.mouse.newCursor = function() end
