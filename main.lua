@@ -15,17 +15,17 @@ function love.mousereleased(x,y,button,istouch)
   _auto_mrelease(x,y,button,istouch)
 end
 
-function love.touchpressed(id,x,y,pressure)
+function love.touchpressed(id,x,y,dx,dy,pressure)
   local x, y = _ScreenToLiko(x,y) if x < 0 or x > 192 or y < 0 or y > 128 then return end
   _auto_tpress(id,x,y,pressure)
 end
 
-function love.touchmoved(id,x,y,pressure)
+function love.touchmoved(id,x,y,dx,dy,pressure)
   local x, y = _ScreenToLiko(x,y) if x < 0 or x > 192 or y < 0 or y > 128 then return end
   _auto_tmove(id,x,y,pressure)
 end
 
-function love.touchreleased(id,x,y,pressure)
+function love.touchreleased(id,x,y,dx,dy,pressure)
   local x, y = _ScreenToLiko(x,y) if x < 0 or x > 192 or y < 0 or y > 128 then return end
   _auto_trelease(id,x,y,pressure)
 end
