@@ -169,7 +169,7 @@ function Image:data() return ImageData(self.image:getData()) end
 function Image:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
 
 ImageData = class("Liko12.imageData")
-function ImageData:initialize(w,h) if h then self.imageData = love.image.newImageData(w or 192, h or 128) else self.imageData = w end end
+function ImageData:initialize(w,h) if h then self.imageData = love.image.newImageData(w or 192, h or 128) elseif type(w) == "string" then self.imageData = love.image.newImageData(love.filesystem.newFileData(w,"spritemap","base64")) else self.imageData = w end end
 function ImageData:size() return self.imageData:getDimensions() end
 function ImageData:getPixel(x,y) return self.imageData:getPixel((x or 1)-1,(y or 1)-1) end
 function ImageData:setPixel(x,y,c) self.imageData:setPixel((x or 1)-1,(y or 1)-1,unpack(_GetColor(c))) return self end
@@ -187,7 +187,7 @@ function ImageData:width() return self.imageData:getWidth() end
 function ImageData:paste(sprData,dx,dy,sx,sy,sw,sh) self.imageData:paste(sprData.imageData,(dx or 1)-1,(dy or 1)-1,(sx or 1)-1,(sy or 1)-1,sw or sprData:width(), sh or sprData:height()) return self end
 function ImageData:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
 function ImageData:image() return Image(self) end
-function ImageData:export(filename) self.imageData:encode("png",filename..".png") return self end
+function ImageData:export(filename) return self.imageData:encode("png",filename and (filename..".png") or nil) end
 function ImageData:enlarge(scale)
   local scale = floor(scale or 1)
   if scale <= 0 then scale = 1 end --Protection
@@ -248,6 +248,8 @@ end
 function clearCursorsCache() _CachedCursors = {} setCursor(_CurrentCursor) end
 
 --Math Section--
+ostime = os.time()
+
 function rand_seed(newSeed)
   love.math.setRandomSeed(newSeed)
 end
@@ -274,7 +276,12 @@ function whereInGrid(x,y, grid) --Grid X, Grid Y, Grid Width, Grid Height, NumOf
 end
 
 --FileSystem Function--
+FS = {}
+function FS.write(path,data)
+  return love.filesystem.write(path,data)
+end
 
+function FS.read(path) return love.filesystem.read(path) end
 
 --Misc Functions--
 function keyrepeat(state) love.keyboard.setKeyRepeat(state) end

@@ -21,8 +21,33 @@ local blinktime = 0.5
 local blinktimer = 0
 local blinkstate = false
 
+function cedit:export()
+  local code = ""
+  for line,text in ipairs(self.codebuffer) do
+    code = code..text.."\n"
+  end
+  return code
+end
+
+local function magiclines(s)
+  if s:sub(-1)~="\n" then s=s.."\n" end
+  return s:gmatch("(.-)\n")
+end
+
+function cedit:load(code)
+  self.codebuffer, self.cursorX, self.cursorY = {}, 1, 1
+  if not code then self.codebuffer[1] = "" return self end
+  local code = code
+  for line in magiclines(code) do
+    table.insert(self.codebuffer,line)
+  end
+  return self
+end
+
 function cedit:_switch()
-  
+  for line,text in pairs(self.codebuffer) do
+    cprint(text)
+  end
 end
 
 function cedit:_redraw()

@@ -1,5 +1,7 @@
 local s = {}
 
+local basexx = require("Libraries.basexx")
+
 local img, mflag
 local imgw, imgh = 8, 8 --Image Width, Image Height
 local psize = 10 --Zoomed Pixel Size
@@ -45,8 +47,11 @@ function s:_switch()
   --self:redraw()
 end
 
-function s:save(path)
-  SpriteMap:data():export(path or "spritesheet")
+function s:export(path)
+  local FileData = SpriteMap:data():export(path)
+  if not path then
+    return basexx.to_base64(FileData:getString())
+  end
 end
 
 function s:load(path)
