@@ -68,7 +68,7 @@ function Terminal:_redraw()
   for line,text in ipairs(self.textbuffer) do
     color(self.textcolors[line])
     if text == "-[[liko12]]-" then --THE SECRET PHASE
-      SpriteGroup(67,9,line*8,6,1,require("Editor").Sheet)
+      SpriteGroup(67,9,line*8,6,1,require("editor").Sheet)
     else
       print_grid(text,2,line+1)
     end

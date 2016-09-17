@@ -23,22 +23,22 @@ end
 function CMD.version() tout() tout("-[[liko12]]-") tout("V0.0.1 DEV",9) end
 
 function CMD.new()
-  require("Editor.sprite"):load()
+  require("editor.sprite"):load()
   tout("CLEARED MEMORY",7)
 end
 
 function CMD.reload()
-  require("Editor").Sheet = SpriteSheet(Image("/editorsheet.png"),24,12)
+  require("editor").Sheet = SpriteSheet(Image("/editorsheet.png"),24,12)
   tout("RELOADED EDITORSHEET",7)
 end
 
 function CMD.export(command,path)
-  require("Editor.sprite"):save(path)
+  require("editor.sprite"):save(path)
   tout("SAVED TO /"..path..".PNG",12)
 end
 
 function CMD.import(command,path)
-  require("Editor.sprite"):load(path)
+  require("editor.sprite"):load(path)
   tout("LOADED /"..path..".PNG",12)
 end
 

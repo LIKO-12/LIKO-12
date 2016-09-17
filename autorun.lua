@@ -1,5 +1,5 @@
-local Editor = require("Editor") --Require the editor
-local Terminal = require("Terminal")
+local Editor = require("editor") --Require the editor
+local Terminal = require("terminal")
 
 local Acitve
 local EActive = false --Editor Active
