@@ -1,4 +1,4 @@
-# LIKO-8
+# LIKO-12
 A PICO-8 clone made in LÖVE framwork with extra abilities and new API.
 
 ## TIPS:
