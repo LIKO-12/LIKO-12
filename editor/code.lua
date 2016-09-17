@@ -1,6 +1,6 @@
 local cedit = {}
 
-local colorize = require("Libraries.colorize_lua")
+local colorize = require("libraries.colorize_lua")
 
 cedit.colors = {
 text = _GetColor(8),

@@ -1,6 +1,6 @@
 local s = {}
 
-local Editor = require("Editor")
+local Editor = require("editor")
 
 local img, mflag
 local imgw, imgh = 8, 8 --Image Width, Image Height
