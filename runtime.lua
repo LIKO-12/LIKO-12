@@ -88,6 +88,7 @@ function r.newGlobals()
     points=points,
     point=point,
     line=line,
+    lines=lines,
     circle=circle,
     circle_line=circle_line,
     rect=rect,
@@ -113,6 +114,7 @@ function r.newGlobals()
     whereInGrid=whereInGrid,
     keyrepeat=keyrepeat,
     showkeyboard=showkeyboard,
+    isMobile=isMobile,
     --Must change--
     SpriteMap=SpriteMap
   }
