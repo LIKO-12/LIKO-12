@@ -1,6 +1,6 @@
 local s = {}
 
-local basexx = require("Libraries.basexx")
+local basexx = require("libraries.basexx")
 
 local img, mflag
 local imgw, imgh = 8, 8 --Image Width, Image Height
@@ -170,10 +170,11 @@ function s:_mrelease(x,y,b,it)
       data:setPixel(qx+cx-1,qy+cy-1,cols)
       SpriteMap.img = data:image()
       self:redrawSPR() self:redrawSPRS()
+      self.unsaved = true
     end
     mflag = false
   end
-  
+
   if (not it and sprsmflag) or it then
     local cx, cy = whereInGrid(x,y,sprsgrid)
     if cx then
@@ -181,8 +182,9 @@ function s:_mrelease(x,y,b,it)
       local cx, cy = cx-1, cy-1
       sprssrect[1] = cx*8
       sprssrect[2] = 128-(8+24+1)+cy*8
-      
+
       self:redrawSPRS() self:redrawSPR() sprsmflag = false
+      self.unsaved = true
     end
   end
 end
