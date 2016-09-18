@@ -121,6 +121,8 @@ function line(...)
   _ShouldDraw = true
 end
 
+lines = line
+
 function circle(x,y,r,s,c) --x,y,radius,segments,color
   if c then color(c) end
   love.graphics.circle("fill",x,y,r,s)
