@@ -1,0 +1,77 @@
+==========================================================================================
+	LIKO-12 V0.0.1 PRE Programmer Manual
+	About:
+	LIKO-12 is a PICO-8 clone but with extra abilities, different api and bigger screen width.
+==========================================================================================
+
+==========================================================================================
+	API
+==========================================================================================
+
+:: Callbacks
+You should overwrite the callbacks you want to use, ex: function _startup() end
+
+_startup
+	This function is called at the initialization of your game.
+	Start your game drawing from here, because any draw calls called when compiling your game code are cleared.
+
+_update dt
+	This function is called everyframe.
+	
+	- DT (Number): The delta time between _update calls in seconds.
+
+_mpress x,y,b,it
+	This function is called when a mouse button is pressed.
+	- x,y (Numbers): The X and Y position of the mouse.
+	- b (Number): The pressed mouse button.
+	- it (Boolean): (istouch) if the mouse press is in fact a touch press.
+
+_mmove x,y,dx,dy,it,iw
+	This function is called whenever the mouse gets moved.
+	- x,y (Numbers): The X and Y position of the mouse.
+	- dx,dy (Numbers): How much the mouse has moved in each direction.
+	- it (Boolean): (istouch) if the mouse press is in fact a touch move.
+	- iw (Boolean): (iswheel) if true then the x,y are how much the mouse wheel has moved.
+
+_mrelease x,y,b,it
+	This function is called when a mouse button is released.
+	- x,y (Numbers): The X and Y position of the mouse.
+	- b (Number): The released mouse button.
+	- it (Boolean): (istouch) if the mouse press is in fact a touch release.
+
+_tpress id,x,y,dx,dy,p
+	This function is called when the screen is touched.
+	- id (Light-Number): The id of the touch.
+	- x,y (Numbers): The X and Y position of the touch.
+	- dx,dy (Numbers): How much the touch has moved in each direction, this should be always zero.
+	- p (Number): (pressure) The pressure of the touch.
+
+_tmove id,x,y,dx,dy,p
+	This function is called when a screen touch is moved.
+	- id (Light-Number): The id of the touch.
+	- x,y (Numbers): The X and Y position of the touch.
+	- dx,dy (Numbers): How much the touch has moved in each direction.
+	- p (Number): (pressure) The pressure of the touch.
+
+_trelease id,x,y,dx,dy,p
+	This function is called when a screen touch is released.
+	- id (Light-Number): The id of the touch.
+	- x,y (Numbers): The X and Y position of the touch.
+	- dx,dy (Numbers): How much the touch has moved in each direction.
+	- p (Number): (pressure) The pressure of the touch.
+
+_kpress k, sc, ir
+	This function is called when a keyboard key is pressed.
+	- k (String [KeyConstant]): The key that has been pressed.
+	- sc (Number): The scancode of the pressed key.
+	- ir (Boolean): (IsRepeat) See keyrepeat function.
+
+_krelease k, sc
+	This function is called when a keyboard key is released.
+	- k (String [KeyConstant]): The key that has been released.
+	- sc (Number): The scancode of the released key.
+
+_tinput t
+	This function is called when text is inputted.
+	- t (String): The text inputted.
+
