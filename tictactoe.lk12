@@ -30,24 +30,23 @@ local function calcWin()
  for x=1,3 do --Vertical Scanning
   if xo[x][1] == xo[x][2] and xo[x][2] == xo[
 x][3] then
-   w = xo[x][1]
+   return xo[x][1]
   end
  end
  for y=1,3 do --Horizental Scanning
   if xo[1][y] == xo[2][y] and xo[2][y] == xo[
 3][y] then
-   w = xo[1][y]
+   return xo[1][y]
   end
  end
  --Diagnostick Scanning
  if xo[1][1] == xo[2][2] and xo[2][2] == xo[
 3][3] then
-  w = xo[1][1]
+  return xo[1][1]
  elseif xo[3][1] == xo[2][2] and xo[2][2] ==
 xo[1][3] then
-  w = xo[3][1]
+  return xo[3][1]
  end
- if w > 0 then return w end
  --Check if the grid is all filled
  for x=1,3 do
   for y=1,3 do
