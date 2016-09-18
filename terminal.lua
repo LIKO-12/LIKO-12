@@ -91,6 +91,7 @@ function Terminal:_kpress(k,sc,ir)
 end
 
 function Terminal:_tinput(t)
+  if t == "\\" then return end --This thing is so bad, so GO AWAY
   if self.textbuffer[self.currentLine]:len() < self.lengthLimit then self:tout(t,8,true) end
 end
 

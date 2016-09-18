@@ -168,6 +168,7 @@ function cedit:_krelease(k,sc)
 end
 
 function cedit:_tinput(t)
+  if t == "\\" then return end --This thing is so bad, so GO AWAY
   blinktimer, blinkstate = 0, true
   if self.codebuffer[self.cursorY+self.topLine]:len() == 46 then return end
   self.codebuffer[self.cursorY+self.topLine] = self.codebuffer[self.cursorY+self.topLine]:sub(0,self.cursorX-1)..t..self.codebuffer[self.cursorY+self.topLine]:sub(self.cursorX,-1)--self.codebuffer[self.cursorY+self.topLine]..t
