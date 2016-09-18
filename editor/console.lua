@@ -14,6 +14,7 @@ local pack = function(...) return {...} end
 
 local eval = function(input, print)
   -- try runnig the compiled code in protected mode.
+  console.G.print, console.G.cprint = print, cprint
   local chunk, err = runtime:compile(input, console.G)
   if(not chunk) then
     print("! Compilation error: " .. (err or "Unknown error"),10)
