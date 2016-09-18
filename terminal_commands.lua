@@ -86,12 +86,16 @@ end
 function CMD.load(command,name)
   if not name then tout("PLEASE PROVIDE A NAME TO LOAD",9) return end
   local code = api.fs.read("/"..name..".lk12")
-  code = loadstring(code)
-  setfenv(code,{})
-  local data = code()
-  api.SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
-  require("editor.code"):load(data.code)
-  tout("LOADED /"..name..".lk12",12)
+  if(code) then
+    code = loadstring(code)
+    setfenv(code,{})
+    local data = code()
+    api.SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
+    require("editor.code"):load(data.code)
+    tout("LOADED /"..name..".lk12",12)
+  else
+    tout("FILE NOT FOUND")
+  end
 end
 
 function CMD.export(command,path)
