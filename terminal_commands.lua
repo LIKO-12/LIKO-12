@@ -1,6 +1,8 @@
-local Terminal = require("Terminal")
+local Terminal = require("terminal")
 local function tout(...) Terminal:tout(...) end
 local CMD = {}
+local sprite_editor = require("editor.sprite")
+local code_editor = require("editor.code")
 
 function CMD.help()
   tout("COMMANDS <REQUIRED> [OPTIONAL]",13)
@@ -14,6 +16,7 @@ function CMD.help()
   tout("EXPORT <PATH>: EXPORTS THE SPRITESHEET",7)
   tout("CLEAR: CLEARS THE SCREEN",7)
   tout("VERSION: SHOWS THE CONSOLE VERSION",7)
+  tout("QUIT: QUIT PROGRAM")
   --tout()
   tout("PRESS ESC TO OPEN THE EDITOR",9)
 end
@@ -25,26 +28,27 @@ end
 function CMD.version() tout() tout("-[[liko12]]-") tout("V0.0.1 DEV",9) end
 
 function CMD.new()
-  require("editor.sprite"):load()
-  require("editor.code"):load()
+  sprite_editor:load()
+  code_editor:load()
+  sprite_editor.unsaved, code_editor.unsaved = false, false
   tout("CLEARED MEMORY",7)
 end
 
 function CMD.reload()
   EditorSheet = SpriteSheet(Image("/editorsheet.png"),24,12)
   loadDefaultCursors()
+  sprite_editor.unsaved, code_editor.unsaved = false, false
   tout("RELOADED EDITORSHEET",7)
 end
 
 function CMD.save(command,name)
   if not name then tout("PLEASE PROVIDE A NAME TO SAVE",9) return end
-  local sm = require("editor.sprite"):export()
-  local cd = require("editor.code")
-  cd = cd:export()
+  local sm, cd = sprite_editor:export(), code_editor:export()
   local saveCode = "local code = [["..cd.."]]\n\n"
   saveCode = saveCode .. "local spritemap = '"..sm.."'\n\n"
   saveCode = saveCode .. "return {code=code,spritemap=spritemap}"
   FS.write("/"..(name)..".lk12",saveCode)
+  sprite_editor.unsaved, code_editor.unsaved = false, false
   tout("SAVED TO "..(name)..".lk12",12)
 end
 
@@ -55,19 +59,28 @@ function CMD.load(command,name)
   setfenv(code,{})
   local data = code()
   SpriteMap = SpriteSheet(ImageData(data.spritemap):image(),24,12)
-  require("editor.code"):load(data.code)
+  code_editor:load(data.code)
+  sprite_editor.unsaved, code_editor.unsaved = false, false
   tout("LOADED /"..name..".lk12",12)
 end
 
 function CMD.export(command,path)
-  require("editor.sprite"):export(path)
+  sprite_editor:export(path)
   tout("EXPORTED TO /"..path..".PNG",12)
 end
 
 function CMD.import(command,path)
-  require("editor.sprite"):load(path)
+  sprite_editor:load(path)
   tout("IMPORTED /"..path..".PNG",12)
 end
 
+function CMD.quit(command,force)
+  if(code_editor.unsaved or sprite_editor.unsaved and not force) then
+    tout("UNSAVED CHANGES. TO QUIT WITHOUT SAVING")
+    tout("RUN: QUIT FORCE")
+  else
+    love.event.quit()
+  end
+end
 
 return CMD

@@ -1,6 +1,6 @@
 local cedit = {}
 
-local colorize = require("Libraries.colorize_lua")
+local colorize = require("libraries.colorize_lua")
 
 cedit.colors = {
 text = _GetColor(8),
@@ -102,6 +102,7 @@ function cedit:_kpress(k,sc,ir)
     end
     blinktimer, blinkstate = 0, true
     self:_redraw()
+    self.unsaved = true
   elseif k == "up" then
     self.cursorY = self.cursorY-1
     if self.cursorY < 1 then if self.topLine > 0 then self.topLine = self.topLine -1 end self.cursorY = 1 end
@@ -143,6 +144,7 @@ function cedit:_tinput(t)
   self.codebuffer[self.cursorY+self.topLine] = self.codebuffer[self.cursorY+self.topLine]:sub(0,self.cursorX-1)..t..self.codebuffer[self.cursorY+self.topLine]:sub(self.cursorX,-1)--self.codebuffer[self.cursorY+self.topLine]..t
   self.cursorX = self.cursorX+1
   self:_redraw()
+  self.unsaved = true
 end
 
 function cedit:_tpress()
