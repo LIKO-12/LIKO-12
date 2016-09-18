@@ -2,9 +2,9 @@ local Terminal = {}
 
 --local EditorSheet = SpriteSheet(Image("/editorsheet.png"),24,12)
 
-local blinktime = 0.5
-local blinktimer = 0
-local blinkstate = false
+Terminal.blinktime = 0.5
+Terminal.blinktimer = 0
+Terminal.blinkstate = false
 
 Terminal.textbuffer = {}
 Terminal.textcolors = {}
@@ -28,7 +28,7 @@ function Terminal:tout(text,col,skipnl)
       self.currentLine = self.currentLine + 1
     end
   end
-  Terminal:_redraw()
+  self:_redraw()
 end
 function Terminal:setLine(l) self.currentLine = floor(l or 1) if self.currentLine > 20 then self.currentLine = 20 elseif self.currentLine < 1 then self.currentLine = 1 end end
 
@@ -57,9 +57,9 @@ function Terminal:_startup()
 end
 
 function Terminal:_update(dt)
-  blinktimer = blinktimer+dt if blinktimer > blinktime then blinktimer = blinktimer - blinktime  blinkstate = not blinkstate end
+  self.blinktimer = self.blinktimer+dt if self.blinktimer > self.blinktime then self.blinktimer = self.blinktimer - self.blinktime  self.blinkstate = not self.blinkstate end
   local curlen = self.textbuffer[self.currentLine]:len()
-  color(blinkstate and 9 or 1)
+  color(self.blinkstate and 9 or 1)
   rect(curlen > 0 and ((curlen)*4+8+3) or 10,(self.currentLine)*8+2,4,5)
 end
 
