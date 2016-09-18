@@ -35,7 +35,7 @@ x][3] then
  end
  for y=1,3 do --Horizental Scanning
   if xo[1][y] == xo[2][y] and xo[2][y] == xo[
-y][3] then
+3][y] then
    w = xo[1][y]
   end
  end
