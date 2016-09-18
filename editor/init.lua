@@ -1,13 +1,17 @@
 local Editor = {}
 
-local ModeGrid = {192-8*5,1,8*5,8,5,1}
-
 Editor.Current = {}
-Editor.curid = 2
-Editor.editors = {"code","sprite","sprite","sprite","sprite"}
+Editor.curid = 3
+Editor.editors = {"console","code","sprite","sprite","sprite","sprite"}
+
+local ModeGrid = {192-8*#Editor.editors,1,8*#Editor.editors,8,#Editor.editors,1}
 
 function Editor:_startup()
   self:switchEditor(self.curid)
+  for _,e in pairs(Editor.editors) do
+    local m = require("editor."..e)
+    if m._startup then m:_startup() end
+  end
 end
 
 function Editor:_redraw()
@@ -19,8 +23,8 @@ function Editor:redrawUI()
   clear(6)
   rect(1,1,192,8,9)
   rect(1,128-7,192,8,9)
-  SpriteGroup(20,192-8*5,1,5,1,1,1,EditorSheet)
-  EditorSheet:draw(43+self.curid,(192-8*5)+self.curid*8-8,1)
+  SpriteGroup(24-#Editor.editors+1,192-8*#Editor.editors,1,#Editor.editors,1,1,1,EditorSheet)
+  EditorSheet:draw((48-#Editor.editors)+self.curid,(192-8*#Editor.editors)+self.curid*8-8,1)
   SpriteGroup(63,1,1,4,1,1,1,EditorSheet)
 end
 
