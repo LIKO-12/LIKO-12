@@ -1,4 +1,6 @@
 # LIKO-12
+Love2D Forums Topic: https://love2d.org/forums/viewtopic.php?f=5&t=82913
+
 ## Screenshots
 ![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_1.png "LIKO-12 Screenshot 1")
 ![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_2.png "LIKO-12 Screenshot 2")
