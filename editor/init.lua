@@ -68,7 +68,11 @@ function Editor:_trelease(id,x,y,p)
 end
 
 function Editor:_kpress(k,sc,ir)
-  if self.Current._kpress then self.Current:_kpress(k,sc,ir) end
+  if k == "pageup" and love.keyboard.isDown("lctrl", "rctrl", "capslock") then
+    Editor:switchEditor(1 + ((Editor.curid - 2) % #Editor.editors))
+  elseif k == "pagedown" and love.keyboard.isDown("lctrl", "rctrl", "capslock") then
+    Editor:switchEditor(1 + (Editor.curid % #Editor.editors))
+  elseif self.Current._kpress then self.Current:_kpress(k,sc,ir) end
 end
 
 function Editor:_krelease(k,sc)
