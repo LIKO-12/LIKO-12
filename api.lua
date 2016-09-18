@@ -4,6 +4,7 @@ require("offsets")
 if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
 love.mouse.newCursor = function() end
 love.mouse.setCursor = function() end
+_IsMobile = true
 end
 
 --[[function SetCursor(name)
@@ -47,9 +48,9 @@ function _mpress(x,y,button,it) end --Called when a mouse button is pressed
 function _mmove(x,y,dx,dy,it,iw) end --Called when the mouse moves
 function _mrelease(x,y,button,it) end --Called when a mouse button is released
 
-function _tpress(id,x,y,button,pressure) end --Called when the screen is touched
-function _tmove(id,x,y,pressure) end --Called when the screen touch moves
-function _trelease(id,x,y,pressure) end --Called when the screen touch releases
+function _tpress(id,x,y,dx,dy,button,pressure) end --Called when the screen is touched
+function _tmove(id,x,y,dx,dy,pressure) end --Called when the screen touch moves
+function _trelease(id,x,y,dx,dy,pressure) end --Called when the screen touch releases
 
 function _kpress(key,scancode,isrepeat) end --Called when a key is pressed
 function _krelease(key,scancode) end --Called when a key is released
@@ -291,6 +292,7 @@ function FS.read(path) return love.filesystem.read(path) end
 --Misc Functions--
 function keyrepeat(state) love.keyboard.setKeyRepeat(state) end
 function showkeyboard(state) love.keyboard.setTextInput(state) end
+function isMobile() return _isMobile or false end
 
 --Spritesheet--
 SpriteMap = SpriteSheet(ImageData(24*8,12*8):image(),24,12)
