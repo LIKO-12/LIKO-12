@@ -60,6 +60,9 @@ function cedit:_redraw()
     print_grid(text,1,line+1)
   end
   
+  rect(1,128-7,192,8,9)
+  color(3) print("LINE "..self.topLine+self.cursorY.."/"..#self.codebuffer,2,128-5)
+  
   --[[for i=self.topLine+1,self.topLine+self.lineLimit do
     if self.codebuffer[i] then print_grid(self.codebuffer[i],1,(i-self.topLine)+1) end
   end]]
