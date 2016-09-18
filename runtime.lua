@@ -1,6 +1,6 @@
 local r = {}
 
-function r.newGlobals()
+local function newGlobals()
   local GLOB = {
     assert=assert,
     error=error,
@@ -129,23 +129,13 @@ local function tr(fnc,...)
   end
 end
 
-function r:compile(code, G)
-  local G = G or r.newGlobals()
-  G.SpriteMap = spritesheet
-  local chunk, err = loadstring(code or "")
-  if(err and not chunk) then -- maybe it's an expression, not a statement
-    chunk, err = loadstring("return " .. code)
-    if(err and not chunk) then
-      return false, err
-    end
-  end
-
-  setfenv(chunk,G)
-  return chunk
-end
-
 function r:loadGame(code,spritesheet,onerr)
-  local success, err = pcall(assert(compile(code)))
+  local G = newGlobals()
+  G.SpriteMap = spritesheet
+  local game, err = loadstring(code or "")
+  if not game then return false, err end
+  setfenv(game,G)
+  local success, err = pcall(game)
   if not success then return false, err end
   self.cg = G
   self.onerr = onerr or error
