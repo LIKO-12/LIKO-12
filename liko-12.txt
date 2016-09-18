@@ -69,6 +69,7 @@ Welcome to LIKO-12:
 	
 	tictactoe   A 2 players tictactoe game made by RamiLego4Game.
 	helloworld  The helloworld example.
+	noise       Fill the screen with random colors.
 	
 	To run a cart, open LIKO-12 terminal and type:
 	load tictactoe

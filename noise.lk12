@@ -1,0 +1,12 @@
+local code = [[--NOISE DEMO BY: RAMILEGO4GAME--
+function _startup()
+ for x=1,192 do for y=1,128 do
+  rand_seed(ostime()*x*y)
+  point(x,y,rand(1,16))
+ end end
+end
+]]
+
+local spritemap = 'iVBORw0KGgoAAAANSUhEUgAAAMAAAABgAQAAAABju0BEAAAAAnRSTlMAAHaTzTgAAAAZSURBVHic7cExAQAAAMKg9U9tCU+gAAB4GglgAAELKx5YAAAAAElFTkSuQmCC'
+
+return {code=code,spritemap=spritemap}
