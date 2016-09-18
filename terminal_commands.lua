@@ -1,6 +1,17 @@
-local Terminal = require("Terminal")
+local Terminal = require("terminal")
 local function tout(...) Terminal:tout(...) end
 local CMD = {}
+
+local function wrap_string(str,ml)
+  local lt = floor(str:len()/ml)
+  if lt <= 1 then return {str} end
+  local t = {}
+  for i = 1, lt+1 do
+    table.insert(t,str:sub(0,ml-1))
+    str=str:sub(ml,-1)
+  end
+  return t
+end
 
 function CMD.help()
   tout("COMMANDS <REQUIRED> [OPTIONAL]",13)
@@ -8,21 +19,43 @@ function CMD.help()
   tout("HELP: SHOW THIS HELP",7)
   tout("NEW: CLEARS THE MEMORY",7)
   tout("RELOAD: RELOADS THE EDITORSHEET",7)
+  tout("RUN: RUNS THE CURRENT GAME",7)
   tout("SAVE <NAME>: SAVES THE CURRENT GAME",7)
   tout("LOAD <NAME>: LOADS A GAME",7)
   tout("IMPORT <PATH>: IMPORTS A SPRITESHEET",7)
   tout("EXPORT <PATH>: EXPORTS THE SPRITESHEET",7)
-  tout("CLEAR: CLEARS THE SCREEN",7)
-  tout("VERSION: SHOWS THE CONSOLE VERSION",7)
+  tout("CLS: CLEARS THE SCREEN",7)
+  tout("VER: SHOWS LIKO12'S TITLE",7)
   --tout()
-  tout("PRESS ESC TO OPEN THE EDITOR",9)
+  tout("PRESS ESC TO OPEN THE EDITOR/EXIT THE GAME",9)
 end
 
-function CMD.clear()
+function CMD.cls()
   for i=1, Terminal.linesLimit do tout() end Terminal:setLine(1)
 end
 
-function CMD.version() tout() tout("-[[liko12]]-") tout("V0.0.1 DEV",9) end
+function CMD.ver() tout() tout("-[[liko12]]-") tout("V0.0.1 DEV",9) end
+
+function CMD.run()
+  local sm = require("editor.sprite"):export()
+  local cd = require("editor.code"):export()
+  local rt = require("runtime")
+  local spr = SpriteSheet(ImageData(sm):image(),24,12)
+  local ok, err = rt:loadGame(cd,spr,function(err)
+    _auto_exitgame()
+    for line,text in ipairs(wrap_string(err,42)) do
+      tout(line == 1 and "ERR: "..text or text,9)
+    end
+  end)
+  if not ok then
+    _auto_exitgame()
+    for line,text in ipairs(wrap_string(err,42)) do
+      tout(line == 1 and "ERR: "..text or text,9)
+    end
+  else
+    _auto_switchgame()
+  end
+end
 
 function CMD.new()
   require("editor.sprite"):load()
@@ -39,8 +72,7 @@ end
 function CMD.save(command,name)
   if not name then tout("PLEASE PROVIDE A NAME TO SAVE",9) return end
   local sm = require("editor.sprite"):export()
-  local cd = require("editor.code")
-  cd = cd:export()
+  local cd = require("editor.code"):export()
   local saveCode = "local code = [["..cd.."]]\n\n"
   saveCode = saveCode .. "local spritemap = '"..sm.."'\n\n"
   saveCode = saveCode .. "return {code=code,spritemap=spritemap}"

@@ -1,6 +1,6 @@
 local cedit = {}
 
-local colorize = require("Libraries.colorize_lua")
+local colorize = require("libraries.colorize_lua")
 
 cedit.colors = {
 text = _GetColor(8),
@@ -45,9 +45,7 @@ function cedit:load(code)
 end
 
 function cedit:_switch()
-  for line,text in pairs(self.codebuffer) do
-    cprint(text)
-  end
+  
 end
 
 function cedit:_redraw()
@@ -73,6 +71,22 @@ function cedit:_update(dt)
   if blinkstate then rect((self.cursorX-1)*4+2,(self.cursorY)*8+2,4,5,9) else self:_redraw() end
 end
 
+function cedit:_mmove(x,y,dx,dy,it,iw)
+  if math.abs(y) > 5 then return end --Dead mouse wheen strike
+  if math.abs(x) > 5 then return end --Dead mouse wheen strike
+  if y > 0 then
+    self:_kpress("up",0,false)
+  elseif y < 0 then
+    self:_kpress("down",0,false)
+  end
+  
+  if x > 0 then
+    self:_kpress("right",0,false) --Maybe ? or inverted..
+  elseif x < 0 then
+    self:_kpress("left",0,false)
+  end
+end
+
 function cedit:_kpress(k,sc,ir)
   if k == "return" then
     if self.cursorY == self.lineLimit then --check if the cursor is at the last line
@@ -80,8 +94,12 @@ function cedit:_kpress(k,sc,ir)
     else
       self.cursorY = self.cursorY+1
     end
+    
     for i=#self.codebuffer, self.cursorY+self.topLine, -1 do self.codebuffer[i+1] = self.codebuffer[i] end--Shift down the code
-    self.codebuffer[self.cursorY+self.topLine] = "" --Insert a new empty line
+    self.codebuffer[self.cursorY+self.topLine] = self.codebuffer[self.cursorY+self.topLine-1]:sub(self.cursorX,-1)
+    self.codebuffer[self.cursorY+self.topLine-1] = self.codebuffer[self.cursorY+self.topLine-1]:sub(0,self.cursorX-1)
+    
+    --self.codebuffer[self.cursorY+self.topLine] = "" --Insert a new empty line
     self.cursorX, blinktimer, blinkstate = 1, 0, true --Set the cursorX to 1 (since it's an empty line), also reset the blinkstate&timer to force the cursor to blink on
     self:_redraw() --Update the screen content for the user
   elseif k == "backspace" then
@@ -97,8 +115,17 @@ function cedit:_kpress(k,sc,ir)
         self.cursorX = self.codebuffer[self.cursorY+self.topLine]:len()+1
       end
     else
-      self.codebuffer[self.cursorY+self.topLine] = self.codebuffer[self.cursorY+self.topLine]:sub(0,self.cursorX-2)..self.codebuffer[self.cursorY+self.topLine]:sub(self.cursorX,-1)--self.codebuffer[self.cursorY+self.topLine]:sub(0,-2)
-      self.cursorX = self.cursorX-1
+      if self.cursorX > 1 then
+        self.codebuffer[self.cursorY+self.topLine] = self.codebuffer[self.cursorY+self.topLine]:sub(0,self.cursorX-2)..self.codebuffer[self.cursorY+self.topLine]:sub(self.cursorX,-1)--self.codebuffer[self.cursorY+self.topLine]:sub(0,-2)
+        self.cursorX = self.cursorX-1
+      --[[else
+        self.codebuffer[self.cursorY+self.topLine-1] = self.codebuffer[self.cursorY+self.topLine-1]..(self.codebuffer[self.cursorY+self.topLine] or "")
+        for i=self.cursorY+self.topLine, #self.codebuffer do self.codebuffer[i] = self.codebuffer[i+1] end--Shift up the code
+        table.remove(self.codebuffer,#self.codebuffer) --Drop The last line (because it got duplicated)
+        self.cursorY = self.cursorY-1
+        if self.cursorY < 1 then if self.topLine > 0 then self.topLine = self.topLine -1 end self.cursorY = 1 end
+        self.cursorX = self.codebuffer[self.cursorY+self.topLine-1]:len()+1  MUST SETUP LINE LENGTH SYSTEM FIRST]]
+      end
     end
     blinktimer, blinkstate = 0, true
     self:_redraw()

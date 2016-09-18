@@ -1,0 +1,17 @@
+local code = [[--HELLO WORLD DEMO--
+function _startup() --The startup function
+ SpriteGroup(1,16,16,6,2) --id, x,y,w,h
+end
+
+function _mpress(x,y)
+ rand_seed(ostime()*(x+y)) --Set the seed
+ point(x,y,rand(9,16)) --X,Y,COLOR
+end
+
+_mmove = _mpress
+_mrelease = _mrelease
+]]
+
+local spritemap = 'iVBORw0KGgoAAAANSUhEUgAAAMAAAABgBAMAAAC57mDaAAAAG1BMVEX/8ekAAADtG1H8zKv6ohtRptz37C9du02Ddpxx19j+AAAAAnRSTlP/AOW3MEoAAADXSURBVHic7dOxCsIwEMbxXCnuQV8gHbqLTxCIdC7oA2Swe6fOfXNzjaLYTW7835YLfD/uQpyI35Xbt/4uJ+J+CPGNdi4XG8BJE76FIvq2NE4pRROgEY18E4XTkwK3qw3QbhOI10VJiXfl5ILhBH2oEzQb0CohnUZbvcEQu0pswKEQXUi53JyPNsAjp0qIvoCTPqQ4zSbZFRjH6UUo0IUhTnkZDYF1XeZKeF+WE3Ne5rtdvumnBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD41BPMim4rjhhYEgAAAABJRU5ErkJggg=='
+
+return {code=code,spritemap=spritemap}

@@ -44,7 +44,7 @@ function _startup() end --Called at the start of the program
 function _update(dt) end --Called when the program updates
 
 function _mpress(x,y,button,it) end --Called when a mouse button is pressed
-function _mmove(x,y,dx,dy,it) end --Called when the mouse moves
+function _mmove(x,y,dx,dy,it,iw) end --Called when the mouse moves
 function _mrelease(x,y,button,it) end --Called when a mouse button is released
 
 function _tpress(id,x,y,button,pressure) end --Called when the screen is touched
@@ -151,11 +151,11 @@ end
 cprint = print --Console Print
 
 function print(text,lx,ly)
-  love.graphics.print(text, (lx or 1)+_goffset.printX, (ly or 1)+_goffset.printY) _ShouldDraw = true --_goffset.rectX
+  love.graphics.print(text, floor((lx or 1)+_goffset.printX), floor((ly or 1)+_goffset.printY)) _ShouldDraw = true --_goffset.rectX
 end
 
 function print_grid(text,lx,ly)
-  love.graphics.print(text, ((lx or 1)*8-6)+_goffset.printX, ((ly or 1)*8-6)+_goffset.printY) _ShouldDraw = true
+  love.graphics.print(text, floor(((lx or 1)*8-6)+_goffset.printX), floor(((ly or 1)*8-6)+_goffset.printY)) _ShouldDraw = true
 end
 
 --Image Section--
@@ -248,7 +248,7 @@ end
 function clearCursorsCache() _CachedCursors = {} setCursor(_CurrentCursor) end
 
 --Math Section--
-ostime = os.time()
+ostime = os.time
 
 function rand_seed(newSeed)
   love.math.setRandomSeed(newSeed)

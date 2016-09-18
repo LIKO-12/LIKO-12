@@ -16,6 +16,10 @@ function love.mousereleased(x,y,button,istouch)
   _auto_mrelease(x,y,button,istouch)
 end
 
+function love.wheelmoved(x,y)
+  _auto_mmove(x,y,0,0,false,true) --Mouse button 0 is the wheel
+end
+
 function love.touchpressed(id,x,y,dx,dy,pressure)
   local x, y = _ScreenToLiko(x,y) if x < 0 or x > 192 or y < 0 or y > 128 then return end
   _auto_tpress(id,x,y,pressure)

@@ -1,6 +1,6 @@
 local s = {}
 
-local basexx = require("Libraries.basexx")
+local basexx = require("libraries.basexx")
 
 local img, mflag
 local imgw, imgh = 8, 8 --Image Width, Image Height
@@ -136,7 +136,8 @@ function s:_mpress(x,y,b,it)
   end
 end
 
-function s:_mmove(x,y,dx,dy,it)
+function s:_mmove(x,y,dx,dy,it,iw)
+  if iw then return end
   if (not it and mflag) or it then
     local cx, cy = whereInGrid(x,y,imggrid)
     if cx then
