@@ -1,4 +1,13 @@
 # LIKO-12
+## Screenshots
+![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_1.png "LIKO-12 Screenshot 1")
+![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_2.png "LIKO-12 Screenshot 2")
+![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_3.png "LIKO-12 Screenshot 3")
+![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_4.png "LIKO-12 Screenshot 4")
+![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_5.png "LIKO-12 Screenshot 5")
+![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_6.png "LIKO-12 Screenshot 6")
+
+## LIKO-12.txt
 ```
 NOTE: this is a placeholder dump of LIKO-12.txt
 ==========================================================================================
