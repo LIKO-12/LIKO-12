@@ -1,17 +1,37 @@
-local code = [[--HELLO WORLD DEMO--
+local code = [[--HELLO WORLD DEMO BY: RAMILEGO4GAME--
 function _startup() --The startup function
- SpriteGroup(1,16,16,6,2) --id, x,y,w,h
+ local x = 192/2 - 8*3 + 2
+ local y = 128/4
+ SpriteGroup(1,x,y,6,2) --id, x,y,w,h
+ local str = "This is LIKO-12"
+ x = 192/2 - (str:len()/2)*4
+ y = y + 128/4
+ color(12) print(str,x,y) --text, x, y
+ str = "Nice to meet YOU"
+ x = 192/2 - (str:len()/2)*4
+ y = y + 10
+ color(13) print(str,x,y) --text, x, y
+ x = 192/2 - 4*3
+ y = y +10
+ Sprite(7,x,y,0,3,3)
 end
-
+local mflag = false
 function _mpress(x,y)
  rand_seed(ostime()*(x+y)) --Set the seed
  point(x,y,rand(9,16)) --X,Y,COLOR
+ mflag = true
 end
 
-_mmove = _mpress
-_mrelease = _mrelease
+function _mmove(x,y)
+ if not mflag then return end _mpress(x,y)
+end
+
+function _mrelease(x,y)
+ if not mflag then return end _mpress(x,y)
+ mflag = false
+end
 ]]
 
-local spritemap = 'iVBORw0KGgoAAAANSUhEUgAAAMAAAABgBAMAAAC57mDaAAAAG1BMVEX/8ekAAADtG1H8zKv6ohtRptz37C9du02Ddpxx19j+AAAAAnRSTlP/AOW3MEoAAADXSURBVHic7dOxCsIwEMbxXCnuQV8gHbqLTxCIdC7oA2Swe6fOfXNzjaLYTW7835YLfD/uQpyI35Xbt/4uJ+J+CPGNdi4XG8BJE76FIvq2NE4pRROgEY18E4XTkwK3qw3QbhOI10VJiXfl5ILhBH2oEzQb0CohnUZbvcEQu0pswKEQXUi53JyPNsAjp0qIvoCTPqQ4zSbZFRjH6UUo0IUhTnkZDYF1XeZKeF+WE3Ne5rtdvumnBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD41BPMim4rjhhYEgAAAABJRU5ErkJggg=='
+local spritemap = 'iVBORw0KGgoAAAANSUhEUgAAAMAAAABgBAMAAAC57mDaAAAAG1BMVEX/8ekAAADtG1F/JFT6ohv37C9du01RptyDdpyXa9RTAAAAAnRSTlP/AOW3MEoAAADWSURBVHic7dMxCsMwDIVhK6QHMM0FHMgBSk5gMNk9hM5ZsmfqnJvXiltamq1o/LVZhvchGTsRfyp3bv1dTsT9EOIb7YyjDeCkCd9CEX1bGl1K0QRoRCPfROH0pEAXbYD2mEC8LkpKvCsnFwwnGEKdoDmAVgnpNdrqDabYV+IALoXoQ8rl5na1Ae45VUL0BZwMIcV5McmuwLbNL0KBPkxxzutmCOz7ulTC+7KcmPO6POzyTT8tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMCnnpo9bT8VsdpSAAAAAElFTkSuQmCC'
 
 return {code=code,spritemap=spritemap}
