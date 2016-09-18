@@ -10,18 +10,9 @@ console.textbuffer, console.currentLine = {}, 2
 
 local pack = function(...) return {...} end
 
-local compile = function(input)
-  local chunk, err = loadstring("return " .. input)
-  if(err and not chunk) then -- maybe it's a statement, not an expression
-    return loadstring(input)
-  else
-    return chunk
-  end
-end
-
 local eval = function(input, print)
   -- try runnig the compiled code in protected mode.
-  local chunk, err = compile(input)
+  local chunk, err = runtime:compile(input, console.G)
   if(not chunk) then
     print("! Compilation error: " .. (err or "Unknown error"))
     return false
@@ -54,6 +45,8 @@ console._startup = function(self)
   keyrepeat(true)
   self:tout("LUA CONSOLE")
   self:tout("> ", 8, true)
+  self.G = runtime.newGlobals()
+  self.G.reset = function() self.G = runtime.newGlobals() end
 end
 
 console._kpress = function(self, k,sc,ir)
