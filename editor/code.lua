@@ -35,7 +35,7 @@ local function magiclines(s)
 end
 
 function cedit:load(code)
-  self.codebuffer, self.cursorX, self.cursorY = {}, 1, 1
+  self.codebuffer, self.topLine, self.cursorX, self.cursorY = {}, 0, 1, 1
   if not code then self.codebuffer[1] = "" return self end
   local code = code
   for line in magiclines(code) do
