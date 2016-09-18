@@ -4,14 +4,10 @@ local ModeGrid = {192-8*5,1,8*5,8,5,1}
 
 Editor.Current = {}
 Editor.curid = 2
-Editor.editors = {"code","sprite","console","sprite","sprite"}
+Editor.editors = {"code","sprite","sprite","sprite","sprite"}
 
 function Editor:_startup()
   self:switchEditor(self.curid)
-  for _,e in pairs(Editor.editors) do
-    local m = require("editor." .. e)
-    if(m._startup) then m:_startup() end
-  end
 end
 
 function Editor:_redraw()
