@@ -29,6 +29,7 @@ Welcome to LIKO-12:
 :: Keys
 
 	Escape: Quit running cart or switch between editors and the terminal.
+	Mouse Wheel: Move up/down/left/right the cursor in the code editor.
 
 :: Specs
 
@@ -38,6 +39,11 @@ Welcome to LIKO-12:
 	Code: LuaJit 5.1
 	L�VE: 0.10.1
 	Runs on: Windows, Linux, Mac, Android, iOS, RaspberryPi (Check PiLove).
+
+:: Bugs/Crashes reports
+
+	Please report those at the github issues tracker:
+	https://github.com/RamiLego4Game/LIKO-12/issues
 
 :: Hello World
 	
@@ -76,6 +82,7 @@ Welcome to LIKO-12:
 	
 		export spritesheet
 		import spritesheet
+		
 :: Editing the internal spritessheet
 
 	To edit the internal spritesheet type in the terminal:
@@ -107,32 +114,35 @@ Welcome to LIKO-12:
 :: Screen Rendering
 
 LIKO-12 has non clearing canvas rendering system this means:
- - You don't have to redraw everything when resizeing thr lk12 window
- - The screen doesn't clears every frame
- - You can draw to the screen anywhere in the code
+	- You don't have to redraw everything when resizeing thr lk12 window
+	- The screen doesn't clears every frame
+	- You can draw to the screen anywhere in the code
  
- Note: the everything called before _startup() will be cleared.
+	Note: the everything called before _startup() will be cleared.
 
 :: Getting Started
 
 To get started do the hello world tutorial then load and play demo games.
   
 After that let's start:
- Load the helloworld cart, then true to edit the logo and run thr game.
- Go back to the editor and switch to the code editor (The [] tab)
- From here you can start by reading the demos code
- 
+	Load the helloworld cart, then true to edit the logo and run thr game.
+	Go back to the editor and switch to the code editor (The [] tab)
+	From here you can start by reading the demos code
+	
 How carts work:
- The game code get's excuted to overwrite the global callbacks
- Then the screen is cleared with black color
- After that the _startup callback is called so the cart draws
- Finally whenever input happens the relevant callbacks are called so the game draws new content.
- On update the _update callback is called with delta time.
+	The game code get's excuted to overwrite the global callbacks
+	Then the screen is cleared with black color
+	After that the _startup callback is called so the cart draws
+	Finally whenever input happens the relevant callbacks are called so the game draws new content.
+	On update the _update callback is called with delta time.
  
 SpriteSheet:
- Before running game code, the spritesheet is loaded to the globals, so the game gets access to it's spritesheet
+	Before running game code, the spritesheet is loaded to the globals, so the game gets access to it's spritesheet
  
 So now read the demo games, and be sure to check the API documentation bellow.
+
+Console Editor Tab:
+	This is a work in progress feature, don't use it for now..
 
 ==========================================================================================
 	API
@@ -208,105 +218,102 @@ _tinput t
 :: Graphics
 
 color [c]
- Sets the current drawing color to the given color or black
- - c [Number]: The new color.
+	Sets the current drawing color to the given color or black
+	- c [Number]: The new color.
 
 clear [c]
- Clears the screen and fills it with the given color black
- - c [Number]: The color to fill with
+	Clears the screen and fills it with the given color black
+	- c [Number]: The color to fill with
 
 stroke [width]
- Sets the width of the lines and points to the given width or 1
- - width [Number]: The new width
+	Sets the width of the lines and points to the given width or 1
+	- width [Number]: The new width
 
 point/points x1,y1,[x2,y2,...],[c]
- Draws the give points, if the number of the given args is odd then last one is set as the color.
- - x,y,... (Numbers): The points locations
- - c [Number]: The color to set to
+	Draws the give points, if the number of the given args is odd then last one is set as the color.
+	- x,y,... (Numbers): The points locations
+	- c [Number]: The color to set to
 
 line/lines x1,y1,x2,y2,[x3,y3,...],[c]
- Draws lines connecting the given points, if the number of the given args is odd then the last one is set as the color.
- - x,y,... (Numbers): The points locations
- - c [Number]: The color to set to
+	Draws lines connecting the given points, if the number of the given args is odd then the last one is set as the color.
+	- x,y,... (Numbers): The points locations
+	- c [Number]: The color to set to
  
 circle/circle_line x,y,r,[c]
- Draws a circle at the given position
- - x,y (Numbers): The center pos of the circle
- - r (Number): The radius of the circle
- - c [Number]: The color to set to
+	Draws a circle at the given position
+	- x,y (Numbers): The center pos of the circle
+	- r (Number): The radius of the circle
+	- c [Number]: The color to set to
 
 rect/rect_line x,y,w,h,[c]
- Draws a rectangle with the given specifications
- - x,y (Numbers): The position of the topleft corner of thr rect.
- - w,h (Numbers): The width and height of the rectangle.
- - c [Number]: The color to set to
+	Draws a rectangle with the given specifications
+	- x,y (Numbers): The position of the topleft corner of thr rect.
+	- w,h (Numbers): The width and height of the rectangle.
+	- c [Number]: The color to set to
  
 print/print_grid text,[x],[y]
- Prints text at a specific location in the screen, be sure to set the color using color()
- print_grid is alligned ta 8x8 cell grid.
- - text (String or Table): The text to print, it can be a table: {"text",{r,g,b,a}}
- - x,y [Numbers]: The position to print at.
+	Prints text at a specific location in the screen, be sure to set the color using color()
+	print_grid is alligned ta 8x8 cell grid.
+	- text (String or Table): The text to print, it can be a table: {"text",{r,g,b,a}}
+	- x,y [Numbers]: The position to print at.
 
 Sprite sprid, x,y, [r], [sx],[sy], [sprsheet]
- Draws a specific sprite at the given pos.
- - sprid (Number): The sprite id as shown in the sprite editor
- - x,y (Numbers): The topleft corner position of the sprite.
- - r [Number]: The rotation in radian.
- - sx,sy [Numbers]: The sprite width and hight multiplying factor.
- - sprsheet [liko12.spriteSheet]: The spritesheet containing the sprite (advanced users only)
+	Draws a specific sprite at the given pos.
+	- sprid (Number): The sprite id as shown in the sprite editor
+	- x,y (Numbers): The topleft corner position of the sprite.
+	- r [Number]: The rotation in radian.
+	- sx,sy [Numbers]: The sprite width and hight multiplying factor.
+	- sprsheet [liko12.spriteSheet]: The spritesheet containing the sprite (advanced users only)
 
 SpriteGroup sprid, x,y, w,h, [sx],[sy], [sprsheet]
- Draws a group of sprites at the given pos.
- - sprid (Number): The id of thr top left sprite in the group.
- - x,y (Numbers): The topleft corner position
- - w,w (Numbers): The number of the sprites in width and height
- - sx,sy [Numbers]: The sprite width and hight multiplying factor.
- - sprsheet [liko12.spriteSheet]: The spritesheet containing the sprite (advanced users only)
-
-EditorSheet
- The internal spritesheet of the console
+	Draws a group of sprites at the given pos.
+	- sprid (Number): The id of thr top left sprite in the group.
+	- x,y (Numbers): The topleft corner position
+	- w,w (Numbers): The number of the sprites in width and height
+	- sx,sy [Numbers]: The sprite width and hight multiplying factor.
+	- sprsheet [liko12.spriteSheet]: The spritesheet containing the sprite (advanced users only)
  
 SpriteMap
- The carts spritesheet
+	The carts spritesheet
  
 :: Math
 
 ostime
- The default lua os.time function
+	The default lua os.time function
 
 floor
- The original lua math.floor function
+	The original lua math.floor function
  
 rand_seed
- the default love.math.setRandomSeed function
+	the default love.math.setRandomSeed function
  
 rand
- the default love.math.random function
+	the default love.math.random function
  
 :: GUI
 
 isInRect x,y,rect
- Returns true is the point is in the rect.
- - x,y (Numbers): The x and y positions of the point.
- - rect (Table): Rect table: {x,y,w,h}
- + (Boolean): is in rect.
+	Returns true is the point is in the rect.
+	- x,y (Numbers): The x and y positions of the point.
+	- rect (Table): Rect table: {x,y,w,h}
+	+ (Boolean): is in rect.
  
 whereInGrid x,y,grid
- Returns false if the point is not in the grid at all.
- Return cellx, celly if the point is in the grid.
- - x,y (Numbers): the x and y posotions of the point to test.
- - grid (Table): The grid config {x,y,cellw,cellh,w,h}
- + cx,cy (Numbers): The position in the grid.
+	Returns false if the point is not in the grid at all.
+	Return cellx, celly if the point is in the grid.
+	- x,y (Numbers): the x and y posotions of the point to test.
+	- grid (Table): The grid config {x,y,cellw,cellh,w,h}
+	+ cx,cy (Numbers): The position in the grid.
 
 :: Misc
 
 keyrepeat state
- To enable _kpress isrepeat function
+	To enable _kpress isrepeat function
 
 showKeyboard state
- To show the keyboard on mobile devices.
+	To show the keyboard on mobile devices.
  
 isMobile
- Returns true if liko12 is running on a mobile device
+	Returns true if liko12 is running on a mobile device
  
 Image, ImageData, SpriteSheet, setCursor, newCursor is not documented here, check api.lua for info about them 
