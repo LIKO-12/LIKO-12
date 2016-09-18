@@ -266,6 +266,20 @@ local function newAPI(noFS,sprsheetmap)
     return false, false
   end
 
+  -- should allow customizing this
+  local button_mapping = {
+    -- player 1
+    {{"left"}, {"right"}, {"up"}, {"down"}, {"z", "c", "x"}, {"x", "v", "m"}},
+    -- player 2
+    {{"s"}, {"f"}, {"e"}, {"d"}, {"lshift", "tab"}, {"a", "q"}}}
+
+  function api.btn(n, p)
+    local keys = button_mapping[(p or 0) + 1][n+1]
+    if(keys) then
+      return love.keyboard.isDown(unpack(keys))
+    end
+  end
+
   function api.getMPos()
     return _ScreenToLiko(love.mouse.getPosition())
   end
