@@ -3,7 +3,7 @@ local function tout(...) Terminal:tout(...) end
 local CMD = {}
 
 local function wrap_string(str,ml)
-  local lt = floor(str:len()/ml)
+  local lt = floor(str:len()/ml+0.99)
   if lt <= 1 then return {str} end
   local t = {}
   for i = 1, lt+1 do
@@ -43,15 +43,17 @@ function CMD.run()
   local spr = SpriteSheet(ImageData(sm):image(),24,12)
   local ok, err = rt:loadGame(cd,spr,function(err)
     _auto_exitgame()
-    for line,text in ipairs(wrap_string(err,42)) do
+    for line,text in ipairs(wrap_string(err,38)) do
       tout(line == 1 and "ERR: "..text or text,9)
     end
+    tout("> ",8,true)
   end)
   if not ok then
     _auto_exitgame()
-    for line,text in ipairs(wrap_string(err,42)) do
+    for line,text in ipairs(wrap_string(err,38)) do
       tout(line == 1 and "ERR: "..text or text,9)
     end
+    tout("> ",8,true)
   else
     _auto_switchgame()
   end
