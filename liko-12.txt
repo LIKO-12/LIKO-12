@@ -1,8 +1,106 @@
 ==========================================================================================
-	LIKO-12 V0.0.1 PRE Programmer Manual
-	About:
-	LIKO-12 is a PICO-8 clone but with extra abilities, different api and bigger screen width.
+	LIKO-12 V0.0.1 PRE
+	https://github.com/RamiLego4Game/LIKO-12
+	Licensed under GPL-3, see LICENSE file for more info
+	Author: RamiLego4Game // ramilego4game@gmail.com
+	Contributers:
+		technomancy: The editor console code.
+	
+	LIKO-12 is built with:
+		LÖVE Framework: http://love2d.org/
 ==========================================================================================
+
+Welcome to LIKO-12:
+	LIKO-12 is a PICO-8 clone but with extra abilities, different api and bigger screen width.
+	We are working on this because PICO-8 is not available for free, and to create a clone
+	without pointless limits.
+	
+	I don't know PICO-8 ??
+	
+	- PICO-8 is a fantasy console for making, sharing and playing tiny games and other computer 
+	programs. When you turn it on, the machine greets you with a shell for typing in Lua programs 
+	straight away and provides simple built-in tools for creating sprites, maps and sound.
+
+	- LIKO-12 comes with a terminal, lua console, sprites editor and a code editor.
+	It also comes with a modified PICO-8 font that have small letters support.
+
+:: Keys
+
+	Escape: Quit running cart or switch between editors and the terminal.
+
+:: Specs
+
+	Display: 192x128, fixed 16 colour palette (PICO-8 pallete)
+	Input: Full access to Mouse, Touch and Keyboard !
+	SpriteSheet: 288 sprite (24x12)
+	Code: LuaJit 5.1
+	LÖVE: 0.10.1
+	Runs on: Windows, Linux, Mac, Android, iOS, RaspberryPi (Check PiLove).
+
+:: Hello World
+	
+	After LIKO-12 boots, try loading the hello world builtin cart by typing those commands in the terminal:
+		
+		load helloworld
+		run
+	
+	Try to to press and drag anywhere on the screen.
+	
+	To quit the cart press escape key, now to view the source code/ sprites of the cart press escape key again.
+	Now in the sprites editor try to edit the hello world sprite then press escape to return to the terminal and type run.
+	
+	Awesome right ?
+	
+	To save your cart type ( you may replace myhelloworld with any name you like ):
+	
+		save myhelloworld
+		
+:: Demo Carts
+	
+	Here's a list of the built-in demo carts the you can load, edit, run and save !
+	
+	tictactoe   A 2 players tictactoe game made by RamiLego4Game.
+	helloworld  The helloworld example.
+	
+	To run a cart, open LIKO-12 terminal and type:
+	load tictactoe
+	run
+	
+	Press escape to stop the cart, and once more to enter editing mode.
+
+:: Exporters / Importers
+	
+	To import or export the spritesheet as a .png:
+	
+		export spritesheet
+		import spritesheet
+:: Editing the internal spritessheet
+
+	To edit the internal spritesheet type in the terminal:
+	
+		import editorsheet
+	
+	Edit the sheet as you like (You can edit the cursor too)
+	
+		export editorsheet
+		reload
+		
+	Have fun hacking this :3
+	
+:: Terminal Commands
+
+	COMMANDS <REQUIRED> [OPTIONAL]
+	
+	HELP: Shows help info
+	NEW: Clears the memory
+	RELOAD: Reloads the editorsheet
+	RUN: Runs the loaded cart
+	SAVE <NAME>: Saves the current cart
+	LOAD <NAME>: Loads a cart
+	IMPORT <PATH>: Imports a spritesheet
+	EXPORT <PATH>: Exports the current loaded spritesheet
+	CLS: Clears the terminal
+	VER: Shows LIKO-12 Title
 
 ==========================================================================================
 	API
