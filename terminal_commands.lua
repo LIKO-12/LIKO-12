@@ -28,13 +28,14 @@ function CMD.help()
   tout("VER: SHOWS LIKO12'S TITLE",7)
   --tout()
   tout("PRESS ESC TO OPEN THE EDITOR/EXIT THE GAME",9)
+  tout("READ LIKO-12.TXT TO GET STARTED !",12)
 end
 
 function CMD.cls()
   for i=1, Terminal.linesLimit do tout() end Terminal:setLine(1)
 end
 
-function CMD.ver() tout() tout("-[[liko12]]-") tout("V0.0.1 DEV",9) end
+function CMD.ver() tout() tout("-[[liko12]]-") tout(_LK12VER,_LK12VERC) end
 
 function CMD.run()
   local sm = require("editor.sprite"):export()
