@@ -1,4 +1,5 @@
 io.stdout:setvbuf("no")
+love.graphics.setDefaultFilter("nearest")
 require("api")
 
 function love.mousepressed(x,y,button,istouch)
@@ -63,7 +64,6 @@ function love.load()
   love.graphics.setLineStyle("rough")
   love.graphics.setLineJoin("miter")
   
-  love.graphics.setDefaultFilter("nearest")
   love.graphics.setFont(_Font)
   
   clear() --Clear the canvas for the first time
