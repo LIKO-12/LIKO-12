@@ -19,9 +19,9 @@ function Editor:redrawUI()
   clear(6)
   rect(1,1,192,8,9)
   rect(1,128-7,192,8,9)
-  SpriteGroup(20,192-8*5,1,5,1,EditorSheet)
+  SpriteGroup(20,192-8*5,1,5,1,1,1,EditorSheet)
   EditorSheet:draw(43+self.curid,(192-8*5)+self.curid*8-8,1)
-  SpriteGroup(63,1,1,4,1,EditorSheet)
+  SpriteGroup(63,1,1,4,1,1,1,EditorSheet)
 end
 
 function Editor:switchEditor(id)

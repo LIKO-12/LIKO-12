@@ -32,28 +32,28 @@ function _auto_update(dt)
   if Active._update then Active:_update(dt) end
 end
 
-function _auto_mpress(x,y,b,it)
-  if Active._mpress then Active:_mpress(x,y,b,it) end
+function _auto_mpress(...)
+  if Active._mpress then Active:_mpress(...) end
 end
 
-function _auto_mmove(x,y,dx,dy,it,iw)
-  if Active._mmove then Active:_mmove(x,y,dx,dy,it,iw) end
+function _auto_mmove(...)
+  if Active._mmove then Active:_mmove(...) end
 end
 
-function _auto_mrelease(x,y,b,it)
-  if Active._mrelease then Active:_mrelease(x,y,b,it) end
+function _auto_mrelease(...)
+  if Active._mrelease then Active:_mrelease(...) end
 end
 
-function _auto_tpress(id,x,y,p)
-  if Active._tpress then Active:_tpress(id,x,y,p) end
+function _auto_tpress(...)
+  if Active._tpress then Active:_tpress(...) end
 end
 
-function _auto_tmove(id,x,y,p)
-  if Active._tmove then Active:_tmove(id,x,y,p) end
+function _auto_tmove(...)
+  if Active._tmove then Active:_tmove(...) end
 end
 
-function _auto_trelease(id,x,y,p)
-  if Active._trelease then Active:_trelease(id,x,y,p) end
+function _auto_trelease(...)
+  if Active._trelease then Active:_trelease(...) end
 end
 
 function _auto_kpress(k,sc,ir)
@@ -65,8 +65,8 @@ function _auto_kpress(k,sc,ir)
   if Active._kpress then Active:_kpress(k,sc,ir) end
 end
 
-function _auto_krelease(k,sc)
-  if Active._krelease then Active:_krelease(k,sc) end
+function _auto_krelease(...)
+  if Active._krelease then Active:_krelease(...) end
 end
 
 function _auto_tinput(t)

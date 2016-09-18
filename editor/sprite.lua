@@ -77,7 +77,7 @@ function s:redrawSPRS()
   color(sprsidrect[6])
   local id = sprsid if id < 10 then id = "00"..id elseif id < 100 then id = "0"..id end
   print(id,sprsidrect[1]+1,sprsidrect[2]+1)
-  SpriteGroup(49,192-32,sprsbanksY,4,1,EditorSheet)
+  SpriteGroup(49,192-32,sprsbanksY,4,1,1,1,EditorSheet)
   EditorSheet:draw(sprsbank+24,192-(40-sprsbank*8),sprsbanksY)
 end
 
