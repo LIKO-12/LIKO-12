@@ -17,7 +17,7 @@ local eval = function(input, print)
   console.G.print, console.G.cprint = print, cprint
   local chunk, err = runtime:compile(input, console.G)
   if(not chunk) then
-    print("! Compilation error: " .. (err or "Unknown error"),10)
+    api.print("! Compilation error: " .. (err or "Unknown error"),10)
     return false
   end
 
@@ -30,12 +30,12 @@ local eval = function(input, print)
       output = output .. ', ' .. pps(result[i])
       i = i + 1
     end
-    print(output,7)
+    api.print(output,7)
   else
     -- display the error and stack trace.
-    print('! Evaluation error: ' .. err or "Unknown")
+    api.print('! Evaluation error: ' .. err or "Unknown")
     for _,l in ipairs(lume.split(trace, "\n")) do
-      print(l,10)
+      api.print(l,10)
     end
   end
 end
@@ -43,7 +43,7 @@ end
 function console:_init()
   for i=1,self.linesLimit do table.insert(self.textbuffer,"") end
   for i=1,self.linesLimit do table.insert(self.textcolors,8) end
-  keyrepeat(true)
+  api.keyrepeat(true)
   self:tout("LUA CONSOLE",8)
   self:tout("> ", 8, true)
   self.G = runtime.newGlobals()
@@ -56,9 +56,9 @@ function console:_redraw() --Patched this to restore the editor ui
   for line,text in ipairs(self.textbuffer) do
     api.color(self.textcolors[line])
     if text == "-[[liko12]]-" then --THE SECRET PHASE
-      api.SpriteGroup(67,9,line*8,6,1,1,1,EditorSheet)
+      api.SpriteGroup(67,9,line*8,6,1,1,1,api.EditorSheet)
     else
-      print_grid(text,1,line+1)
+      api.print_grid(text,1,line+1)
     end
   end
 end

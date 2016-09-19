@@ -43,7 +43,7 @@ _ColorSet[0] = {0,0,0,0}
 --Internal Funtions--
   function _ScreenToLiko(x,y)
     x, y = x-_ScreenX, y-_ScreenY
-    return floor(x/_ScreenScaleX)+1, floor(y/_ScreenScaleY)+1
+    return api.floor(x/_ScreenScaleX)+1, api.floor(y/_ScreenScaleY)+1
   end
 
   function _GetColor(c) return _ColorSet[c or 1] end
@@ -57,7 +57,7 @@ _ColorSet[0] = {0,0,0,0}
   end
 
 local function newAPI(noFS)
-  local api. = {}
+  local api = {}
   
   --Callbacks--
   function api._init() end --Called at the start of the program
@@ -138,11 +138,11 @@ local function newAPI(noFS)
   end
 
   function api.print(text,lx,ly)
-    love.graphics.print(text, floor((lx or 1)+_goffset.printX), floor((ly or 1)+_goffset.printY)) _ShouldDraw = true --_goffset.rectX
+    love.graphics.print(text, api.floor((lx or 1)+_goffset.printX), api.floor((ly or 1)+_goffset.printY)) _ShouldDraw = true --_goffset.rectX
   end
 
   function api.print_grid(text,lx,ly)
-    love.graphics.print(text, floor(((lx or 1)*8-6)+_goffset.printX), floor(((ly or 1)*8-6)+_goffset.printY)) _ShouldDraw = true
+    love.graphics.print(text, api.floor(((lx or 1)*8-6)+_goffset.printX), api.floor(((ly or 1)*8-6)+_goffset.printY)) _ShouldDraw = true
   end
 
   --Image Section--
@@ -152,7 +152,7 @@ local function newAPI(noFS)
   function api.Image:size() return self.image:getDimensions() end
   function api.Image:width() return self.image:getWidth() end
   function api.Image:height() return self.image:getHeight() end
-  function api.Image:data() return ImageData(self.image:getData()) end
+  function api.Image:data() return api.ImageData(self.image:getData()) end
   function api.Image:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
 
   api.ImageData = class("Liko12.imageData")
@@ -176,7 +176,7 @@ local function newAPI(noFS)
   function api.ImageData:image() return api.Image(self) end
   function api.ImageData:export(filename) return self.imageData:encode("png",filename and (filename..".png") or nil) end
   function api.ImageData:enlarge(scale)
-    local scale = floor(scale or 1)
+    local scale = api.floor(scale or 1)
     if scale <= 0 then scale = 1 end --Protection
     if scale == 1 then return self end
     local newData = api.ImageData(self:width()*scale,self:height()*scale)
@@ -203,11 +203,11 @@ local function newAPI(noFS)
   function api.SpriteSheet:draw(id,x,y,r,sx,sy) self.img:draw(x,y,r,sx,sy,self.quads[id]) _ShouldDraw = true return self end
   function api.SpriteSheet:extract(id) return api.ImageData(8,8):paste(self:data(),1,1,self:rect(id)) end
 
-  function api.Sprite(id,x,y,r,sx,sy,sheet) (sheet or SpriteMap):draw(id,x,y,r,sx,sy) end
+  function api.Sprite(id,x,y,r,sx,sy,sheet) (sheet or api.SpriteMap):draw(id,x,y,r,sx,sy) end
   function api.SpriteGroup(id,x,y,w,h,sx,sy,sheet)
-    local sx,sy = floor(sx or 1), floor(sy or 1)
+    local sx,sy = api.floor(sx or 1), api.floor(sy or 1)
     for spry = 1, h or 1 do for sprx = 1, w or 1 do
-      (sheet or SpriteMap):draw((id-1)+sprx+(spry*24-24),x+(sprx*sx*8-sx*8),y+(spry*sy*8-sy*8),0,sx,sy)
+      (sheet or api.SpriteMap):draw((id-1)+sprx+(spry*24-24),x+(sprx*sx*8-sx*8),y+(spry*sy*8-sy*8),0,sx,sy)
     end end
   end
   
@@ -222,20 +222,20 @@ local function newAPI(noFS)
   end
 
   function api.loadDefaultCursors()
-    api.newCursor(EditorSheet:extract(1),"normal",2,2)
-    api.newCursor(EditorSheet:extract(2),"handrelease",3,2)
-    api.newCursor(EditorSheet:extract(3),"handpress",3,4)
-    api.newCursor(EditorSheet:extract(4),"hand",5,5)
-    api.newCursor(EditorSheet:extract(5),"cross",4,4)
-    api.setCursor(_CurrentCursor)
+    api.newCursor(api.EditorSheet:extract(1),"normal",2,2)
+    api.newCursor(api.EditorSheet:extract(2),"handrelease",3,2)
+    api.newCursor(api.EditorSheet:extract(3),"handpress",3,4)
+    api.newCursor(api.EditorSheet:extract(4),"hand",5,5)
+    api.newCursor(api.EditorSheet:extract(5),"cross",4,4)
+    api.setCursor(api._CurrentCursor)
   end
 
   function api.setCursor(name)
-   if not api._CachedCursors[name] then api._CachedCursors[name or "custom"] = love.mouse.newCursor(api._Cursors[name].data:enlarge(_ScreenScale).imageData,(api._Cursors[name].hotx-1)*_ScreenScale,(api._Cursors[name].hoty-1)*_ScreenScale) end
-   love.mouse.setCursor(api._CachedCursors[name]) api._CurrentCursor = name or "custom"
+    if not api._CachedCursors[name] then api._CachedCursors[name or "custom"] = love.mouse.newCursor(api._Cursors[name].data:enlarge(_ScreenScale).imageData,(api._Cursors[name].hotx-1)*_ScreenScale,(api._Cursors[name].hoty-1)*_ScreenScale) end
+    love.mouse.setCursor(api._CachedCursors[name]) api._CurrentCursor = name or "custom"
   end
 
-  function api.clearCursorsCache() api._CachedCursors = {} api.setCursor(_CurrentCursor) end
+  function api.clearCursorsCache() api._CachedCursors = {} api.setCursor(api._CurrentCursor) end
 
   --Math Section--
   api.ostime = os.time
@@ -255,11 +255,11 @@ local function newAPI(noFS)
 
   function api.whereInGrid(x,y, grid) --Grid X, Grid Y, Grid Width, Grid Height, NumOfCells in width, NumOfCells in height
     local gx,gy,gw,gh,cw,ch = unpack(grid)
-    if isInRect(x,y,{gx,gy,gw,gh}) then
-      local clw, clh = floor(gw/cw), floor(gh/ch)
+    if api.isInRect(x,y,{gx,gy,gw,gh}) then
+      local clw, clh = api.floor(gw/cw), api.floor(gh/ch)
       local x, y = x-gx, y-gy
-      local hx = floor(x/clw)+1 hx = hx <= cw and hx or hx-1
-      local hy = floor(y/clh)+1 hy = hy <= ch and hy or hy-1
+      local hx = api.floor(x/clw)+1 hx = hx <= cw and hx or hx-1
+      local hy = api.floor(y/clh)+1 hy = hy <= ch and hy or hy-1
       return hx,hy
     end
     return false, false
@@ -287,13 +287,13 @@ local function newAPI(noFS)
   function api.isMobile() return _isMobile or false end
 
   --Spritesheet--
-  api.SpriteMap = SpriteSheet(ImageData(24*8,12*8):image(),24,12)
+  api.EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
+  api.SpriteMap = api.SpriteSheet(api.ImageData(24*8,12*8):image(),24,12)
   
   return api
 end
 
 local sapi = newAPI()
-sapi.EditorSheet = sapi.SpriteSheet(sapi.Image("/editorsheet.png"),24,12)
 sapi.newAPI = newAPI
 
 return sapi

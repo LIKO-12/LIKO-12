@@ -51,12 +51,12 @@ end
 --Internal Callbacks--
 function love.load()
   --love.keyboard.setTextInput(true)
-  loadDefaultCursors()
+  api.loadDefaultCursors()
   _ScreenCanvas = love.graphics.newCanvas(192,128)
   _ScreenCanvas:setFilter("nearest")
-  love.graphics.api.clear(0,0,0,255)
+  love.graphics.clear(0,0,0,255)
   love.graphics.setCanvas(_ScreenCanvas)
-  love.graphics.api.clear(0,0,0,255)
+  love.graphics.clear(0,0,0,255)
   love.graphics.translate(_ScreenTX,_ScreenTY)
   
   love.resize(love.graphics.getDimensions())
@@ -67,7 +67,7 @@ function love.load()
   love.graphics.setFont(_Font)
   
   api.clear() --Clear the canvas for the first time
-  stroke(1)
+  api.stroke(1)
   
   require("autorun")
   --require("debugrun")
@@ -85,7 +85,7 @@ function love.resize(w,h)
     _ScreenScaleX, _ScreenScaleY, _ScreenScale = h/128, h/128, h/128
     _ScreenX, _ScreenY = (_ScreenWidth-192*_ScreenScaleX)/2, 0
   end
-  clearCursorsCache()
+  api.clearCursorsCache()
   _ShouldDraw = true
 end
 
@@ -145,7 +145,7 @@ function love.run()
 		if love.graphics and love.graphics.isActive() and (_ShouldDraw or _ForceDraw) then
 			love.graphics.setCanvas()
 			love.graphics.origin()
-			love.graphics.setapi.color(255,255,255)
+			love.graphics.setColor(255,255,255)
 			love.graphics.draw(_ScreenCanvas, _ScreenX,_ScreenY, 0, _ScreenScaleX,_ScreenScaleY)
 			--love.graphics.api.points(1,1,_ScreenWidth,_ScreenHeight)
 			love.graphics.present()

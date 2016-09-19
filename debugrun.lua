@@ -14,5 +14,5 @@ function _init()
  api.rect_line(10,30,10,10,8)
  api.points(10,10, 10,19, 19,19, 19,10, 8)
  api.color(8)
- print_grid("0 TEST",1,1)
+ api.print_grid("0 TEST",1,1)
 end

@@ -69,7 +69,7 @@ function r.newGlobals()
       tanh=math.tanh,
     }
   }
-  local newAPI = api.newAPI()
+  local newAPI = api.newAPI(true)
   for k,v in pairs(newAPI) do
     GLOB[k] = v
   end
@@ -98,7 +98,7 @@ function r:compile(code, G, spritesheet)
   end
 
   setfenv(chunk,G)
-  G.SpriteMap = spritesheet
+  G.api.SpriteMap = spritesheet
   self.cg = G
   return chunk
 end

@@ -37,7 +37,7 @@ function s:_switch()
   cols = 0
   
   sprsbquads = {}
-  local sprsimg = SpriteMap:image()
+  local sprsimg = api.SpriteMap:image()
   for i = 1, 4 do
     sprsbquads[i] = sprsimg:quad(1,(i*8*3-8*3)+1,_,3*8)
   end
@@ -49,7 +49,7 @@ function s:_switch()
 end
 
 function s:export(path)
-  local FileData = SpriteMap:data():export(path)
+  local FileData = api.SpriteMap:data():export(path)
   if not path then
     return basexx.to_base64(FileData:getString())
   end
@@ -57,9 +57,9 @@ end
 
 function s:load(path)
   if path then
-    SpriteMap = api.SpriteSheet(api.Image("/"..path..".png"),24,12)
+    api.SpriteMap = api.SpriteSheet(api.Image("/"..path..".png"),24,12)
   else
-    SpriteMap = api.SpriteSheet(api.ImageData(24*8,12*8):image(),24,12)
+    api.SpriteMap = api.SpriteSheet(api.ImageData(24*8,12*8):image(),24,12)
   end
 end
 
@@ -72,19 +72,19 @@ end
 
 function s:redrawSPRS()
   api.rect(unpack(sprsrecto))
-  SpriteMap:image():draw(sprsdraw[1],sprsdraw[2],sprsdraw[3],sprsdraw[4],sprsdraw[5],sprsbquads[sprsbank])
+  api.SpriteMap:image():draw(sprsdraw[1],sprsdraw[2],sprsdraw[3],sprsdraw[4],sprsdraw[5],sprsbquads[sprsbank])
   api.rect_line(unpack(sprssrect))
   api.rect(unpack(sprsidrect))
   api.color(sprsidrect[6])
   local id = sprsid if id < 10 then id = "00"..id elseif id < 100 then id = "0"..id end
-  print(id,sprsidrect[1]+1,sprsidrect[2]+1)
-  api.SpriteGroup(49,192-32,sprsbanksY,4,1,1,1,EditorSheet)
-  EditorSheet:draw(sprsbank+24,192-(40-sprsbank*8),sprsbanksY)
+  api.print(id,sprsidrect[1]+1,sprsidrect[2]+1)
+  api.SpriteGroup(49,192-32,sprsbanksY,4,1,1,1,api.EditorSheet)
+  api.EditorSheet:draw(sprsbank+24,192-(40-sprsbank*8),sprsbanksY)
 end
 
 function s:redrawSPR()
   api.rect(unpack(imgrecto))
-  SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],SpriteMap:quad(sprsid))
+  api.SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],api.SpriteMap:quad(sprsid))
 end
 
 function s:_redraw()
@@ -94,7 +94,7 @@ function s:_redraw()
 end
 
 function s:_mpress(x,y,b,it)
-  --if api.isInRect(x,y,{1,1,192,8}) then SpriteMap:data():export("editorsheet") end
+  --if api.isInRect(x,y,{1,1,192,8}) then api.SpriteMap:data():export("editorsheet") end
   local cx, cy = api.whereInGrid(x,y,palgrid)
   if cx then
     if b == 1 then
@@ -115,7 +115,7 @@ function s:_mpress(x,y,b,it)
   local cx = api.whereInGrid(x,y,sprsbanksgrid)
   if cx then
     sprsbank = cx
-    local idbank = floor((sprsid-1)/(24*3))+1
+    local idbank = api.floor((sprsid-1)/(24*3))+1
     if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*24*3 elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*24*3 end
     self:redrawSPRS() self:redrawSPR()
   end
@@ -134,11 +134,11 @@ function s:_mpress(x,y,b,it)
   local cx, cy = api.whereInGrid(x,y,imggrid)
   if cx then
     if not it then mflag = true end
-    local data = SpriteMap:data()
-    local qx,qy = SpriteMap:api.rect(sprsid)
+    local data = api.SpriteMap:data()
+    local qx,qy = api.SpriteMap:rect(sprsid)
     local col = b == 1 and colsL or colsR
     data:setPixel(qx+cx-1,qy+cy-1,col)
-    SpriteMap.img = data:image()
+    api.SpriteMap.img = data:image()
     self:redrawSPR() self:redrawSPRS()
   end
 end
@@ -148,11 +148,11 @@ function s:_mmove(x,y,dx,dy,it,iw)
   if (not it and mflag) or it then
     local cx, cy = api.whereInGrid(x,y,imggrid)
     if cx then
-      local data = SpriteMap:data()
-      local qx,qy = SpriteMap:api.rect(sprsid)
+      local data = api.SpriteMap:data()
+      local qx,qy = api.SpriteMap:rect(sprsid)
       local col = isMDown(1) and colsL or colsR
       data:setPixel(qx+cx-1,qy+cy-1,col)
-      SpriteMap.img = data:image()
+      api.SpriteMap.img = data:image()
       self:redrawSPR() self:redrawSPRS()
     end
   end
@@ -174,11 +174,11 @@ function s:_mrelease(x,y,b,it)
   if (not it and mflag) or it then
     local cx, cy = api.whereInGrid(x,y,imggrid)
     if cx then
-      local data = SpriteMap:data()
-      local qx,qy = SpriteMap:api.rect(sprsid)
+      local data = api.SpriteMap:data()
+      local qx,qy = api.SpriteMap:rect(sprsid)
       local col = b == 1 and colsL or colsR
       data:setPixel(qx+cx-1,qy+cy-1,col)
-      SpriteMap.img = data:image()
+      api.SpriteMap.img = data:image()
       self:redrawSPR() self:redrawSPRS()
     end
     mflag = false

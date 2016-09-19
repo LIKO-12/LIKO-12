@@ -3,7 +3,7 @@ local function tout(...) Terminal:tout(...) end
 local CMD = {}
 
 local function wrap_string(str,ml)
-  local lt = floor(str:len()/ml+0.99)
+  local lt = api.floor(str:len()/ml+0.99)
   if lt <= 1 then return {str} end
   local t = {}
   for i = 1, lt+1 do
@@ -67,7 +67,7 @@ function CMD.new()
 end
 
 function CMD.reload()
-  EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
+  api.EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
   loadDefaultCursors()
   tout("RELOADED EDITORSHEET",7)
 end
@@ -89,7 +89,7 @@ function CMD.load(command,name)
   code = loadstring(code)
   setfenv(code,{})
   local data = code()
-  SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
+  api.SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
   require("editor.code"):load(data.code)
   tout("LOADED /"..name..".lk12",12)
 end

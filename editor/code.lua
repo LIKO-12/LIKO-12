@@ -3,11 +3,11 @@ local cedit = {}
 local colorize = require("libraries.colorize_lua")
 
 cedit.colors = {
-text = _Getapi.color(8),
-keyword = _Getapi.color(15),
-number = _Getapi.color(13),
-comment = _Getapi.color(14),
-str = _Getapi.color(13),
+text = _GetColor(8),
+keyword = _GetColor(15),
+number = _GetColor(13),
+comment = _GetColor(14),
+str = _GetColor(13),
 }
 
 cedit.codebuffer = {""}
@@ -29,7 +29,7 @@ function cedit:export()
   return code
 end
 
-local function magicapi.lines(s)
+local function magiclines(s)
   if s:sub(-1)~="\n" then s=s.."\n" end
   return s:gmatch("(.-)\n")
 end
@@ -38,7 +38,7 @@ function cedit:load(code)
   self.codebuffer, self.topLine, self.cursorX, self.cursorY = {}, 0, 1, 1
   if not code then self.codebuffer[1] = "" return self end
   local code = code
-  for line in magicapi.lines(code) do
+  for line in magiclines(code) do
     table.insert(self.codebuffer,line)
   end
   return self
@@ -57,14 +57,15 @@ function cedit:_redraw()
   local colored = colorize(tocolor,self.colors)
   api.color(8)
   for line,text in ipairs(colored) do
-    print_grid(text,1,line+1)
+    api.print_grid(text,1,line+1)
   end
   
   api.rect(1,128-7,192,8,9)
-  api.color(3) print("LINE "..self.topLine+self.cursorY.."/"..#self.codebuffer,2,128-5)
+  api.color(3)
+  api.print("LINE "..self.topLine+self.cursorY.."/"..#self.codebuffer,2,128-5)
   
   --[[for i=self.topLine+1,self.topLine+self.lineLimit do
-    if self.codebuffer[i] then print_grid(self.codebuffer[i],1,(i-self.topLine)+1) end
+    if self.codebuffer[i] then api.print_grid(self.codebuffer[i],1,(i-self.topLine)+1) end
   end]]
 end
 
@@ -179,7 +180,7 @@ end
 function cedit:_tpress()
   --This means the user is using a touch device
   self.lineLimit = 7
-  showkeyboard(true)
+  api.showkeyboard(true)
 end
 
 return cedit
