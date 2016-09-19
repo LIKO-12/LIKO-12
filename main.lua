@@ -1,6 +1,7 @@
 io.stdout:setvbuf("no")
 love.graphics.setDefaultFilter("nearest")
 api = require("api") --I STILL WANT IT AS A GLOBAL !
+local utf8 = require("utf8")
 
 function love.mousepressed(x,y,button,istouch)
 	local x,y = _ScreenToLiko(x,y) if x < 0 or x > 192 or y < 0 or y > 128 then return end
@@ -45,6 +46,8 @@ function love.keyreleased(key,scancode)
 end
 
 function love.textinput(text)
+  if utf8.len(text) > 1 then return end --Filter UTF8
+  if not string.find(_FontChars,text) then return end --Filer Unknown chars
   _auto_tinput(text)
 end
 
