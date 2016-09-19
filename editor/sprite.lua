@@ -150,7 +150,7 @@ function s:_mmove(x,y,dx,dy,it,iw)
     if cx then
       local data = api.SpriteMap:data()
       local qx,qy = api.SpriteMap:rect(sprsid)
-      local col = isMDown(1) and colsL or colsR
+      local col = api.isMDown(1) and colsL or colsR
       data:setPixel(qx+cx-1,qy+cy-1,col)
       api.SpriteMap.img = data:image()
       self:redrawSPR() self:redrawSPRS()
