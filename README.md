@@ -385,6 +385,7 @@ V0.0.2 PRE:
 8. New API Functions: getMPos, isMDown, btn
 9. Run command accepts args
 10. Renamed _startup to _init (sorry for breaking that..)
+11. SAVE and EXPORT commands now saves to the last load/save path
 
 V0.0.1 PRE:
 First Public Release
