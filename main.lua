@@ -46,9 +46,10 @@ function love.keyreleased(key,scancode)
 end
 
 function love.textinput(text)
-  if utf8.len(text) > 1 then return end --Filter UTF8
-  --if not string.find(_FontChars,text) then return end --Filer Unknown chars
-  _auto_tinput(text)
+  local text_escaped = text:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1")
+  if #text == 1 and _FontChars:find(text_escaped) then
+    _auto_tinput(text)
+  end
 end
 
 --Internal Callbacks--
