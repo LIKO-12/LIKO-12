@@ -287,6 +287,12 @@ function whereInGrid(x,y, grid) --Grid X, Grid Y, Grid Width, Grid Height, NumOf
   return false, false
 end
 
+function getMPos()
+  return _ScreenToLiko(love.mouse.getPosition())
+end
+
+function isMDown(b) return love.mouse.isDown(b) end
+
 --FileSystem Function--
 FS = {}
 function FS.write(path,data)
