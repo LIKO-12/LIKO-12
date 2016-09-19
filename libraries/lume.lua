@@ -169,7 +169,7 @@ function lume.remove(t, x)
 end
 
 
-function lume.clear(t)
+function lume.api.clear(t)
   local iter = getiter(t)
   for k in iter(t) do
     t[k] = nil
@@ -713,7 +713,7 @@ function lume.ripairs(t)
 end
 
 
-function lume.color(str, mul)
+function lume.api.color(str, mul)
   mul = mul or 1
   local r, g, b, a
   r, g, b = str:match("#(%x%x)(%x%x)(%x%x)")

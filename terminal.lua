@@ -1,6 +1,6 @@
 local Terminal = {}
 
---local EditorSheet = SpriteSheet(Image("/editorsheet.png"),24,12)
+--local EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
 
 Terminal.blinktime = 0.5
 Terminal.blinktimer = 0
@@ -40,7 +40,7 @@ function Terminal:splitCommand(str)
   return t
 end
 
-function Terminal:_startup()
+function Terminal:_init()
   for i=1,self.linesLimit do table.insert(self.textbuffer,"") end --Clean the framebuffer
   for i=1,self.linesLimit do table.insert(self.textcolors,8) end
   keyrepeat(true)
@@ -59,16 +59,16 @@ end
 function Terminal:_update(dt)
   self.blinktimer = self.blinktimer+dt if self.blinktimer > self.blinktime then self.blinktimer = self.blinktimer - self.blinktime  self.blinkstate = not self.blinkstate end
   local curlen = self.textbuffer[self.currentLine]:len()
-  color(self.blinkstate and 9 or 1)
-  rect(curlen > 0 and ((curlen)*4+8+3) or 10,(self.currentLine)*8+2,4,5)
+  api.color(self.blinkstate and 9 or 1)
+  api.rect(curlen > 0 and ((curlen)*4+8+3) or 10,(self.currentLine)*8+2,4,5)
 end
 
 function Terminal:_redraw()
-  clear(1)
+  api.clear(1)
   for line,text in ipairs(self.textbuffer) do
-    color(self.textcolors[line])
+    api.color(self.textcolors[line])
     if text == "-[[liko12]]-" then --THE SECRET PHASE
-      SpriteGroup(67,9,line*8,6,1,1,1,EditorSheet)
+      api.SpriteGroup(67,9,line*8,6,1,1,1,EditorSheet)
     else
       print_grid(text,2,line+1)
     end

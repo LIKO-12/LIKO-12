@@ -1,5 +1,5 @@
 local code = [[--HELLO WORLD DEMO BY: RAMILEGO4GAME--
-function _startup() --The startup function
+function _init() --The startup function
  local x = 192/2 - 8*3 + 2
  local y = 128/4
  SpriteGroup(1,x,y,6,2) --id, x,y,w,h

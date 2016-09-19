@@ -1,5 +1,5 @@
 local code = [[--NOISE DEMO BY: RAMILEGO4GAME--
-function _startup()
+function _init()
  for x=1,192 do for y=1,128 do
   rand_seed(ostime()*x*y)
   point(x,y,rand(1,16))

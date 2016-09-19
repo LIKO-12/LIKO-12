@@ -41,7 +41,7 @@ function CMD.run()
   local sm = require("editor.sprite"):export()
   local cd = require("editor.code"):export()
   local rt = require("runtime")
-  local spr = SpriteSheet(ImageData(sm):image(),24,12)
+  local spr = api.SpriteSheet(api.ImageData(sm):image(),24,12)
   local ok, err = rt:loadGame(cd,spr,function(err)
     _auto_exitgame()
     for line,text in ipairs(wrap_string(err,38)) do
@@ -67,7 +67,7 @@ function CMD.new()
 end
 
 function CMD.reload()
-  EditorSheet = SpriteSheet(Image("/editorsheet.png"),24,12)
+  EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
   loadDefaultCursors()
   tout("RELOADED EDITORSHEET",7)
 end
@@ -89,7 +89,7 @@ function CMD.load(command,name)
   code = loadstring(code)
   setfenv(code,{})
   local data = code()
-  SpriteMap = SpriteSheet(ImageData(data.spritemap):image(),24,12)
+  SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
   require("editor.code"):load(data.code)
   tout("LOADED /"..name..".lk12",12)
 end

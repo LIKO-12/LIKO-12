@@ -119,7 +119,7 @@ LIKO-12 has non clearing canvas rendering system this means:
 	- The screen doesn't clears every frame
 	- You can draw to the screen anywhere in the code
  
-	Note: the everything called before _startup() will be cleared.
+	Note: the everything called before _init() will be cleared.
 
 :: Getting Started
 
@@ -133,7 +133,7 @@ After that let's start:
 How carts work:
 	The game code get's excuted to overwrite the global callbacks
 	Then the screen is cleared with black color
-	After that the _startup callback is called so the cart draws
+	After that the _init callback is called so the cart draws
 	Finally whenever input happens the relevant callbacks are called so the game draws new content.
 	On update the _update callback is called with delta time.
  
@@ -150,9 +150,9 @@ Console Editor Tab:
 ==========================================================================================
 
 :: Callbacks
-You should overwrite the callbacks you want to use, ex: function _startup() end
+You should overwrite the callbacks you want to use, ex: function _init() end
 
-_startup
+_init
 	This function is called at the initialization of your game.
 	Start your game drawing from here, because any draw calls called when compiling your game code are cleared.
 
