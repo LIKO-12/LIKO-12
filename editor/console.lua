@@ -12,12 +12,13 @@ console.linesLimit = 14
 
 local pack = function(...) return {...} end
 
-local eval = function(input, print)
+local eval = function(input, console_print)
   -- try runnig the compiled code in protected mode.
-  console.G.print, console.G.cprint = print, cprint
+  console.G.print = console_print
   local chunk, err = runtime:compile(input, console.G)
   if(not chunk) then
-    api.print("! Compilation error: " .. (err or "Unknown error"),10)
+    console_print("! Compilation error: " .. (err or "Unknown error"),10)
+    print("! Compilation error: " .. (err or "Unknown error"))
     return false
   end
 
@@ -30,12 +31,14 @@ local eval = function(input, print)
       output = output .. ', ' .. pps(result[i])
       i = i + 1
     end
-    api.print(output,7)
+    console_print(output,7)
   else
     -- display the error and stack trace.
-    api.print('! Evaluation error: ' .. err or "Unknown")
+    console_print('! Evaluation error: ' .. (err or "Unknown"))
+    print('! Evaluation error: ' .. (err or "Unknown"))
     for _,l in ipairs(lume.split(trace, "\n")) do
-      api.print(l,10)
+      console_print(l,10)
+      print(l)
     end
   end
 end
@@ -46,9 +49,16 @@ function console:_init()
   api.keyrepeat(true)
   self:tout("LUA CONSOLE",8)
   self:tout("> ", 8, true)
-  self.G = runtime.newGlobals()
-  self.G.reset = function() self.G = runtime.newGlobals() self.G.cprint = tout end
-  self.G.cprint = tout
+  local function reset()
+    self.G = runtime.newGlobals()
+    self.G.cprint = tout
+    local code = require("editor.code"):export()
+    local chunk = runtime:compile(code, self.G)
+    -- we ignore compile errors here; I think that is OK, but maybe warn?
+    if(chunk) then chunk() end
+    self.G.reset = reset
+  end
+  reset()
 end
 
 function console:_redraw() --Patched this to restore the editor ui
