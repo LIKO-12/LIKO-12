@@ -1,5 +1,5 @@
 ==========================================================================================
-	LIKO-12 V0.0.1 PRE
+	LIKO-12 V0.0.2 DEV
 	https://github.com/RamiLego4Game/LIKO-12
 	Licensed under GPL-3, see LICENSE file for more info
 	Author: RamiLego4Game // ramilego4game@gmail.com
@@ -305,6 +305,15 @@ whereInGrid x,y,grid
 	- x,y (Numbers): the x and y posotions of the point to test.
 	- grid (Table): The grid config {x,y,cellw,cellh,w,h}
 	+ cx,cy (Numbers): The position in the grid.
+
+getMPos
+	Returns the current position of the mouse, may break some touch compatibility..
+	+ x,y (Numbers): The position of the mouse, or the last moved touch.
+
+isMDown b
+	Returns if the specific mouse button is pressed down or not, may break some touch compatibility..
+	- b (Number): The id of the button to check: 1:left 2:right 3:middle
+	+ isDown (Boolean): The state of the mouse button, true for button 1 if the screen is touched.
 
 :: Misc
 
