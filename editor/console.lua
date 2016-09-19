@@ -12,12 +12,13 @@ console.linesLimit = 14
 
 local pack = function(...) return {...} end
 
-local eval = function(input, print)
+local eval = function(input, console_print)
   -- try runnig the compiled code in protected mode.
-  console.G.print, console.G.cprint = print, cprint
+  console.G.print = console_print
   local chunk, err = runtime:compile(input, console.G)
   if(not chunk) then
-    api.print("! Compilation error: " .. (err or "Unknown error"),10)
+    console_print("! Compilation error: " .. (err or "Unknown error"),10)
+    print("! Compilation error: " .. (err or "Unknown error"))
     return false
   end
 
@@ -30,12 +31,14 @@ local eval = function(input, print)
       output = output .. ', ' .. pps(result[i])
       i = i + 1
     end
-    api.print(output,7)
+    console_print(output,7)
   else
     -- display the error and stack trace.
-    api.print('! Evaluation error: ' .. err or "Unknown")
+    console_print('! Evaluation error: ' .. (err or "Unknown"))
+    print('! Evaluation error: ' .. (err or "Unknown"))
     for _,l in ipairs(lume.split(trace, "\n")) do
-      api.print(l,10)
+      console_print(l,10)
+      print(l)
     end
   end
 end
