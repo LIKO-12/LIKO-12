@@ -17,7 +17,7 @@ local eval = function(input, print)
   console.G.print, console.G.cprint = print, cprint
   local chunk, err = runtime:compile(input, console.G)
   if(not chunk) then
-    print("! Compilation error: " .. (err or "Unknown error"),10)
+    api.print("! Compilation error: " .. (err or "Unknown error"),10)
     return false
   end
 
@@ -30,20 +30,20 @@ local eval = function(input, print)
       output = output .. ', ' .. pps(result[i])
       i = i + 1
     end
-    print(output,7)
+    api.print(output,7)
   else
     -- display the error and stack trace.
-    print('! Evaluation error: ' .. err or "Unknown")
+    api.print('! Evaluation error: ' .. err or "Unknown")
     for _,l in ipairs(lume.split(trace, "\n")) do
-      print(l,10)
+      api.print(l,10)
     end
   end
 end
 
-function console:_startup()
+function console:_init()
   for i=1,self.linesLimit do table.insert(self.textbuffer,"") end
   for i=1,self.linesLimit do table.insert(self.textcolors,8) end
-  keyrepeat(true)
+  api.keyrepeat(true)
   self:tout("LUA CONSOLE",8)
   self:tout("> ", 8, true)
   self.G = runtime.newGlobals()
@@ -52,13 +52,13 @@ function console:_startup()
 end
 
 function console:_redraw() --Patched this to restore the editor ui
-  rect(1,9,192,128-16,6)
+  api.rect(1,9,192,128-16,6)
   for line,text in ipairs(self.textbuffer) do
-    color(self.textcolors[line])
+    api.color(self.textcolors[line])
     if text == "-[[liko12]]-" then --THE SECRET PHASE
-      SpriteGroup(67,9,line*8,6,1,1,1,EditorSheet)
+      api.SpriteGroup(67,9,line*8,6,1,1,1,api.EditorSheet)
     else
-      print_grid(text,1,line+1)
+      api.print_grid(text,1,line+1)
     end
   end
 end
@@ -66,8 +66,8 @@ end
 function console:_update(dt)
   self.blinktimer = self.blinktimer+dt if self.blinktimer > self.blinktime then self.blinktimer = self.blinktimer - self.blinktime  self.blinkstate = not self.blinkstate end
   local curlen = self.textbuffer[self.currentLine]:len()
-  color(self.blinkstate and 9 or 6)
-  rect(curlen > 0 and ((curlen)*4+3) or 10,(self.currentLine)*8+2,4,5)
+  api.color(self.blinkstate and 9 or 6)
+  api.rect(curlen > 0 and ((curlen)*4+3) or 10,(self.currentLine)*8+2,4,5)
 end
 
 function console:_kpress(k,sc,ir)

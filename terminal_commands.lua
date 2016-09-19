@@ -3,7 +3,7 @@ local function tout(...) Terminal:tout(...) end
 local CMD = {}
 
 local function wrap_string(str,ml)
-  local lt = floor(str:len()/ml+0.99)
+  local lt = api.floor(str:len()/ml+0.99)
   if lt <= 1 then return {str} end
   local t = {}
   for i = 1, lt+1 do
@@ -41,8 +41,8 @@ function CMD.run()
   local sm = require("editor.sprite"):export()
   local cd = require("editor.code"):export()
   local rt = require("runtime")
-  local spr = SpriteSheet(ImageData(sm):image(),24,12)
-  local ok, err = rt:loadGame(cd,spr,function(err)
+  local sprsheet = api.SpriteSheet(api.ImageData(sm):image(),24,12)
+  local ok, err = rt:loadGame(cd,sprsheet,function(err)
     _auto_exitgame()
     for line,text in ipairs(wrap_string(err,38)) do
       tout(line == 1 and "ERR: "..text or text,9)
@@ -67,8 +67,8 @@ function CMD.new()
 end
 
 function CMD.reload()
-  EditorSheet = SpriteSheet(Image("/editorsheet.png"),24,12)
-  loadDefaultCursors()
+  api.EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
+  api.loadDefaultCursors()
   tout("RELOADED EDITORSHEET",7)
 end
 
@@ -79,17 +79,17 @@ function CMD.save(command,name)
   local saveCode = "local code = [["..cd.."]]\n\n"
   saveCode = saveCode .. "local spritemap = '"..sm.."'\n\n"
   saveCode = saveCode .. "return {code=code,spritemap=spritemap}"
-  FS.write("/"..(name)..".lk12",saveCode)
+  api.fs.write("/"..(name)..".lk12",saveCode)
   tout("SAVED TO "..(name)..".lk12",12)
 end
 
 function CMD.load(command,name)
   if not name then tout("PLEASE PROVIDE A NAME TO LOAD",9) return end
-  local code = FS.read("/"..name..".lk12")
+  local code = api.fs.read("/"..name..".lk12")
   code = loadstring(code)
   setfenv(code,{})
   local data = code()
-  SpriteMap = SpriteSheet(ImageData(data.spritemap):image(),24,12)
+  api.SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
   require("editor.code"):load(data.code)
   tout("LOADED /"..name..".lk12",12)
 end

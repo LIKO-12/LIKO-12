@@ -49,29 +49,30 @@ function cedit:_switch()
 end
 
 function cedit:_redraw()
-  rect(1,9,192,128-16,6) color(7)
+  api.rect(1,9,192,128-16,6) api.color(7)
   local tocolor = {}
   for i=self.topLine+1,self.topLine+self.lineLimit do
     if self.codebuffer[i] then table.insert(tocolor,self.codebuffer[i]) end
   end
   local colored = colorize(tocolor,self.colors)
-  color(8)
+  api.color(8)
   for line,text in ipairs(colored) do
-    print_grid(text,1,line+1)
+    api.print_grid(text,1,line+1)
   end
   
-  rect(1,128-7,192,8,9)
-  color(3) print("LINE "..self.topLine+self.cursorY.."/"..#self.codebuffer,2,128-5)
+  api.rect(1,128-7,192,8,9)
+  api.color(3)
+  api.print("LINE "..self.topLine+self.cursorY.."/"..#self.codebuffer,2,128-5)
   
   --[[for i=self.topLine+1,self.topLine+self.lineLimit do
-    if self.codebuffer[i] then print_grid(self.codebuffer[i],1,(i-self.topLine)+1) end
+    if self.codebuffer[i] then api.print_grid(self.codebuffer[i],1,(i-self.topLine)+1) end
   end]]
 end
 
 function cedit:_update(dt)
   blinktimer = blinktimer+dt if blinktimer > blinktime then blinktimer = blinktimer - blinktime  blinkstate = not blinkstate end
   local curlen = self.codebuffer[self.topLine+self.cursorY]:len()
-  if blinkstate then rect((self.cursorX-1)*4+2,(self.cursorY)*8+2,4,5,9) else self:_redraw() end
+  if blinkstate then api.rect((self.cursorX-1)*4+2,(self.cursorY)*8+2,4,5,9) else self:_redraw() end
 end
 
 function cedit:_mmove(x,y,dx,dy,it,iw)
@@ -179,7 +180,7 @@ end
 function cedit:_tpress()
   --This means the user is using a touch device
   self.lineLimit = 7
-  showkeyboard(true)
+  api.showkeyboard(true)
 end
 
 return cedit

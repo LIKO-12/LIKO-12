@@ -23,7 +23,7 @@ local sprsbquads = {} --SpriteSheet 6 BanksQuads
 local sprsbank = 1 --Current Selected Bank
 
 local temp = 0
-local palimg = Image(ImageData(4,4):map(function() temp = temp + 1 return temp end ))
+local palimg = api.Image(api.ImageData(4,4):map(function() temp = temp + 1 return temp end ))
 local palrecto = {192-(psize*4+3),8+3,psize*4+2,psize*4+2,1}
 local paldraw = {192-(psize*4+2),8+3+1,0,psize,psize}
 local palgrid = {192-(psize*4+2),8+3+1,psize*4,psize*4,4,4}
@@ -37,19 +37,19 @@ function s:_switch()
   cols = 0
   
   sprsbquads = {}
-  local sprsimg = SpriteMap:image()
+  local sprsimg = api.SpriteMap:image()
   for i = 1, 4 do
     sprsbquads[i] = sprsimg:quad(1,(i*8*3-8*3)+1,_,3*8)
   end
   
-  img = ImageData(imgw,imgh):map(function() return 0 end)
+  img = api.ImageData(imgw,imgh):map(function() return 0 end)
   mflag = false
   
   --self:redraw()
 end
 
 function s:export(path)
-  local FileData = SpriteMap:data():export(path)
+  local FileData = api.SpriteMap:data():export(path)
   if not path then
     return basexx.to_base64(FileData:getString())
   end
@@ -57,34 +57,34 @@ end
 
 function s:load(path)
   if path then
-    SpriteMap = SpriteSheet(Image("/"..path..".png"),24,12)
+    api.SpriteMap = api.SpriteSheet(api.Image("/"..path..".png"),24,12)
   else
-    SpriteMap = SpriteSheet(ImageData(24*8,12*8):image(),24,12)
+    api.SpriteMap = api.SpriteSheet(api.ImageData(24*8,12*8):image(),24,12)
   end
 end
 
 function s:redrawCP() --Redraw color pallete
-  rect_line(unpack(palrecto))
+  api.rect_line(unpack(palrecto))
   palimg:draw(unpack(paldraw))
-  rect_line(unpack(colsrectR))
-  rect_line(unpack(colsrectL))
+  api.rect_line(unpack(colsrectR))
+  api.rect_line(unpack(colsrectL))
 end
 
 function s:redrawSPRS()
-  rect(unpack(sprsrecto))
-  SpriteMap:image():draw(sprsdraw[1],sprsdraw[2],sprsdraw[3],sprsdraw[4],sprsdraw[5],sprsbquads[sprsbank])
-  rect_line(unpack(sprssrect))
-  rect(unpack(sprsidrect))
-  color(sprsidrect[6])
+  api.rect(unpack(sprsrecto))
+  api.SpriteMap:image():draw(sprsdraw[1],sprsdraw[2],sprsdraw[3],sprsdraw[4],sprsdraw[5],sprsbquads[sprsbank])
+  api.rect_line(unpack(sprssrect))
+  api.rect(unpack(sprsidrect))
+  api.color(sprsidrect[6])
   local id = sprsid if id < 10 then id = "00"..id elseif id < 100 then id = "0"..id end
-  print(id,sprsidrect[1]+1,sprsidrect[2]+1)
-  SpriteGroup(49,192-32,sprsbanksY,4,1,1,1,EditorSheet)
-  EditorSheet:draw(sprsbank+24,192-(40-sprsbank*8),sprsbanksY)
+  api.print(id,sprsidrect[1]+1,sprsidrect[2]+1)
+  api.SpriteGroup(49,192-32,sprsbanksY,4,1,1,1,api.EditorSheet)
+  api.EditorSheet:draw(sprsbank+24,192-(40-sprsbank*8),sprsbanksY)
 end
 
 function s:redrawSPR()
-  rect(unpack(imgrecto))
-  SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],SpriteMap:quad(sprsid))
+  api.rect(unpack(imgrecto))
+  api.SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],api.SpriteMap:quad(sprsid))
 end
 
 function s:_redraw()
@@ -94,8 +94,8 @@ function s:_redraw()
 end
 
 function s:_mpress(x,y,b,it)
-  --if isInRect(x,y,{1,1,192,8}) then SpriteMap:data():export("editorsheet") end
-  local cx, cy = whereInGrid(x,y,palgrid)
+  --if api.isInRect(x,y,{1,1,192,8}) then api.SpriteMap:data():export("editorsheet") end
+  local cx, cy = api.whereInGrid(x,y,palgrid)
   if cx then
     if b == 1 then
       colsL = (cy-1)*4+cx if colsL == 1 then colsL = 0 end
@@ -112,15 +112,15 @@ function s:_mpress(x,y,b,it)
     self:redrawCP()
   end
   
-  local cx = whereInGrid(x,y,sprsbanksgrid)
+  local cx = api.whereInGrid(x,y,sprsbanksgrid)
   if cx then
     sprsbank = cx
-    local idbank = floor((sprsid-1)/(24*3))+1
+    local idbank = api.floor((sprsid-1)/(24*3))+1
     if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*24*3 elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*24*3 end
     self:redrawSPRS() self:redrawSPR()
   end
   
-  local cx, cy = whereInGrid(x,y,sprsgrid)
+  local cx, cy = api.whereInGrid(x,y,sprsgrid)
   if cx then
     sprsid = (cy-1)*24+cx+(sprsbank*24*3-24*3)
     local cx, cy = cx-1, cy-1
@@ -131,14 +131,14 @@ function s:_mpress(x,y,b,it)
   end
   
   
-  local cx, cy = whereInGrid(x,y,imggrid)
+  local cx, cy = api.whereInGrid(x,y,imggrid)
   if cx then
     if not it then mflag = true end
-    local data = SpriteMap:data()
-    local qx,qy = SpriteMap:rect(sprsid)
+    local data = api.SpriteMap:data()
+    local qx,qy = api.SpriteMap:rect(sprsid)
     local col = b == 1 and colsL or colsR
     data:setPixel(qx+cx-1,qy+cy-1,col)
-    SpriteMap.img = data:image()
+    api.SpriteMap.img = data:image()
     self:redrawSPR() self:redrawSPRS()
   end
 end
@@ -146,19 +146,19 @@ end
 function s:_mmove(x,y,dx,dy,it,iw)
   if iw then return end
   if (not it and mflag) or it then
-    local cx, cy = whereInGrid(x,y,imggrid)
+    local cx, cy = api.whereInGrid(x,y,imggrid)
     if cx then
-      local data = SpriteMap:data()
-      local qx,qy = SpriteMap:rect(sprsid)
+      local data = api.SpriteMap:data()
+      local qx,qy = api.SpriteMap:rect(sprsid)
       local col = isMDown(1) and colsL or colsR
       data:setPixel(qx+cx-1,qy+cy-1,col)
-      SpriteMap.img = data:image()
+      api.SpriteMap.img = data:image()
       self:redrawSPR() self:redrawSPRS()
     end
   end
   
   if (not it and sprsmflag) or it then
-    local cx, cy = whereInGrid(x,y,sprsgrid)
+    local cx, cy = api.whereInGrid(x,y,sprsgrid)
     if cx then
       sprsid = (cy-1)*24+cx+(sprsbank*24*3-24*3)
       local cx, cy = cx-1, cy-1
@@ -172,20 +172,20 @@ end
 
 function s:_mrelease(x,y,b,it)
   if (not it and mflag) or it then
-    local cx, cy = whereInGrid(x,y,imggrid)
+    local cx, cy = api.whereInGrid(x,y,imggrid)
     if cx then
-      local data = SpriteMap:data()
-      local qx,qy = SpriteMap:rect(sprsid)
+      local data = api.SpriteMap:data()
+      local qx,qy = api.SpriteMap:rect(sprsid)
       local col = b == 1 and colsL or colsR
       data:setPixel(qx+cx-1,qy+cy-1,col)
-      SpriteMap.img = data:image()
+      api.SpriteMap.img = data:image()
       self:redrawSPR() self:redrawSPRS()
     end
     mflag = false
   end
   
   if (not it and sprsmflag) or it then
-    local cx, cy = whereInGrid(x,y,sprsgrid)
+    local cx, cy = api.whereInGrid(x,y,sprsgrid)
     if cx then
       sprsid = (cy-1)*24+cx+(sprsbank*24*3-24*3)
       local cx, cy = cx-1, cy-1

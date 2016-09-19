@@ -1,6 +1,6 @@
 io.stdout:setvbuf("no")
 love.graphics.setDefaultFilter("nearest")
-require("api")
+api = require("api") --I STILL WANT IT AS A GLOBAL !
 
 function love.mousepressed(x,y,button,istouch)
 	local x,y = _ScreenToLiko(x,y) if x < 0 or x > 192 or y < 0 or y > 128 then return end
@@ -51,7 +51,7 @@ end
 --Internal Callbacks--
 function love.load()
   --love.keyboard.setTextInput(true)
-  loadDefaultCursors()
+  api.loadDefaultCursors()
   _ScreenCanvas = love.graphics.newCanvas(192,128)
   _ScreenCanvas:setFilter("nearest")
   love.graphics.clear(0,0,0,255)
@@ -66,13 +66,13 @@ function love.load()
   
   love.graphics.setFont(_Font)
   
-  clear() --Clear the canvas for the first time
-  stroke(1)
+  api.clear() --Clear the canvas for the first time
+  api.stroke(1)
   
   require("autorun")
   --require("debugrun")
   --require("editor")
-  _auto_startup()
+  _auto_init()
 end
 
 function love.resize(w,h)
@@ -85,7 +85,7 @@ function love.resize(w,h)
     _ScreenScaleX, _ScreenScaleY, _ScreenScale = h/128, h/128, h/128
     _ScreenX, _ScreenY = (_ScreenWidth-192*_ScreenScaleX)/2, 0
   end
-  clearCursorsCache()
+  api.clearCursorsCache()
   _ShouldDraw = true
 end
 
@@ -147,7 +147,7 @@ function love.run()
 			love.graphics.origin()
 			love.graphics.setColor(255,255,255)
 			love.graphics.draw(_ScreenCanvas, _ScreenX,_ScreenY, 0, _ScreenScaleX,_ScreenScaleY)
-			--love.graphics.points(1,1,_ScreenWidth,_ScreenHeight)
+			--love.graphics.api.points(1,1,_ScreenWidth,_ScreenHeight)
 			love.graphics.present()
 			love.graphics.setCanvas(_ScreenCanvas)
 			love.graphics.translate(_ScreenTX,_ScreenTY)

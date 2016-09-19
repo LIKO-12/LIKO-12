@@ -647,7 +647,7 @@ function lume.trace(...)
     end
     t[#t + 1] = tostring(x)
   end
-  print(table.concat(t, " "))
+  api.print(table.concat(t, " "))
 end
 
 

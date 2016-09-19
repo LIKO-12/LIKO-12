@@ -6,11 +6,11 @@ Editor.editors = {"console","code","sprite","sprite","sprite","sprite"}
 
 local ModeGrid = {192-8*#Editor.editors,1,8*#Editor.editors,8,#Editor.editors,1}
 
-function Editor:_startup()
+function Editor:_init()
   self:switchEditor(self.curid)
   for _,e in pairs(Editor.editors) do
     local m = require("editor."..e)
-    if m._startup then m:_startup() end
+    if m._init then m:_init() end
   end
 end
 
@@ -20,12 +20,12 @@ function Editor:_redraw()
 end
 
 function Editor:redrawUI()
-  clear(6)
-  rect(1,1,192,8,9)
-  rect(1,128-7,192,8,9)
-  SpriteGroup(24-#Editor.editors+1,192-8*#Editor.editors,1,#Editor.editors,1,1,1,EditorSheet)
-  EditorSheet:draw((48-#Editor.editors)+self.curid,(192-8*#Editor.editors)+self.curid*8-8,1)
-  SpriteGroup(63,1,1,4,1,1,1,EditorSheet)
+  api.clear(6)
+  api.rect(1,1,192,8,9)
+  api.rect(1,128-7,192,8,9)
+  api.SpriteGroup(24-#Editor.editors+1,192-8*#Editor.editors,1,#Editor.editors,1,1,1,api.EditorSheet)
+  api.EditorSheet:draw((48-#Editor.editors)+self.curid,(192-8*#Editor.editors)+self.curid*8-8,1)
+  api.SpriteGroup(63,1,1,4,1,1,1,api.EditorSheet)
 end
 
 function Editor:switchEditor(id)
@@ -40,7 +40,7 @@ end
 
 function Editor:_mpress(x,y,b,it)
   if self.Current._mpress then self.Current:_mpress(x,y,b,it) end
-  local cx = whereInGrid(x,y,ModeGrid)
+  local cx = api.whereInGrid(x,y,ModeGrid)
   if cx then
     self:switchEditor(cx)
     self:_redraw()

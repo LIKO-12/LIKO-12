@@ -1,6 +1,6 @@
 local Terminal = {}
 
---local EditorSheet = SpriteSheet(Image("/editorsheet.png"),24,12)
+--local api.EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
 
 Terminal.blinktime = 0.5
 Terminal.blinktimer = 0
@@ -30,7 +30,7 @@ function Terminal:tout(text,col,skipnl)
   end
   self:_redraw()
 end
-function Terminal:setLine(l) self.currentLine = floor(l or 1) if self.currentLine > 20 then self.currentLine = 20 elseif self.currentLine < 1 then self.currentLine = 1 end end
+function Terminal:setLine(l) self.currentLine = api.floor(l or 1) if self.currentLine > 20 then self.currentLine = 20 elseif self.currentLine < 1 then self.currentLine = 1 end end
 
 function Terminal:splitCommand(str)
   local t = {}
@@ -40,10 +40,10 @@ function Terminal:splitCommand(str)
   return t
 end
 
-function Terminal:_startup()
+function Terminal:_init()
   for i=1,self.linesLimit do table.insert(self.textbuffer,"") end --Clean the framebuffer
   for i=1,self.linesLimit do table.insert(self.textcolors,8) end
-  keyrepeat(true)
+  api.keyrepeat(true)
   --tout("12345678901234567890123456789012345678901234567890123456789012345678901234567890",9)
   self:tout("-[[liko12]]-")
   self:tout(_LK12VER,_LK12VERC)
@@ -59,18 +59,18 @@ end
 function Terminal:_update(dt)
   self.blinktimer = self.blinktimer+dt if self.blinktimer > self.blinktime then self.blinktimer = self.blinktimer - self.blinktime  self.blinkstate = not self.blinkstate end
   local curlen = self.textbuffer[self.currentLine]:len()
-  color(self.blinkstate and 9 or 1)
-  rect(curlen > 0 and ((curlen)*4+8+3) or 10,(self.currentLine)*8+2,4,5)
+  api.color(self.blinkstate and 9 or 1)
+  api.rect(curlen > 0 and ((curlen)*4+8+3) or 10,(self.currentLine)*8+2,4,5)
 end
 
 function Terminal:_redraw()
-  clear(1)
+  api.clear(1)
   for line,text in ipairs(self.textbuffer) do
-    color(self.textcolors[line])
+    api.color(self.textcolors[line])
     if text == "-[[liko12]]-" then --THE SECRET PHASE
-      SpriteGroup(67,9,line*8,6,1,1,1,EditorSheet)
+      api.SpriteGroup(67,9,line*8,6,1,1,1,api.EditorSheet)
     else
-      print_grid(text,2,line+1)
+      api.print_grid(text,2,line+1)
     end
   end
 end
@@ -98,7 +98,7 @@ end
 function Terminal:_tpress()
   --This means the user is using a touch device
   self.linesLimit = 7
-  showkeyboard(true)
+  api.showkeyboard(true)
 end
 
 return Terminal

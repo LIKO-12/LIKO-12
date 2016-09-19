@@ -1,6 +1,6 @@
 local r = {}
 
-function r.newGlobals()
+function r.newGlobals(spritesheet)
   local GLOB = {
     assert=assert,
     error=error,
@@ -67,57 +67,13 @@ function r.newGlobals()
       sqrt=math.sqrt,
       tan=math.tan,
       tanh=math.tanh,
-    },
-    --API SECTION--
-    --Callbacks--
-    --[[_startup=function() end,
-    _update=function() end,
-    _mpress=function() end,
-    _mmove=function() end,
-    _mrelease=function() end,
-    _tpress=function() end,
-    _tmove=function() end,
-    _trelease=function() end,
-    _kpress=function() end,
-    _krelease=function() end,
-    _tinput=function() end,]]
-    --Graphics--
-    clear=clear,
-    color=color,
-    stroke=stroke,
-    points=points,
-    point=point,
-    line=line,
-    lines=lines,
-    circle=circle,
-    circle_line=circle_line,
-    rect=rect,
-    rect_line=rect_line,
-    print=print,
-    print_grid=print_grid,
-    --Sprites--
-    Image=Image,
-    ImageData=ImageData,
-    SpriteSheet=SpriteSheet,
-    Sprite=Sprite,
-    SpriteGroup=SpriteGroup,
-    --Cursors--
-    newCursor=newCursor,
-    setCursor=setCursor,
-    --Math--
-    ostime=ostime,
-    rand=rand,
-    rand_seed=rand_seed,
-    floor=floor,
-    --GUI--
-    isInRect=isInRect,
-    whereInGrid=whereInGrid,
-    keyrepeat=keyrepeat,
-    showkeyboard=showkeyboard,
-    isMobile=isMobile,
-    --Must change--
-    SpriteMap=SpriteMap
+    }
   }
+  local newAPI = api.newAPI(true,spritesheet)
+  for k,v in pairs(newAPI) do
+    GLOB[k] = v
+  end
+  
   GLOB._G=GLOB --Mirror Mirror
   return GLOB
 end
@@ -132,7 +88,7 @@ local function tr(fnc,...)
 end
 
 function r:compile(code, G, spritesheet)
-  local G = G or r.newGlobals()
+  local G = G or r.newGlobals(spritesheet)
   local chunk, err = loadstring(code or "")
   if(err and not chunk) then -- maybe it's an expression, not a statement
     chunk, err = loadstring("return " .. code)
@@ -142,7 +98,6 @@ function r:compile(code, G, spritesheet)
   end
 
   setfenv(chunk,G)
-  G.SpriteMap = spritesheet
   self.cg = G
   return chunk
 end
@@ -155,11 +110,11 @@ function r:loadGame(code,spritesheet,onerr)
 end
 
 function r:startGame()
-  clear(1)
-  tr(self.cg._startup)
+  api.clear(1)
+  tr(self.cg._init)
 end
 
-function r:_startup()
+function r:_init()
   self.cg = {}
 end
 

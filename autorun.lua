@@ -7,10 +7,10 @@ local EActive = false --Editor Active
 local GActive = false --Game Active
 local GStarted = false
 
-function _auto_startup() --I have to seperate the autorun callbacks from the main ones so games can override the original ones without destroying these.
-  Terminal:_startup()
-  Editor:_startup()
-  RT:_startup()
+function _auto_init() --I have to seperate the autorun callbacks from the main ones so games can override the original ones without destroying these.
+  Terminal:_init()
+  Editor:_init()
+  RT:_init()
   
   Active = Terminal
   if Active._redraw then Active:_redraw() end
