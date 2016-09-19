@@ -11,9 +11,8 @@ Love2D Forums Topic: https://love2d.org/forums/viewtopic.php?f=5&t=82913
 
 ## LIKO-12.txt
 ```
-NOTE: this is a placeholder dump of LIKO-12.txt
 ==========================================================================================
-	LIKO-12 V0.0.1 PRE
+	LIKO-12 V0.0.2 DEV
 	https://github.com/RamiLego4Game/LIKO-12
 	Licensed under GPL-3, see LICENSE file for more info
 	Author: RamiLego4Game // ramilego4game@gmail.com
@@ -27,7 +26,7 @@ NOTE: this is a placeholder dump of LIKO-12.txt
 Welcome to LIKO-12:
 	LIKO-12 is a PICO-8 clone but with extra abilities, different api and bigger screen width.
 	We are working on this because PICO-8 is not available for free, and to create a clone
-	without pointless limits.
+	without code limits (No tokens limit :) ).
 	
 	What's PICO-8 ??
 	
@@ -44,6 +43,16 @@ Welcome to LIKO-12:
 
 	Escape: Quit running cart or switch between editors and the terminal.
 	Mouse Wheel: Move up/down/left/right the cursor in the code editor.
+	
+	Player controls:
+
+		player 1
+		id:1,   2,    3,    4,     5,         6
+		 left, right, up, down, {z, c, x}, {x, v, m}
+		
+		player 2
+		id:1, 2, 3, 4,     5,            6
+		   s, f, e, d, {lshift, tab}, {a, q}
 
 :: Specs
 
@@ -63,6 +72,7 @@ Welcome to LIKO-12:
 	
 	After LIKO-12 boots, try loading the hello world builtin cart by typing those commands in the terminal:
 		
+		cd demos
 		load helloworld
 		run
 	
@@ -81,15 +91,20 @@ Welcome to LIKO-12:
 	
 	Here's a list of the built-in demo carts the you can load, edit, run and save !
 	
+	cd demos
+	
 	tictactoe   A 2 players tictactoe game made by RamiLego4Game.
 	helloworld  The helloworld example.
 	noise       Fill the screen with random colors.
 	
 	To run a cart, open LIKO-12 terminal and type:
+	cd demos
 	load tictactoe
 	run
 	
 	Press escape to stop the cart, and once more to enter editing mode.
+	
+	Delete the demos directory and restart liko12 to restore the defaults/ add new ones. "DEL demos"
 
 :: Exporters / Importers
 	
@@ -125,6 +140,10 @@ Welcome to LIKO-12:
 	EXPORT <PATH>: Exports the current loaded spritesheet
 	CLS: Clears the terminal
 	VER: Shows LIKO-12 Title
+	DIR/LS: Lists the directory items.
+	CD: Change the working directory.
+	DEL: Delete the give file/directory.
+	MKDIR: Creates a directory at the given path.
 
 :: Screen Rendering
 
@@ -133,7 +152,7 @@ LIKO-12 has non clearing canvas rendering system this means:
 	- The screen doesn't clears every frame
 	- You can draw to the screen anywhere in the code
  
-	Note: the everything called before _startup() will be cleared.
+	Note: the everything called before _init() will be cleared.
 
 :: Getting Started
 
@@ -147,7 +166,7 @@ After that let's start:
 How carts work:
 	The game code get's excuted to overwrite the global callbacks
 	Then the screen is cleared with black color
-	After that the _startup callback is called so the cart draws
+	After that the _init callback is called so the cart draws
 	Finally whenever input happens the relevant callbacks are called so the game draws new content.
 	On update the _update callback is called with delta time.
  
@@ -157,16 +176,19 @@ SpriteSheet:
 So now read the demo games, and be sure to check the API documentation bellow.
 
 Console Editor Tab:
-	This is a work in progress feature, don't use it for now..
+	This is a work in progress feature, don't use it for now.
 
 ==========================================================================================
 	API
 ==========================================================================================
 
-:: Callbacks
-You should overwrite the callbacks you want to use, ex: function _startup() end
+:: Lua Global
+	Read runtime.lua in lk12 code for a full list of globals.
 
-_startup
+:: Callbacks
+You should overwrite the callbacks you want to use, ex: function _init() end
+
+_init
 	This function is called at the initialization of your game.
 	Start your game drawing from here, because any draw calls called when compiling your game code are cleared.
 
@@ -320,6 +342,22 @@ whereInGrid x,y,grid
 	- grid (Table): The grid config {x,y,cellw,cellh,w,h}
 	+ cx,cy (Numbers): The position in the grid.
 
+btn n, player
+	Returns the state of the specific player button, use in _update
+	Check player controls section at the top
+	- n (Number): the id of the button
+	- p (Number): the number of the player (1/2)
+	+ state (Boolean): the state of the button
+
+getMPos
+	Returns the current position of the mouse, may break some touch compatibility..
+	+ x,y (Numbers): The position of the mouse, or the last moved touch.
+
+isMDown b
+	Returns if the specific mouse button is pressed down or not, may break some touch compatibility..
+	- b (Number): The id of the button to check: 1:left 2:right 3:middle
+	+ isDown (Boolean): The state of the mouse button, true for button 1 if the screen is touched.
+
 :: Misc
 
 keyrepeat state
@@ -333,4 +371,21 @@ isMobile
  
 Image, ImageData, SpriteSheet, setCursor, newCursor is not documented here, check api.lua for info about them 
 
+==========================================================================================
+	Changelog
+==========================================================================================
+V0.0.2 PRE:
+1. Now sprite editor can set a right button color.
+2. Sandboxed Save, Load, Import Commands.
+3. Created virtual file system.
+4. Added cd,ls,dir,mkdir,del commands.
+5. [Internal] Better api sandboxing.
+6. Now filters utf8 and unknown chars.
+7. Changed to orange flavor (delete %appdata%/editorsheet if you edited that to update) to differ from pico8
+8. New API Functions: getMPos, isMDown, btn
+9. Run command accepts args
+10. Renamed _startup to _init (sorry for breaking that..)
+
+V0.0.1 PRE:
+First Public Release
 ```
