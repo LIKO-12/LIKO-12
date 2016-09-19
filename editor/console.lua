@@ -46,9 +46,16 @@ function console:_init()
   api.keyrepeat(true)
   self:tout("LUA CONSOLE",8)
   self:tout("> ", 8, true)
-  self.G = runtime.newGlobals()
-  self.G.reset = function() self.G = runtime.newGlobals() self.G.cprint = tout end
-  self.G.cprint = tout
+  local function reset()
+    self.G = runtime.newGlobals()
+    self.G.cprint = tout
+    local code = require("editor.code"):export()
+    local chunk = runtime:compile(code, self.G)
+    -- we ignore compile errors here; I think that is OK, but maybe warn?
+    if(chunk) then chunk() end
+    self.G.reset = reset
+  end
+  reset()
 end
 
 function console:_redraw() --Patched this to restore the editor ui
