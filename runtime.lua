@@ -1,6 +1,6 @@
 local r = {}
 
-function r.newGlobals()
+function r.newGlobals(spritesheet)
   local GLOB = {
     assert=assert,
     error=error,
@@ -69,7 +69,7 @@ function r.newGlobals()
       tanh=math.tanh,
     }
   }
-  local newAPI = api.newAPI(true)
+  local newAPI = api.newAPI(true,spritesheet)
   for k,v in pairs(newAPI) do
     GLOB[k] = v
   end
@@ -88,7 +88,7 @@ local function tr(fnc,...)
 end
 
 function r:compile(code, G, spritesheet)
-  local G = G or r.newGlobals()
+  local G = G or r.newGlobals(spritesheet)
   local chunk, err = loadstring(code or "")
   if(err and not chunk) then -- maybe it's an expression, not a statement
     chunk, err = loadstring("return " .. code)
@@ -98,7 +98,6 @@ function r:compile(code, G, spritesheet)
   end
 
   setfenv(chunk,G)
-  G.api.SpriteMap = spritesheet
   self.cg = G
   return chunk
 end
