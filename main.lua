@@ -55,6 +55,13 @@ end
 --Internal Callbacks--
 function love.load()
   --love.keyboard.setTextInput(true)
+  if not love.filesystem.exists("/data/") then love.filesystem.createDirectory("/data/") end
+  if not love.filesystem.exists("/data/demos/") then
+    love.filesystem.createDirectory("/data/demos/")
+    for k, demo in ipairs(love.filesystem.getDirectoryItems("/demos/")) do
+      api.fs.write("/demos/"..demo,love.filesystem.read("/demos/"..demo))
+    end
+  end
   api.loadDefaultCursors()
   _ScreenCanvas = love.graphics.newCanvas(192,128)
   _ScreenCanvas:setFilter("nearest")

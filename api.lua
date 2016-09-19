@@ -1,8 +1,8 @@
 local class = require("class")
 require("offsets")
 
-_LK12VER = "V0.0.2 DEV"
-_LK12VERC = 9--10
+_LK12VER = "V0.0.2 PRE"
+_LK12VERC = 10--9
 
 --Mobiles Cursor FIX--
 if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
@@ -100,7 +100,7 @@ local function newAPI(noFS,sprsheetmap)
     love.graphics.points(unpack(args))
     _ShouldDraw = true
   end
-  api.point = points
+  api.point = api.points
 
   function api.line(...)
     local args = {...}
@@ -109,7 +109,7 @@ local function newAPI(noFS,sprsheetmap)
     _ShouldDraw = true
   end
 
-  api.lines = line
+  api.lines = api.line
 
   function api.circle(x,y,r,s,c) --x,y,radius,segments,color
     if c then api.color(c) end
@@ -276,17 +276,17 @@ local function newAPI(noFS,sprsheetmap)
   if not noFS then
     api.fs = {}
     function api.fs.write(path,data)
-      return love.filesystem.write("/data/"..path,data)
+      return love.filesystem.write("/data"..path,data)
     end
     
     function api.fs.exists(path) return love.filesystem.exists("/data/"..path) end
     function api.fs.isDir(path) return love.filesystem.isDirectory("/data/"..path) end
     function api.fs.isFile(path) return love.filesystem.isFile("/data/"..path) end
+    function api.fs.mkDir(path) return love.filesystem.createDirectory("/data/"..path) end
     function api.fs.dirItems(path) return love.filesystem.getDirectoryItems("/data/"..path) end
+    function api.fs.del(path) return love.filesystem.remove("/data/"..path) end
 
     function api.fs.read(path) return love.filesystem.read("/data/"..path) end
-
-    
   end
 
   --Misc Functions--

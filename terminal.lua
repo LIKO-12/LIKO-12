@@ -12,7 +12,28 @@ Terminal.linesLimit = 14
 Terminal.lengthLimit = 43
 Terminal.currentLine = 1
 
-function Terminal:tout(text,col,skipnl)
+Terminal.rootDir = "/"
+
+function Terminal:wrap_string(str,ml)
+  local ml = ml or (Terminal.lengthLimit-5)-(self.rootDir:len()+1)
+  local lt = api.floor(str:len()/ml+0.99)
+  if lt <= 1 then return {str} end
+  local t = {}
+  for i = 1, lt+1 do
+    table.insert(t,str:sub(0,ml-1))
+    str=str:sub(ml,-1)
+  end
+  return t
+end
+
+function Terminal:tout(text,col,skipnl,pathLen)
+  local text = text or ""
+  local length = pathLen and (Terminal.lengthLimit-5)-(self.rootDir:len()+1) or Terminal.lengthLimit
+  for line,str in ipairs(self:wrap_string(text,length)) do
+    self:tout_line(str,col,skipnl)
+  end
+end
+function Terminal:tout_line(text,col,skipnl)
   self.textcolors[self.currentLine] = col or self.textcolors[self.currentLine]
   if skipnl then
     self.textbuffer[self.currentLine] = self.textbuffer[self.currentLine]..(text or "")
@@ -44,15 +65,12 @@ function Terminal:_init()
   for i=1,self.linesLimit do table.insert(self.textbuffer,"") end --Clean the framebuffer
   for i=1,self.linesLimit do table.insert(self.textcolors,8) end
   api.keyrepeat(true)
-  --tout("12345678901234567890123456789012345678901234567890123456789012345678901234567890",9)
   self:tout("-[[liko12]]-")
   self:tout(_LK12VER,_LK12VERC)
   self:tout()
   self:tout("A PICO-8 CLONE WITH EXTRA ABILITIES",7)
-  --tout()
   self:tout("TYPE HELP FOR HELP",10)
-  --tout()
-  self:tout("> ",8,true)
+  self:tout(self.rootDir.."> ",8,true)
   
 end
 
@@ -85,7 +103,7 @@ function Terminal:_kpress(k,sc,ir)
     elseif splitted[1] then
       self:tout("UNKNOWN COMMAND '"..splitted[1].."' !",15)
     end
-    self:tout("> ",8,true)
+    self:tout(self.rootDir.."> ",8,true,true)
   end
   if k == "backspace" then self.textbuffer[self.currentLine] = self.textbuffer[self.currentLine]:sub(0,-2) self:_redraw() end
 end
@@ -99,6 +117,10 @@ function Terminal:_tpress()
   --This means the user is using a touch device
   self.linesLimit = 7
   api.showkeyboard(true)
+end
+
+function Terminal:setRoot(path)
+  self.rootDir = path or "/"
 end
 
 return Terminal
