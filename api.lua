@@ -276,10 +276,15 @@ local function newAPI(noFS,sprsheetmap)
   if not noFS then
     api.fs = {}
     function api.fs.write(path,data)
-      return love.filesystem.write(path,data)
+      return love.filesystem.write("/data/"..path,data)
     end
+    
+    function api.fs.exists(path) return love.filesystem.exists("/data/"..path) end
+    function api.fs.isDir(path) return love.filesystem.isDirectory("/data/"..path) end
+    function api.fs.isFile(path) return love.filesystem.isFile("/data/"..path) end
+    function api.fs.dirItems(path) return love.filesystem.getDirectoryItems("/data/"..path) end
 
-    function api.fs.read(path) return love.filesystem.read(path) end
+    function api.fs.read(path) return love.filesystem.read("/data/"..path) end
 
     
   end
