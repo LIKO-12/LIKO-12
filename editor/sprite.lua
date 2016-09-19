@@ -28,9 +28,10 @@ local palrecto = {192-(psize*4+3),8+3,psize*4+2,psize*4+2,1}
 local paldraw = {192-(psize*4+2),8+3+1,0,psize,psize}
 local palgrid = {192-(psize*4+2),8+3+1,psize*4,psize*4,4,4}
 
-local colsrecto = {192-(psize*4+3),8+3,psize+2,psize+2,8}
-local colsrect = {192-(psize*4+2),8+3+1,psize,psize,1}
-local cols
+local colsrectL = {192-(psize*4+3),8+3,psize+2,psize+2,8}
+local colsrectR = {192-(psize*4+2),8+3+1,psize,psize,1}
+local colsL --Color Select Left
+local colsR --Color Select Right
 
 function s:_switch()
   cols = 0
@@ -65,8 +66,8 @@ end
 function s:redrawCP() --Redraw color pallete
   rect_line(unpack(palrecto))
   palimg:draw(unpack(paldraw))
-  rect_line(unpack(colsrect))
-  rect_line(unpack(colsrecto))
+  rect_line(unpack(colsrectR))
+  rect_line(unpack(colsrectL))
 end
 
 function s:redrawSPRS()
@@ -96,12 +97,17 @@ function s:_mpress(x,y,b,it)
   --if isInRect(x,y,{1,1,192,8}) then SpriteMap:data():export("editorsheet") end
   local cx, cy = whereInGrid(x,y,palgrid)
   if cx then
-    cols = (cy-1)*4+cx if cols == 1 then cols = 0 end
-    local cx, cy = cx-1, cy-1
-    colsrecto[1] = 192-(psize*4+3)+psize*cx
-    colsrecto[2] = 8+3+psize*cy
-    colsrect[1] = 192-(psize*4+2)+psize*cx
-    colsrect[2] = 8+3+1+psize*cy
+    if b == 1 then
+      colsL = (cy-1)*4+cx if colsL == 1 then colsL = 0 end
+      local cx, cy = cx-1, cy-1
+      colsrectL[1] = 192-(psize*4+3)+psize*cx
+      colsrectL[2] = 8+3+psize*cy
+    elseif b == 2 then
+      colsR = (cy-1)*4+cx if colsR == 1 then colsR = 0 end
+      local cx, cy = cx-1, cy-1
+      colsrectR[1] = 192-(psize*4+2)+psize*cx
+      colsrectR[2] = 8+3+1+psize*cy
+    end
     
     self:redrawCP()
   end
@@ -129,8 +135,9 @@ function s:_mpress(x,y,b,it)
   if cx then
     if not it then mflag = true end
     local data = SpriteMap:data()
-    local qx,qy = SpriteMap:rect(sprsid) 
-    data:setPixel(qx+cx-1,qy+cy-1,cols)
+    local qx,qy = SpriteMap:rect(sprsid)
+    local col = b == 1 and colsL or colsR
+    data:setPixel(qx+cx-1,qy+cy-1,col)
     SpriteMap.img = data:image()
     self:redrawSPR() self:redrawSPRS()
   end
@@ -143,7 +150,8 @@ function s:_mmove(x,y,dx,dy,it,iw)
     if cx then
       local data = SpriteMap:data()
       local qx,qy = SpriteMap:rect(sprsid)
-      data:setPixel(qx+cx-1,qy+cy-1,cols)
+      local col = isMDown(1) and colsL or colsR
+      data:setPixel(qx+cx-1,qy+cy-1,col)
       SpriteMap.img = data:image()
       self:redrawSPR() self:redrawSPRS()
     end
@@ -168,7 +176,8 @@ function s:_mrelease(x,y,b,it)
     if cx then
       local data = SpriteMap:data()
       local qx,qy = SpriteMap:rect(sprsid)
-      data:setPixel(qx+cx-1,qy+cy-1,cols)
+      local col = b == 1 and colsL or colsR
+      data:setPixel(qx+cx-1,qy+cy-1,col)
       SpriteMap.img = data:image()
       self:redrawSPR() self:redrawSPRS()
     end
