@@ -47,7 +47,7 @@ end
 
 function love.textinput(text)
   if utf8.len(text) > 1 then return end --Filter UTF8
-  if not string.find(_FontChars,text) then return end --Filer Unknown chars
+  --if not string.find(_FontChars,text) then return end --Filer Unknown chars
   _auto_tinput(text)
 end
 

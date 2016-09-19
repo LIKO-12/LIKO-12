@@ -59,7 +59,7 @@ end
 function Terminal:_update(dt)
   self.blinktimer = self.blinktimer+dt if self.blinktimer > self.blinktime then self.blinktimer = self.blinktimer - self.blinktime  self.blinkstate = not self.blinkstate end
   local curlen = self.textbuffer[self.currentLine]:len()
-  api.color(self.blinkstate and 9 or 1)
+  api.color(self.blinkstate and 5 or 1)
   api.rect(curlen > 0 and ((curlen)*4+8+3) or 10,(self.currentLine)*8+2,4,5)
 end
 
