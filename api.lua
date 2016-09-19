@@ -12,7 +12,8 @@ _IsMobile = true
 end
 
 --Internal Variables--
-_Font = love.graphics.newImageFont("/font.png",'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"\'`-_/1234567890!?[](){}.,;:<>+=%#^*~ ',1)
+_FontChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"\'`-_/1234567890!?[](){}.,;:<>+=%#^*~ '
+_Font = love.graphics.newImageFont("/font.png",_FontChars,1)
 --love.graphics.newFont("font.ttf",20)
 
 _ShouldDraw = false
@@ -58,7 +59,7 @@ _ColorSet[0] = {0,0,0,0}
 
 local function newAPI(noFS,sprsheetmap)
   local api = {}
-  
+
   --Callbacks--
   function api._init() end --Called at the start of the program
   function api._update(dt) end --Called when the program updates
@@ -210,7 +211,7 @@ local function newAPI(noFS,sprsheetmap)
       (sheet or api.SpriteMap):draw((id-1)+sprx+(spry*24-24),x+(sprx*sx*8-sx*8),y+(spry*sy*8-sy*8),0,sx,sy)
     end end
   end
-  
+
   --Cursors Section--
   api._CurrentCursor = "normal"
   api._Cursors = {}
@@ -279,6 +280,8 @@ local function newAPI(noFS,sprsheetmap)
     end
 
     function api.fs.read(path) return love.filesystem.read(path) end
+
+    
   end
 
   --Misc Functions--
@@ -289,7 +292,7 @@ local function newAPI(noFS,sprsheetmap)
   --Spritesheet--
   api.EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
   api.SpriteMap = sprsheetmap or api.SpriteSheet(api.ImageData(24*8,12*8):image(),24,12)
-  
+
   return api
 end
 
