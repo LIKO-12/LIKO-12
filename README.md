@@ -12,7 +12,7 @@ Love2D Forums Topic: https://love2d.org/forums/viewtopic.php?f=5&t=82913
 ## LIKO-12.txt
 ```
 ==========================================================================================
-	LIKO-12 V0.0.2 DEV
+	LIKO-12 V0.0.2 PRE
 	https://github.com/RamiLego4Game/LIKO-12
 	Licensed under GPL-3, see LICENSE file for more info
 	Author: RamiLego4Game // ramilego4game@gmail.com
