@@ -1,8 +1,8 @@
 local class = require("class")
 require("offsets")
 
-_LK12VER = "V0.0.2 PRE"
-_LK12VERC = 10--9
+_LK12VER = "V0.0.3 DEV"
+_LK12VERC = 9--9 DEV, 10 PRE
 
 --Mobiles Cursor FIX--
 if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
@@ -276,7 +276,7 @@ local function newAPI(noFS,sprsheetmap)
   if not noFS then
     api.fs = {}
     function api.fs.write(path,data)
-      return love.filesystem.write("/data"..path,data)
+      return love.filesystem.write("/data/"..path,data)
     end
     
     function api.fs.exists(path) return love.filesystem.exists("/data/"..path) end

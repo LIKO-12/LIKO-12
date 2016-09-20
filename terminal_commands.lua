@@ -26,7 +26,7 @@ end
 
 function CMD.ver() tout() tout("-[[liko12]]-") tout(_LK12VER,_LK12VERC) end
 
-function CMD.run()
+function CMD.run(command,...)
   local sm = require("editor.sprite"):export()
   local cd = require("editor.code"):export()
   local rt = require("runtime")
@@ -35,7 +35,7 @@ function CMD.run()
     _auto_exitgame()
     tout("ERR: "..err,9)
     tout(term.rootDir.."> ",8,true)
-  end)
+  end,...)
   if not ok then
     _auto_exitgame()
     tout("ERR: "..err,9)
@@ -60,16 +60,17 @@ function CMD.reload()
 end
 
 function CMD.save(command,name)
-  local name = name or require("editor").lastCart
+  local name = name
+  if name then name = (name:sub(0,1) == "/" and name..".lk12" or term.rootDir..name..".lk12") else name = require("editor").lastCart end
   if not name then tout("PLEASE PROVIDE A NAME TO SAVE",9) return end
   local sm = require("editor.sprite"):export()
   local cd = require("editor.code"):export()
   local saveCode = "local code = [["..cd.."]]\n\n"
   saveCode = saveCode .. "local spritemap = '"..sm.."'\n\n"
   saveCode = saveCode .. "return {code=code,spritemap=spritemap}"
-  local ok, err = api.fs.write((name)..".lk12",saveCode)
+  local ok, err = api.fs.write(name,saveCode)
   if ok then
-    tout("SAVED TO "..term.rootDir..(name)..".lk12",12)
+    tout("SAVED TO "..name,12)
   else
     tout("ERR: "..err,9)
   end
@@ -78,8 +79,10 @@ end
 
 function CMD.load(command,name,...)
   if not name then tout("PLEASE PROVIDE A NAME TO LOAD",9) return end
-  if not api.fs.exists(term.rootDir..name..".lk12") then tout(term.rootDir..name..".lk12 DOES NOT EXISTS !",9) return end
-  local code = api.fs.read(term.rootDir..name..".lk12")
+  local name = name:sub(0,1) == "/" and name..".lk12" or term.rootDir..name..".lk12"
+  if not api.fs.exists(name) then tout(name.." DOES NOT EXISTS !",9) return end
+  local code,err = api.fs.read(name)
+  if not code then tout("ERR: "..(err or "UNKNOWN"),9) return end
   local chunk, err = loadstring(code)
   if not chunk then tout("ERR: "..err,9) return end
   local args = {...}
@@ -89,7 +92,7 @@ function CMD.load(command,name,...)
   api.SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
   require("editor").lastsprpng = nil
   require("editor.code"):load(data.code)
-  tout("LOADED "..term.rootDir..name..".lk12",12)
+  tout("LOADED "..name,12)
   require("editor").lastCart = name
 end
 
@@ -148,17 +151,45 @@ end
 
 CMD.ls = CMD.dir
 
+local function delDir(path)
+  local files = api.fs.dirItems(path)
+  for k, file in ipairs(files) do
+    if api.fs.isFile(path..file) then
+      local ok, err = api.fs.del(path..file)
+      if not ok then return ok, err end
+    else
+      local ok, err = delDir(path..file.."/")
+      if not ok then return ok, err end
+    end
+  end
+  local ok, err = api.fs.del(path)
+  if not ok then return ok, err end
+  return true
+end
+
 function CMD.del(command,path)
   if not path then tout("PLEASE PROVIDE A PATH FIRST",9) return end
   local curpath = term.rootDir..path
   if not api.fs.exists(curpath) then tout(curpath.." DOES NOT EXISTS !",9) return end
-  local ok, err = api.fs.del(curpath)
+  local ok, err
+  if api.fs.isFile(curpath) then
+    ok, err = api.fs.del(curpath)
+  else
+    ok, err = delDir(curpath.."/")
+  end
+  
   if ok then
     tout("DELETED "..path.." SUCCESSFULLY",12)
   else
-    tout("ERR: "..(err or "UNKNOWN"),9)
+    tout("ERR["..curpath.."]: "..(err or "UNKNOWN"),9)
   end
   if not love.filesystem.exists("/data/") then love.filesystem.createDirectory("/data/") end
+  if not love.filesystem.exists("/data/demos/") then
+    love.filesystem.createDirectory("/data/demos/")
+    for k, demo in ipairs(love.filesystem.getDirectoryItems("/demos/")) do
+      api.fs.write("/demos/"..demo,love.filesystem.read("/demos/"..demo))
+    end
+  end
 end
 
 return CMD
