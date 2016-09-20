@@ -91,25 +91,35 @@ function cedit:_mmove(x,y,dx,dy,it,iw)
   end
 end
 
-function cedit:_kpress(k,sc,ir)
-  if k == "return" then
-    if self.cursorY == self.lineLimit then --check if the cursor is at the last line
-      self.topLine = self.topLine+1 --In that case
+cedit.keymap = {
+  ["return"] = function(self)
+    -- check if the cursor is at the last line
+    if self.cursorY == self.lineLimit then
+      self.topLine = self.topLine+1
     else
       self.cursorY = self.cursorY+1
     end
-    
-    for i=#self.codebuffer, self.cursorY+self.topLine, -1 do self.codebuffer[i+1] = self.codebuffer[i] end--Shift down the code
-    self.codebuffer[self.cursorY+self.topLine] = self.codebuffer[self.cursorY+self.topLine-1]:sub(self.cursorX,-1)
-    self.codebuffer[self.cursorY+self.topLine-1] = self.codebuffer[self.cursorY+self.topLine-1]:sub(0,self.cursorX-1)
-    
-    --self.codebuffer[self.cursorY+self.topLine] = "" --Insert a new empty line
-    self.cursorX, blinktimer, blinkstate = 1, 0, true --Set the cursorX to 1 (since it's an empty line), also reset the blinkstate&timer to force the cursor to blink on
-    self:_redraw() --Update the screen content for the user
-  elseif k == "backspace" then
-    if self.codebuffer[self.cursorY+self.topLine] == "" then
+
+    for i=#self.codebuffer, self.cursorY+self.topLine, -1 do
+      self.codebuffer[i+1] = self.codebuffer[i]
+    end--Shift down the code
+
+    local offset = self.cursorY+self.topLine
+    self.codebuffer[offset] = self.codebuffer[offset-1]:sub(self.cursorX,-1)
+    self.codebuffer[offset-1] = self.codebuffer[offset-1]:sub(0,self.cursorX-1)
+
+    -- self.codebuffer[self.cursorY+self.topLine] = "" --Insert a new empty line
+    -- Set the cursorX to 1 (since it's an empty line), also reset the
+    -- blinkstate&timer to force the cursor to blink on
+    self.cursorX, blinktimer, blinkstate = 1, 0, true
+  end,
+
+  backspace = function(self)
+    local offset = self.cursorY+self.topLine
+    if self.codebuffer[offset] == "" then
       if self.cursorY ~= 1 then
-        table.remove(self.codebuffer,self.cursorY+self.topLine) --Remove the line so the table size stays correct
+         --Remove the line so the table size stays correct
+        table.remove(self.codebuffer,offset)
         if self.cursorY == 1 then
          self.topLine = self.topLine-1
          if self.topLine < 1 then self.topline=0 end
@@ -120,27 +130,31 @@ function cedit:_kpress(k,sc,ir)
       end
     else
       if self.cursorX > 1 then
-        self.codebuffer[self.cursorY+self.topLine] = self.codebuffer[self.cursorY+self.topLine]:sub(0,self.cursorX-2)..self.codebuffer[self.cursorY+self.topLine]:sub(self.cursorX,-1)--self.codebuffer[self.cursorY+self.topLine]:sub(0,-2)
+        self.codebuffer[offset] =
+          self.codebuffer[offset]:sub(0,self.cursorX-2) ..
+          self.codebuffer[offset]:sub(self.cursorX,-1)
         self.cursorX = self.cursorX-1
       --[[else
-        self.codebuffer[self.cursorY+self.topLine-1] = self.codebuffer[self.cursorY+self.topLine-1]..(self.codebuffer[self.cursorY+self.topLine] or "")
-        for i=self.cursorY+self.topLine, #self.codebuffer do self.codebuffer[i] = self.codebuffer[i+1] end--Shift up the code
+        self.codebuffer[offset-1] = self.codebuffer[offset-1]..(self.codebuffer[offset] or "")
+        for i=offset, #self.codebuffer do self.codebuffer[i] = self.codebuffer[i+1] end--Shift up the code
         table.remove(self.codebuffer,#self.codebuffer) --Drop The last line (because it got duplicated)
         self.cursorY = self.cursorY-1
         if self.cursorY < 1 then if self.topLine > 0 then self.topLine = self.topLine -1 end self.cursorY = 1 end
-        self.cursorX = self.codebuffer[self.cursorY+self.topLine-1]:len()+1  MUST SETUP LINE LENGTH SYSTEM FIRST]]
+        self.cursorX = self.codebuffer[offset-1]:len()+1  MUST SETUP LINE LENGTH SYSTEM FIRST]]
       end
     end
     blinktimer, blinkstate = 0, true
-    self:_redraw()
-  elseif k == "up" then
+  end,
+
+  up = function(self)
     self.cursorY = self.cursorY-1
     if self.cursorY < 1 then if self.topLine > 0 then self.topLine = self.topLine -1 end self.cursorY = 1 end
     if ir then self.cursorX = lastCursorX else lastCursorX = self.cursorX end
     if self.cursorX > self.codebuffer[self.cursorY+self.topLine]:len()+1 then self.cursorX = self.codebuffer[self.cursorY+self.topLine]:len()+1 end
     blinktimer, blinkstate = 0, true
-    self:_redraw()
-  elseif k == "down" then
+  end,
+
+  down = function(self)
     blinktimer, blinkstate = 0, true
     if self.cursorY+self.topLine == #self.codebuffer then return end
     if self.cursorY == self.lineLimit then
@@ -150,19 +164,20 @@ function cedit:_kpress(k,sc,ir)
     end
     if ir then self.cursorX = lastCursorX else lastCursorX = self.cursorX end
     if self.cursorX > self.codebuffer[self.cursorY+self.topLine]:len()+1 then self.cursorX = self.codebuffer[self.cursorY+self.topLine]:len()+1 end
-    self:_redraw()
-  elseif k == "left" then
+  end,
+
+  left = function(self)
     self.cursorX = self.cursorX - 1
     if self.cursorX < 1 then self.cursorX = 1 end
     blinktimer, blinkstate = 0, true
-    self:_redraw()
-  elseif k == "right" then
+  end,
+
+  right = function(self)
     self.cursorX = self.cursorX + 1
     if self.cursorX > self.codebuffer[self.topLine+self.cursorY]:len() then self.cursorX = self.codebuffer[self.topLine+self.cursorY]:len()+1 end
     blinktimer, blinkstate = 0, true
-    self:_redraw()
-  end
-end
+  end,
+}
 
 function cedit:_krelease(k,sc)
   lastCursorX = 1

@@ -91,9 +91,12 @@ end
 
 function Editor:_kpress(k,sc,ir)
   local key = key_for(k)
-  print(key, self.Current.keymap[key])
-  if self.Current.keymap[key] then self.Current.keymap[key](self.Current)
-  elseif self.Current._kpress then self.Current:_kpress(k,sc,ir) end
+  if self.Current.keymap[key] then
+    self.Current.keymap[key](self.Current)
+    self.Current:_redraw()
+  elseif self.Current._kpress then
+    self.Current:_kpress(k,sc,ir)
+  end
 end
 
 function Editor:_krelease(k,sc)

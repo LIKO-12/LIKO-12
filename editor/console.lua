@@ -87,13 +87,11 @@ console.keymap = {
     self:tout("")
     eval(input, lume.fn(self.tout, self))
     self:tout("> ",8,true)
-    self:_redraw()
   end,
 
   ["backspace"] = function(self)
     self.textbuffer[self.currentLine] =
       self.textbuffer[self.currentLine]:sub(0,-2)
-    self:_redraw()
   end,
 }
 
