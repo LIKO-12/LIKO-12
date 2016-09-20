@@ -1,4 +1,4 @@
-local class = require("class")
+_Class = require("class")
 require("offsets")
 
 _LK12VER = "V0.0.3 DEV"
@@ -147,7 +147,7 @@ local function newAPI(noFS,sprsheetmap)
   end
 
   --Image Section--
-  api.Image = class("Liko12.image")
+  api.Image = _Class("Liko12.image")
   function api.Image:initialize(path) if type(path) == "string" then self.image = love.graphics.newImage(path) else self.image = love.graphics.newImage(path.imageData) end end
   function api.Image:draw(x,y,r,sx,sy,quad) love.graphics.setColor(255,255,255,255) if quad then love.graphics.draw(self.image,quad,x+_goffset.quadX,y+_goffset.quadY,r,sx,sy) else love.graphics.draw(self.image,x+_goffset.imageX,y+_goffset.imageY,r,sx,sy) end api.color(8) _ShouldDraw = true return self end
   function api.Image:size() return self.image:getDimensions() end
@@ -156,7 +156,7 @@ local function newAPI(noFS,sprsheetmap)
   function api.Image:data() return api.ImageData(self.image:getData()) end
   function api.Image:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
 
-  api.ImageData = class("Liko12.imageData")
+  api.ImageData = _Class("Liko12.imageData")
   function api.ImageData:initialize(w,h) if h then self.imageData = love.image.newImageData(w or 192, h or 128) elseif type(w) == "string" then self.imageData = love.image.newImageData(love.filesystem.newFileData(w,"spritemap","base64")) else self.imageData = w end end
   function api.ImageData:size() return self.imageData:getDimensions() end
   function api.ImageData:getPixel(x,y) return self.imageData:getPixel((x or 1)-1,(y or 1)-1) end
@@ -189,7 +189,7 @@ local function newAPI(noFS,sprsheetmap)
     return newData
   end
 
-  api.SpriteSheet = class("Liko12.spriteSheet")
+  api.SpriteSheet = _Class("Liko12.spriteSheet")
   function api.SpriteSheet:initialize(img,w,h)
     self.img, self.w, self.h = img, w, h
     self.cw, self.ch, self.quads = self.img:width()/self.w, self.img:height()/self.h, {}
@@ -293,6 +293,8 @@ local function newAPI(noFS,sprsheetmap)
   function api.keyrepeat(state) love.keyboard.setKeyRepeat(state) end
   function api.showkeyboard(state) love.keyboard.setTextInput(state) end
   function api.isMobile() return _isMobile or false end
+  
+  TextBuffer = love.filesystem.load("/libraries/textbuffer.lua")()
 
   --Spritesheet--
   api.EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
