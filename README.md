@@ -378,6 +378,7 @@ V0.0.3 PRE:
 1. Bugfixed V0.0.2 pre bugs (about 5/6 bugs) :)
 2. Recoded the code editor to support vertical scrolling (no length limit anymore) [not fully bugtested..]
 3. Fixed run command sandboxing and added "run [args]"
+4. Fixed a bug in the tictactoe demo,type "delete demos" "load demos/tictactoe" "run"
 
 V0.0.2 PRE:
 1. Now sprite editor can set a right button color.

@@ -85,9 +85,8 @@ function CMD.load(command,name)
   if not code then tout("ERR: "..(err or "UNKNOWN"),9) return end
   local chunk, err = loadstring(code)
   if not chunk then tout("ERR: "..err,9) return end
-  local args = {...}
   setfenv(chunk,{})
-  local ok, data = pcall(chunk,unpack(args))
+  local ok, data = pcall(chunk)
   if not ok then tout("ERR: "..data,9) return end
   api.SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
   require("editor").lastsprpng = nil
