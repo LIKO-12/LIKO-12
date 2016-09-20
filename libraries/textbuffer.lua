@@ -30,10 +30,10 @@ function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
     ["backspace"] = function(self,ir)
       if self.cursorX == 1 then --If it's at the start of the line
         if self.buffer[self.cursorY-1] then
+          self.cursorX = self.buffer[self.cursorY-1]:len()+1
           self.buffer[self.cursorY-1] = self.buffer[self.cursorY-1]..self.buffer[self.cursorY]
           self:shiftUp(self.cursorY+1)
           self.cursorY = self.cursorY-1
-          self.cursorX = self.buffer[self.cursorY]:len()+1
         end
       else
         self.buffer[self.cursorY] = self.buffer[self.cursorY]:sub(0,self.cursorX-2)..self.buffer[self.cursorY]:sub(self.cursorX,-1)
@@ -164,10 +164,10 @@ function tb:getDrawBuffer()
 end
 
 function tb:fixShifts()
-  if self.cursorX > self.shiftRight+self.gw then self.shiftRight =  self.cursorX - (self.shiftRight+self.gw) end
+  if self.cursorX > self.shiftRight+self.gw then self.shiftRight =  self.cursorX - self.gw end
   if self.cursorY > self.shiftTop+self.gh then self.shiftTop =  self.cursorY - self.gh end
   
-  if self.cursorX < self.shiftRight then self.shiftRight =  self.shiftRight - (self.cursorX-1) end
+  if self.cursorX <= self.shiftRight then self.shiftRight =  self.cursorX-1 end
   if self.cursorY <= self.shiftTop then self.shiftTop =  self.cursorY-1 end
   self.shiftRight =  api.floor(self.shiftRight)
   self.shiftTop =  api.floor(self.shiftTop)

@@ -12,7 +12,7 @@ Love2D Forums Topic: https://love2d.org/forums/viewtopic.php?f=5&t=82913
 ## LIKO-12.txt
 ```
 ==========================================================================================
-	LIKO-12 V0.0.2 PRE
+	LIKO-12 V0.0.3 PRE
 	https://github.com/RamiLego4Game/LIKO-12
 	Licensed under GPL-3, see LICENSE file for more info
 	Author: RamiLego4Game // ramilego4game@gmail.com
@@ -133,7 +133,7 @@ Welcome to LIKO-12:
 	HELP: Shows help info
 	NEW: Clears the memory
 	RELOAD: Reloads the editorsheet
-	RUN: Runs the loaded cart
+	RUN [args]: Runs the loaded cart
 	SAVE <NAME>: Saves the current cart
 	LOAD <NAME>: Loads a cart
 	IMPORT <PATH>: Imports a spritesheet
@@ -369,11 +369,16 @@ showKeyboard state
 isMobile
 	Returns true if liko12 is running on a mobile device
  
-Image, ImageData, SpriteSheet, setCursor, newCursor is not documented here, check api.lua for info about them 
+Image, ImageData, SpriteSheet, setCursor, newCursor, TextBuffer is not documented here, check api.lua for info about them 
 
 ==========================================================================================
 	Changelog
 ==========================================================================================
+V0.0.3 PRE:
+1. Bugfixed V0.0.2 pre bugs (about 5/6 bugs) :)
+2. Recoded the code editor to support vertical scrolling (no length limit anymore) [not fully bugtested..]
+3. Fixed run command sandboxing and added "run [args]"
+
 V0.0.2 PRE:
 1. Now sprite editor can set a right button color.
 2. Sandboxed Save, Load, Import Commands.

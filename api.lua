@@ -1,8 +1,8 @@
 _Class = require("class")
 require("offsets")
 
-_LK12VER = "V0.0.3 DEV"
-_LK12VERC = 9--9 DEV, 10 PRE
+_LK12VER = "V0.0.3 PRE"
+_LK12VERC = 10--9 DEV, 10 PRE
 
 --Mobiles Cursor FIX--
 if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then

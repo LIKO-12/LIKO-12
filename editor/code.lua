@@ -22,7 +22,7 @@ function cedit:resetBuffer()
     end
     api.rect(1,128-7,192,8,10)
     api.color(5)
-    api.print("LINE "..self.cursorY.."/"..#self.buffer,2,128-5)
+    api.print("LINE "..self.cursorY.."/"..#self.buffer.."  CHAR "..(self.cursorX-1).."/"..self.buffer[self.cursorY]:len(),2,128-5)
   end
 end
 
@@ -41,10 +41,9 @@ local function magiclines(s)
 end
 
 function cedit:load(code)
-  --self.codebuffer, self.topLine, self.cursorX, self.cursorY = {}, 0, 1, 1
   self:resetBuffer()
   self.buffer.buffer = {}
-  if not code then return self end
+  if not code then table.insert(self.buffer.buffer,"") return self end
   local code = code
   for line in magiclines(code) do
     table.insert(self.buffer.buffer,line)
@@ -58,24 +57,6 @@ end
 
 function cedit:_redraw()
   self.buffer:_redraw()
-  --api.rect(1,9,192,128-16,6) api.color(7)
-  --[[local tocolor = {}
-  for i=self.topLine+1,self.topLine+self.lineLimit do
-    if self.codebuffer[i] then table.insert(tocolor,self.codebuffer[i]) end
-  end
-  local colored = colorize(tocolor,self.colors)
-  api.color(8)
-  for line,text in ipairs(colored) do
-    api.print_grid(text,1,line+1)
-  end
-  
-  api.rect(1,128-7,192,8,10)
-  api.color(5)
-  api.print("LINE "..self.topLine+self.cursorY.."/"..#self.codebuffer,2,128-5)]]
-  
-  --[[for i=self.topLine+1,self.topLine+self.lineLimit do
-    if self.codebuffer[i] then api.print_grid(self.codebuffer[i],1,(i-self.topLine)+1) end
-  end]]
 end
 
 function cedit:_update(dt)

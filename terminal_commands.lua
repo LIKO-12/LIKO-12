@@ -8,9 +8,9 @@ function CMD.help()
   tout("HELP: SHOW THIS HELP",7)
   tout("NEW: CLEARS THE MEMORY",7)
   tout("RELOAD: RELOADS THE EDITORSHEET",7)
-  tout("RUN: RUNS THE CURRENT GAME",7)
+  tout("RUN [args]: RUNS THE CURRENT GAME",7)
   tout("SAVE <NAME>: SAVES THE CURRENT GAME",7)
-  tout("LOAD <NAME> [args]: LOADS A GAME",7)
+  tout("LOAD <NAME>: LOADS A GAME",7)
   tout("IMPORT <PATH>: IMPORTS A SPRITESHEET",7)
   tout("EXPORT <PATH>: EXPORTS THE SPRITESHEET",7)
   tout("CLS: CLEARS THE SCREEN",7)
@@ -77,7 +77,7 @@ function CMD.save(command,name)
   require("editor").lastCart = name
 end
 
-function CMD.load(command,name,...)
+function CMD.load(command,name)
   if not name then tout("PLEASE PROVIDE A NAME TO LOAD",9) return end
   local name = name:sub(0,1) == "/" and name..".lk12" or term.rootDir..name..".lk12"
   if not api.fs.exists(name) then tout(name.." DOES NOT EXISTS !",9) return end
