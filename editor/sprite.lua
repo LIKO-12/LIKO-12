@@ -34,8 +34,6 @@ local colsL --Color Select Left
 local colsR --Color Select Right
 
 function s:_switch()
-  cols = 0
-  
   sprsbquads = {}
   local sprsimg = api.SpriteMap:image()
   for i = 1, 4 do

@@ -15,8 +15,6 @@ cedit.lineLimit = 14
 cedit.cursorX, cedit.cursorY = 1,1
 cedit.topLine = 0
 
-local lastCursorX = 1
-
 local blinktime = 0.5
 local blinktimer = 0
 local blinkstate = false
@@ -149,7 +147,6 @@ cedit.keymap = {
   up = function(self)
     self.cursorY = self.cursorY-1
     if self.cursorY < 1 then if self.topLine > 0 then self.topLine = self.topLine -1 end self.cursorY = 1 end
-    if ir then self.cursorX = lastCursorX else lastCursorX = self.cursorX end
     if self.cursorX > self.codebuffer[self.cursorY+self.topLine]:len()+1 then self.cursorX = self.codebuffer[self.cursorY+self.topLine]:len()+1 end
     blinktimer, blinkstate = 0, true
   end,
@@ -162,7 +159,6 @@ cedit.keymap = {
     else
       self.cursorY = self.cursorY+1
     end
-    if ir then self.cursorX = lastCursorX else lastCursorX = self.cursorX end
     if self.cursorX > self.codebuffer[self.cursorY+self.topLine]:len()+1 then self.cursorX = self.codebuffer[self.cursorY+self.topLine]:len()+1 end
   end,
 
@@ -200,10 +196,6 @@ cedit.keymap = {
     self.cursorX = #self.codebuffer[self.topLine+self.cursorY] + 1
   end
 }
-
-function cedit:_krelease(k,sc)
-  lastCursorX = 1
-end
 
 function cedit:_tinput(t)
   if t == "\\" then return end --This thing is so bad, so GO AWAY

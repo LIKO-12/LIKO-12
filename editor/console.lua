@@ -52,7 +52,7 @@ function console:_init()
   self:tout("> ", 8, true)
   local function reset()
     self.G = runtime.newGlobals()
-    self.G.cprint = tout
+    self.G.cprint = print
     local code = require("editor.code"):export()
     local chunk = runtime:compile(code, self.G)
     -- we ignore compile errors here; I think that is OK, but maybe warn?
