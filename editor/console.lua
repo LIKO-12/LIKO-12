@@ -6,6 +6,7 @@ local lume = require("libraries.lume")
 local pps = lume.serialize
 
 local console = lume.clone(terminal) --Clone the terminal
+console._kpress = nil
 console.textbuffer, console.textcolors, console.currentLine = {}, {}, 1
 console.lengthLimit = 45
 console.linesLimit = 14
@@ -80,19 +81,21 @@ function console:_update(dt)
   api.rect(curlen > 0 and ((curlen)*4+3) or 10,(self.currentLine)*8+2,4,5)
 end
 
-function console:_kpress(k,sc,ir)
-  if k == "return" then
+console.keymap = {
+  ["return"] = function(self)
     local input = self.textbuffer[self.currentLine]:sub(3)
     self:tout("")
     eval(input, lume.fn(self.tout, self))
     self:tout("> ",8,true)
     self:_redraw()
-  elseif k == "backspace" then
+  end,
+
+  ["backspace"] = function(self)
     self.textbuffer[self.currentLine] =
       self.textbuffer[self.currentLine]:sub(0,-2)
     self:_redraw()
-  end
-end
+  end,
+}
 
 function console:_tinput(t)
   if t == "\\" then return end --This thing is so bad, so GO AWAY

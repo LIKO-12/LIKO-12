@@ -11,6 +11,15 @@ function Editor:_init()
   for _,e in pairs(Editor.editors) do
     local m = require("editor."..e)
     if m._init then m:_init() end
+    if not m.keymap then m.keymap = {} end
+  end
+
+  local init_path = (os.getenv("HOME") or "") .. "/.liko12/init.lua"
+  local init_file = io.open(init_path)
+  if(init_file) then
+    init_file:close()
+    local ok, err = pcall(dofile, init_path)
+    if(not ok) then print(err) end
   end
 end
 
@@ -67,8 +76,24 @@ function Editor:_trelease(id,x,y,p)
   if self.Current._trelease then self.Current:_trelease(id,x,y,p) end
 end
 
+local key_for = function(k)
+  if(love.keyboard.isDown("lalt", "ralt")) then
+    k = "alt-" .. k
+  end
+  if(love.keyboard.isDown("lctrl", "rctrl", "capslock")) then
+    k = "ctrl-" .. k
+  end
+  if(love.keyboard.isDown("lshift", "rshift")) then
+    k = "shift-" .. k
+  end
+  return k
+end
+
 function Editor:_kpress(k,sc,ir)
-  if self.Current._kpress then self.Current:_kpress(k,sc,ir) end
+  local key = key_for(k)
+  print(key, self.Current.keymap[key])
+  if self.Current.keymap[key] then self.Current.keymap[key](self.Current)
+  elseif self.Current._kpress then self.Current:_kpress(k,sc,ir) end
 end
 
 function Editor:_krelease(k,sc)
