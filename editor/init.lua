@@ -12,6 +12,7 @@ function Editor:_init()
     local m = require("editor."..e)
     if m._init then m:_init() end
     if not m.keymap then m.keymap = {} end
+    if not m.parent then m.parent = Editor end
   end
 
   local init_path = (os.getenv("HOME") or "") .. "/.liko12/init.lua"
@@ -89,15 +90,29 @@ local key_for = function(k)
   return k
 end
 
+local function find_binding(key, mode)
+  if mode.keymap[key] then return mode.keymap[key], mode end
+  if mode.parent then return find_binding(key, mode.parent) end
+end
+
 function Editor:_kpress(k,sc,ir)
-  local key = key_for(k)
-  if self.Current.keymap[key] then
-    self.Current.keymap[key](self.Current)
-    self.Current:_redraw()
+  local command, mode = find_binding(key_for(k), self.Current)
+  if command then
+    command(mode)
+    mode:_redraw()
   elseif self.Current._kpress then
     self.Current:_kpress(k,sc,ir)
   end
 end
+
+Editor.keymap = {
+  ["ctrl-pageup"] = function(self)
+    Editor:switchEditor(1 + ((Editor.curid - 2) % #Editor.editors))
+  end,
+  ["ctrl-pagedown"] = function(self)
+    Editor:switchEditor(1 + (Editor.curid % #Editor.editors))
+  end,
+}
 
 function Editor:_krelease(k,sc)
   if self.Current._krelease then self.Current:_krelease(k,sc) end
