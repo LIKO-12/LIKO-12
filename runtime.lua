@@ -1,6 +1,6 @@
 local r = {}
 
-function r.newGlobals(spritesheet)
+function r:newGlobals(spritesheet)
   local GLOB = {
     assert=assert,
     error=error,
@@ -88,11 +88,11 @@ local function tr(fnc,...)
 end
 
 function r:compile(code, G, spritesheet)
-  local G = G or r.newGlobals(spritesheet)
+  local G = G or r:newGlobals(spritesheet)
   local chunk, err = loadstring(code or "")
-  if(err and not chunk) then -- maybe it's an expression, not a statement
+  if err and not chunk then -- maybe it's an expression, not a statement
     chunk, err = loadstring("return " .. code)
-    if(err and not chunk) then
+    if err and not chunk then
       return false, err
     end
   end
@@ -102,11 +102,22 @@ function r:compile(code, G, spritesheet)
   return chunk
 end
 
-function r:loadGame(code,spritesheet,onerr)
-  local success, err = pcall(assert(r:compile(code, nil, spritesheet)))
+function r:loadGame(code,spritesheet,onerr,...)
+  --[[local success, err = self:compile(code, false, spritesheet, false)
   if not success then return false, err end
   self.onerr = onerr or error
-  return true
+  return true]] -- The loadGame will have it's own loading code because r:compile made by technomancy is so so buggy..
+  local G = self:newGlobals(spritesheet)
+  local cart, err = loadstring(code or "")
+  if not cart then return err end
+  
+  setfenv(cart,G)
+  local ok, err = pcall(cart,...)
+  if not ok then return err end
+  self.cg = G
+  self.onerr = onerr or error
+  
+  return self
 end
 
 function r:startGame()
