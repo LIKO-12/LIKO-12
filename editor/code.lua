@@ -167,16 +167,38 @@ cedit.keymap = {
   end,
 
   left = function(self)
+    local lineNum = self.cursorY+self.topLine
     self.cursorX = self.cursorX - 1
-    if self.cursorX < 1 then self.cursorX = 1 end
+    if self.cursorX < 1 and lineNum > 1 then
+      self.keymap.up(self)
+      self.keymap["end"](self)
+    elseif self.cursorX < 1 then
+      self.cursorX = 1
+    end
     blinktimer, blinkstate = 0, true
   end,
 
   right = function(self)
+    local lineNum = self.cursorY+self.topLine
     self.cursorX = self.cursorX + 1
-    if self.cursorX > self.codebuffer[self.topLine+self.cursorY]:len() then self.cursorX = self.codebuffer[self.topLine+self.cursorY]:len()+1 end
+    if self.cursorX > #self.codebuffer[lineNum] then
+      if lineNum < #self.codebuffer then
+        self.keymap.down(self)
+        self.keymap.home(self)
+      else
+        self.cursorX = #self.codebuffer[lineNum] + 1
+      end
+    end
     blinktimer, blinkstate = 0, true
   end,
+
+  home = function(self)
+   self.cursorX = 1
+  end,
+
+  ["end"] = function(self)
+    self.cursorX = #self.codebuffer[self.topLine+self.cursorY] + 1
+  end
 }
 
 function cedit:_krelease(k,sc)
