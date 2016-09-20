@@ -106,7 +106,7 @@ function tb:_update(dt)
   if self.blinktime == 0 then return end
   self.blinktimer = self.blinktimer+dt if self.blinktimer > self.blinktime then self.blinktimer = self.blinktimer - self.blinktime  self.blinkstate = not self.blinkstate end
   local curlen = self.buffer[self.cursorY]:len()
-  if self.blinkstate then api.rect((self.cursorX-1)*4+2,(self.cursorY)*8+2,4,5,self.curcol) else self:_redraw() end
+  if self.blinkstate then api.rect((self.cursorX-1-self.shiftRight)*4+2,(self.cursorY-self.shiftTop)*8+2,4,5,self.curcol) else self:_redraw() end
 end
 
 function tb:_redraw()
@@ -164,11 +164,13 @@ function tb:getDrawBuffer()
 end
 
 function tb:fixShifts()
-  if self.cursorX > self.gw+self.shiftRight then self.shiftRight =  self.cursorX - (self.gw+self.shiftRight) end
-  if self.cursorY > self.gh+self.shiftTop then self.shiftTop =  self.cursorY - (self.gh+self.shiftTop) end
+  if self.cursorX > self.shiftRight+self.gw then self.shiftRight =  self.cursorX - (self.shiftRight+self.gw) end
+  if self.cursorY > self.shiftTop+self.gh then self.shiftTop =  self.cursorY - self.gh end
   
-  if self.cursorX <= self.shiftRight then self.shiftRight =  self.shiftRight - (self.cursorX-1) end
-  if self.cursorY <= self.shiftTop then self.shiftTop =  self.shiftTop - (self.cursorY-1) end
+  if self.cursorX < self.shiftRight then self.shiftRight =  self.shiftRight - (self.cursorX-1) end
+  if self.cursorY <= self.shiftTop then self.shiftTop =  self.cursorY-1 end
+  self.shiftRight =  api.floor(self.shiftRight)
+  self.shiftTop =  api.floor(self.shiftTop)
 end
 
 function tb:forceBlink() self.blinktimer, self.blinkstate = 0, true end

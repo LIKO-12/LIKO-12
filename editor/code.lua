@@ -43,6 +43,7 @@ end
 function cedit:load(code)
   --self.codebuffer, self.topLine, self.cursorX, self.cursorY = {}, 0, 1, 1
   self:resetBuffer()
+  self.buffer.buffer = {}
   if not code then return self end
   local code = code
   for line in magiclines(code) do
@@ -52,7 +53,7 @@ function cedit:load(code)
 end
 
 function cedit:_switch()
-  self:resetBuffer()
+  
 end
 
 function cedit:_redraw()
@@ -110,5 +111,7 @@ function cedit:_tpress()
   --self.lineLimit = 7
   api.showkeyboard(true)
 end
+
+cedit:resetBuffer()
 
 return cedit
