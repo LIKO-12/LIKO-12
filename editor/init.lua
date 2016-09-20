@@ -11,6 +11,16 @@ function Editor:_init()
   for _,e in pairs(Editor.editors) do
     local m = require("editor."..e)
     if m._init then m:_init() end
+    if not m.keymap then m.keymap = {} end
+    if not m.parent then m.parent = Editor end
+  end
+
+  local init_path = (os.getenv("HOME") or "") .. "/.liko12/init.lua"
+  local init_file = io.open(init_path)
+  if(init_file) then
+    init_file:close()
+    local ok, err = pcall(dofile, init_path)
+    if(not ok) then print(err) end
   end
 end
 
@@ -67,9 +77,42 @@ function Editor:_trelease(id,x,y,p)
   if self.Current._trelease then self.Current:_trelease(id,x,y,p) end
 end
 
-function Editor:_kpress(k,sc,ir)
-  if self.Current._kpress then self.Current:_kpress(k,sc,ir) end
+local key_for = function(k)
+  if(love.keyboard.isDown("lalt", "ralt")) then
+    k = "alt-" .. k
+  end
+  if(love.keyboard.isDown("lctrl", "rctrl", "capslock")) then
+    k = "ctrl-" .. k
+  end
+  if(love.keyboard.isDown("lshift", "rshift")) then
+    k = "shift-" .. k
+  end
+  return k
 end
+
+local function find_binding(key, mode)
+  if mode.keymap[key] then return mode.keymap[key], mode end
+  if mode.parent then return find_binding(key, mode.parent) end
+end
+
+function Editor:_kpress(k,sc,ir)
+  local command, mode = find_binding(key_for(k), self.Current)
+  if command then
+    command(mode)
+    mode:_redraw()
+  elseif self.Current._kpress then
+    self.Current:_kpress(k,sc,ir)
+  end
+end
+
+Editor.keymap = {
+  ["ctrl-pageup"] = function(self)
+    Editor:switchEditor(1 + ((Editor.curid - 2) % #Editor.editors))
+  end,
+  ["ctrl-pagedown"] = function(self)
+    Editor:switchEditor(1 + (Editor.curid % #Editor.editors))
+  end,
+}
 
 function Editor:_krelease(k,sc)
   if self.Current._krelease then self.Current:_krelease(k,sc) end

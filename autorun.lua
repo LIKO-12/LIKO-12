@@ -2,7 +2,7 @@ local Editor = require("editor") --Require the editor
 local Terminal = require("terminal")
 local RT = require("runtime")
 
-local Acitve
+local Active
 local EActive = false --Editor Active
 local GActive = false --Game Active
 local GStarted = false

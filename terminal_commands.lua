@@ -80,11 +80,11 @@ function CMD.load(command,name,...)
   if not name then tout("PLEASE PROVIDE A NAME TO LOAD",9) return end
   if not api.fs.exists(term.rootDir..name..".lk12") then tout(term.rootDir..name..".lk12 DOES NOT EXISTS !",9) return end
   local code = api.fs.read(term.rootDir..name..".lk12")
-  code, err = loadstring(code)
-  if not code then tout("ERR: "..err,9) return end
+  local chunk, err = loadstring(code)
+  if not chunk then tout("ERR: "..err,9) return end
   local args = {...}
-  setfenv(code,{})
-  local ok, data = pcall(code,unpack(args))
+  setfenv(chunk,{})
+  local ok, data = pcall(chunk,unpack(args))
   if not ok then tout("ERR: "..data,9) return end
   api.SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
   require("editor").lastsprpng = nil

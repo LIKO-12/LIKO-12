@@ -113,7 +113,7 @@ end
 
 function love.focus(f)
   _ForceDraw = not f
-  ShouldDraw = f
+  _ShouldDraw = f
 end
 
 function love.run()
