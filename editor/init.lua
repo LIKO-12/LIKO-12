@@ -2,7 +2,7 @@ local Editor = {}
 
 Editor.Current = {}
 Editor.curid = 3
-Editor.editors = {"console","code","sprite","sprite","sprite","sprite"}
+Editor.editors = {"console","code","sprite","tile","sprite","sprite"}
 
 local ModeGrid = {192-8*#Editor.editors,1,8*#Editor.editors,8,#Editor.editors,1}
 
