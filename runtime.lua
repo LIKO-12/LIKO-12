@@ -109,8 +109,8 @@ function r:loadGame(code,spritesheet,onerr,...)
   return true]] -- The loadGame will have it's own loading code because r:compile made by technomancy is so so buggy..
   local G = self:newGlobals(spritesheet)
   local cart, err = loadstring(code or "")
-  if not cart then return err end
-  
+  if not cart then return false, err end
+
   setfenv(cart,G)
   local ok, err = pcall(cart,...)
   if not ok then return err end
