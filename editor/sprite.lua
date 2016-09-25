@@ -18,9 +18,11 @@ local sprsbanksY = 128 - (8+24+9)
 local sprsbanksgrid = {192-32,sprsbanksY+1,8*4,8,4,1}
 local sprsid = 1 --SpriteSheet Selected ID
 local sprsmflag = false
-
 local sprsbquads = {} --SpriteSheet 6 BanksQuads
 local sprsbank = 1 --Current Selected Bank
+for i = 1, 4 do
+  sprsbquads[i] = api.SpriteMap:image():quad(1,(i*8*3-8*3)+1,_,3*8)
+end
 
 local temp = 0
 local palimg = api.Image(api.ImageData(4,4):map(function() temp = temp + 1 return temp end ))
@@ -34,12 +36,6 @@ local colsL --Color Select Left
 local colsR --Color Select Right
 
 function s:_switch()
-  sprsbquads = {}
-  local sprsimg = api.SpriteMap:image()
-  for i = 1, 4 do
-    sprsbquads[i] = sprsimg:quad(1,(i*8*3-8*3)+1,_,3*8)
-  end
-  
   img = api.ImageData(imgw,imgh):map(function() return 0 end)
   mflag = false
   
