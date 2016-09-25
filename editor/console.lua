@@ -1,13 +1,10 @@
 local terminal = require("terminal")
 local runtime = require("runtime")
 local lume = require("libraries.lume")
-
--- use lume for serialization, which is so lame but good enough for nom
-local pps = lume.serialize
+local inspect = require("libraries.inspect")
 
 local console = lume.clone(terminal) --Clone the terminal
 console._kpress = nil
-console.textbuffer, console.textcolors, console.currentLine = {}, {}, 1
 console.lengthLimit = 45
 console.linesLimit = 14
 
@@ -26,10 +23,10 @@ local eval = function(input, console_print)
   local trace
   local result = pack(xpcall(chunk, function(e) trace = debug.traceback() err = e end))
   if(result[1]) then
-    local output, i = pps(result[2]), 3
+    local output, i = inspect(result[2]), 3
     -- pretty-print out the values it returned.
     while i <= #result do
-      output = output .. ', ' .. pps(result[i])
+      output = output .. ', ' .. inspect(result[i])
       i = i + 1
     end
     console_print(output,7)
