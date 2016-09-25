@@ -26,6 +26,10 @@ Welcome to LIKO-12:
 	
 	- So you can basicly create spritesheets, and games using this console.
 
+:: IRC Channel
+
+	We have an irc channel #liko12 at irc.oftc.net , feel free to join us
+
 :: Keys
 
 	Escape: Quit running cart or switch between editors and the terminal.

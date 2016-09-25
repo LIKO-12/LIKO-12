@@ -1,6 +1,8 @@
 # LIKO-12
 Love2D Forums Topic: https://love2d.org/forums/viewtopic.php?f=5&t=82913
 
+We have an irc channel #liko12 at irc.oftc.net , feel free to join us
+
 ## Screenshots
 ![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_1.png "LIKO-12 Screenshot 1")
 ![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_2.png "LIKO-12 Screenshot 2")
@@ -38,6 +40,10 @@ Welcome to LIKO-12:
 	It also comes with a modified PICO-8 font that have small letters support.
 	
 	- So you can basicly create spritesheets, and games using this console.
+
+:: IRC	
+
+	We have an irc channel #liko12 at irc.oftc.net , feel free to join us
 
 :: Keys
 

@@ -6,7 +6,7 @@ local tb = _Class("liko12.textBuffer")
 --0 blinktime disables cursor, 0 lines limit, 0 length disables all that..--
 --TODO: add real lines & length & mlength limits.--
 function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
-  self.gx, self.gy, self.linel, self.lenl, self.minl, self.curcol, self.blinktime = gx or 1, gy or 1, linel or 16, lengthl or 45, mlength or 0, curcol or 5, blinktime or 0.5
+  self.gx, self.gy, self.linel, self.lenl, self.minl, self.curcol, self.blinktime = gx or 1, gy or 1, linel or 16, lengthl or 47, mlength or 0, curcol or 5, blinktime or 0.5
   self.gw, self.gh = gw or self.lenl, gh or self.linel
   self.buffer = {""} --Start with an empty line
   self.blinktimer = 0
