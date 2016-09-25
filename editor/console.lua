@@ -45,11 +45,12 @@ local eval = function(input, console_print)
 end
 
 function console:_init()
-  for i=1,self.linesLimit do table.insert(self.textbuffer,"") end
-  for i=1,self.linesLimit do table.insert(self.textcolors,8) end
   api.keyrepeat(true)
-  self:tout("LUA CONSOLE",8)
-  self:tout("> ", 8, true)
+  local cls = function()
+    console.textbuffer, console.textcolors, console.currentLine = {}, {}, 1
+    for i=1,self.linesLimit do table.insert(self.textbuffer,"") end
+    for i=1,self.linesLimit do table.insert(self.textcolors,8) end
+  end
   local function reset()
     self.G = runtime.newGlobals()
     self.G.cprint = print
@@ -58,6 +59,10 @@ function console:_init()
     -- we ignore compile errors here; I think that is OK, but maybe warn?
     if(chunk) then chunk() end
     self.G.reset = reset
+    self.G.cls = cls
+    cls()
+    self:tout("LUA CONSOLE", 8)
+    self:tout("> ", 8, true)
   end
   reset()
 end
