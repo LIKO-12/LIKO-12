@@ -138,6 +138,8 @@ local function newAPI(noFS,sprsheetmap)
     _ShouldDraw = true
   end
 
+  api.map = require("editor.map").api_draw
+
   function api.print(text,lx,ly)
     love.graphics.print(text, api.floor((lx or 1)+_goffset.printX), api.floor((ly or 1)+_goffset.printY)) _ShouldDraw = true --_goffset.rectX
   end

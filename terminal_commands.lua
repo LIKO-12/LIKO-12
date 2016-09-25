@@ -48,6 +48,7 @@ end
 function CMD.new()
   require("editor.sprite"):load()
   require("editor.code"):load()
+  require("editor.map"):load()
   require("editor").lastCart = nil
   require("editor").lastSprpng = nil
   tout("CLEARED MEMORY",7)
@@ -65,9 +66,11 @@ function CMD.save(command,name)
   if not name then tout("PLEASE PROVIDE A NAME TO SAVE",9) return end
   local sm = require("editor.sprite"):export()
   local cd = require("editor.code"):export()
+  local mp = require("editor.map"):export()
   local saveCode = "local code = [["..cd.."]]\n\n"
   saveCode = saveCode .. "local spritemap = '"..sm.."'\n\n"
-  saveCode = saveCode .. "return {code=code,spritemap=spritemap}"
+  saveCode = saveCode .. "local map = '"..mp.."'\n\n"
+  saveCode = saveCode .. "return {code=code,spritemap=spritemap,map=map}"
   local ok, err = api.fs.write(name,saveCode)
   if ok then
     tout("SAVED TO "..name,12)
@@ -91,8 +94,9 @@ function CMD.load(command,name)
   api.SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
   require("editor").lastsprpng = nil
   require("editor.code"):load(data.code)
-  tout("LOADED "..name,12)
+  require("editor.map"):load(data.map)
   require("editor").lastCart = name
+  tout("LOADED "..name,12)
 end
 
 function CMD.export(command,path)
