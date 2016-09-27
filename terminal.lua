@@ -1,3 +1,4 @@
+local lume = require("libraries.lume")
 local Terminal = {}
 
 --local api.EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
@@ -29,10 +30,13 @@ end
 function Terminal:tout(text,col,skipnl,pathLen)
   local text = text or ""
   local length = pathLen and (Terminal.lengthLimit-5)-(self.rootDir:len()+1) or Terminal.lengthLimit
-  for line,str in ipairs(self:wrap_string(text,length)) do
-    self:tout_line(str,col,skipnl)
+  for _,line in ipairs(lume.split(text, "\n")) do
+    for _,wrapped_line in ipairs(self:wrap_string(line,length)) do
+      self:tout_line(wrapped_line,col,skipnl)
+    end
   end
 end
+
 function Terminal:tout_line(text,col,skipnl)
   self.textcolors[self.currentLine] = col or self.textcolors[self.currentLine]
   if skipnl then

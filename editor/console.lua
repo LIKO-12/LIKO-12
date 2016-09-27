@@ -1,13 +1,10 @@
 local terminal = require("terminal")
 local runtime = require("runtime")
 local lume = require("libraries.lume")
-
--- use lume for serialization, which is so lame but good enough for nom
-local pps = lume.serialize
+local inspect = require("libraries.inspect")
 
 local console = lume.clone(terminal) --Clone the terminal
 console._kpress = nil
-console.textbuffer, console.textcolors, console.currentLine = {}, {}, 1
 console.lengthLimit = 45
 console.linesLimit = 14
 
@@ -26,10 +23,10 @@ local eval = function(input, console_print)
   local trace
   local result = pack(xpcall(chunk, function(e) trace = debug.traceback() err = e end))
   if(result[1]) then
-    local output, i = pps(result[2]), 3
+    local output, i = inspect(result[2]), 3
     -- pretty-print out the values it returned.
     while i <= #result do
-      output = output .. ', ' .. pps(result[i])
+      output = output .. ', ' .. inspect(result[i])
       i = i + 1
     end
     console_print(output,7)
@@ -45,11 +42,12 @@ local eval = function(input, console_print)
 end
 
 function console:_init()
-  for i=1,self.linesLimit do table.insert(self.textbuffer,"") end
-  for i=1,self.linesLimit do table.insert(self.textcolors,8) end
   api.keyrepeat(true)
-  self:tout("LUA CONSOLE",8)
-  self:tout("> ", 8, true)
+  local cls = function()
+    console.textbuffer, console.textcolors, console.currentLine = {}, {}, 1
+    for i=1,self.linesLimit do table.insert(self.textbuffer,"") end
+    for i=1,self.linesLimit do table.insert(self.textcolors,8) end
+  end
   local function reset()
     self.G = runtime.newGlobals()
     self.G.cprint = print
@@ -58,6 +56,10 @@ function console:_init()
     -- we ignore compile errors here; I think that is OK, but maybe warn?
     if(chunk) then chunk() end
     self.G.reset = reset
+    self.G.cls = cls
+    cls()
+    self:tout("LUA CONSOLE", 8)
+    self:tout("> ", 8, true)
   end
   reset()
 end
