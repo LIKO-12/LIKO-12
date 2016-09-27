@@ -18,17 +18,18 @@ We have an irc channel #liko12 at irc.oftc.net , feel free to join us
 	https://github.com/RamiLego4Game/LIKO-12
 	Licensed under GPL-3, see LICENSE file for more info
 	Author: RamiLego4Game // ramilego4game@gmail.com
-	Contributers:
+	Contributors:
 		technomancy: The editor console code.
 	
 	LIKO-12 is built with:
-		L�VE Framework: http://love2d.org/
+		LÖVE Framework: http://love2d.org/
 ==========================================================================================
 
 Welcome to LIKO-12:
 	LIKO-12 is a PICO-8 clone but with extra abilities, different api and bigger screen width.
-	We are working on this because PICO-8 is not available for free, and to create a clone
-	without code limits (No tokens limit :) ).
+	We are working on this because PICO-8 is not available under a free license that allows
+	improvements and sharing, and also to lift some of the more restrictive limitations on games
+	like the token limit.
 	
 	What's PICO-8 ??
 	
@@ -36,8 +37,9 @@ Welcome to LIKO-12:
 	programs. When you turn it on, the machine greets you with a shell for typing in Lua programs 
 	straight away and provides simple built-in tools for creating sprites, maps and sound.
 
-	- LIKO-12 comes with a terminal, lua console, sprites editor and a code editor.
-	It also comes with a modified PICO-8 font that have small letters support.
+	- LIKO-12 comes with a terminal, lua console, sprites editor and a code editor. It also comes
+	with a modified pixel font which includes lower-case letters. We plan on adding a map editor and
+	audio/music editor in the future.
 	
 	- So you can basicly create spritesheets, and games using this console.
 
@@ -49,8 +51,9 @@ Welcome to LIKO-12:
 
 	Escape: Quit running cart or switch between editors and the terminal.
 	Mouse Wheel: Move up/down/left/right the cursor in the code editor.
-	
-	Player controls:
+	Ctrl-pageup/pagedown: Change between editor modes.
+
+	In-game player controls:
 
 		player 1
 		id:1,   2,    3,    4,     5,         6
@@ -66,8 +69,8 @@ Welcome to LIKO-12:
 	Input: Full access to Mouse, Touch and Keyboard !
 	SpriteSheet: 288 sprite (24x12)
 	Code: LuaJit 5.1
-	L�VE: 0.10.1
-	Runs on: Windows, Linux, Mac, Android, iOS, RaspberryPi (Check PiLove).
+	LÖVE: 0.10.1
+	Runs on: Windows, Linux, Mac, Android, iOS, RaspberryPi (see PiLove).
 
 :: Bugs/Crashes reports
 
@@ -84,12 +87,12 @@ Welcome to LIKO-12:
 	
 	Try to to press and drag anywhere on the screen.
 	
-	To quit the cart press escape key, now to view the source code/ sprites of the cart press escape key again.
-	Now in the sprites editor try to edit the hello world sprite then press escape to return to the terminal and type run.
+	To quit the cart press escape key, now to view the source code and sprites of the cart press escape key again.
+	Now in the sprite editor try to edit the hello world sprite, then press escape to return to the terminal and type run.
 	
-	Awesome right ?
+	Awesome right?
 	
-	To save your cart type ( you may replace myhelloworld with any name you like ):
+	To save your cart type (you may replace myhelloworld with any name you like):
 	
 		save myhelloworld
 		
@@ -129,8 +132,8 @@ Welcome to LIKO-12:
 	
 		export editorsheet
 		reload
-		
-	Have fun hacking this :3
+
+    Have fun hacking this :3
 	
 :: Terminal Commands
 
@@ -154,30 +157,30 @@ Welcome to LIKO-12:
 :: Screen Rendering
 
 LIKO-12 has non clearing canvas rendering system this means:
-	- You don't have to redraw everything when resizeing thr lk12 window
-	- The screen doesn't clears every frame
+	- You don't have to redraw everything when resizeing the lk12 window
+	- The screen doesn't clear every frame
 	- You can draw to the screen anywhere in the code
- 
-	Note: the everything called before _init() will be cleared.
+
+	Note: everything called before _init() will be cleared.
 
 :: Getting Started
 
 To get started do the hello world tutorial then load and play demo games.
-  
+
 After that let's start:
-	Load the helloworld cart, then true to edit the logo and run thr game.
-	Go back to the editor and switch to the code editor (The [] tab)
-	From here you can start by reading the demos code
+	Type "load demos/helloworld" then type "run" to start it
+	Go back to the editor (press esc twice) and switch to the code editor (The [] tab)
+	From here you can start by reading the demo's code
 	
 How carts work:
-	The game code get's excuted to overwrite the global callbacks
+	The game code gets excuted to overwrite the global callbacks
 	Then the screen is cleared with black color
-	After that the _init callback is called so the cart draws
-	Finally whenever input happens the relevant callbacks are called so the game draws new content.
-	On update the _update callback is called with delta time.
+	After that the _init callback is called so the cart can draw
+	Periodically the _update callback is called with delta time
+	Finally whenever input happens the relevant callbacks are called so the game draws new content
  
 SpriteSheet:
-	Before running game code, the spritesheet is loaded to the globals, so the game gets access to it's spritesheet
+	Before running game code, the spritesheet is loaded to the globals so the game gets access to its spritesheet
  
 So now read the demo games, and be sure to check the API documentation bellow.
 
@@ -196,7 +199,7 @@ You should overwrite the callbacks you want to use, ex: function _init() end
 
 _init
 	This function is called at the initialization of your game.
-	Start your game drawing from here, because any draw calls called when compiling your game code are cleared.
+	Start your game drawing from here, because any draw calls at the top level of your code are cleared.
 
 _update dt
 	This function is called everyframe.
@@ -290,7 +293,7 @@ circle/circle_line x,y,r,[c]
 
 rect/rect_line x,y,w,h,[c]
 	Draws a rectangle with the given specifications
-	- x,y (Numbers): The position of the topleft corner of thr rect.
+	- x,y (Numbers): The position of the topleft corner of the rect.
 	- w,h (Numbers): The width and height of the rectangle.
 	- c [Number]: The color to set to
  
@@ -310,7 +313,7 @@ Sprite sprid, x,y, [r], [sx],[sy], [sprsheet]
 
 SpriteGroup sprid, x,y, w,h, [sx],[sy], [sprsheet]
 	Draws a group of sprites at the given pos.
-	- sprid (Number): The id of thr top left sprite in the group.
+	- sprid (Number): The id of the top left sprite in the group.
 	- x,y (Numbers): The topleft corner position
 	- w,w (Numbers): The number of the sprites in width and height
 	- sx,sy [Numbers]: The sprite width and hight multiplying factor.
@@ -339,30 +342,31 @@ isInRect x,y,rect
 	Returns true is the point is in the rect.
 	- x,y (Numbers): The x and y positions of the point.
 	- rect (Table): Rect table: {x,y,w,h}
-	+ (Boolean): is in rect.
+	returns (Boolean): is in rect.
  
 whereInGrid x,y,grid
 	Returns false if the point is not in the grid at all.
 	Return cellx, celly if the point is in the grid.
 	- x,y (Numbers): the x and y posotions of the point to test.
 	- grid (Table): The grid config {x,y,cellw,cellh,w,h}
-	+ cx,cy (Numbers): The position in the grid.
+	returns cx,cy (Numbers): The position in the grid.
 
 btn n, player
 	Returns the state of the specific player button, use in _update
-	Check player controls section at the top
 	- n (Number): the id of the button
 	- p (Number): the number of the player (1/2)
-	+ state (Boolean): the state of the button
+    returns state (Boolean): the state of the button
+    Each player has four directional keys and two other keys. See the "keys" section above for a
+    listing of key ids.
 
 getMPos
 	Returns the current position of the mouse, may break some touch compatibility..
-	+ x,y (Numbers): The position of the mouse, or the last moved touch.
+	returns x,y (Numbers): The position of the mouse, or the last moved touch.
 
 isMDown b
 	Returns if the specific mouse button is pressed down or not, may break some touch compatibility..
 	- b (Number): The id of the button to check: 1:left 2:right 3:middle
-	+ isDown (Boolean): The state of the mouse button, true for button 1 if the screen is touched.
+	returns (Boolean): The state of the mouse button, true for button 1 if the screen is touched.
 
 :: Misc
 
