@@ -1,3 +1,4 @@
+local lume = require("libraries.lume")
 local r = {}
 
 function r:newGlobals(spritesheet)
@@ -6,6 +7,7 @@ function r:newGlobals(spritesheet)
     error=error,
     ipairs=ipairs,
     pairs=pairs,
+    ripairs = lume.ripairs,
     next=next,
     pcall=pcall,
     select=select,
@@ -116,7 +118,7 @@ function r:loadGame(code,spritesheet,onerr,...)
   if not ok then return err end
   self.cg = G
   self.onerr = onerr or error
-  
+  require("editor.console").G = G
   return self
 end
 
