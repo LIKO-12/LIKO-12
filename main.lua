@@ -3,6 +3,8 @@ love.graphics.setDefaultFilter("nearest")
 api = require("api") --I STILL WANT IT AS A GLOBAL !
 local utf8 = require("utf8")
 
+local debugrun = false
+
 function love.mousepressed(x,y,button,istouch)
 	local x,y = _ScreenToLiko(x,y) if x < 0 or x > 192 or y < 0 or y > 128 then return end
   _auto_mpress(x,y,button,istouch)
@@ -80,9 +82,12 @@ function love.load()
   api.clear() --Clear the canvas for the first time
   api.stroke(1)
   
-  require("autorun")
-  --require("debugrun")
-  --require("editor")
+  if debugrun then
+    require("debugrun")
+  else
+    require("autorun")
+  end
+  
   _auto_init()
 end
 
