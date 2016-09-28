@@ -161,6 +161,7 @@ function love.run()
 		if love.graphics and love.graphics.isActive() and (_ShouldDraw or _ForceDraw) then
 			love.graphics.setCanvas()
 			love.graphics.origin()
+			love.graphics.clear(0,0,0,255)
 			love.graphics.setColor(255,255,255)
 			love.graphics.draw(_ScreenCanvas, _ScreenX,_ScreenY, 0, _ScreenScaleX,_ScreenScaleY)
 			--love.graphics.api.points(1,1,_ScreenWidth,_ScreenHeight)
