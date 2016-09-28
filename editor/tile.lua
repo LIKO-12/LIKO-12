@@ -15,12 +15,21 @@ for i = 1, 4 do
   sprsbquads[i] = api.SpriteMap:image():quad(1,(i*8*3-8*3)+1,_,3*8)
 end
 
+local mapgrid = {1,9,192,8*8,24,8}
+t.map = api.MapObj()
+
 function t:_switch()
   sprsmflag = false
 end
 
 function t:_redraw()
+  self:redrawMap()
   self:redrawSPRS()
+end
+
+function t:redrawMap()
+  api.rect(1,9,self.map:width()*8,self.map:height()*8,1)
+  self.map:draw(1,9)
 end
 
 function t:redrawSPRS()
@@ -42,6 +51,13 @@ function t:_mpress(x,y,b,it)
     local idbank = api.floor((sprsid-1)/(24*3))+1
     if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*24*3 elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*24*3 end
     self:redrawSPRS()
+  end
+  
+  local cx, cy = api.whereInGrid(x,y,mapgrid)
+  if cx then
+    self.map:cell(cx,cy,sprsid)
+    
+    self:redrawMap()
   end
   
   local cx, cy = api.whereInGrid(x,y,sprsgrid)
