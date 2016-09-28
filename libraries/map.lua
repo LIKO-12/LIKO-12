@@ -3,7 +3,7 @@
 local Map = _Class("liko12.map")
 
 function Map:initialize(w,h)
-  self.w, self.h = w or 24, h or 28
+  self.w, self.h = w or 24, h or 8
   --Initialize the map table
   self.m = {}
   for x=1, self.w do
@@ -21,7 +21,8 @@ function Map:map(func)
   if func then
     for x=1, self.w do
       for y=1, self.h do
-        self.m[x][y] = func(x,y,self.m[x][y]) or self.m[x][y]
+        --self.m[x][y] = func(x,y,self.m[x][y]) or self.m[x][y]
+        func(x,y,self.m[x][y])
       end
     end
   end
@@ -59,7 +60,8 @@ function Map:draw(dx,dy,x,y,w,h,sx,sy)
   local dx,dy,x,y,w,h,sx,sy = dx or 1, dy or 1, x or 1, y or 1, w or self.w, h or self.h, sx or 1, sy or 1
   local cm = self:cut(x,y,w,h)
   cm:map(function(spx,spy,sprid)
-    Sprite(sprid,spx*8*sx - 8*sx, spy*8*sy - 8*sy, 0, sx, sy)
+    if sprid < 1 then return end
+    api.Sprite(sprid,dx + spx*8*sx - 8*sx, dy + spy*8*sy - 8*sy, 0, sx, sy)
   end)
   return self
 end
