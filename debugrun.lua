@@ -1,4 +1,4 @@
-function _init()
+function _auto_init()
  api.points(1,1, 192,1, 192,128, 1,128, 8)
  api.points(0,1, 193,1, 193,128, 0,128, 3)
  api.points(1,0, 192,0, 192,129, 1,129, 3)
@@ -16,3 +16,14 @@ function _init()
  api.color(8)
  api.print_grid("0 TEST",1,1)
 end
+
+function _auto_update() end
+function _auto_tpress() end
+function _auto_tmove() end
+function _auto_trelease() end
+function _auto_mpress() end
+function _auto_mmove() end
+function _auto_mrelease() end
+function _auto_tinput() end
+function _auto_kpress() end
+function _auto_krelease() end
