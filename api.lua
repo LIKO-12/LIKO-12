@@ -308,7 +308,8 @@ local function newAPI(noFS,sprsheetmap)
   function api.showkeyboard(state) love.keyboard.setTextInput(state) end
   function api.isMobile() return _isMobile or false end
   
-  TextBuffer = love.filesystem.load("/libraries/textbuffer.lua")()
+  api.TextBuffer = love.filesystem.load("/libraries/textbuffer.lua")()
+  api.MapObj = love.filesystem.load("/libraries/map.lua")()
 
   --Spritesheet--
   api.EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
