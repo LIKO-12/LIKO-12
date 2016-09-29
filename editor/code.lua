@@ -10,6 +10,13 @@ comment = _GetColor(14),
 str = _GetColor(13),
 }
 
+function cedit:_init(editor)
+  self:resetBuffer()
+  self.keymap = self.keymap or {}
+  self.parent = self.buffer
+  self.buffer.parent = editor
+end
+
 function cedit:resetBuffer()
   self.buffer = api.TextBuffer(1,2,47,14,0,0,0)
   function self.buffer:_redraw() --To add syntax highlighting
@@ -79,10 +86,6 @@ function cedit:_mmove(x,y,dx,dy,it,iw)
   end
 end
 
-function cedit:_kpress(k,sc,ir)
-  self.buffer:_kpress(k,sc,ir)
-end
-
 function cedit:_tinput(t)
   self.buffer:_tinput(t)
 end
@@ -92,7 +95,5 @@ function cedit:_tpress()
   --self.lineLimit = 7
   api.showkeyboard(true)
 end
-
-cedit:resetBuffer()
 
 return cedit
