@@ -116,14 +116,6 @@ function tb:_redraw()
   end
 end
 
-function tb:_kpress(k,sc,ir)
-  if self.keymap[k] then
-    self.keymap[k](self,ir)
-    self:_redraw()
-  end
-  self:forceBlink()
-end
-
 function tb:_tinput(t)
   self:forceBlink()
   --print(self.buffer[self.cursorY]:sub(0,self.cursorX-1)..t..self.buffer[self.cursorY]:sub(self.cursorX,-1))

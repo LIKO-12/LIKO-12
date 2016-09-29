@@ -10,7 +10,7 @@ function Editor:_init()
   self:switchEditor(self.curid)
   for _,e in pairs(Editor.editors) do
     local m = require("editor."..e)
-    if m._init then m:_init() end
+    if m._init then m:_init(Editor) end
     if not m.keymap then m.keymap = {} end
     if not m.parent then m.parent = Editor end
   end
@@ -90,13 +90,13 @@ local key_for = function(k)
   return k
 end
 
-local function find_binding(key, mode)
+function Editor.find_binding(key, mode)
   if mode.keymap[key] then return mode.keymap[key], mode end
-  if mode.parent then return find_binding(key, mode.parent) end
+  if mode.parent then return Editor.find_binding(key, mode.parent) end
 end
 
 function Editor:_kpress(k,sc,ir)
-  local command, mode = find_binding(key_for(k), self.Current)
+  local command, mode = Editor.find_binding(key_for(k), self.Current)
   if command then
     command(mode)
     mode:_redraw()
