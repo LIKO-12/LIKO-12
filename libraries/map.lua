@@ -3,7 +3,7 @@
 local Map = _Class("liko12.map")
 
 function Map:initialize(w,h)
-  self.w, self.h = w or 24, h or 8
+  self.w, self.h = w or 24, h or 9
   --Initialize the map table
   self.m = {}
   for x=1, self.w do
@@ -62,6 +62,26 @@ function Map:draw(dx,dy,x,y,w,h,sx,sy)
   cm:map(function(spx,spy,sprid)
     if sprid < 1 then return end
     api.Sprite(sprid,dx + spx*8*sx - 8*sx, dy + spy*8*sy - 8*sy, 0, sx, sy)
+  end)
+  return self
+end
+
+function Map:export(filename)
+  local imgdata = api.ImageData(self.w,self.h)
+  self:map(function(x,y,sprid)
+    if sprid > 255 then
+      imgdata.imageData:setPixel(x-1,y-1,255,sprid-255,0,0)
+    else
+      imgdata.imageData:setPixel(x-1,y-1,sprid,0,0,0)
+    end
+  end)
+  return imgdata:export(filename)
+end
+
+function Map:import(imgdata)
+  imgdata.imageData:mapPixel(function(x,y,r,g,b,a)
+    self:cell(x+1,y+1,r+g)
+    return r,g,b,a
   end)
   return self
 end

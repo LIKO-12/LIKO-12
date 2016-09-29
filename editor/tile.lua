@@ -1,3 +1,6 @@
+
+local basexx = require("libraries.basexx")
+
 local t = {}
 
 local sprsrecto = {1,128-(8+24+1),192,24+2, 1} --SpriteSheet Outline Rect
@@ -15,8 +18,24 @@ for i = 1, 4 do
   sprsbquads[i] = api.SpriteMap:image():quad(1,(i*8*3-8*3)+1,_,3*8)
 end
 
-local mapgrid = {1,9,192,8*8,24,8}
-t.map = api.MapObj()
+local mapgrid = {1,9,192,9*8,24,9}
+local mapmflag = false
+
+function t:export(path)
+  local FileData = api.TileMap:export(path)
+  if not path then
+    return basexx.to_base64(FileData:getString())
+  end
+end
+
+--[[function t:load(path)
+  local map = api.Map
+  if path then
+    api.SpriteMap = api.SpriteSheet(api.Image("/"..path..".png"),24,12)
+  else
+    api.SpriteMap = api.SpriteSheet(api.ImageData(24*8,12*8):image(),24,12)
+  end
+end]]
 
 function t:_switch()
   sprsmflag = false
@@ -28,8 +47,8 @@ function t:_redraw()
 end
 
 function t:redrawMap()
-  api.rect(1,9,self.map:width()*8,self.map:height()*8,1)
-  self.map:draw(1,9)
+  api.rect(1,9,api.TileMap:width()*8,api.TileMap:height()*8,1)
+  api.TileMap:draw(1,9)
 end
 
 function t:redrawSPRS()
@@ -55,9 +74,9 @@ function t:_mpress(x,y,b,it)
   
   local cx, cy = api.whereInGrid(x,y,mapgrid)
   if cx then
-    self.map:cell(cx,cy,sprsid)
+    api.TileMap:cell(cx,cy,sprsid)
     
-    self:redrawMap()
+    self:redrawMap() mapmflag = true
   end
   
   local cx, cy = api.whereInGrid(x,y,sprsgrid)
@@ -72,6 +91,13 @@ function t:_mpress(x,y,b,it)
 end
 
 function t:_mmove(x,y,dx,dy,it,iw)
+  local cx, cy = api.whereInGrid(x,y,mapgrid)
+  if cx and mapmflag then
+    api.TileMap:cell(cx,cy,sprsid)
+    
+    self:redrawMap()
+  end
+  
   if (not it and sprsmflag) or it then
     local cx, cy = api.whereInGrid(x,y,sprsgrid)
     if cx then
@@ -86,6 +112,13 @@ function t:_mmove(x,y,dx,dy,it,iw)
 end
 
 function t:_mrelease(x,y,b,it)
+  local cx, cy = api.whereInGrid(x,y,mapgrid)
+  if cx and mapmflag then
+    api.TileMap:cell(cx,cy,sprsid)
+    
+    self:redrawMap() mapmflag = false
+  end
+  
   if (not it and sprsmflag) or it then
     local cx, cy = api.whereInGrid(x,y,sprsgrid)
     if cx then

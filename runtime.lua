@@ -1,7 +1,7 @@
 local lume = require("libraries.lume")
 local r = {}
 
-function r:newGlobals(spritesheet)
+function r:newGlobals(spritesheet,tilemap)
   local GLOB = {
     assert=assert,
     error=error,
@@ -71,7 +71,7 @@ function r:newGlobals(spritesheet)
       tanh=math.tanh,
     }
   }
-  local newAPI = api.newAPI(true,spritesheet)
+  local newAPI = api.newAPI(true,spritesheet,tilemap)
   for k,v in pairs(newAPI) do
     GLOB[k] = v
   end
@@ -104,12 +104,12 @@ function r:compile(code, G, spritesheet)
   return chunk
 end
 
-function r:loadGame(code,spritesheet,onerr,...)
+function r:loadGame(code,spritesheet,tilemap,onerr,...)
   --[[local success, err = self:compile(code, false, spritesheet, false)
   if not success then return false, err end
   self.onerr = onerr or error
   return true]] -- The loadGame will have it's own loading code because r:compile made by technomancy is so so buggy..
-  local G = self:newGlobals(spritesheet)
+  local G = self:newGlobals(spritesheet,tilemap)
   local cart, err = loadstring(code or "")
   if not cart then return false, err end
 

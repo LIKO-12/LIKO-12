@@ -31,7 +31,8 @@ function CMD.run(command,...)
   local cd = require("editor.code"):export()
   local rt = require("runtime")
   local sprsheet = api.SpriteSheet(api.ImageData(sm):image(),24,12)
-  local ok, err = rt:loadGame(cd,sprsheet,function(err)
+  local tilemap = api.MapObj(api.TileMap.w,api.TileMap.h):import(api.ImageData(require("editor.tile"):export()))
+    local ok, err = rt:loadGame(cd,sprsheet,tilemap,function(err)
     _auto_exitgame()
     tout("ERR: "..err,9)
     tout(term.rootDir.."> ",8,true)
@@ -50,6 +51,7 @@ function CMD.new()
   require("editor.code"):load()
   require("editor").lastCart = nil
   require("editor").lastSprpng = nil
+  api.TileMap = api.MapObj()
   tout("CLEARED MEMORY",7)
 end
 
@@ -65,9 +67,11 @@ function CMD.save(command,name)
   if not name then tout("PLEASE PROVIDE A NAME TO SAVE",9) return end
   local sm = require("editor.sprite"):export()
   local cd = require("editor.code"):export()
+  local tm = require("editor.tile"):export()
   local saveCode = "local code = [["..cd.."]]\n\n"
   saveCode = saveCode .. "local spritemap = '"..sm.."'\n\n"
-  saveCode = saveCode .. "return {code=code,spritemap=spritemap}"
+  saveCode = saveCode .. "local tilemap = '"..tm.."'\n\n"
+  saveCode = saveCode .. "return {code=code,spritemap=spritemap,tilemap=tilemap}"
   local ok, err = api.fs.write(name,saveCode)
   if ok then
     tout("SAVED TO "..name,12)
@@ -89,6 +93,13 @@ function CMD.load(command,name)
   local ok, data = pcall(chunk)
   if not ok then tout("ERR: "..data,9) return end
   api.SpriteMap = api.SpriteSheet(api.ImageData(data.spritemap):image(),24,12)
+  if data.tilemap then
+    local MapData = api.ImageData(data.tilemap)
+    api.TileMap = api.MapObj()
+    api.TileMap:import(MapData)
+  else
+    api.TileMap = api.MapObj()
+  end
   require("editor").lastsprpng = nil
   require("editor.code"):load(data.code)
   tout("LOADED "..name,12)

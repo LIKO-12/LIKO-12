@@ -57,7 +57,7 @@ _ColorSet[0] = {0,0,0,0}
     return false
   end
 
-local function newAPI(noFS,sprsheetmap)
+local function newAPI(noFS,sprsheetmap,carttilemap)
   local api = {}
 
   --Callbacks--
@@ -314,6 +314,7 @@ local function newAPI(noFS,sprsheetmap)
   --Spritesheet--
   api.EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
   api.SpriteMap = sprsheetmap or api.SpriteSheet(api.ImageData(24*8,12*8):image(),24,12)
+  api.TileMap = carttilemap or api.MapObj()
 
   return api
 end
