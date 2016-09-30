@@ -10,15 +10,15 @@ comment = _GetColor(14),
 str = _GetColor(13),
 }
 
-function cedit:_init(editor)
+function cedit:_init()
   self:resetBuffer()
   self.keymap = self.keymap or {}
-  self.parent = self.buffer
-  self.buffer.parent = editor
 end
 
 function cedit:resetBuffer()
   self.buffer = api.TextBuffer(1,2,47,14,0,0,0)
+  self.parent = self.buffer
+  self.buffer.parent = require("editor")
   function self.buffer:_redraw() --To add syntax highlighting
     api.rect(1,9,192,128-16,6) api.color(7)
     local dbuff, gx,gy, sr = self:getLinesBuffer()
