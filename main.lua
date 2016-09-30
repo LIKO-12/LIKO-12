@@ -2,6 +2,8 @@ io.stdout:setvbuf("no")
 love.graphics.setDefaultFilter("nearest")
 api = require("api") --I STILL WANT IT AS A GLOBAL !
 local utf8 = require("utf8")
+local giflib = require("gif")
+local gifrecording
 
 local debugrun = false
 
@@ -40,6 +42,27 @@ function love.touchreleased(id,x,y,dx,dy,pressure)
 end
 
 function love.keypressed(key,scancode,isrepeat)
+  if key == "f8" or key == "f3" then
+    if not gifrecording then
+      local err
+      gifrecording, err = giflib.new("data/LIKO12-"..os.time()..".gif")
+      if not gifrecording then
+        print("Failed to start recording: "..err)
+      else
+        print("Started recording ...") _ShoudDraw = true --To flash the first frame
+      end
+    else
+      print("Recording already in progress")
+    end
+  elseif key == "f4" or key == "f9" then
+    if gifrecording then
+      gifrecording:close()
+      print("Saved gif recording to: "..gifrecording.filename)
+      gifrecording = nil
+    else
+      print("No active gif recording !")
+    end
+  end
   _auto_kpress(key,scancode,isrepeat)
 end
 
@@ -67,6 +90,8 @@ function love.load()
   api.loadDefaultCursors()
   _ScreenCanvas = love.graphics.newCanvas(192,128)
   _ScreenCanvas:setFilter("nearest")
+  _GifCanvas = love.graphics.newCanvas(192*_GIFSCALE,128*_GIFSCALE)
+  _GifCanvas:setFilter("nearest")
   love.graphics.clear(0,0,0,255)
   love.graphics.setCanvas(_ScreenCanvas)
   love.graphics.clear(0,0,0,255)
@@ -161,6 +186,16 @@ function love.run()
 		if love.graphics and love.graphics.isActive() and (_ShouldDraw or _ForceDraw) then
 			love.graphics.setCanvas()
 			love.graphics.origin()
+      
+      if gifrecording then
+        love.graphics.setCanvas(_GifCanvas)
+        love.graphics.clear(0,0,0,255)
+        love.graphics.setColor(255,255,255,255)
+        love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFSCALE, _GIFSCALE)
+        gifrecording:frame(_GifCanvas:newImageData())
+        love.graphics.setCanvas()
+      end
+      
 			love.graphics.clear(0,0,0,255)
 			love.graphics.setColor(255,255,255)
 			love.graphics.draw(_ScreenCanvas, _ScreenX,_ScreenY, 0, _ScreenScaleX,_ScreenScaleY)

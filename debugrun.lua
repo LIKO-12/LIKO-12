@@ -1,4 +1,5 @@
 function _auto_init()
+ api.showkeyboard(true)
  api.points(1,1, 192,1, 192,128, 1,128, 8)
  api.points(0,1, 193,1, 193,128, 0,128, 3)
  api.points(1,0, 192,0, 192,129, 1,129, 3)

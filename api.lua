@@ -4,6 +4,8 @@ require("offsets")
 _LK12VER = "V0.0.4 DEV"
 _LK12VERC = 9--9 DEV, 10 PRE
 
+_GIFSCALE = 2
+
 --Mobiles Cursor FIX--
 if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
 love.mouse.newCursor = function() end
