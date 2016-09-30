@@ -107,16 +107,18 @@ function CMD.load(command,name)
 end
 
 function CMD.export(command,path)
+  local es = (path == "editorsheet") or false
   local path = path or require("editor").lastSprpng
   if not path then tout("PLEASE PROVIDE A PATH TO EXPORT TO",9) return end
-  require("editor.sprite"):export(path)
-  tout("EXPORTED TO "..path..".PNG",12)
+  require("editor.sprite"):export(es and path or "data/"..path)
+  tout("EXPORTED TO /"..path..".PNG",12)
 end
 
 function CMD.import(command,path)
+  local es = (path == "editorsheet") or false
   if not path then tout("PLEASE PROVIDE A PATH TO IMPORT FROM",9) return end
-  if not love.filesystem.exists(path..".png") then tout(path..".png DOES NOT EXISTS !") return end
-  require("editor.sprite"):load(path)
+  if not love.filesystem.exists(es and path..".png" or "data/"..path..".png") then tout("/"..path..".png DOES NOT EXISTS !") return end
+  require("editor.sprite"):load(es and path or "data/"..path)
   tout("IMPORTED /"..path..".PNG",12)
   require("editor").lastSprpng = path
 end
@@ -160,6 +162,10 @@ function CMD.dir(command,path)
 end
 
 CMD.ls = CMD.dir
+
+function CMD.folder()
+  love.system.openURL("file://"..love.filesystem.getSaveDirectory().."/data"..term.rootDir)
+end
 
 local function delDir(path)
   local files = api.fs.dirItems(path)
