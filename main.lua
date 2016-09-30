@@ -45,11 +45,11 @@ function love.keypressed(key,scancode,isrepeat)
   if key == "f8" or key == "f3" then
     if not gifrecording then
       local err
-      gifrecording, err = giflib.new("LIKO12-"..os.time()..".gif")
+      gifrecording, err = giflib.new("data/LIKO12-"..os.time()..".gif")
       if not gifrecording then
         print("Failed to start recording: "..err)
       else
-        print("Started recording ...")
+        print("Started recording ...") _ShoudDraw = true --To flash the first frame
       end
     else
       print("Recording already in progress")
@@ -190,6 +190,7 @@ function love.run()
       if gifrecording then
         love.graphics.setCanvas(_GifCanvas)
         love.graphics.clear(0,0,0,255)
+        love.graphics.setColor(255,255,255,255)
         love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFSCALE, _GIFSCALE)
         gifrecording:frame(_GifCanvas:newImageData())
         love.graphics.setCanvas()

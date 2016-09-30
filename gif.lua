@@ -1,6 +1,6 @@
 -- GIF encoder specialized for PICO-8
 -- by gamax92.
-
+-- Updated for liko12 by RamiLego4Game
 local palmap={}
 
 for i=1, 16 do
@@ -18,6 +18,10 @@ end
 local gif={}
 
 function gif:frame(data)
+  --[[data:mapPixel(function(x,y,r,g,b,a)
+    local lk12id = _GetColorID(r,g,b,255) or 1
+    return unpack(_ColorSet[lk12id])
+  end)]]
 	self.file:write("\33\249\4\4\3\0\0\0")
 	local last=self.last
 	local x0, y0, x1, y1=0, nil, 192*_GIFSCALE-1, 128*_GIFSCALE-1
@@ -101,7 +105,7 @@ function gif:frame(data)
 	for y=y0, y1 do
 		for x=x0, x1 do
 			local r, g, b=data:getPixel(x, y)
-			local index=palmap[bit.lshift(r, 16)+bit.lshift(g, 8)+b] --FIXME PLEASE
+			local index=string.char(palmap[bit.lshift(r, 16)+bit.lshift(g, 8)+b]) --FIXME PLEASE
 			local temp=buffer..index
 			if codetbl[temp] then
 				buffer=temp
