@@ -193,6 +193,21 @@ end
 
 local clipboard = nil
 
+local make_transformation = function(lookup)
+  return function()
+    local current = api.SpriteMap:extract(sprsid)
+    local data = api.SpriteMap:data()
+    local qx,qy = api.SpriteMap:rect(sprsid)
+    for x=1,imgw do
+      for y=1,imgh do
+        data:setPixel(qx+x-1,qy+y-1,{current:getPixel(lookup(x,y))})
+      end
+    end
+    api.SpriteMap.img = data:image()
+    s:redrawSPR() s:redrawSPRS()
+  end
+end
+
 s.keymap = {
   ["ctrl-c"] = function()
     clipboard = api.SpriteMap:extract(sprsid)
@@ -210,6 +225,11 @@ s.keymap = {
     api.SpriteMap.img = data:image()
     s:redrawSPR() s:redrawSPRS()
   end,
+
+  -- TODO: find better key bindings
+  ["ctrl-r"] = make_transformation(function(x,y) return y,9-x end),
+  ["ctrl-h"] = make_transformation(function(x,y) return 9-x,y end),
+  ["ctrl-f"] = make_transformation(function(x,y) return x,9-y end),
 }
 
 return s
