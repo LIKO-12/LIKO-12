@@ -191,4 +191,25 @@ function s:_mrelease(x,y,b,it)
   end
 end
 
+local clipboard = nil
+
+s.keymap = {
+  ["ctrl-c"] = function()
+    clipboard = api.SpriteMap:extract(sprsid)
+  end,
+
+  ["ctrl-v"] = function()
+    if not clipboard then return end
+    local data = api.SpriteMap:data()
+    local qx,qy = api.SpriteMap:rect(sprsid)
+    for x=1,imgw do
+      for y=1,imgh do
+        data:setPixel(qx+x-1,qy+y-1,{clipboard:getPixel(x,y)})
+      end
+    end
+    api.SpriteMap.img = data:image()
+    s:redrawSPR() s:redrawSPRS()
+  end,
+}
+
 return s
