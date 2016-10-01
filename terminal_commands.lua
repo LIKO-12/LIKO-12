@@ -151,7 +151,7 @@ function CMD.dir(command,path)
   local dirstring = ""
   local filestring = ""
   for k,v in ipairs(files) do
-    if api.fs.isDir(curpath..v) then
+    if api.fs.isDir(curpath..v) and not curpath..v ~= "/backup.lk12" then
       dirstring = dirstring.." "..v
     else
       filestring = filestring.." "..v
