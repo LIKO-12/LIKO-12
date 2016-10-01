@@ -163,7 +163,11 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
   function api.ImageData:initialize(w,h) if h then self.imageData = love.image.newImageData(w or 192, h or 128) elseif type(w) == "string" then self.imageData = love.image.newImageData(love.filesystem.newFileData(w,"spritemap","base64")) else self.imageData = w end end
   function api.ImageData:size() return self.imageData:getDimensions() end
   function api.ImageData:getPixel(x,y) return self.imageData:getPixel((x or 1)-1,(y or 1)-1) end
-  function api.ImageData:setPixel(x,y,c) self.imageData:setPixel((x or 1)-1,(y or 1)-1,unpack(_GetColor(c))) return self end
+  function api.ImageData:setPixel(x,y,c)
+    if(type(c) ~= "table") then c = _GetColor(c) end -- accept palette color or {r,g,b}
+    self.imageData:setPixel((x or 1)-1,(y or 1)-1,unpack(c))
+    return self
+  end
   function api.ImageData:map(mf)
     self.imageData:mapPixel(
       function(x,y,r,g,b,a)
