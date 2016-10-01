@@ -212,6 +212,12 @@ function love.run()
 	end
  if _REBOOT then
    _REBOOT = false
+   if gifrecording then
+     gifrecording:close()
+     print("Saved gif recording to: "..gifrecording.filename)
+     gifrecording = nil
+   end
+   
    for k,v in pairs(package.loaded) do
      package.loaded[k] = nil
    end
