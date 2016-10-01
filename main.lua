@@ -179,6 +179,8 @@ function love.run()
 			love.timer.step()
 			dt = love.timer.getDelta()
 		end
+		
+		if _REBOOT then break end
  
 		-- Call update and draw
 		if love.update then love.update(dt) end -- will pass 0 if love.timer is disabled
@@ -208,5 +210,13 @@ function love.run()
  
 		if love.timer then love.timer.sleep(0.001) end
 	end
- 
+ if _REBOOT then
+   _REBOOT = false
+   for k,v in pairs(package.loaded) do
+     package.loaded[k] = nil
+   end
+   love.filesystem.load("conf.lua")()
+   love.filesystem.load("main.lua")()
+   love.run()
+ end
 end

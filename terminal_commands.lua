@@ -61,6 +61,12 @@ function CMD.reload()
   tout("RELOADED EDITORSHEET",7)
 end
 
+function CMD.reboot()
+  pcall(CMD.save,"save","/_backup")
+  _REBOOT = true
+  tout("REBOOTING...",7)
+end
+
 function CMD.save(command,name)
   local name = name
   if name then name = (name:sub(0,1) == "/" and name..".lk12" or term.rootDir..name..".lk12") else name = require("editor").lastCart end
@@ -153,7 +159,7 @@ function CMD.dir(command,path)
   for k,v in ipairs(files) do
     if api.fs.isDir(curpath..v) then
       dirstring = dirstring.." "..v
-    elseif curpath..v ~= "/x/backup.lk12" then
+    elseif curpath..v ~= "/x/_backup.lk12" then
       filestring = filestring.." "..v
     end
   end
@@ -168,7 +174,7 @@ function CMD.folder()
 end
 
 function CMD.shutdown()
-  pcall(CMD.save,"save","/backup")
+  pcall(CMD.save,"save","/_backup")
   love.event.quit()
 end
 
