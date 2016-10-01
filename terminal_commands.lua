@@ -167,6 +167,11 @@ function CMD.folder()
   love.system.openURL("file://"..love.filesystem.getSaveDirectory().."/data"..term.rootDir)
 end
 
+function CMD.shutdown()
+  pcall(CMD.save,"save","/backup.lk12")
+  love.event.quit()
+end
+
 local function delDir(path)
   local files = api.fs.dirItems(path)
   for k, file in ipairs(files) do
