@@ -151,9 +151,9 @@ function CMD.dir(command,path)
   local dirstring = ""
   local filestring = ""
   for k,v in ipairs(files) do
-    if api.fs.isDir(curpath..v) and not curpath..v ~= "/backup.lk12" then
+    if api.fs.isDir(curpath..v) then
       dirstring = dirstring.." "..v
-    else
+    elseif curpath..v ~= "/x/backup.lk12" then
       filestring = filestring.." "..v
     end
   end
@@ -168,7 +168,7 @@ function CMD.folder()
 end
 
 function CMD.shutdown()
-  pcall(CMD.save,"save","/backup.lk12")
+  pcall(CMD.save,"save","/backup")
   love.event.quit()
 end
 
