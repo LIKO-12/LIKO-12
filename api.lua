@@ -325,6 +325,8 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
   function api.keyrepeat(state) love.keyboard.setKeyRepeat(state) end
   function api.showkeyboard(state) love.keyboard.setTextInput(state) end
   function api.isMobile() return _isMobile or false end
+  function api.setclip(t) love.system.setClipboardText(t) end
+  function api.getclip() return love.system.getClipboardText() end
   
   api.TextBuffer = love.filesystem.load("/libraries/textbuffer.lua")()
   api.MapObj = love.filesystem.load("/libraries/map.lua")()
