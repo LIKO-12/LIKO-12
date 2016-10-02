@@ -14,12 +14,13 @@ We have an irc channel #liko12 at irc.oftc.net , feel free to join us
 ## LIKO-12.txt
 ```
 ==========================================================================================
-	LIKO-12 V0.0.3 PRE
+	LIKO-12 V0.0.4 PRE
 	https://github.com/RamiLego4Game/LIKO-12
 	Licensed under GPL-3, see LICENSE file for more info
 	Author: RamiLego4Game // ramilego4game@gmail.com
 	Contributors:
-		technomancy: The editor console code.
+		technomancy: Co-Developer.
+		gamax92: Gif recording.
 	
 	LIKO-12 is built with:
 		LÖVE Framework: http://love2d.org/

@@ -1,10 +1,11 @@
 ﻿==========================================================================================
-	LIKO-12 V0.0.3 PRE
+	LIKO-12 V0.0.4 PRE
 	https://github.com/RamiLego4Game/LIKO-12
 	Licensed under GPL-3, see LICENSE file for more info
 	Author: RamiLego4Game // ramilego4game@gmail.com
 	Contributors:
-		technomancy: The editor console code.
+		technomancy: Co-Developer.
+		gamax92: Gif recording.
 	
 	LIKO-12 is built with:
 		LÖVE Framework: http://love2d.org/
@@ -37,6 +38,9 @@ Welcome to LIKO-12:
 	Escape: Quit running cart or switch between editors and the terminal.
 	Mouse Wheel: Move up/down/left/right the cursor in the code editor.
 	Ctrl-pageup/pagedown: Change between editor modes.
+	Ctrl-c/Ctrl-v: Copy & Paste in the spriteeditor.
+	F8: Start gif recording (may be heavy in some devices).
+	F9: End the gif recoring and save it.
 
 	In-game player controls:
 
@@ -119,6 +123,11 @@ Welcome to LIKO-12:
 		reload
 
     Have fun hacking this :3
+
+:: Auto saving
+
+	LIKO-12 automatically saves your cart to /_backup.lk12 when typing shutdown/reload
+	(_backup.lk12 is hidden in the dir/ls command, do "load _backup" to load it)
 	
 :: Terminal Commands
 
@@ -138,6 +147,9 @@ Welcome to LIKO-12:
 	CD: Change the working directory.
 	DEL: Delete the give file/directory.
 	MKDIR: Creates a directory at the given path.
+	REBOOT: Reboots liko12 (And reloads all the internal code files).
+	SHUTDOWN: Quit liko12.
+	FOLDER: Opens the current directory with the host explorer.
 
 :: Screen Rendering
 
@@ -252,6 +264,12 @@ color [c]
 	Sets the current drawing color to the given color or black
 	- c [Number]: The new color.
 
+pushColor
+	Push the current color to the colors stack
+
+popColor
+	Pops/restores the last color in the colors stack
+
 clear [c]
 	Clears the screen and fills it with the given color black
 	- c [Number]: The color to fill with
@@ -363,12 +381,32 @@ showKeyboard state
  
 isMobile
 	Returns true if liko12 is running on a mobile device
+
+setclip
+	Sets the host's clipboard text
+
+getclip
+	Gets the host's clipboard text
  
-Image, ImageData, SpriteSheet, setCursor, newCursor, TextBuffer is not documented here, check api.lua for info about them 
+Image, ImageData, SpriteSheet, setCursor, newCursor, TextBuffer, Map is not documented here, check api.lua for info about them 
 
 ==========================================================================================
 	Changelog
 ==========================================================================================
+V0.0.4 PRE:
+1. New gif recording :3 (Thanks for gamax92)
+2. New Shutdown, Folder, Reboot commands (Reboot reloads all the internals of liko12 ! like launching it again)
+3. New WIP Tilemap editor.
+4. New api functions: pushColor, popColor, setclip, getclip
+5. Restored BTN back.
+6. Console crash fix.
+7. Spriteeditor copy & paste.
+8. Spriteeditor & Tilemapeditor sprite preview near the sprite id.
+9. Changed the small letter "a" to be more clear.
+10. New (non-documented :/) Map api (check libraries/map.lua).
+11. The setten color is no longer lost between frames/image draw calls.
+12. Bugfixes for the terminal & the textbuffer.
+
 V0.0.3 PRE:
 1. Bugfixed V0.0.2 pre bugs (about 5/6 bugs) :)
 2. Recoded the code editor to support vertical scrolling (no length limit anymore) [not fully bugtested..]
