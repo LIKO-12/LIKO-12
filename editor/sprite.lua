@@ -49,6 +49,21 @@ function s:export(path)
   end
 end
 
+function s:copy()
+  api.setclip(basexx.to_base64(api.SpriteMap:extract(sprsid):export():getString()))
+end
+
+function s:paste()
+  local ok, err = pcall(function()
+    local imd = api.ImageData(api.getclip() or "")
+    local dx,dy,dw,dh = api.SpriteMap:rect(sprsid)
+    local sheetdata = api.SpriteMap:data()
+    sheetdata:paste(imd,dx,dy,1,1,dw,dh)
+    api.SpriteMap.img = sheetdata:image()
+    self:_redraw()
+  end)
+end
+
 function s:load(path)
   if path then
     api.SpriteMap = api.SpriteSheet(api.Image("/"..path..".png"),24,12)
@@ -79,6 +94,9 @@ end
 function s:redrawSPR()
   api.rect(unpack(imgrecto))
   api.SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],api.SpriteMap:quad(sprsid))
+  api.color(1)
+  api.rect(sprsidrect[1]-9,sprsidrect[2]-1,8,8)
+  api.SpriteMap:image():draw(sprsidrect[1]-9,sprsidrect[2]-1,0,1,1,api.SpriteMap:quad(sprsid))
 end
 
 function s:_redraw()
@@ -188,6 +206,13 @@ function s:_mrelease(x,y,b,it)
       
       self:redrawSPRS() self:redrawSPR() sprsmflag = false
     end
+  end
+end
+
+function s:_kpress(key,sc,isrepeat)
+  if isrepeat then return end
+  if love.keyboard.isDown("lctrl","rctrl") then
+    if key == "c" then self:copy() elseif key == "v" then self:paste() end
   end
 end
 
