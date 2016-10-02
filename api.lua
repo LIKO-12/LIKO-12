@@ -1,8 +1,8 @@
 _Class = require("class")
 require("offsets")
 
-_LK12VER = "V0.0.4 DEV"
-_LK12VERC = 9--9 DEV, 10 PRE
+_LK12VER = "V0.0.4 PRE"
+_LK12VERC = 10--9 DEV, 10 PRE
 
 _GIFSCALE = 2
 _GIFINVERTAL = 0.06 --How much time between every frame ? (in seconds)
