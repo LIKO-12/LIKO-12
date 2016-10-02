@@ -3,7 +3,6 @@ love.graphics.setDefaultFilter("nearest")
 api = require("api") --I STILL WANT IT AS A GLOBAL !
 local utf8 = require("utf8")
 local giflib = require("gif")
-local gifrecording
 
 local debugrun = false
 
@@ -43,22 +42,22 @@ end
 
 function love.keypressed(key,scancode,isrepeat)
   if key == "f8" or key == "f3" then
-    if not gifrecording then
+    if not _GIFREC then
       local err
-      gifrecording, err = giflib.new("data/LIKO12-"..os.time()..".gif")
-      if not gifrecording then
+      _GIFREC, err = giflib.new("data/LIKO12-"..os.time()..".gif")
+      if not _GIFREC then
         print("Failed to start recording: "..err)
       else
-        print("Started recording ...") _ShoudDraw = true --To flash the first frame
+        print("Started recording ...") _GIFTIMER = _GIFINVERTAL --To flash the first frame
       end
     else
       print("Recording already in progress")
     end
   elseif key == "f4" or key == "f9" then
-    if gifrecording then
-      gifrecording:close()
-      print("Saved gif recording to: "..gifrecording.filename)
-      gifrecording = nil
+    if _GIFREC then
+      _GIFREC:close()
+      print("Saved gif recording to: ".._GIFREC.filename)
+      _GIFREC = nil
     else
       print("No active gif recording !")
     end
@@ -183,40 +182,58 @@ function love.run()
 		if _REBOOT then break end
  
 		-- Call update and draw
-		if love.update then love.update(dt) end -- will pass 0 if love.timer is disabled
+		if love.update then
+      love.update(dt) -- will pass 0 if love.timer is disabled
+      if _GIFREC then
+        _GIFTIMER = _GIFTIMER + dt
+        if _GIFTIMER >= _GIFINVERTAL then
+          _GIFTIMER = _GIFTIMER - _GIFINVERTAL
+          api.pushColor()
+          
+          love.graphics.setCanvas()
+          love.graphics.origin()
+          
+          love.graphics.setColor(255,255,255,255)
+          love.graphics.setCanvas(_GifCanvas)
+          love.graphics.clear(0,0,0,255)
+          love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFSCALE, _GIFSCALE)
+          _GIFREC:frame(_GifCanvas:newImageData())
+          love.graphics.setCanvas()
+          
+          love.graphics.setCanvas(_ScreenCanvas)
+          love.graphics.translate(_ScreenTX,_ScreenTY)
+          
+          api.popColor()
+        end
+      end
+    end 
  
 		if love.graphics and love.graphics.isActive() and (_ShouldDraw or _ForceDraw) then
 			love.graphics.setCanvas()
 			love.graphics.origin()
       
-      if gifrecording then
-        love.graphics.setCanvas(_GifCanvas)
-        love.graphics.clear(0,0,0,255)
-        love.graphics.setColor(255,255,255,255)
-        love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFSCALE, _GIFSCALE)
-        gifrecording:frame(_GifCanvas:newImageData())
-        love.graphics.setCanvas()
-      end
+      api.pushColor()
+      love.graphics.setColor(255,255,255,255)
       
 			love.graphics.clear(0,0,0,255)
-			love.graphics.setColor(255,255,255)
 			love.graphics.draw(_ScreenCanvas, _ScreenX,_ScreenY, 0, _ScreenScaleX,_ScreenScaleY)
 			--love.graphics.api.points(1,1,_ScreenWidth,_ScreenHeight)
 			love.graphics.present()
 			love.graphics.setCanvas(_ScreenCanvas)
 			love.graphics.translate(_ScreenTX,_ScreenTY)
 			_ShouldDraw = false
+      api.popColor()
 		end
  
 		if love.timer then love.timer.sleep(0.001) end
 	end
  if _REBOOT then
    _REBOOT = false
-   if gifrecording then
-     gifrecording:close()
-     print("Saved gif recording to: "..gifrecording.filename)
-     gifrecording = nil
-   end
+   --[[if _GIFREC then
+     _GIFREC:close()
+     print("Saved gif recording to: ".._GIFREC.filename)
+     _GIFREC = nil
+   end]]
    
    for k,v in pairs(package.loaded) do
      package.loaded[k] = nil

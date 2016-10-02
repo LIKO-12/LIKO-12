@@ -159,7 +159,7 @@ function CMD.dir(command,path)
   for k,v in ipairs(files) do
     if api.fs.isDir(curpath..v) then
       dirstring = dirstring.." "..v
-    elseif curpath..v ~= "/x/_backup.lk12" then
+    elseif curpath..v ~= "//_backup.lk12" then
       filestring = filestring.." "..v
     end
   end
