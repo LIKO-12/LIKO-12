@@ -94,8 +94,7 @@ end
 function s:redrawSPR()
   api.rect(unpack(imgrecto))
   api.SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],api.SpriteMap:quad(sprsid))
-  api.color(1)
-  api.rect(sprsidrect[1]-9,sprsidrect[2]-1,8,8)
+  api.rect(sprsidrect[1]-9,sprsidrect[2]-1,8,8,1)
   api.SpriteMap:image():draw(sprsidrect[1]-9,sprsidrect[2]-1,0,1,1,api.SpriteMap:quad(sprsid))
 end
 

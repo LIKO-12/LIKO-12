@@ -61,6 +61,8 @@ function t:redrawSPRS()
   api.print(id,sprsidrect[1]+1,sprsidrect[2]+1)
   api.SpriteGroup(97,192-32,sprsbanksY,4,1,1,1,api.EditorSheet)
   api.EditorSheet:draw(sprsbank+72,192-(40-sprsbank*8),sprsbanksY)
+  api.rect(sprsidrect[1]-9,sprsidrect[2]-1,8,8,1)
+  api.SpriteMap:image():draw(sprsidrect[1]-9,sprsidrect[2]-1,0,1,1,api.SpriteMap:quad(sprsid))
 end
 
 function t:_mpress(x,y,b,it)
