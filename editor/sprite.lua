@@ -72,8 +72,8 @@ function s:redrawSPRS()
   api.color(sprsidrect[6])
   local id = sprsid if id < 10 then id = "00"..id elseif id < 100 then id = "0"..id end
   api.print(id,sprsidrect[1]+1,sprsidrect[2]+1)
-  api.SpriteGroup(49,192-32,sprsbanksY,4,1,1,1,api.EditorSheet)
-  api.EditorSheet:draw(sprsbank+24,192-(40-sprsbank*8),sprsbanksY)
+  api.SpriteGroup(97,192-32,sprsbanksY,4,1,1,1,api.EditorSheet)
+  api.EditorSheet:draw(sprsbank+72,192-(40-sprsbank*8),sprsbanksY)
 end
 
 function s:redrawSPR()

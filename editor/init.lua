@@ -35,7 +35,7 @@ function Editor:redrawUI()
   api.rect(1,128-7,192,8,10)
   api.SpriteGroup(24-#Editor.editors+1,192-8*#Editor.editors,1,#Editor.editors,1,1,1,api.EditorSheet)
   api.EditorSheet:draw((48-#Editor.editors)+self.curid,(192-8*#Editor.editors)+self.curid*8-8,1)
-  api.SpriteGroup(63,1,1,4,1,1,1,api.EditorSheet)
+  api.SpriteGroup(55,1,1,4,1,1,1,api.EditorSheet)
 end
 
 function Editor:switchEditor(id)

@@ -69,7 +69,7 @@ function console:_redraw() --Patched this to restore the editor ui
   for line,text in ipairs(self.textbuffer) do
     api.color(self.textcolors[line])
     if text == "-[[liko12]]-" then --THE SECRET PHASE
-      api.SpriteGroup(67,9,line*8,6,1,1,1,api.EditorSheet)
+      api.SpriteGroup(49,9,line*8,6,1,1,1,api.EditorSheet)
     else
       api.print_grid(text,1,line+1)
     end

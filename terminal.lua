@@ -1,8 +1,6 @@
 local lume = require("libraries.lume")
 local Terminal = {}
 
---local api.EditorSheet = api.SpriteSheet(api.Image("/editorsheet.png"),24,12)
-
 Terminal.blinktime = 0.5
 Terminal.blinktimer = 0
 Terminal.blinkstate = false
@@ -90,7 +88,7 @@ function Terminal:_redraw()
   for line,text in ipairs(self.textbuffer) do
     api.color(self.textcolors[line])
     if text == "-[[liko12]]-" then --THE SECRET PHASE
-      api.SpriteGroup(67,9,line*8,6,1,1,1,api.EditorSheet)
+      api.SpriteGroup(49,9,line*8,6,1,1,1,api.EditorSheet)
     else
       api.print_grid(text,2,line+1)
     end
