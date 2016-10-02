@@ -20,16 +20,18 @@ function cedit:resetBuffer()
   self.parent = self.buffer
   self.buffer.parent = require("editor")
   function self.buffer:_redraw() --To add syntax highlighting
-    api.rect(1,9,192,128-16,6) api.color(7)
+    api.rect(1,9,192,128-16,6)
     local dbuff, gx,gy, sr = self:getLinesBuffer()
     local cbuff = colorize(dbuff,cedit.colors)
-    api.color(8)
+    api.pushColor()
+    love.graphics.setColor(255,255,255,255)
     for line, text in ipairs(cbuff) do
       api.print(text, (gx*8-6)-sr*4,(gy+line-1)*8-6)
     end
     api.rect(1,128-7,192,8,10)
     api.color(5)
     api.print("LINE "..self.cursorY.."/"..#self.buffer.."  CHAR "..(self.cursorX-1).."/"..self.buffer[self.cursorY]:len(),2,128-5)
+    api.popColor()
   end
 end
 

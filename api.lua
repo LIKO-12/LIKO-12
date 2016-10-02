@@ -5,6 +5,9 @@ _LK12VER = "V0.0.4 DEV"
 _LK12VERC = 9--9 DEV, 10 PRE
 
 _GIFSCALE = 2
+_GIFINVERTAL = 1 --How much time between every frame ? (in seconds)
+_GIFTIMER = 0
+
 _REBOOT = false
 
 --Mobiles Cursor FIX--
@@ -62,6 +65,8 @@ _ColorSet[0] = {0,0,0,0}
 
 local function newAPI(noFS,sprsheetmap,carttilemap)
   local api = {}
+  
+  api.colorsStack = {}
 
   --Callbacks--
   function api._init() end --Called at the start of the program
@@ -89,6 +94,16 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
 
   function api.color(id)
     love.graphics.setColor(_ColorSet[id or 1] or _ColorSet[1])
+  end
+  
+  function api.pushColor()
+    table.insert(api.colorsStack,{love.graphics.getColor()})
+  end
+  
+  function api.popColor()
+    if #api.colorsStack == 0 then return error("No more colors to pop") end
+    love.graphics.setColor(api.colorsStack[#api.colorsStack])
+    table.remove(api.colorsStack,#api.colorsStack)
   end
 
   function api.stroke(width) --Sets the lines and the points width
@@ -152,7 +167,7 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
   --Image Section--
   api.Image = _Class("Liko12.image")
   function api.Image:initialize(path) if type(path) == "string" then self.image = love.graphics.newImage(path) else self.image = love.graphics.newImage(path.imageData) end end
-  function api.Image:draw(x,y,r,sx,sy,quad) love.graphics.setColor(255,255,255,255) if quad then love.graphics.draw(self.image,quad,x+_goffset.quadX,y+_goffset.quadY,r,sx,sy) else love.graphics.draw(self.image,x+_goffset.imageX,y+_goffset.imageY,r,sx,sy) end api.color(8) _ShouldDraw = true return self end
+  function api.Image:draw(x,y,r,sx,sy,quad) api.pushColor() love.graphics.setColor(255,255,255,255) if quad then love.graphics.draw(self.image,quad,x+_goffset.quadX,y+_goffset.quadY,r,sx,sy) else love.graphics.draw(self.image,x+_goffset.imageX,y+_goffset.imageY,r,sx,sy) end api.popColor() _ShouldDraw = true return self end
   function api.Image:size() return self.image:getDimensions() end
   function api.Image:width() return self.image:getWidth() end
   function api.Image:height() return self.image:getHeight() end
