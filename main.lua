@@ -185,26 +185,26 @@ function love.run()
 		if love.update then
       love.update(dt) -- will pass 0 if love.timer is disabled
       if _GIFREC then
-      _GIFTIMER = _GIFTIMER + dt
-      if _GIFTIMER > _GIFINVERTAL then
-        _GIFTIMER = _GIFTIMER - _GIFINVERTAL
-        api.pushColor()
-        
-        love.graphics.setCanvas()
-        love.graphics.origin()
-        
-        love.graphics.setColor(255,255,255,255)
-        love.graphics.setCanvas(_GifCanvas)
-        love.graphics.clear(0,0,0,255)
-        love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFSCALE, _GIFSCALE)
-        _GIFREC:frame(_GifCanvas:newImageData())
-        love.graphics.setCanvas()
-        
-        love.graphics.setCanvas(_ScreenCanvas)
-        love.graphics.translate(_ScreenTX,_ScreenTY)
-        
-        api.popColor()
-      end
+        _GIFTIMER = _GIFTIMER + dt
+        if _GIFTIMER >= _GIFINVERTAL then
+          _GIFTIMER = _GIFTIMER - _GIFINVERTAL
+          api.pushColor()
+          
+          love.graphics.setCanvas()
+          love.graphics.origin()
+          
+          love.graphics.setColor(255,255,255,255)
+          love.graphics.setCanvas(_GifCanvas)
+          love.graphics.clear(0,0,0,255)
+          love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFSCALE, _GIFSCALE)
+          _GIFREC:frame(_GifCanvas:newImageData())
+          love.graphics.setCanvas()
+          
+          love.graphics.setCanvas(_ScreenCanvas)
+          love.graphics.translate(_ScreenTX,_ScreenTY)
+          
+          api.popColor()
+        end
       end
     end 
  
@@ -214,14 +214,6 @@ function love.run()
       
       api.pushColor()
       love.graphics.setColor(255,255,255,255)
-      
-      if _GIFREC then
-        love.graphics.setCanvas(_GifCanvas)
-        love.graphics.clear(0,0,0,255)
-        love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFSCALE, _GIFSCALE)
-        _GIFREC:frame(_GifCanvas:newImageData())
-        love.graphics.setCanvas()
-      end
       
 			love.graphics.clear(0,0,0,255)
 			love.graphics.draw(_ScreenCanvas, _ScreenX,_ScreenY, 0, _ScreenScaleX,_ScreenScaleY)
