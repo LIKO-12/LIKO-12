@@ -35,6 +35,37 @@ local colsrectR = {192-(psize*4+2),8+3+1,psize,psize,1}
 local colsL --Color Select Left
 local colsR --Color Select Right
 
+local toolsdraw = {104, 192-105,sprsbanksY-2, 5,1, 1,1, api.EditorSheet} --Tools Draw Config
+local toolsgrid = {toolsdraw[2],toolsdraw[3], toolsdraw[4]*8,toolsdraw[5]*8, toolsdraw[4],toolsdraw[5]} --Tools Selection Grid
+local stool = 1
+
+local toolshold = {true,true,false,false,false} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
+local tools = {
+  function(self,cx,cy,b) --Pencil (Default)
+    local data = api.SpriteMap:data()
+    local qx,qy = api.SpriteMap:rect(sprsid)
+    local col = (b == 1 or api.isMDown(1)) and colsL or colsR
+    data:setPixel(qx+cx-1,qy+cy-1,col)
+    api.SpriteMap.img = data:image()
+  end,
+
+  function(self,cx,cy,b) --Fill (Bucket)
+    
+  end,
+
+  function(self) --Clone (Copy)
+    
+  end,
+
+  function(self) --Stamp (Paste)
+    
+  end,
+
+  function(self) --Delete (Erase)
+    
+  end
+}
+
 function s:_switch()
   img = api.ImageData(imgw,imgh):map(function() return 0 end)
   mflag = false
@@ -98,18 +129,26 @@ function s:redrawSPR()
   api.SpriteMap:image():draw(sprsidrect[1]-9,sprsidrect[2]-1,0,1,1,api.SpriteMap:quad(sprsid))
 end
 
-function s:redrawFLAG()
+function s:redrawTOOLS()
+  api.SpriteGroup(unpack(toolsdraw))
+end
 
+function s:redrawFLAG()
+  api.SpriteGroup(126,192-64,sprsbanksY-18,8,1,1,1,api.EditorSheet)
+  api.SpriteGroup(126,192-64,sprsbanksY-10,8,1,1,1,api.EditorSheet)
 end
 
 function s:_redraw()
   self:redrawCP()
   self:redrawSPR()
   self:redrawSPRS()
+  self:redrawFLAG()
+  self:redrawTOOLS()
 end
 
 function s:_mpress(x,y,b,it)
   --if api.isInRect(x,y,{1,1,192,8}) then api.SpriteMap:data():export("editorsheet") end
+  --Pallete Color Selection
   local cx, cy = api.whereInGrid(x,y,palgrid)
   if cx then
     if b == 1 then
@@ -127,6 +166,7 @@ function s:_mpress(x,y,b,it)
     self:redrawCP()
   end
   
+  --Bank selection
   local cx = api.whereInGrid(x,y,sprsbanksgrid)
   if cx then
     sprsbank = cx
@@ -135,6 +175,7 @@ function s:_mpress(x,y,b,it)
     self:redrawSPRS() self:redrawSPR()
   end
   
+  --Sprite Selection
   local cx, cy = api.whereInGrid(x,y,sprsgrid)
   if cx then
     sprsid = (cy-1)*24+cx+(sprsbank*24*3-24*3)
@@ -145,33 +186,28 @@ function s:_mpress(x,y,b,it)
     self:redrawSPRS() self:redrawSPR() sprsmflag = true
   end
   
-  
+  --Image Drawing
   local cx, cy = api.whereInGrid(x,y,imggrid)
   if cx then
     if not it then mflag = true end
-    local data = api.SpriteMap:data()
-    local qx,qy = api.SpriteMap:rect(sprsid)
-    local col = b == 1 and colsL or colsR
-    data:setPixel(qx+cx-1,qy+cy-1,col)
-    api.SpriteMap.img = data:image()
+    tools[stool](self,cx,cy,b)
     self:redrawSPR() self:redrawSPRS()
   end
 end
 
 function s:_mmove(x,y,dx,dy,it,iw)
   if iw then return end
+  
+  --Image Drawing
   if (not it and mflag) or it then
     local cx, cy = api.whereInGrid(x,y,imggrid)
     if cx then
-      local data = api.SpriteMap:data()
-      local qx,qy = api.SpriteMap:rect(sprsid)
-      local col = api.isMDown(1) and colsL or colsR
-      data:setPixel(qx+cx-1,qy+cy-1,col)
-      api.SpriteMap.img = data:image()
+      tools[stool](self,cx,cy)
       self:redrawSPR() self:redrawSPRS()
     end
   end
   
+  --Sprite Selection
   if (not it and sprsmflag) or it then
     local cx, cy = api.whereInGrid(x,y,sprsgrid)
     if cx then
@@ -186,19 +222,18 @@ function s:_mmove(x,y,dx,dy,it,iw)
 end
 
 function s:_mrelease(x,y,b,it)
+
+  --Image Drawing
   if (not it and mflag) or it then
     local cx, cy = api.whereInGrid(x,y,imggrid)
     if cx then
-      local data = api.SpriteMap:data()
-      local qx,qy = api.SpriteMap:rect(sprsid)
-      local col = b == 1 and colsL or colsR
-      data:setPixel(qx+cx-1,qy+cy-1,col)
-      api.SpriteMap.img = data:image()
+      tools[stool](self,cx,cy,b)
       self:redrawSPR() self:redrawSPRS()
     end
     mflag = false
   end
   
+  --Sprite Selection
   if (not it and sprsmflag) or it then
     local cx, cy = api.whereInGrid(x,y,sprsgrid)
     if cx then
