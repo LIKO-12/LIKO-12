@@ -243,13 +243,15 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
   function api.loadDefaultCursors()
     api.newCursor(api.EditorSheet:extract(1),"normal",2,2)
     api.newCursor(api.EditorSheet:extract(2),"handrelease",3,2)
-    api.newCursor(api.EditorSheet:extract(3),"handpress",3,4)
+    api.newCursor(api.EditorSheet:extract(3),"handpress",3,2)
     api.newCursor(api.EditorSheet:extract(4),"hand",5,5)
     api.newCursor(api.EditorSheet:extract(5),"cross",4,4)
+    api.newCursor(api.EditorSheet:extract(7),"point",2,2)
     api.setCursor(api._CurrentCursor)
   end
 
   function api.setCursor(name)
+    if name == api._CurrentCursor then return end
     if not api._CachedCursors[name] then api._CachedCursors[name or "custom"] = love.mouse.newCursor(api._Cursors[name].data:enlarge(_ScreenScale).imageData,(api._Cursors[name].hotx-1)*_ScreenScale,(api._Cursors[name].hoty-1)*_ScreenScale) end
     love.mouse.setCursor(api._CachedCursors[name]) api._CurrentCursor = name or "custom"
   end
