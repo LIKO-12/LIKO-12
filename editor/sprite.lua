@@ -32,12 +32,16 @@ local palgrid = {192-(psize*4+2),8+3+1,psize*4,psize*4,4,4}
 
 local colsrectL = {192-(psize*4+3),8+3,psize+2,psize+2,8}
 local colsrectR = {192-(psize*4+2),8+3+1,psize,psize,1}
-local colsL --Color Select Left
-local colsR --Color Select Right
+local colsL = 0 --Color Select Left
+local colsR = 0 --Color Select Right
 
-local toolsdraw = {104, 192-105,sprsbanksY-2, 5,1, 1,1, api.EditorSheet} --Tools Draw Config
+local toolsdraw = {104, 192-102,sprsbanksY-2, 5,1, 1,1, api.EditorSheet} --Tools Draw Config
 local toolsgrid = {toolsdraw[2],toolsdraw[3], toolsdraw[4]*8,toolsdraw[5]*8, toolsdraw[4],toolsdraw[5]} --Tools Selection Grid
 local stool = 1
+
+local tbtimer = 0
+local tbtime = 0.1125
+local tbflag = false
 
 local toolshold = {true,true,false,false,false} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
@@ -50,19 +54,39 @@ local tools = {
   end,
 
   function(self,cx,cy,b) --Fill (Bucket)
-    
+    local data = api.SpriteMap:data()
+    local qx,qy = api.SpriteMap:rect(sprsid)
+    local col = (b == 1 or api.isMDown(1)) and colsL or colsR
+    local tofill = data:getPixel(qx+cx-1,qy+cy-1)
+    if tofill == col then return end
+    local function spixel(x,y) if x >= qx and x <= qx+7 and y >= qy and y <= qy+7 then data:setPixel(x,y,col) end end
+    local function gpixel(x,y) if x >= qx and x <= qx+7 and y >= qy and y <= qy+7 then return data:getPixel(x,y) else return false end end
+    local function mapPixel(x,y)
+      if gpixel(x,y) and gpixel(x,y) == tofill then spixel(x,y) end
+      if gpixel(x+1,y) and gpixel(x+1,y) == tofill then mapPixel(x+1,y) end
+      if gpixel(x-1,y) and gpixel(x-1,y) == tofill then mapPixel(x-1,y) end
+      if gpixel(x,y+1) and gpixel(x,y+1) == tofill then mapPixel(x,y+1) end
+      if gpixel(x,y-1) and gpixel(x,y-1) == tofill then mapPixel(x,y-1) end
+    end
+    mapPixel(qx+cx-1,qy+cy-1)
+    api.SpriteMap.img = data:image()
   end,
 
   function(self) --Clone (Copy)
-    
+    self:copy()
   end,
 
   function(self) --Stamp (Paste)
-    
+    self:paste()
   end,
 
   function(self) --Delete (Erase)
-    
+    local data = api.SpriteMap:data()
+    local qx,qy = api.SpriteMap:rect(sprsid)
+    for px = 0, 7 do for py = 0, 7 do
+      data:setPixel(qx+px,qy+py,0)
+    end end
+    api.SpriteMap.img = data:image()
   end
 }
 
@@ -131,6 +155,7 @@ end
 
 function s:redrawTOOLS()
   api.SpriteGroup(unpack(toolsdraw))
+  api.Sprite((toolsdraw[1]+(stool-1))-24,toolsdraw[2]+(stool-1)*8,toolsdraw[3],0,toolsdraw[6],toolsdraw[7],api.EditorSheet)
 end
 
 function s:redrawFLAG()
@@ -144,6 +169,17 @@ function s:_redraw()
   self:redrawSPRS()
   self:redrawFLAG()
   self:redrawTOOLS()
+end
+
+function s:_update(dt)
+  if tbflag then
+    tbtimer = tbtimer + dt
+    if tbtime <= tbtimer then
+      stool = tbflag
+      tbflag = false
+      self:redrawTOOLS()
+    end
+  end
 end
 
 function s:_mpress(x,y,b,it)
@@ -184,6 +220,21 @@ function s:_mpress(x,y,b,it)
     sprssrect[2] = 128-(8+24+1)+cy*8
     
     self:redrawSPRS() self:redrawSPR() sprsmflag = true
+  end
+  
+  --Tool Selection
+  local cx, cy = api.whereInGrid(x,y,toolsgrid)
+  if cx then
+    if toolshold[cx] then
+      stool = cx
+      self:redrawTOOLS()
+      self:redrawSPRS() self:redrawSPR()
+    else
+      tools[cx](self)
+      tbflag, tbtimer = stool, 0
+      stool = cx
+      self:redrawSPRS() self:redrawSPR() self:redrawTOOLS()
+    end
   end
   
   --Image Drawing
@@ -249,9 +300,22 @@ end
 
 function s:_kpress(key,sc,isrepeat)
   if isrepeat then return end
-  if love.keyboard.isDown("lctrl","rctrl") then
+  
+  if love.keyboard.isDown("lctrl","rctrl") then --Copy & Paste
     if key == "c" then self:copy() elseif key == "v" then self:paste() end
   end
+  
+  if key == "1" or key == "2" or key == "3" or key == "4" then
+    sprsbank = tonumber(key)
+    local idbank = api.floor((sprsid-1)/(24*3))+1
+    if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*24*3 elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*24*3 end
+    self:redrawSPRS() self:redrawSPR()
+  end
+  
+  if key == "z" then stool=1 self:redrawTOOLS() end
+  if key == "x" then stool=2 self:redrawTOOLS() end
+  
+  if key == "delete" then tools[5](self) self:redrawSPRS() self:redrawSPR() end --Delete Tool
 end
 
 return s
