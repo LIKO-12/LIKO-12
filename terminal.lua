@@ -77,6 +77,7 @@ function Terminal:_init()
 end
 
 function Terminal:_update(dt)
+  api.setCursor("point")
   self.blinktimer = self.blinktimer+dt if self.blinktimer > self.blinktime then self.blinktimer = self.blinktimer - self.blinktime  self.blinkstate = not self.blinkstate end
   local curlen = self.textbuffer[self.currentLine]:len()
   api.color(self.blinkstate and 5 or 1)
