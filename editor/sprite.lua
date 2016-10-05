@@ -98,6 +98,10 @@ function s:redrawSPR()
   api.SpriteMap:image():draw(sprsidrect[1]-9,sprsidrect[2]-1,0,1,1,api.SpriteMap:quad(sprsid))
 end
 
+function s:redrawFLAG()
+
+end
+
 function s:_redraw()
   self:redrawCP()
   self:redrawSPR()
