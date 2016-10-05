@@ -5,6 +5,7 @@ Editor.curid = 3
 Editor.editors = {"console","code","sprite","tile","sprite","sprite"}
 
 local ModeGrid = {192-8*#Editor.editors,1,8*#Editor.editors,8,#Editor.editors,1}
+local ModeMFlag = false
 
 function Editor:_init()
   self:switchEditor(self.curid)
@@ -45,6 +46,16 @@ function Editor:switchEditor(id)
 end
 
 function Editor:_update(dt)
+  local mx, my = api.getMPos()
+  if api.isInRect(mx,my,ModeGrid) then
+    if api.isMDown(1) then
+      api.setCursor("handpress")
+    else
+      api.setCursor("handrelease")
+    end
+  else
+    api.setCursor("normal")
+  end
   if self.Current._update then self.Current:_update(dt) end
 end
 
@@ -54,15 +65,27 @@ function Editor:_mpress(x,y,b,it)
   if cx then
     self:switchEditor(cx)
     self:_redraw()
+    ModeMFlag = true
   end
 end
 
 function Editor:_mmove(x,y,dx,dy,it)
   if self.Current._mmove then self.Current:_mmove(x,y,dx,dy,it) end
+  local cx = api.whereInGrid(x,y,ModeGrid)
+  if cx and ModeMFlag then
+    self:switchEditor(cx)
+    self:_redraw()
+  end
 end
 
 function Editor:_mrelease(x,y,b,it)
   if self.Current._mrelease then self.Current:_mrelease(x,y,b,it) end
+  local cx = api.whereInGrid(x,y,ModeGrid)
+  if cx and ModeMFlag then
+    self:switchEditor(cx)
+    self:_redraw()
+  end
+  ModeMFlag = false
 end
 
 function Editor:_tpress(id,x,y,p)
