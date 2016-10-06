@@ -118,8 +118,9 @@ function t:_mrelease(x,y,b,it)
   if cx and mapmflag then
     api.TileMap:cell(cx,cy,sprsid)
     
-    self:redrawMap() mapmflag = false
+    self:redrawMap()
   end
+  mapmflag = false
   
   if (not it and sprsmflag) or it then
     local cx, cy = api.whereInGrid(x,y,sprsgrid)
@@ -129,9 +130,10 @@ function t:_mrelease(x,y,b,it)
       sprssrect[1] = cx*8
       sprssrect[2] = 128-(8+24+1)+cy*8
       
-      self:redrawSPRS() sprsmflag = false
+      self:redrawSPRS()
     end
   end
+  sprsmflag = false
 end
 
 return t

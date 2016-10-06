@@ -281,8 +281,8 @@ function s:_mrelease(x,y,b,it)
       tools[stool](self,cx,cy,b)
       self:redrawSPR() self:redrawSPRS()
     end
-    mflag = false
   end
+  mflag = false
   
   --Sprite Selection
   if (not it and sprsmflag) or it then
@@ -293,9 +293,10 @@ function s:_mrelease(x,y,b,it)
       sprssrect[1] = cx*8
       sprssrect[2] = 128-(8+24+1)+cy*8
       
-      self:redrawSPRS() self:redrawSPR() sprsmflag = false
+      self:redrawSPRS() self:redrawSPR()
     end
   end
+  sprsmflag = false
 end
 
 function s:_kpress(key,sc,isrepeat)
