@@ -1,4 +1,4 @@
-_ScreenScale = 3
+_ScreenScale = tonumber(os.getenv("LIKO_SCALE") or 3)
 
 function love.conf(t)
     t.identity = ".liko12"              -- The name of the save directory (string)
