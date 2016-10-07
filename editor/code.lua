@@ -37,11 +37,7 @@ end
 
 function cedit:export()
   if not self.buffer then self:resetBuffer() end
-  local code, buff = "", self.buffer:getBuffer()
-  for line,text in ipairs(buff) do
-    code = code..text.."\n"
-  end
-  return code
+  return table.concat(self.buffer:getBuffer(), "\n")
 end
 
 local function magiclines(s)
@@ -52,9 +48,7 @@ end
 function cedit:load(code)
   self:resetBuffer()
   self.buffer.buffer = {}
-  if not code then table.insert(self.buffer.buffer,"") return self end
-  local code = code
-  for line in magiclines(code) do
+  for line in magiclines(code or "") do
     table.insert(self.buffer.buffer,line)
   end
   return self

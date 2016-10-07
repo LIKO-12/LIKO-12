@@ -93,8 +93,6 @@ local tools = {
 function s:_switch()
   img = api.ImageData(imgw,imgh):map(function() return 0 end)
   mflag = false
-  
-  --self:redraw()
 end
 
 function s:export(path)
@@ -299,24 +297,26 @@ function s:_mrelease(x,y,b,it)
   sprsmflag = false
 end
 
-function s:_kpress(key,sc,isrepeat)
-  if isrepeat then return end
-  
-  if love.keyboard.isDown("lctrl","rctrl") then --Copy & Paste
-    if key == "c" then self:copy() elseif key == "v" then self:paste() end
-  end
-  
-  if key == "1" or key == "2" or key == "3" or key == "4" then
-    sprsbank = tonumber(key)
+local bank = function(bank)
+  return function()
     local idbank = api.floor((sprsid-1)/(24*3))+1
-    if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*24*3 elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*24*3 end
-    self:redrawSPRS() self:redrawSPR()
+    sprsbank = bank
+    if idbank > sprsbank then
+      sprsid = sprsid-(idbank-sprsbank)*24*3
+    elseif sprsbank > idbank then
+      sprsid = sprsid+(sprsbank-idbank)*24*3
+    end
+    s:redrawSPRS() s:redrawSPR()
   end
-  
-  if key == "z" then stool=1 self:redrawTOOLS() end
-  if key == "x" then stool=2 self:redrawTOOLS() end
-  
-  if key == "delete" then tools[5](self) self:redrawSPRS() self:redrawSPR() end --Delete Tool
 end
+
+s.keymap = {
+  ["ctrl-c"] = s.copy,
+  ["ctrl-v"] = s.paste,
+  ["1"] = bank(1), ["2"] = bank(2), ["3"] = bank(3), ["4"] = bank(4),
+  ["z"] = function() stool=1 s:redrawTOOLS() end,
+  ["x"] = function() stool=2 s:redrawTOOLS() end,
+  ["delete"] = function() tools[5](s) s:redrawSPRS() s:redrawSPR() end,
+}
 
 return s
