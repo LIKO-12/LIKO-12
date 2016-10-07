@@ -1,6 +1,18 @@
 --This library is create for programming code editors in liko-12 more easly by using premade text buffer with horizental and vertical scrolling support--
 
+local lume = require("libraries.lume")
 local tb = _Class("liko12.textBuffer")
+
+local recalculate_x_after_scroll = function(self, is_repeat)
+  if is_repeat then
+    self.cursorX = self.lastCX
+  else
+    self.lastCX = self.cursorX
+  end
+  if self.cursorX > self.buffer[self.cursorY]:len()+1 then
+    self.cursorX = self.buffer[self.cursorY]:len()+1
+  end
+end
 
 --Args: grid x, grid Y, draw width in grid, draw height in grid, lines Limit, length Limit, min length, cursor color, blinktime--
 --0 blinktime disables cursor, 0 lines limit, 0 length disables all that..--
@@ -68,16 +80,14 @@ function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
     ["up"] = function(self,ir)
       if self.buffer[self.cursorY-1] then
         self.cursorY = self.cursorY-1
-        if not ir then self.lastCX = self.cursorX else self.cursorX = self.lastCX end
-        if self.cursorX > self.buffer[self.cursorY]:len()+1 then self.cursorX = self.buffer[self.cursorY]:len()+1 end
+        recalculate_x_after_scroll(self, ir)
       end
     end,
     
     ["down"] = function(self,ir)
       if self.buffer[self.cursorY+1] then
         self.cursorY = self.cursorY+1
-        if not ir then self.lastCX = self.cursorX else self.cursorX = self.lastCX end
-        if self.cursorX > self.buffer[self.cursorY]:len()+1 then self.cursorX = self.buffer[self.cursorY]:len()+1 end
+        recalculate_x_after_scroll(self, ir)
       end
     end,
     
@@ -89,14 +99,14 @@ function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
       self.cursorX = self.buffer[self.cursorY]:len()+1
     end,
     
-    ["pageup"] = function(self,ir)
-      for i=1, self.gh do
-        
-      end
+    ["pageup"] = function(self,is_repeat)
+      self.cursorY = math.max(1, self.cursorY-self.gh)
+      recalculate_x_after_scroll(self, is_repeat)
     end,
     
-    ["pagedown"] = function(self,ir)
-      
+    ["pagedown"] = function(self,is_repeat)
+      self.cursorY = math.min(#self.buffer, self.cursorY+self.gh)
+      recalculate_x_after_scroll(self, is_repeat)
     end
   }
   
@@ -126,11 +136,7 @@ function tb:_tinput(t)
 end
 
 function tb:getBuffer()
-  local bclone = {}
-  for line,text in ipairs(self.buffer) do
-    table.insert(bclone,text)
-  end
-  return bclone
+  return lume.clone(self.buffer)
 end
 
 function tb:getLinesBuffer()
