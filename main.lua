@@ -197,6 +197,9 @@ function love.run()
           love.graphics.setCanvas(_GifCanvas)
           love.graphics.clear(0,0,0,255)
           love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFSCALE, _GIFSCALE)
+          local cur, curhx, curhy = api._Cursors[api._CurrentCursor].data:image().image,(api._Cursors[api._CurrentCursor].hotx-1)*_ScreenScale,(api._Cursors[api._CurrentCursor].hoty-1)*_ScreenScale
+          local curx, cury = _ScreenToLiko(love.mouse.getPosition())
+          love.graphics.draw(cur,(curx-curhx)*_GIFSCALE,(cury-curhy)*_GIFSCALE,0, _GIFSCALE, _GIFSCALE)
           _GIFREC:frame(_GifCanvas:newImageData())
           love.graphics.setCanvas()
           
