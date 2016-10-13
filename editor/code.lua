@@ -70,15 +70,15 @@ function cedit:_mmove(x,y,dx,dy,it,iw)
   if math.abs(y) > 5 then return end --Dead mouse wheel strike
   if math.abs(x) > 5 then return end --Dead mouse wheel strike
   if y > 0 then
-    self.buffer:_kpress("up",0,false)
+    self.buffer.keymap["up"](self.buffer,false) self:_redraw()
   elseif y < 0 then
-    self.buffer:_kpress("down",0,false)
+    self.buffer.keymap["down"](self.buffer,false) self:_redraw()
   end
   
   if x > 0 then
-    self.buffer:_kpress("right",0,false) --Maybe ? or inverted..
+    self.buffer.keymap["right"](self.buffer,false) self:_redraw() --Maybe ? or inverted..
   elseif x < 0 then
-    self.buffer:_kpress("left",0,false)
+    self.buffer.keymap["left"](self.buffer,false) self:_redraw()
   end
 end
 
