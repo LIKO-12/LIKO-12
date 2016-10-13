@@ -43,6 +43,13 @@ local tbtimer = 0
 local tbtime = 0.1125
 local tbflag = false
 
+local transdraw = {109, 192-105,sprsbanksY-15, 5,1, 1,1, api.EditorSheet} --Transformations Draw Config
+local transgrid = {transdraw[2],transdraw[3], transdraw[4]*8, transdraw[5]*8, transdraw[4], transdraw[5]} --Transformations Selection Grid
+local strans --Selected Transformation
+
+local transtimer
+local transtime = 0.1125
+
 local toolshold = {true,true,false,false,false} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
   function(self,cx,cy,b) --Pencil (Default)
@@ -102,6 +109,14 @@ local function transform(tfunc)
   data:paste(new,x,y)
   api.SpriteMap.img = data:image()
 end
+
+local transformations = {
+  function(x,y,c,w,h) return h+1-y,x end, --Rotate right
+  function(x,y,c,w,h) return y, w+1-x end, --Rotate left
+  function(x,y,c,w,h) return w+1-x,y end, --Flip horizental
+  function(x,y,c,w,h) return x,h+1-y end, --Flip vertical
+  function(x,y,c,w,h) return w+1-x,h+1-y end --Flip horizentaly + verticaly
+}
 
 function s:_switch()
   img = api.ImageData(imgw,imgh):map(function() return 0 end)
@@ -165,8 +180,13 @@ function s:redrawSPR()
 end
 
 function s:redrawTOOLS()
+  --Tools
   api.SpriteGroup(unpack(toolsdraw))
   api.Sprite((toolsdraw[1]+(stool-1))-24,toolsdraw[2]+(stool-1)*8,toolsdraw[3],0,toolsdraw[6],toolsdraw[7],api.EditorSheet)
+  
+  --Transformations
+  api.SpriteGroup(unpack(transdraw))
+  if strans then api.Sprite((transdraw[1]+(strans-1))-24,transdraw[2]+(strans-1)*8,transdraw[3],0,transdraw[6],transdraw[7],api.EditorSheet) end
 end
 
 function s:redrawFLAG()
@@ -188,6 +208,14 @@ function s:_update(dt)
     if tbtime <= tbtimer then
       stool = tbflag
       tbflag = false
+      self:redrawTOOLS()
+    end
+  end
+  
+  if transtimer then
+    transtimer = transtimer + dt
+    if transtimer > transtime then
+      transtimer, strans = nil, nil
       self:redrawTOOLS()
     end
   end
@@ -246,6 +274,13 @@ function s:_mpress(x,y,b,it)
       stool = cx
       self:redrawSPRS() self:redrawSPR() self:redrawTOOLS()
     end
+  end
+  
+  --Transformation Selection
+  local cx, cy = api.whereInGrid(x,y,transgrid)
+  if cx and transformations[cx] then
+    transform(transformations[cx]) transtimer, strans = 0, cx
+    self:redrawSPRS() self:redrawSPR() self:redrawTOOLS()
   end
   
   --Image Drawing
