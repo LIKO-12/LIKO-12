@@ -108,7 +108,7 @@ function Terminal:_kpress(k,sc,ir)
     end
     self:tout(self.rootDir.."> ",8,true,true)
   end
-  if k == "backspace" then self.textbuffer[self.currentLine] = self.textbuffer[self.currentLine]:sub(0,-2) self:_redraw() end
+  if k == "backspace" and self.textbuffer[self.currentLine]:len() > self.rootDir:len()+2 then self.textbuffer[self.currentLine] = self.textbuffer[self.currentLine]:sub(0,-2) self:_redraw() end
 end
 
 function Terminal:_tinput(t)
