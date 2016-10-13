@@ -90,6 +90,19 @@ local tools = {
   end
 }
 
+local function transform(tfunc)
+  local current = api.SpriteMap:extract(sprsid)
+  local new = api.ImageData(current:width(),current:height())
+  current:map(function(x,y,c)
+    local nx,ny,nc = tfunc(x,y,c,current:width(),current:height())
+    new:setPixel(nx or x,ny or y,nc or c)
+  end)
+  local x,y = api.SpriteMap:rect(sprsid)
+  local data = api.SpriteMap:data()
+  data:paste(new,x,y)
+  api.SpriteMap.img = data:image()
+end
+
 function s:_switch()
   img = api.ImageData(imgw,imgh):map(function() return 0 end)
   mflag = false
