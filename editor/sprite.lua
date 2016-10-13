@@ -18,20 +18,21 @@ local sprsbanksY = 128 - (8+24+9)
 local sprsbanksgrid = {192-32,sprsbanksY+1,8*4,8,4,1}
 local sprsid = 1 --SpriteSheet Selected ID
 local sprsmflag = false
-local sprsbquads = {} --SpriteSheet 6 BanksQuads
+local sprsbquads = {} --SpriteSheets 4 BanksQuads
 local sprsbank = 1 --Current Selected Bank
 for i = 1, 4 do
   sprsbquads[i] = api.SpriteMap:image():quad(1,(i*8*3-8*3)+1,_,3*8)
 end
 
 local temp = 0
+local palpsize = 13
 local palimg = api.Image(api.ImageData(4,4):map(function() temp = temp + 1 return temp end ))
-local palrecto = {192-(psize*4+3),8+3,psize*4+2,psize*4+2,1}
-local paldraw = {192-(psize*4+2),8+3+1,0,psize,psize}
-local palgrid = {192-(psize*4+2),8+3+1,psize*4,psize*4,4,4}
+local palrecto = {192-(palpsize*4+3),8+3,palpsize*4+2,palpsize*4+2,1}
+local paldraw = {192-(palpsize*4+2),8+3+1,0,palpsize,palpsize}
+local palgrid = {192-(palpsize*4+2),8+3+1,palpsize*4,palpsize*4,4,4}
 
-local colsrectL = {192-(psize*4+3),8+3,psize+2,psize+2,8}
-local colsrectR = {192-(psize*4+2),8+3+1,psize,psize,1}
+local colsrectL = {192-(palpsize*4+3),8+3,palpsize+2,palpsize+2,8}
+local colsrectR = {192-(palpsize*4+2),8+3+1,palpsize,palpsize,1}
 local colsL = 0 --Color Select Left
 local colsR = 0 --Color Select Right
 
@@ -229,13 +230,13 @@ function s:_mpress(x,y,b,it)
     if b == 1 then
       colsL = (cy-1)*4+cx if colsL == 1 then colsL = 0 end
       local cx, cy = cx-1, cy-1
-      colsrectL[1] = 192-(psize*4+3)+psize*cx
-      colsrectL[2] = 8+3+psize*cy
+      colsrectL[1] = 192-(palpsize*4+3)+palpsize*cx
+      colsrectL[2] = 8+3+palpsize*cy
     elseif b == 2 then
       colsR = (cy-1)*4+cx if colsR == 1 then colsR = 0 end
       local cx, cy = cx-1, cy-1
-      colsrectR[1] = 192-(psize*4+2)+psize*cx
-      colsrectR[2] = 8+3+1+psize*cy
+      colsrectR[1] = 192-(palpsize*4+2)+palpsize*cx
+      colsrectR[2] = 8+3+1+palpsize*cy
     end
     
     self:redrawCP()
