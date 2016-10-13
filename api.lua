@@ -236,8 +236,8 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
   api._CachedCursors = {}
 
   function api.newCursor(data,name,hotx,hoty)
-    api._Cursors[name] = {data = data, hotx = hotx or 1, hoty = hoty or 1}
-    api._CachedCursors[name or "custom"] = love.mouse.newCursor(api._Cursors[name].data:enlarge(_ScreenScale).imageData,(api._Cursors[name].hotx-1)*_ScreenScale,(api._Cursors[name].hoty-1)*_ScreenScale)
+    api._Cursors[name or "custom"] = {data = data, hotx = hotx or 1, hoty = hoty or 1}
+    api._CachedCursors[name or "custom"] = love.mouse.newCursor(api._Cursors[name or "custom"].data:enlarge(_ScreenScale).imageData,(api._Cursors[name or "custom"].hotx-1)*_ScreenScale,(api._Cursors[name or "custom"].hoty-1)*_ScreenScale)
   end
 
   function api.loadDefaultCursors()
