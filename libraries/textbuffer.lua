@@ -53,6 +53,20 @@ function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
       end
     end,
     
+    ["delete"] = function(self,ir)
+      if self.cursorX == self.buffer[self.cursorY]:len()+1 then --If it's at the end of the line
+        if self.buffer[self.cursorY+1] then
+          self.buffer[self.cursorY] = self.buffer[self.cursorY]..self.buffer[self.cursorY+1] --Copies next line
+		      self.buffer[self.cursorY+1] = "" --Deletes next line
+          self:shiftUp(self.cursorY+2)
+          self.cursorY = self.cursorY
+        end
+      else
+        self.buffer[self.cursorY] = self.buffer[self.cursorY]:sub(0,self.cursorX-1)..self.buffer[self.cursorY]:sub(self.cursorX+1,self.buffer[self.cursorY]:len())
+        self.cursorX = self.cursorX
+      end
+    end,
+    
     ["left"] = function(self,ir)
       self.cursorX = self.cursorX-1
       if self.cursorX < 1 then
