@@ -38,6 +38,14 @@ function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
       self.cursorY = self.cursorY+1
       self.cursorX = 1
     end,
+		
+    ["kpenter"] = function(self,ir) --Num pad enter key
+      self:shiftDown(self.cursorY+1)
+      self.buffer[self.cursorY+1] = self.buffer[self.cursorY]:sub(self.cursorX,-1)
+      self.buffer[self.cursorY] = self.buffer[self.cursorY]:sub(0,self.cursorX-1)
+      self.cursorY = self.cursorY+1
+      self.cursorX = 1
+    end,
     
     ["backspace"] = function(self,ir)
       if self.cursorX == 1 then --If it's at the start of the line
