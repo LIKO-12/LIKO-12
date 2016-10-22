@@ -123,6 +123,7 @@ function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
       recalculate_x_after_scroll(self, is_repeat)
     end
   }
+  self.keymap.kpenter = self.keymap.return --Add numpad enter key as the return key
   
 end
 
