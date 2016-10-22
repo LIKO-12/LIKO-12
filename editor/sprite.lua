@@ -51,6 +51,10 @@ local strans --Selected Transformation
 local transtimer
 local transtime = 0.1125
 
+local copyPaste_Time = 0 --Text delay time before it vanishes
+local copyOn = 0 --If user want to copy
+local pasteOn = 0 --If user want to paste 
+
 local toolshold = {true,true,false,false,false} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
   function(self,cx,cy,b) --Pencil (Default)
@@ -133,6 +137,26 @@ end
 
 function s:copy()
   api.setclip(basexx.to_base64(api.SpriteMap:extract(sprsid):export():getString()))
+  copyOn = 1 
+  copyPaste_Time = 0
+  api.rect(1,128-7,192,8,10) --Avoids redrawing every tick
+end
+
+function s:copyPaste_Text(dt)
+	if copyOn == 1 and copyPaste_Time < 2 then
+		api.color(5)
+		api.print("COPIED 1 X 1 SPRITES",2,128-5)  
+		copyPaste_Time = copyPaste_Time + dt
+	elseif copyPaste_Time >= 2 then
+			api.rect(1,128-7,192,8,10)
+			elseif pasteOn == 1 then
+				api.rect(1,128-7,192,8,10)
+				if copyPaste_Time < 2 then
+					api.color(5)
+					api.print("PASTED 1 X 1 SPRITES",2,128-5)
+					copyPaste_Time = copyPaste_Time + dt
+				end
+	end
 end
 
 function s:paste()
@@ -144,6 +168,9 @@ function s:paste()
     api.SpriteMap.img = sheetdata:image()
     self:_redraw()
   end)
+  pasteOn = 1  
+  copyOn = 0
+  copyPaste_Time = 0	
 end
 
 function s:load(path)
@@ -220,6 +247,7 @@ function s:_update(dt)
       self:redrawTOOLS()
     end
   end
+  s:copyPaste_Text(dt) 
 end
 
 function s:_mpress(x,y,b,it)
