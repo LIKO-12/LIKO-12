@@ -51,6 +51,9 @@ local strans --Selected Transformation
 local transtimer
 local transtime = 0.1125
 
+local infotimer = 0 --The info timer, 0 if no info.
+local infotext = "" --The info text to display
+
 local toolshold = {true,true,false,false,false} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
   function(self,cx,cy,b) --Pencil (Default)
@@ -95,6 +98,7 @@ local tools = {
       data:setPixel(qx+px,qy+py,0)
     end end
     api.SpriteMap.img = data:image()
+    infotimer, infotext = 2,"DELETED SPRITE "..sprsid s:redrawINFO()
   end
 }
 
@@ -133,6 +137,9 @@ end
 
 function s:copy()
   api.setclip(basexx.to_base64(api.SpriteMap:extract(sprsid):export():getString()))
+  infotimer = 2 --Show info for 2 seconds
+  infotext = "COPIED SPRITE "..sprsid
+  self:redrawINFO()
 end
 
 function s:paste()
@@ -144,6 +151,14 @@ function s:paste()
     api.SpriteMap.img = sheetdata:image()
     self:_redraw()
   end)
+  if not ok then
+    infotimer = 5 --Display error msg for 5 seconds
+    infotext = "PASTE ERR: "..(err or "nil")
+  else
+    infotimer = 2 --Display info for 2 seconds
+    infotext = "PASTED TO SPRITE "..sprsid
+  end
+  self:redrawINFO()
 end
 
 function s:load(path)
@@ -195,6 +210,14 @@ function s:redrawFLAG()
   api.SpriteGroup(126,192-64,sprsbanksY-10,8,1,1,1,api.EditorSheet)
 end
 
+function s:redrawINFO()
+  api.rect(1,128-7,192,8,10)
+  if infotimer > 0 then
+    api.color(5)
+    api.print(infotext or "",2,128-5)
+  end
+end
+
 function s:_redraw()
   self:redrawCP()
   self:redrawSPR()
@@ -218,6 +241,14 @@ function s:_update(dt)
     if transtimer > transtime then
       transtimer, strans = nil, nil
       self:redrawTOOLS()
+    end
+  end
+  
+  if infotimer > 0 then
+    infotimer = infotimer - dt
+    if infotimer < 0 then
+      infotimer = 0
+      self:redrawINFO()
     end
   end
 end
