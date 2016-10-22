@@ -149,10 +149,12 @@ function tb:_tinput(t)
   self:_redraw()
 end
 
+--Returns a table containing the lines of code.
 function tb:getBuffer()
   return lume.clone(self.buffer)
 end
 
+--Returns a table of the lines to draw, and the gridx, gridy pos to draw on, how much letters toshift right.
 function tb:getLinesBuffer()
   self:fixShifts()
   local dbuff = {}
@@ -164,6 +166,7 @@ function tb:getLinesBuffer()
   return dbuff, self.gx, self.gy, self.shiftRight
 end
 
+--Returns a table of the visible text to draw, and the gridx, gridy pos to draw on.
 function tb:getDrawBuffer()
   self:fixShifts()
   local dbuff = {}
@@ -175,6 +178,7 @@ function tb:getDrawBuffer()
   return dbuff, self.gx, self.gy
 end
 
+--Update the visible text offsets(shifts).
 function tb:fixShifts()
   if self.cursorX > self.shiftRight+self.gw then self.shiftRight =  self.cursorX - self.gw end
   if self.cursorY > self.shiftTop+self.gh then self.shiftTop =  self.cursorY - self.gh end
@@ -185,8 +189,10 @@ function tb:fixShifts()
   self.shiftTop =  api.floor(self.shiftTop)
 end
 
+--Force the cursor to blink
 function tb:forceBlink() self.blinktimer, self.blinkstate = 0, true end
 
+--Shift the text down
 function tb:shiftDown(sline) --Note: the sline is shifted
   if sline > #self.buffer then table.insert(self.buffer,"") return end
   table.insert(self.buffer,"") -- Insert a new line
@@ -197,6 +203,7 @@ function tb:shiftDown(sline) --Note: the sline is shifted
   return self
 end
 
+--Shift text up
 function tb:shiftUp(sline)
   if sline == 1 then return end
   for i=sline,#self.buffer do --Note: the sline is shifted
