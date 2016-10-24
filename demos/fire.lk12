@@ -1,0 +1,77 @@
+local code = [[--FIRE MADE BY: COSME12--
+function _init() --The startup function
+ clear(1) 
+ pixelColors = {}
+ for i = 1,194 do
+  pixelColors[i] = {}
+ end
+ x = 64 
+ y = 64 --Fire coords
+ s = 1 --Circle radius
+ speed = 4 --Fire speed
+ saveCircle()
+ palette = {1,2,3,6,9,10,11} --Only colors allowed for fire
+end
+
+function _update(dt)
+ for i = 1,1100 do
+  a = rand(192) 
+  b = rand(128)
+  p = pget(a,b) --Gets the color of the pixel
+  extrarandX = rand(2)
+  extrarandY = rand(3)
+  color(palette[p])
+  point(a-1+extrarandX,b-2-extrarandY) --Draw a new pixel near it
+  pixelColors[a-1+extrarandX][b-2+extrarandY] = p
+  if p > 1 then
+   color(palette[p-1])
+   point(a,b) --Decrease first pixel color
+   pixelColors[a][b] = p-1
+  end
+ end
+ color(palette[7])
+ circle(x,y,s)
+ saveCircle()
+ --Buttons, much more faster than _kpress and allows multitouch
+ if (btn(0)) then
+  if x > 12 then
+   x = x - 2 
+  end
+ end
+ if (btn(1)) then
+  if x < 180 then
+   x = x + 2 
+  end
+ end
+ if (btn(2)) then
+  if y > 12 then
+   y = y - 2 
+  end
+ end
+ if (btn(3)) then
+  if y < 110 then
+   y = y + 2 
+  end
+ end
+end
+
+function saveCircle() --Adds circle colors
+ pixelColors[x][y] = 7
+ pixelColors[x][y-1] = 7
+ pixelColors[x][y+1] = 7
+ pixelColors[x-1][y] = 7
+ pixelColors[x+1][y] = 7
+end
+
+function pget(x,y) --Gets pixel color
+ if pixelColors[x][y] then
+  return pixelColors[x][y]
+ else
+  return 1
+ end
+end
+]]
+
+local spritemap = 'iVBORw0KGgoAAAANSUhEUgAAAMAAAABgBAMAAAC57mDaAAAAG1BMVEX/8ekAAADtG1F/JFT6ohv37C9du01RptyDdpyXa9RTAAAAAnRSTlP/AOW3MEoAAADXSURBVHic7dMxCsMwDIVhKyQHMM0FHMgBSk9gMNk9hM5ZsmfqnJtXjltamq1o/LVZhvchGTsRfyp3bv1dTsT9EOKb0rndbAAnTfgWVPStNvqUognQSIl8E8rpqStAH22A9phAfFmUaLzTkwuGE4yhTtAcQFsIGUq01RtMcajEAXRKDCFlvblebIB7TpWQ8gJOxpDivJhkV2Db5hdRgCFMcc7rZgjs+7pUwntdTsx5XR52+aafFgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgU08m7G1Dsgyg3AAAAABJRU5ErkJggg=='
+
+return {code=code,spritemap=spritemap}
