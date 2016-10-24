@@ -69,9 +69,10 @@ function pget(x,y) --Gets pixel color
  else
   return 1
  end
-end
-]]
+end]]
 
-local spritemap = 'iVBORw0KGgoAAAANSUhEUgAAAMAAAABgBAMAAAC57mDaAAAAG1BMVEX/8ekAAADtG1F/JFT6ohv37C9du01RptyDdpyXa9RTAAAAAnRSTlP/AOW3MEoAAADXSURBVHic7dMxCsMwDIVhKyQHMM0FHMgBSk9gMNk9hM5ZsmfqnJtXjltamq1o/LVZhvchGTsRfyp3bv1dTsT9EOKb0rndbAAnTfgWVPStNvqUognQSIl8E8rpqStAH22A9phAfFmUaLzTkwuGE4yhTtAcQFsIGUq01RtMcajEAXRKDCFlvblebIB7TpWQ8gJOxpDivJhkV2Db5hdRgCFMcc7rZgjs+7pUwntdTsx5XR52+aafFgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgU08m7G1Dsgyg3AAAAABJRU5ErkJggg=='
+local spritemap = 'iVBORw0KGgoAAAANSUhEUgAAAMAAAABgAQAAAABju0BEAAAAAnRSTlMAAHaTzTgAAAAZSURBVHic7cExAQAAAMKg9U9tCU+gAAB4GglgAAELKx5YAAAAAElFTkSuQmCC'
 
-return {code=code,spritemap=spritemap}
+local tilemap = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAJAQAAAAAAhtFrAAAAAnRSTlMAAHaTzTgAAAALSURBVHicY2AgDAAAJAABtmbfBAAAAABJRU5ErkJggg=='
+
+return {code=code,spritemap=spritemap,tilemap=tilemap}
