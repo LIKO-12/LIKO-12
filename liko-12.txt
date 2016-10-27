@@ -12,7 +12,7 @@
 ==========================================================================================
 
 Welcome to LIKO-12:
-	LIKO-12 is a PICO-8 clone but with extra abilities, different api and bigger screen width.
+	LIKO-12 is a PICO-8 clone but with extra abilities, different API and bigger screen width.
 	We are working on this because PICO-8 is not available under a free license that allows
 	improvements and sharing, and also to lift some of the more restrictive limitations on games
 	like the token limit.
@@ -27,7 +27,7 @@ Welcome to LIKO-12:
 	with a modified pixel font which includes lower-case letters. We plan on adding a map editor and
 	audio/music editor in the future.
 	
-	- So you can basicly create spritesheets, and games using this console.
+	- So you can basically create spritesheets, and games using this console.
 
 :: IRC	
 
@@ -54,10 +54,10 @@ Welcome to LIKO-12:
 
 :: Specs
 
-	Display: 192x128, fixed 16 colour palette (PICO-8 pallete)
+	Display: 192x128, fixed 16 colour palette (PICO-8 palette)
 	Input: Full access to Mouse, Touch and Keyboard !
 	SpriteSheet: 288 sprite (24x12)
-	Code: LuaJit 5.1
+	Code: LuaJIT 5.1
 	LÖVE: 0.10.1
 	Runs on: Windows, Linux, Mac, Android, iOS, RaspberryPi (see PiLove).
 
