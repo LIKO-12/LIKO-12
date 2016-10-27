@@ -396,8 +396,8 @@ Image, ImageData, SpriteSheet, setCursor, newCursor, TextBuffer, Map is not docu
 	Changelog
 ==========================================================================================
 V0.0.5 PRE:
-!! Change appdata folder name from .liko12 to liko12 to be visible in unix systems.
-- New:
+!! Changed appdata folder name from .liko12 to liko12 to be visible in unix systems.
+## New:
 1. Added awesome fire & snake demos made by cosme12.
 2. Nice hand cursor when hovering at the editor mode tabs.
 3. Spriteeditor tools (Brush, Filler, Copy, Paste, Delete) !
@@ -406,7 +406,7 @@ V0.0.5 PRE:
 6. The cursor is now visible when gif recording.
 7. Sprite draw no longer sets the color to 1.
 
-- Minor:
+## Minor:
 8. New sprites in the EditorSheet.
 9. New cursor: point, shown in the terminal and games.
 10. The window scale can be set by an enviroment variable "LIKO_SCALE", defaults to 3.
@@ -414,7 +414,7 @@ V0.0.5 PRE:
 12. Made the color palette selection bigger.
 13. Non-functional flag buttons in the spriteeditor :P.
 
-- Fixed:
+## Fixed:
 14. Minor fixes in the api.
 15. Bugfixed ImageData:getPixel.
 16. Fixed crashing when using the mousewheel in the code editor.
