@@ -1,11 +1,13 @@
 ﻿==========================================================================================
-	LIKO-12 V0.0.4 PRE
+	LIKO-12 V0.0.5 PRE
 	https://github.com/RamiLego4Game/LIKO-12
 	Licensed under GPL-3, see LICENSE file for more info
 	Author: RamiLego4Game // ramilego4game@gmail.com
 	Contributors:
 		technomancy: Co-Developer.
 		gamax92: Gif recording.
+		cosme12: Fire & Snake demo carts.
+		OmgCopito95, s0r00t: For being awesome and contributing on github.
 	
 	LIKO-12 is built with:
 		LÖVE Framework: http://love2d.org/
@@ -393,6 +395,32 @@ Image, ImageData, SpriteSheet, setCursor, newCursor, TextBuffer, Map is not docu
 ==========================================================================================
 	Changelog
 ==========================================================================================
+V0.0.5 PRE:
+!! Change appdata folder name from .liko12 to liko12 to be visible in unix systems.
+- New:
+1. Added awesome fire & snake demos made by cosme12.
+2. Nice hand cursor when hovering at the editor mode tabs.
+3. Spriteeditor tools (Brush, Filler, Copy, Paste, Delete) !
+4. Spriteeditor transformations (filp, rotate, etc..) !
+5. Now shows info in the spriteeditor when copying, pasting and deleting.
+6. The cursor is now visible when gif recording.
+7. Documented the missing api functions.
+
+- Minor:
+8. New sprites in the EditorSheet.
+9. New cursor: point, shown in the terminal and games.
+10. The window scale can be set by an enviroment variable "LIKO_SCALE", defaults to 3.
+11. Now shows error msg when failing to paste in the spriteeditor.
+12. Made the color palette selection bigger.
+13. Non-functional flag buttons in the spriteeditor :P.
+
+- Fixed:
+14. Minor fixes in the api.
+15. Bugfixed ImageData:getPixel.
+16. Fixed crashing when using the mousewheel in the code editor.
+17. You can no longer delete the path in the terminal.
+18. Bugfixed the path being double written in the terminal when a cart errors.
+
 V0.0.4 PRE:
 1. New gif recording :3 (Thanks for gamax92)
 2. New Shutdown, Folder, Reboot commands (Reboot reloads all the internals of liko12 ! like launching it again)
