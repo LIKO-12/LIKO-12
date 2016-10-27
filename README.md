@@ -5,8 +5,8 @@ We have an irc channel #liko12 at irc.oftc.net , feel free to join us
 
 ## Screenshots
 ![gifrecording](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/gif_1.gif "Snake Demo Cart")
-![gifrecording](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/gif_1.gif "Fire Demo Cart")
-![gifrecording](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/gif_1.gif "TicTacToe Demo Cart")
+![gifrecording](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/gif_2.gif "Fire Demo Cart")
+![gifrecording](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/gif_3.gif "TicTacToe Demo Cart")
 ![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_1.png "LIKO-12 Screenshot 1")
 ![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_2.png "LIKO-12 Screenshot 2")
 ![screenshot](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/screenshot_3.png "LIKO-12 Screenshot 3")
