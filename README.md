@@ -3,6 +3,14 @@ Love2D Forums Topic: https://love2d.org/forums/viewtopic.php?f=5&t=82913
 
 We have an irc channel #liko12 at irc.oftc.net , feel free to join us
 
+## Launching LIKO-12
+
+### Windows 32bit:
+Extract the windows 32 build and run LIKO-12.exe
+
+### All other opereating systems:
+Download LÖVE framwork installer from https://love2d.org/ and double click the .love file to run.
+
 ## Screenshots
 ![gifrecording](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/gif_1.gif "Snake Demo Cart")
 ![gifrecording](https://raw.githubusercontent.com/RamiLego4Game/LIKO-12/master/gif_2.gif "Fire Demo Cart")
