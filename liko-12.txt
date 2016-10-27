@@ -404,7 +404,7 @@ V0.0.5 PRE:
 4. Spriteeditor transformations (filp, rotate, etc..) !
 5. Now shows info in the spriteeditor when copying, pasting and deleting.
 6. The cursor is now visible when gif recording.
-7. Documented the missing api functions.
+7. Sprite draw no longer sets the color to 1.
 
 - Minor:
 8. New sprites in the EditorSheet.
