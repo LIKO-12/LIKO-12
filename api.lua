@@ -260,6 +260,7 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
 
   --Math Section--
   api.ostime = os.time
+  api.osclock = os.clock
 
   function api.rand_seed(newSeed)
     love.math.setRandomSeed(newSeed)
