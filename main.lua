@@ -1,64 +1,9 @@
 io.stdout:setvbuf("no")
-
-function love.mousepressed(x,y,button,istouch)
-  
-end
-
-function love.mousemoved(x,y,dx,dy,istouch)
-  
-end
-
-function love.mousereleased(x,y,button,istouch)
-  
-end
-
-function love.wheelmoved(x,y)
-  
-end
-
-function love.touchpressed(id,x,y,dx,dy,pressure)
-  
-end
-
-function love.touchmoved(id,x,y,dx,dy,pressure)
-  
-end
-
-function love.touchreleased(id,x,y,dx,dy,pressure)
-  
-end
-
-function love.keypressed(key,scancode,isrepeat)
-  
-end
-
-function love.keyreleased(key,scancode)
-  
-end
-
-function love.textinput(text)
-  
-end
+local events = require("Engine.events")
 
 --Internal Callbacks--
 function love.load()
-  
-end
-
-function love.resize(w,h)
-  
-end
-
-function love.update(dt)
-  
-end
-
-function love.visible(v)
-  
-end
-
-function love.focus(f)
-  
+  events:trigger("love:load")
 end
 
 function love.run()
@@ -81,11 +26,14 @@ function love.run()
 			love.event.pump()
 			for name, a,b,c,d,e,f in love.event.poll() do
 				if name == "quit" then
-					if not love.quit or not love.quit() then
-						return a
+					local r = events:trigger("love:quit")
+					for k,v in pairs(r) do
+					  if v then r = nil break end
 					end
+					if not r then return a end
+				else
+				  events:trigger("love:"..name,a,b,c,d,e,f)
 				end
-				love.handlers[name](a,b,c,d,e,f)
 			end
 		end
  
@@ -97,11 +45,11 @@ function love.run()
  
 		-- Call update and draw
 		if love.update then
-    love.update(dt) -- will pass 0 if love.timer is disabled
+    events:trigger("love:update",dt) -- will pass 0 if love.timer is disabled
   end
   
   if love.graphics and love.graphics.isActive() then
-    
+    events:trigger("love:graphics")
   end
   
 		if love.timer then love.timer.sleep(0.001) end
