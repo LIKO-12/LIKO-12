@@ -59,8 +59,10 @@ function t:redrawSPRS()
   api.color(sprsidrect[6])
   local id = sprsid if id < 10 then id = "00"..id elseif id < 100 then id = "0"..id end
   api.print(id,sprsidrect[1]+1,sprsidrect[2]+1)
-  api.SpriteGroup(49,192-32,sprsbanksY,4,1,1,1,api.EditorSheet)
-  api.EditorSheet:draw(sprsbank+24,192-(40-sprsbank*8),sprsbanksY)
+  api.SpriteGroup(97,192-32,sprsbanksY,4,1,1,1,api.EditorSheet)
+  api.EditorSheet:draw(sprsbank+72,192-(40-sprsbank*8),sprsbanksY)
+  api.rect(sprsidrect[1]-9,sprsidrect[2]-1,8,8,1)
+  api.SpriteMap:image():draw(sprsidrect[1]-9,sprsidrect[2]-1,0,1,1,api.SpriteMap:quad(sprsid))
 end
 
 function t:_mpress(x,y,b,it)
@@ -116,8 +118,9 @@ function t:_mrelease(x,y,b,it)
   if cx and mapmflag then
     api.TileMap:cell(cx,cy,sprsid)
     
-    self:redrawMap() mapmflag = false
+    self:redrawMap()
   end
+  mapmflag = false
   
   if (not it and sprsmflag) or it then
     local cx, cy = api.whereInGrid(x,y,sprsgrid)
@@ -127,9 +130,10 @@ function t:_mrelease(x,y,b,it)
       sprssrect[1] = cx*8
       sprssrect[2] = 128-(8+24+1)+cy*8
       
-      self:redrawSPRS() sprsmflag = false
+      self:redrawSPRS()
     end
   end
+  sprsmflag = false
 end
 
 return t

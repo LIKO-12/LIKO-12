@@ -8,6 +8,7 @@ local GActive = false --Game Active
 local GStarted = false
 
 function _auto_init() --I have to seperate the autorun callbacks from the main ones so games can override the original ones without destroying these.
+  api.setCursor("normal")
   Terminal:_init()
   Editor:_init()
   RT:_init()
@@ -58,6 +59,7 @@ end
 
 function _auto_kpress(k,sc,ir)
   if k == "escape" then
+    api.setCursor("normal")
     if not GActive then EActive = not EActive else GActive = false end
     if EActive then Active = Editor else Active = Terminal end
     if Active._redraw then Active:_redraw() end

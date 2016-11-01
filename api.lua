@@ -1,8 +1,8 @@
 _Class = require("class")
 require("offsets")
 
-_LK12VER = "V0.0.4 DEV"
-_LK12VERC = 9--9 DEV, 10 PRE
+_LK12VER = "V0.0.5 PRE"
+_LK12VERC = 10--9 DEV, 10 PRE
 
 _GIFSCALE = 2
 _GIFINVERTAL = 0.06 --How much time between every frame ? (in seconds)
@@ -60,7 +60,7 @@ _ColorSet[0] = {0,0,0,0}
         return id
       end
     end
-    return false
+    return 0
   end
 
 local function newAPI(noFS,sprsheetmap,carttilemap)
@@ -177,7 +177,7 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
   api.ImageData = _Class("Liko12.imageData")
   function api.ImageData:initialize(w,h) if h then self.imageData = love.image.newImageData(w or 192, h or 128) elseif type(w) == "string" then self.imageData = love.image.newImageData(love.filesystem.newFileData(w,"spritemap","base64")) else self.imageData = w end end
   function api.ImageData:size() return self.imageData:getDimensions() end
-  function api.ImageData:getPixel(x,y) return self.imageData:getPixel((x or 1)-1,(y or 1)-1) end
+  function api.ImageData:getPixel(x,y) return _GetColorID(self.imageData:getPixel((x or 1)-1,(y or 1)-1)) end
   function api.ImageData:setPixel(x,y,c) self.imageData:setPixel((x or 1)-1,(y or 1)-1,unpack(_GetColor(c))) return self end
   function api.ImageData:map(mf)
     self.imageData:mapPixel(
@@ -236,20 +236,22 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
   api._CachedCursors = {}
 
   function api.newCursor(data,name,hotx,hoty)
-    api._Cursors[name] = {data = data, hotx = hotx or 1, hoty = hoty or 1}
-    api._CachedCursors[name or "custom"] = love.mouse.newCursor(api._Cursors[name].data:enlarge(_ScreenScale).imageData,(api._Cursors[name].hotx-1)*_ScreenScale,(api._Cursors[name].hoty-1)*_ScreenScale)
+    api._Cursors[name or "custom"] = {data = data, hotx = hotx or 1, hoty = hoty or 1}
+    api._CachedCursors[name or "custom"] = love.mouse.newCursor(api._Cursors[name or "custom"].data:enlarge(_ScreenScale).imageData,(api._Cursors[name or "custom"].hotx-1)*_ScreenScale,(api._Cursors[name or "custom"].hoty-1)*_ScreenScale)
   end
 
   function api.loadDefaultCursors()
     api.newCursor(api.EditorSheet:extract(1),"normal",2,2)
     api.newCursor(api.EditorSheet:extract(2),"handrelease",3,2)
-    api.newCursor(api.EditorSheet:extract(3),"handpress",3,4)
+    api.newCursor(api.EditorSheet:extract(3),"handpress",3,2)
     api.newCursor(api.EditorSheet:extract(4),"hand",5,5)
     api.newCursor(api.EditorSheet:extract(5),"cross",4,4)
+    api.newCursor(api.EditorSheet:extract(7),"point",2,2)
     api.setCursor(api._CurrentCursor)
   end
 
   function api.setCursor(name)
+    if name == api._CurrentCursor then return end
     if not api._CachedCursors[name] then api._CachedCursors[name or "custom"] = love.mouse.newCursor(api._Cursors[name].data:enlarge(_ScreenScale).imageData,(api._Cursors[name].hotx-1)*_ScreenScale,(api._Cursors[name].hoty-1)*_ScreenScale) end
     love.mouse.setCursor(api._CachedCursors[name]) api._CurrentCursor = name or "custom"
   end
@@ -258,6 +260,7 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
 
   --Math Section--
   api.ostime = os.time
+  api.osclock = os.clock
 
   function api.rand_seed(newSeed)
     love.math.setRandomSeed(newSeed)
@@ -325,6 +328,8 @@ local function newAPI(noFS,sprsheetmap,carttilemap)
   function api.keyrepeat(state) love.keyboard.setKeyRepeat(state) end
   function api.showkeyboard(state) love.keyboard.setTextInput(state) end
   function api.isMobile() return _isMobile or false end
+  function api.setclip(t) love.system.setClipboardText(t) end
+  function api.getclip() return love.system.getClipboardText() end
   
   api.TextBuffer = love.filesystem.load("/libraries/textbuffer.lua")()
   api.MapObj = love.filesystem.load("/libraries/map.lua")()

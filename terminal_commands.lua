@@ -40,7 +40,6 @@ function CMD.run(command,...)
   if not ok then
     _auto_exitgame()
     tout("ERR: "..err,9)
-    tout(term.rootDir.."> ",8,true)
   else
     _auto_switchgame()
   end

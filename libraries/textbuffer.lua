@@ -1,6 +1,18 @@
 --This library is create for programming code editors in liko-12 more easly by using premade text buffer with horizental and vertical scrolling support--
 
+local lume = require("libraries.lume")
 local tb = _Class("liko12.textBuffer")
+
+local recalculate_x_after_scroll = function(self, is_repeat)
+  if is_repeat then
+    self.cursorX = self.lastCX
+  else
+    self.lastCX = self.cursorX
+  end
+  if self.cursorX > self.buffer[self.cursorY]:len()+1 then
+    self.cursorX = self.buffer[self.cursorY]:len()+1
+  end
+end
 
 --Args: grid x, grid Y, draw width in grid, draw height in grid, lines Limit, length Limit, min length, cursor color, blinktime--
 --0 blinktime disables cursor, 0 lines limit, 0 length disables all that..--
@@ -41,6 +53,20 @@ function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
       end
     end,
     
+    ["delete"] = function(self,ir)
+      if self.cursorX == self.buffer[self.cursorY]:len()+1 then --If it's at the end of the line
+        if self.buffer[self.cursorY+1] then
+          self.buffer[self.cursorY] = self.buffer[self.cursorY]..self.buffer[self.cursorY+1] --Copies next line
+		      self.buffer[self.cursorY+1] = "" --Deletes next line
+          self:shiftUp(self.cursorY+2)
+          self.cursorY = self.cursorY
+        end
+      else
+        self.buffer[self.cursorY] = self.buffer[self.cursorY]:sub(0,self.cursorX-1)..self.buffer[self.cursorY]:sub(self.cursorX+1,self.buffer[self.cursorY]:len())
+        self.cursorX = self.cursorX
+      end
+    end,
+    
     ["left"] = function(self,ir)
       self.cursorX = self.cursorX-1
       if self.cursorX < 1 then
@@ -68,16 +94,14 @@ function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
     ["up"] = function(self,ir)
       if self.buffer[self.cursorY-1] then
         self.cursorY = self.cursorY-1
-        if not ir then self.lastCX = self.cursorX else self.cursorX = self.lastCX end
-        if self.cursorX > self.buffer[self.cursorY]:len()+1 then self.cursorX = self.buffer[self.cursorY]:len()+1 end
+        recalculate_x_after_scroll(self, ir)
       end
     end,
     
     ["down"] = function(self,ir)
       if self.buffer[self.cursorY+1] then
         self.cursorY = self.cursorY+1
-        if not ir then self.lastCX = self.cursorX else self.cursorX = self.lastCX end
-        if self.cursorX > self.buffer[self.cursorY]:len()+1 then self.cursorX = self.buffer[self.cursorY]:len()+1 end
+        recalculate_x_after_scroll(self, ir)
       end
     end,
     
@@ -89,16 +113,17 @@ function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
       self.cursorX = self.buffer[self.cursorY]:len()+1
     end,
     
-    ["pageup"] = function(self,ir)
-      for i=1, self.gh do
-        
-      end
+    ["pageup"] = function(self,is_repeat)
+      self.cursorY = math.max(1, self.cursorY-self.gh)
+      recalculate_x_after_scroll(self, is_repeat)
     end,
     
-    ["pagedown"] = function(self,ir)
-      
+    ["pagedown"] = function(self,is_repeat)
+      self.cursorY = math.min(#self.buffer, self.cursorY+self.gh)
+      recalculate_x_after_scroll(self, is_repeat)
     end
   }
+  self.keymap["kpenter"] = self.keymap["return"] --Add numpad enter key as the return key
   
 end
 
@@ -125,14 +150,12 @@ function tb:_tinput(t)
   self:_redraw()
 end
 
+--Returns a table containing the lines of code.
 function tb:getBuffer()
-  local bclone = {}
-  for line,text in ipairs(self.buffer) do
-    table.insert(bclone,text)
-  end
-  return bclone
+  return lume.clone(self.buffer)
 end
 
+--Returns a table of the lines to draw, and the gridx, gridy pos to draw on, how much letters toshift right.
 function tb:getLinesBuffer()
   self:fixShifts()
   local dbuff = {}
@@ -144,6 +167,7 @@ function tb:getLinesBuffer()
   return dbuff, self.gx, self.gy, self.shiftRight
 end
 
+--Returns a table of the visible text to draw, and the gridx, gridy pos to draw on.
 function tb:getDrawBuffer()
   self:fixShifts()
   local dbuff = {}
@@ -155,6 +179,7 @@ function tb:getDrawBuffer()
   return dbuff, self.gx, self.gy
 end
 
+--Update the visible text offsets(shifts).
 function tb:fixShifts()
   if self.cursorX > self.shiftRight+self.gw then self.shiftRight =  self.cursorX - self.gw end
   if self.cursorY > self.shiftTop+self.gh then self.shiftTop =  self.cursorY - self.gh end
@@ -165,8 +190,10 @@ function tb:fixShifts()
   self.shiftTop =  api.floor(self.shiftTop)
 end
 
+--Force the cursor to blink
 function tb:forceBlink() self.blinktimer, self.blinkstate = 0, true end
 
+--Shift the text down
 function tb:shiftDown(sline) --Note: the sline is shifted
   if sline > #self.buffer then table.insert(self.buffer,"") return end
   table.insert(self.buffer,"") -- Insert a new line
@@ -177,6 +204,7 @@ function tb:shiftDown(sline) --Note: the sline is shifted
   return self
 end
 
+--Shift text up
 function tb:shiftUp(sline)
   if sline == 1 then return end
   for i=sline,#self.buffer do --Note: the sline is shifted

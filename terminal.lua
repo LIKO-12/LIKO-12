@@ -77,6 +77,7 @@ function Terminal:_init()
 end
 
 function Terminal:_update(dt)
+  api.setCursor("point")
   self.blinktimer = self.blinktimer+dt if self.blinktimer > self.blinktime then self.blinktimer = self.blinktimer - self.blinktime  self.blinkstate = not self.blinkstate end
   local curlen = self.textbuffer[self.currentLine]:len()
   api.color(self.blinkstate and 5 or 1)
@@ -107,7 +108,7 @@ function Terminal:_kpress(k,sc,ir)
     end
     self:tout(self.rootDir.."> ",8,true,true)
   end
-  if k == "backspace" then self.textbuffer[self.currentLine] = self.textbuffer[self.currentLine]:sub(0,-2) self:_redraw() end
+  if k == "backspace" and self.textbuffer[self.currentLine]:len() > self.rootDir:len()+2 then self.textbuffer[self.currentLine] = self.textbuffer[self.currentLine]:sub(0,-2) self:_redraw() end
 end
 
 function Terminal:_tinput(t)
