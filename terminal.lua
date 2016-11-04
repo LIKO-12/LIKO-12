@@ -110,9 +110,11 @@ function Terminal:_kpress(k,sc,ir)
       self:tout("UNKNOWN COMMAND '"..splitted[1].."' !",15)
     end
     --Save the command in the command cache
-    self.cacheIndex = self.cacheIndex + 1
-    self.cacheCommand[self.cacheIndex] = splitted[1]
-    self.cacheIndexIt = self.cacheIndex
+    if splitted[1] ~= nil then  --Only when it have something to save
+      self.cacheIndex = self.cacheIndex + 1
+      self.cacheCommand[self.cacheIndex] = splitted[1]
+      self.cacheIndexIt = self.cacheIndex
+    end
     
     self:tout(self.rootDir.."> ",8,true,true)
   end
