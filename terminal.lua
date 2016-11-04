@@ -131,6 +131,30 @@ function Terminal:_kpress(k,sc,ir)
   end
 end
 
+function Terminal:_krelease(k,sc)
+  --Try to autocomplete with files in the current folder
+  if k == "tab" then
+    local splitted = self:splitCommand(self.textbuffer[self.currentLine])
+    local path = path or ""
+    local curpath = path:sub(0,1) == "/" and path.."/" or self.rootDir..path.."/"
+    local files = api.fs.dirItems(curpath)
+    local exit = 0
+    self.textbuffer[self.currentLine] = self.rootDir.."> "
+    for fileKey,fileValue in ipairs(files) do
+      for splittedKey,splittedValue in ipairs(splitted) do
+        if string.find(fileValue, splittedValue) then
+          self:_tinput(fileValue)
+          exit = 1
+          break
+        end
+        if exit == 1 then break end
+        self:_tinput(splittedValue)
+        self:_tinput(" ")
+      end
+    end
+  end
+end
+
 function Terminal:_tinput(t)
   if t == "\\" then return end --This thing is so bad, so GO AWAY
   if self.textbuffer[self.currentLine]:len() < self.lengthLimit then self:tout(t,8,true) end
