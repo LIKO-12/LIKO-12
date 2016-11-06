@@ -88,7 +88,7 @@ end
 
 function CMD.load(command,name)
   if not name then tout("PLEASE PROVIDE A NAME TO LOAD",9) return end
-  local name = name:sub(0,1) == "/" and name or term.rootDir..name
+  local name = name:sub(0,1) == "/" and name..".lk12" or term.rootDir..name..".lk12"
   if not api.fs.exists(name) then tout(name.." DOES NOT EXISTS !",9) return end
   local code,err = api.fs.read(name)
   if not code then tout("ERR: "..(err or "UNKNOWN"),9) return end

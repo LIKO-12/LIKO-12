@@ -143,7 +143,7 @@ function Terminal:_krelease(k,sc)
       self.textbuffer[self.currentLine] = self.rootDir.."> "
       for splittedKey,splittedValue in ipairs(splitted) do
         if string.find(fileValue, splittedValue) then
-          self:_tinput(fileValue)
+          self:_tinput(string.gsub(fileValue, ".lk12", ""))
           exit = 1
           break
         end
