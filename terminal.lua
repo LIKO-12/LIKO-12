@@ -10,6 +10,9 @@ Terminal.textcolors = {}
 Terminal.linesLimit = 14
 Terminal.lengthLimit = 43
 Terminal.currentLine = 1
+Terminal.cacheCommand = {}
+Terminal.cacheIndex = 0
+Terminal.cacheIndexIt = 0
 
 Terminal.rootDir = "/"
 
@@ -106,9 +109,51 @@ function Terminal:_kpress(k,sc,ir)
     elseif splitted[1] then
       self:tout("UNKNOWN COMMAND '"..splitted[1].."' !",15)
     end
+    --Save the command in the command cache
+    if splitted[1] ~= nil then  --Only when it have something to save
+      self.cacheIndex = self.cacheIndex + 1
+      self.cacheCommand[self.cacheIndex] = splitted[1]
+      self.cacheIndexIt = self.cacheIndex
+    end
+    
     self:tout(self.rootDir.."> ",8,true,true)
   end
   if k == "backspace" and self.textbuffer[self.currentLine]:len() > self.rootDir:len()+2 then self.textbuffer[self.currentLine] = self.textbuffer[self.currentLine]:sub(0,-2) self:_redraw() end
+  if k == "up" then --Use the command cache
+    self.textbuffer[self.currentLine] = self.rootDir.."> "
+    self:_tinput(self.cacheCommand[self.cacheIndexIt])
+    
+    if self.cacheIndexIt > 1 then
+      self.cacheIndexIt = self.cacheIndexIt - 1
+    else
+      self.cacheIndexIt = self.cacheIndex
+    end
+  end
+end
+
+function Terminal:_krelease(k,sc)
+  --Try to autocomplete with files in the current folder
+  if k == "tab" then
+    local splitted = self:splitCommand(self.textbuffer[self.currentLine])
+    local path = path or ""
+    local curpath = path:sub(0,1) == "/" and path.."/" or self.rootDir..path.."/"
+    local files = api.fs.dirItems(curpath)
+    local exit = 0
+    for fileKey,fileValue in ipairs(files) do
+      self.textbuffer[self.currentLine] = self.rootDir.."> "
+      for splittedKey,splittedValue in ipairs(splitted) do
+        if string.find(fileValue, splittedValue) then
+          self:_tinput(string.gsub(fileValue, ".lk12", ""))
+          exit = 1
+          break
+        end
+        if exit == 1 then break end
+        self:_tinput(splittedValue)
+        self:_tinput(" ")
+      end
+      if exit == 1 then break end
+    end
+  end
 end
 
 function Terminal:_tinput(t)
