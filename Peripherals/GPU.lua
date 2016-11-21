@@ -46,7 +46,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   event:trigger("love:resize", _HOST_W, _HOST_H) --Calculate LIKO12 scale to the host window for the first time.
   
-  --==The end of new code==--
+  --Post initialization (Setup the in liko12 gpu settings)--
   
   --love.graphics.translate(_ScreenTX,_ScreenTY) --Offset all the drawing opereations.
   
