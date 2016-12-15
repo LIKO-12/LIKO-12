@@ -36,6 +36,7 @@ return function(config) --A function that creates a new GPU peripheral.
   _ColorSet[0] = {0,0,0,0} --Color index 0 must be always transparent.
   --End of config loading--
   
+  
   local _ShouldDraw = false --This flag means that the gpu has to update the screen for the user.
   
   local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing)
@@ -72,13 +73,13 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Post initialization (Setup the in liko12 gpu settings)--
   
-  local o = {} --Offsets table.
-  o.point = {0,0}
+  local ofs = {} --Offsets table.
+  ofs.point = {0,0}
   
   --love.graphics.translate(_ScreenTX,_ScreenTY) --Offset all the drawing opereations.
   
-  --love.graphics.setLineStyle("rough") --Set the line style.
-  --love.graphics.setLineJoin("miter") --Set the line join style.
+  love.graphics.setLineStyle("rough") --Set the line style.
+  love.graphics.setLineJoin("miter") --Set the line join style.
   
   --api.clear() --Clear the canvas for the first time
   --api.stroke(1) --Set the line width to 1
@@ -89,7 +90,7 @@ return function(config) --A function that creates a new GPU peripheral.
     return math.floor(x/_LIKOScale)+1, api.floor(y/_LIKOScale)+1
   end
   
-  function _GetColor(c) return _ColorSet[c or 1] end --Get the (rgba) table of a color id.
+  function _GetColor(c) return _ColorSet[c or 1] or _ColorSet[1] end --Get the (rgba) table of a color id.
   function _GetColorID(r,g,b,a) --Get the color id by the (rgba) table.
     local a = type(a) == "nil" and 255 or a
     for id, col in pairs(_ColorSet) do
@@ -103,6 +104,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --The api starts here--
   local GPU = {}
   
+<<<<<<< HEAD
   local ColorStack = {} --The colors stack (pushColor,popColor)
   
   --Call with color id to set the active color.
@@ -130,6 +132,9 @@ return function(config) --A function that creates a new GPU peripheral.
     if #ColorStack == 0 then return false, "No more colors to pop." end --Error
     GPU.color(ColorStack[#ColorStack]) --Set the last color in the stack to be the active color.
     table.remove(ColorStack,#ColorStack) --Remove the last color in the stack.
+=======
+
+>>>>>>> origin/WIP
   end
   
   return GPU
