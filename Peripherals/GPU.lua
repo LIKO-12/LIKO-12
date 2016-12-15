@@ -80,6 +80,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   love.graphics.setLineStyle("rough") --Set the line style.
   love.graphics.setLineJoin("miter") --Set the line join style.
+  love.graphics.setColor(_GetColor(1))
   
   --api.clear() --Clear the canvas for the first time
   --api.stroke(1) --Set the line width to 1
@@ -131,6 +132,14 @@ return function(config) --A function that creates a new GPU peripheral.
     if #ColorStack == 0 then return false, "No more colors to pop." end --Error
     GPU.color(ColorStack[#ColorStack]) --Set the last color in the stack to be the active color.
     table.remove(ColorStack,#ColorStack) --Remove the last color in the stack.
+  end
+  
+  function GPU.clear(c)
+    if c and type(c) ~= "number" then return false, "The color id must be a number." end --Error
+    if c > 16 or c < 0 then return false, "The color id is out of range." end --Error
+    GUI.color(c or 1) --Defaults to black.
+    --api.rect(1,1,192,128)
+    return true --It ran successfully.
   end
   
   return GPU
