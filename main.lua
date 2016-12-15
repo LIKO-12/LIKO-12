@@ -45,13 +45,11 @@ function love.run()
 		end
  
 		-- Call update and draw
-		if love.update then
     events:trigger("love:update",dt) -- will pass 0 if love.timer is disabled
-  end
   
-  if love.graphics and love.graphics.isActive() then
-    events:trigger("love:graphics")
-  end
+    if love.graphics and love.graphics.isActive() then
+      events:trigger("love:graphics")
+    end
   
 		if love.timer then love.timer.sleep(0.001) end
 	end
