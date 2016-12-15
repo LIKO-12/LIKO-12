@@ -1,0 +1,19 @@
+local code = [[--Scaling Demo by RamiLego4Game--
+ball = SpriteMap:image()
+flag = false
+rot, sc = 0, 0.5
+
+function _update(dt)
+  clear()
+  rot = rot+math.rad(dt*90)
+  sc = flag and sc-dt/2 or sc+dt/2
+  if math.deg(rot) > 360 then rot = math.rad(math.deg(rot) - 360) end
+  if sc > 1.5 or sc < 0.5 then flag = not flag end
+  ball:draw(192/2,128/2,rot,sc,sc)
+end]]
+
+local spritemap = 'iVBORw0KGgoAAAANSUhEUgAAAMAAAABgAgMAAAA2rpV6AAAADFBMVEUAAAB/JFTtG1H6ohvQCb0TAAAAAXRSTlMAQObYZgAAAHZJREFUeJzt1KERgDAQRNEgKAHqoQQEMZSQemgBwUVEodMErSCZA0r4AsHMfv/kbghdjFMANfFpAKBN1a8RgN6K+4FAZmA2cz8ZqBQUCjIFhkGloFCQKTAMdgrWf4P+BcuXoE1mG5koPgF8M0oppZRSSimlftUN4BVS36cTL9YAAAAASUVORK5CYII='
+
+local tilemap = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAJAQAAAAAAhtFrAAAAAnRSTlMAAHaTzTgAAAALSURBVHicY2AgDAAAJAABtmbfBAAAAABJRU5ErkJggg=='
+
+return {code=code,spritemap=spritemap,tilemap=tilemap}

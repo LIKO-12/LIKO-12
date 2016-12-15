@@ -79,6 +79,7 @@ end
 --Internal Callbacks--
 function love.load()
   --love.keyboard.setTextInput(true)
+  love.graphics.setDefaultFilter("nearest","nearest")
   if not love.filesystem.exists("/data/") then love.filesystem.createDirectory("/data/") end
   if not love.filesystem.exists("/data/demos/") then
     love.filesystem.createDirectory("/data/demos/")
