@@ -75,6 +75,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local ofs = {} --Offsets table.
   ofs.point = {0,0}
+  ofs.rect = {0,0}
+  ofs.rect_line = {0,0}
   
   --love.graphics.translate(_ScreenTX,_ScreenTY) --Offset all the drawing opereations.
   
@@ -134,13 +136,61 @@ return function(config) --A function that creates a new GPU peripheral.
     table.remove(ColorStack,#ColorStack) --Remove the last color in the stack.
   end
   
+  --Draw a rectangle filled, or lines only.
+  --X pos, Y pos, W width, H height, L linerect, C colorid.
+  function GPU.rect(x,y,w,h,l,c)
+    local x,y,w,h,l,c = x or 1, y or 1, w or 1, h or 1, l or false, c --In case if they are not provided.
+    
+    --It accepts all the args as a table.
+    if x and type(x) == "table" then
+      x,y,w,h,l,c = unpack(x)
+    end
+    
+    --Args types verification
+    if type(x) ~= "number" then return false, "X pos must be a number or nil." end --Error
+    if type(y) ~= "number" then return false, "Y pos must be a number or nil." end --Error
+    if type(w) ~= "number" then return false, "W width must be a number or nil." end --Error
+    if type(h) ~= "number" then return false, "H height must be a number or nil." end --Error
+    if type(l) ~= "boolean" then return false, "L linerect must be a number or nil." end --Error
+    if c and type(c) ~= "number" then return false, "The color id must be a number or nil." end --Error
+    
+    --Remove float digits
+    x,y,w,h,c = math.floor(x), math.floor(y), math.floor(w), math.floor(h), c and math.floor(c) or c
+    
+    if c then --If the colorid is provided, pushColor then set the color.
+      GPU.pushColor()
+      GPU.color(c)
+    end
+    
+    if l then x,y = x+ofs.rect_line[1], y+ofs.rect_line[2] else x,y = x+ofs.rect[1], y+ofs.rect[2] end --Apply the offset.
+    
+    love.graphics.rectangle(l and "line" or "fill",x,y,w,h) _ShouldDraw = true --Draw and tell that changes has been made.
+    
+    if c then GPU.popColor() end --Restore the color from the stack.
+    
+    return true --It ran successfully
+  end
+  
+  --Clears the whole screen with black or the given color id.
   function GPU.clear(c)
     if c and type(c) ~= "number" then return false, "The color id must be a number." end --Error
     if c > 16 or c < 0 then return false, "The color id is out of range." end --Error
-    GUI.color(c or 1) --Defaults to black.
-    --api.rect(1,1,192,128)
+    GPU.rect(1,1,192,128,false,c or 1) --Draw a rectangle that covers the whole screen.
     return true --It ran successfully.
   end
+  
+  --Draws a point/s at specific location/s, accepts the colorid as the last args, x and y of points must be provided before the colorid.
+  function GPU.points(...)
+    local args = {...} --The table of args
+    GPU.pushColor() --Push the current color.
+    if not (#args % 2 == 0) then GUI.color(args[#args]) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
+    for k,v in ipairs(args) do if type(v) ~= "number" then return false, "The color id must be a number." end end --Error
+    for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + offs.point[2] else args[k] = v + offs.point[1] end end --Apply the offset.
+    love.graphics.points(unpack(args)) _ShouldDraw = true --Draw the points and tell that changes has been made.
+    GPU.popColor() --Pop the last color in the stack.
+    return true --It ran successfully.
+  end
+  GPU.point = GPU.points --Just an alt name :P.
   
   return GPU
 end
