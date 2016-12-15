@@ -104,7 +104,6 @@ return function(config) --A function that creates a new GPU peripheral.
   --The api starts here--
   local GPU = {}
   
-<<<<<<< HEAD
   local ColorStack = {} --The colors stack (pushColor,popColor)
   
   --Call with color id to set the active color.
@@ -132,9 +131,6 @@ return function(config) --A function that creates a new GPU peripheral.
     if #ColorStack == 0 then return false, "No more colors to pop." end --Error
     GPU.color(ColorStack[#ColorStack]) --Set the last color in the stack to be the active color.
     table.remove(ColorStack,#ColorStack) --Remove the last color in the stack.
-=======
-
->>>>>>> origin/WIP
   end
   
   return GPU
