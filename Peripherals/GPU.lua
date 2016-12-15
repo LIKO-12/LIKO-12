@@ -3,7 +3,7 @@ local events = require("Engine.events")
 return function(config) --A function that creates a new GPU peripheral.
   
   --Load the config--
-  local _LIKO_W, _LIKO_H = config._LIKO_W or 192, config._LIKO_H or 128 --The interal screen width.
+  local _LIKO_W, _LIKO_H = config._LIKO_W or 192, config._LIKO_H or 128 --LIKO screen width.
   local _LIKO_X, _LIKO_Y = 0,0 --LIKO12 Screen padding in the HOST screen.
   
   local _HOST_W, _HOST_H = love.graphics.getDimensions() --The host window size.
@@ -34,6 +34,9 @@ return function(config) --A function that creates a new GPU peripheral.
   } --The colorset of the gpu
   
   _ColorSet[0] = {0,0,0,0} --Color index 0 must be always transparent.
+  
+  local _ClearOnRender = config._ClearOnRender --Should clear the screen when render, some platforms have glitches when this is disabled.
+  if type(_ClearOnRender) == "nil" then _ClearOnRender = true end --Defaults to be enabled.
   --End of config loading--
   
   
@@ -55,6 +58,10 @@ return function(config) --A function that creates a new GPU peripheral.
     _ShouldDraw = true
   end)
   
+  --Hook to some functions to redraw (when the window is moved, got focus, etc ...)
+  event:register("love:focus",function(f) if f then _ShouldDraw = true end end) --Window got focus.
+  event:register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
+  
   --Initialize the gpu--
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --Create the screen canvas.
   _ScreenCanvas:setFilter("nearest") --Set the scaling filter to the nearest pixel.
@@ -74,18 +81,12 @@ return function(config) --A function that creates a new GPU peripheral.
   --Post initialization (Setup the in liko12 gpu settings)--
   
   local ofs = {} --Offsets table.
-  ofs.point = {0,0}
-  ofs.rect = {0,0}
-  ofs.rect_line = {0,0}
+  ofs.screen = {0,0} --The offset of all the drawing opereations.
+  ofs.point = {0,0} --The offset of GPU.point/s.
+  ofs.rect = {0,0} --The offset of GPU.rect with l as false.
+  ofs.rect_line = {0,0} --The offset of GPU.rect with l as true.
   
-  --love.graphics.translate(_ScreenTX,_ScreenTY) --Offset all the drawing opereations.
-  
-  love.graphics.setLineStyle("rough") --Set the line style.
-  love.graphics.setLineJoin("miter") --Set the line join style.
-  love.graphics.setColor(_GetColor(1))
-  
-  --api.clear() --Clear the canvas for the first time
-  --api.stroke(1) --Set the line width to 1
+  love.graphics.translate(unpack(ofs.screen)) --Offset all the drawing opereations.
   
   --Internal Functions--
   function _HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
@@ -192,5 +193,34 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   GPU.point = GPU.points --Just an alt name :P.
   
-  return GPU
+  love.graphics.setLineStyle("rough") --Set the line style.
+  love.graphics.setLineJoin("miter") --Set the line join style.
+  love.graphics.setPointSize(1) --Set the point size to 1px.
+  love.graphics.setLineWidth(1) --Set the line width to 1px.
+  love.graphics.setColor(_GetColor(1)) --Set the active color to black.
+  
+  GPU.clear() --Clear the canvas for the first time.
+  
+  --Host to love.run when graphics is active--
+  events:register("love:graphics",function()
+    if _ShouldDraw then --When it's required to draw (when changes has been made to the canvas)
+      love.graphics.setCanvas() --Quit the canvas and return to the host screen.
+      love.graphics.origin() --Reset all transformations.
+      
+      GPU.pushColor() --Push the current color to the stack.
+      love.graphics.setColor(255,255,255,255) --I don't want to tint the canvas :P
+      
+      if _ClearOnRender then love.graphics.clear(0,0,0,255) end --Clear the screen (Some platforms are glitching without this).
+      
+      love.graphics.draw(_ScreenCanvas, _LIKO_X, _LIKO_Y, 0, _LIKOScale, _LIKOScale) --Draw the canvas.
+      
+      love.graphics.present() --Present the screen to the host & the user.
+      love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
+      love.graphics.translate(unpack(ofs.screen)) --Reapply the offset.
+      _ShouldDraw = false --Reset the flag.
+      GPU.popColor() --Restore the active color.
+    end
+  end)
+  
+  return GPU --Return the table containing all of the api functions.
 end
