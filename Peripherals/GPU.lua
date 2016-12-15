@@ -67,7 +67,8 @@ return function(config) --A function that creates a new GPU peripheral.
   _ScreenCanvas:setFilter("nearest") --Set the scaling filter to the nearest pixel.
   
   local _GifCanvas = love.graphics.newCanvas(_LIKO_W*_GIFSCALE,_LIKO_H*_GIFSCALE) --Create the gif canvas, used to apply the gif scale factor.
-  _GifCanvas:setFilter("nearest") --Set the scaling filter to the nearest pixel.
+  _GifCanvas:setFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
+  love.graphics.setDefaultFilter("nearest","nearest")
   
   love.graphics.clear(0,0,0,255) --Clear the host screen.
   
