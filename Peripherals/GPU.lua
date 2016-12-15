@@ -83,8 +83,11 @@ return function(config) --A function that creates a new GPU peripheral.
   local ofs = {} --Offsets table.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
   ofs.point = {-1,0} --The offset of GPU.point/s.
+  ofs.line = {0,0} --The offset of GPU.line/s.
   ofs.rect = {-1,-1} --The offset of GPU.rect with l as false.
+  ofs.rectSize = {0,0} --The offset of w,h in GPU.rect with l as false.
   ofs.rect_line = {0,0} --The offset of GPU.rect with l as true.
+  ofs.rectSize_line = {-1,-1} --The offset of w,h in GPU.rect with l as false.
   
   love.graphics.translate(unpack(ofs.screen)) --Offset all the drawing opereations.
   
@@ -181,7 +184,14 @@ return function(config) --A function that creates a new GPU peripheral.
       exe(GPU.color(c))
     end
     
-    if l then x,y = x+ofs.rect_line[1], y+ofs.rect_line[2] else x,y = x+ofs.rect[1], y+ofs.rect[2] end --Apply the offset.
+    --Apply the offset.
+    if l then
+      x,y = x+ofs.rect_line[1], y+ofs.rect_line[2] --Pos
+      w,h = w+ofs.rectSize_line[1], h+ofs.rectSize_line[2] --Size
+    else
+      x,y = x+ofs.rect[1], y+ofs.rect[2] --Pos
+      w,h = w+ofs.rectSize[1], h+ofs.rectSize[2] --Size
+    end
     
     love.graphics.rectangle(l and "line" or "fill",x,y,w,h) _ShouldDraw = true --Draw and tell that changes has been made.
     
@@ -204,13 +214,28 @@ return function(config) --A function that creates a new GPU peripheral.
     local args = {...} --The table of args
     exe(GPU.pushColor()) --Push the current color.
     if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
-    for k,v in ipairs(args) do if type(v) ~= "number" then return false, "The color id must be a number." end end --Error
+    for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
     for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.point[2] else args[k] = v + ofs.point[1] end end --Apply the offset.
     love.graphics.points(unpack(args)) _ShouldDraw = true --Draw the points and tell that changes has been made.
     exe(GPU.popColor()) --Pop the last color in the stack.
     return true --It ran successfully.
   end
   GPU.point = GPU.points --Just an alt name :P.
+  
+  --Draws a line/s at specific location/s, accepts the colorid as the last args, x1,y1,x2 and y2 of points must be provided before the colorid.
+  function GPU.lines(...)
+    local args = {...} --The table of args
+    exe(GPU.pushColor()) --Push the current color.
+    if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
+    for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
+    for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.line[2] else args[k] = v + ofs.line[1] end end --Apply the offset.
+    love.graphics.line(unpack(args)) _ShouldDraw = true --Draw the lines and tell that changes has been made.
+    exe(GPU.popColor()) --Pop the last color in the stack.
+    return true --It ran successfully.
+  end
+  GPU.line = GPU.lines --Just an alt name :P.
+  
+  --End of API--
   
   love.graphics.setLineStyle("rough") --Set the line style.
   love.graphics.setLineJoin("miter") --Set the line join style.
