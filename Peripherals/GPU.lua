@@ -72,6 +72,9 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Post initialization (Setup the in liko12 gpu settings)--
   
+  local o = {} --Offsets table.
+  o.point = {0,0}
+  
   --love.graphics.translate(_ScreenTX,_ScreenTY) --Offset all the drawing opereations.
   
   --love.graphics.setLineStyle("rough") --Set the line style.
@@ -100,7 +103,34 @@ return function(config) --A function that creates a new GPU peripheral.
   --The api starts here--
   local GPU = {}
   
+  local ColorStack = {} --The colors stack (pushColor,popColor)
   
+  --Call with color id to set the active color.
+  --Call with no args to get the current acive color id.
+  function GPU.color(id)
+    if id then
+      if type(id) ~= "number" then return false, "The color id must be a number." end --Error
+      if id > 16 or id < 0 then return false, "The color id is out of range." end --Error
+      id = math.floor(id) --Remove the float digits.
+      love.graphics.setColor(_GetColor(id)) --Set the active color.
+      return true --It ran successfuly.
+    else
+      return true, _GetColorID(love.graphics.getColor()) --Return the current color.
+    end
+  end
+  
+  --Push the current active color to the ColorStack.
+  function GPU.pushColor()
+    table.insert(ColorStack,GPU.color()) --Add the active color id to the stack.
+    return true --It ran successfully.
+  end
+  
+  --Pop the last color from the ColorStack and set it to the active color.
+  function GPU.popColor()
+    if #ColorStack == 0 then return false, "No more colors to pop." end --Error
+    GPU.color(ColorStack[#ColorStack]) --Set the last color in the stack to be the active color.
+    table.remove(ColorStack,#ColorStack) --Remove the last color in the stack.
+  end
   
   return GPU
 end
