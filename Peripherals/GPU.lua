@@ -8,8 +8,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local _HOST_W, _HOST_H = love.graphics.getDimensions() --The host window size.
   
-  local _GIFSCALE = math.floor(config._GIFSCALE) or 2 --The gif scale factor (must be int).
-  local _LIKOScale = math.floor(config._LIKOScale) or 3 --The LIKO12 screen scale to the host screen scale.
+  local _GIFSCALE = math.floor(config._GIFSCALE or 2) --The gif scale factor (must be int).
+  local _LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
   
   local _FontChars = config._FontChars or 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"\'`-_/1234567890!?[](){}.,;:<>+=%#^*~ ' --Font chars
   local _FontPath, _FontExtraSpacing = config._FontPath or "/Engine/font.png", config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
@@ -49,18 +49,18 @@ return function(config) --A function that creates a new GPU peripheral.
     _HOST_W, _HOST_H = w, h
     local TSX, TSY = w/_LIKO_W, h/_LIKO_H --TestScaleX, TestScaleY
     if TSX < TSY then
-      _LIKO_Scale = TSX
+      _LIKOScale = TSX
       _LIKO_X, _LIKO_Y = 0, (_HOST_H-_LIKO_H*_LIKOScale)/2
     else
-      _LIKO_Scale = TSY
+      _LIKOScale = TSY
       _LIKO_X, _LIKO_Y = (_HOST_W-_LIKO_W*_LIKOScale)/2, 0
     end
     _ShouldDraw = true
   end)
   
   --Hook to some functions to redraw (when the window is moved, got focus, etc ...)
-  event:register("love:focus",function(f) if f then _ShouldDraw = true end end) --Window got focus.
-  event:register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
+  events:register("love:focus",function(f) if f then _ShouldDraw = true end end) --Window got focus.
+  events:register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
   
   --Initialize the gpu--
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --Create the screen canvas.
@@ -74,7 +74,7 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setCanvas(_ScreenCanvas) --Activate LIKO12 canvas.
   love.graphics.clear(0,0,0,255) --Clear LIKO12 screen for the first time.
   
-  event:trigger("love:resize", _HOST_W, _HOST_H) --Calculate LIKO12 scale to the host window for the first time.
+  events:trigger("love:resize", _HOST_W, _HOST_H) --Calculate LIKO12 scale to the host window for the first time.
   
   love.graphics.setFont(_Font) --Apply the default font.
   
@@ -82,20 +82,20 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local ofs = {} --Offsets table.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
-  ofs.point = {0,0} --The offset of GPU.point/s.
-  ofs.rect = {0,0} --The offset of GPU.rect with l as false.
+  ofs.point = {-1,0} --The offset of GPU.point/s.
+  ofs.rect = {-1,-1} --The offset of GPU.rect with l as false.
   ofs.rect_line = {0,0} --The offset of GPU.rect with l as true.
   
   love.graphics.translate(unpack(ofs.screen)) --Offset all the drawing opereations.
   
   --Internal Functions--
-  function _HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
+  local function _HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
     --x, y = x-_ScreenX, y-_ScreenY
     return math.floor(x/_LIKOScale)+1, api.floor(y/_LIKOScale)+1
   end
   
-  function _GetColor(c) return _ColorSet[c or 1] or _ColorSet[1] end --Get the (rgba) table of a color id.
-  function _GetColorID(r,g,b,a) --Get the color id by the (rgba) table.
+  local function _GetColor(c) return _ColorSet[c or 1] or _ColorSet[1] end --Get the (rgba) table of a color id.
+  local function _GetColorID(r,g,b,a) --Get the color id by the (rgba) table.
     local a = type(a) == "nil" and 255 or a
     for id, col in pairs(_ColorSet) do
       if col[1] == r and col[2] == g and col[3] == b and col[4] == a then
@@ -103,6 +103,23 @@ return function(config) --A function that creates a new GPU peripheral.
       end
     end
     return 1
+  end
+  
+  local function exe(...) --Excute a LIKO12 api function (to handle errors)
+    local args = {...}
+    if args[1] then
+      local nargs = {}
+      for k,v in pairs(args) do --Clone the args, removing the first one
+        if type(k) == "number" then
+          nargs[k-1] = v
+        else
+          nargs[k] = v
+        end
+      end
+      return unpack(nargs)
+    else
+      return error(args[2])
+    end
   end
   
   --The api starts here--
@@ -126,15 +143,16 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Push the current active color to the ColorStack.
   function GPU.pushColor()
-    table.insert(ColorStack,GPU.color()) --Add the active color id to the stack.
+    table.insert(ColorStack,exe(GPU.color())) --Add the active color id to the stack.
     return true --It ran successfully.
   end
   
   --Pop the last color from the ColorStack and set it to the active color.
   function GPU.popColor()
     if #ColorStack == 0 then return false, "No more colors to pop." end --Error
-    GPU.color(ColorStack[#ColorStack]) --Set the last color in the stack to be the active color.
+    exe(GPU.color(ColorStack[#ColorStack])) --Set the last color in the stack to be the active color.
     table.remove(ColorStack,#ColorStack) --Remove the last color in the stack.
+    return true --It ran successfully
   end
   
   --Draw a rectangle filled, or lines only.
@@ -159,36 +177,37 @@ return function(config) --A function that creates a new GPU peripheral.
     x,y,w,h,c = math.floor(x), math.floor(y), math.floor(w), math.floor(h), c and math.floor(c) or c
     
     if c then --If the colorid is provided, pushColor then set the color.
-      GPU.pushColor()
-      GPU.color(c)
+      exe(GPU.pushColor())
+      exe(GPU.color(c))
     end
     
     if l then x,y = x+ofs.rect_line[1], y+ofs.rect_line[2] else x,y = x+ofs.rect[1], y+ofs.rect[2] end --Apply the offset.
     
     love.graphics.rectangle(l and "line" or "fill",x,y,w,h) _ShouldDraw = true --Draw and tell that changes has been made.
     
-    if c then GPU.popColor() end --Restore the color from the stack.
+    if c then exe(GPU.popColor()) end --Restore the color from the stack.
     
     return true --It ran successfully
   end
   
   --Clears the whole screen with black or the given color id.
   function GPU.clear(c)
-    if c and type(c) ~= "number" then return false, "The color id must be a number." end --Error
+    local c = c or 1
+    if type(c) ~= "number" then return false, "The color id must be a number." end --Error
     if c > 16 or c < 0 then return false, "The color id is out of range." end --Error
-    GPU.rect(1,1,192,128,false,c or 1) --Draw a rectangle that covers the whole screen.
+    exe(GPU.rect(1,1,192,128,false,c or 1)) --Draw a rectangle that covers the whole screen.
     return true --It ran successfully.
   end
   
   --Draws a point/s at specific location/s, accepts the colorid as the last args, x and y of points must be provided before the colorid.
   function GPU.points(...)
     local args = {...} --The table of args
-    GPU.pushColor() --Push the current color.
-    if not (#args % 2 == 0) then GUI.color(args[#args]) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
+    exe(GPU.pushColor()) --Push the current color.
+    if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
     for k,v in ipairs(args) do if type(v) ~= "number" then return false, "The color id must be a number." end end --Error
-    for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + offs.point[2] else args[k] = v + offs.point[1] end end --Apply the offset.
+    for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.point[2] else args[k] = v + ofs.point[1] end end --Apply the offset.
     love.graphics.points(unpack(args)) _ShouldDraw = true --Draw the points and tell that changes has been made.
-    GPU.popColor() --Pop the last color in the stack.
+    exe(GPU.popColor()) --Pop the last color in the stack.
     return true --It ran successfully.
   end
   GPU.point = GPU.points --Just an alt name :P.
@@ -199,7 +218,7 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setLineWidth(1) --Set the line width to 1px.
   love.graphics.setColor(_GetColor(1)) --Set the active color to black.
   
-  GPU.clear() --Clear the canvas for the first time.
+  exe(GPU.clear()) --Clear the canvas for the first time.
   
   --Host to love.run when graphics is active--
   events:register("love:graphics",function()

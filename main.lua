@@ -3,6 +3,7 @@ local events = require("Engine.events")
 
 --Internal Callbacks--
 function love.load()
+  love.filesystem.load("BIOS/init.lua")() --Initialize the BIOS.
   events:trigger("love:load")
 end
 
