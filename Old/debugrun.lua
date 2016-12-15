@@ -10,7 +10,7 @@ function _auto_init()
  
  --api.rect(10,10,10,10,9)
  api.Image(api.ImageData(10,10):map(function() return 13 end)):draw(10,10)
-  api.rect(10,42,10,10,9)
+ api.rect(10,42,10,10,9)
  api.rect(10,30,10,10,9)
  api.rect_line(10,30,10,10,8)
  api.points(10,10, 10,19, 19,19, 19,10, 8)
