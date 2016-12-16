@@ -1,5 +1,5 @@
 local code = [[--Scaling Demo by RamiLego4Game--
-ball = SpriteMap:image()
+ball = SpriteMap:image() --The image object of the spritemap
 flag = false
 rot, sc = 0, 0.1
 
