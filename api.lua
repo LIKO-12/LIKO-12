@@ -1,7 +1,7 @@
 _Class = require("class")
 require("offsets")
 
-_LK12VER = "V0.0.5 PRE"
+_LK12VER = "V0.0.5A PRE"
 _LK12VERC = 10--9 DEV, 10 PRE
 
 _GIFSCALE = 2
