@@ -6,6 +6,7 @@
 	Contributors:
 		technomancy: Co-Developer.
 		gamax92: Gif recording.
+		feserr: Terminal command history & autocomplete.
 		cosme12: Fire & Snake demo carts.
 		OmgCopito95, s0r00t: For being awesome and contributing on github.
 	
@@ -38,6 +39,8 @@ Welcome to LIKO-12:
 :: Keys
 
 	Escape: Quit running cart or switch between editors and the terminal.
+	Up: Command history in the terminal.
+	Tab: Autocomplete file/folder names in the terminal.
 	Mouse Wheel: Move up/down/left/right the cursor in the code editor.
 	Ctrl-pageup/pagedown: Change between editor modes.
 	Ctrl-c/Ctrl-v: Copy & Paste in the spriteeditor.
@@ -96,6 +99,11 @@ Welcome to LIKO-12:
 	tictactoe   A 2 players tictactoe game made by RamiLego4Game.
 	helloworld  The helloworld example.
 	noise       Fill the screen with random colors.
+	snake       A snake game made by cosme12.
+	snakenew	A w.i.p snake rewrite made by RamiLego4Game.
+	maze		A spritesheet for a maze game.
+	scale		A demo for scaling and rotating images.
+	fire		Fire particle by cosme12.
 	
 	To run a cart, open LIKO-12 terminal and type:
 	cd demos
@@ -395,6 +403,13 @@ Image, ImageData, SpriteSheet, setCursor, newCursor, TextBuffer, Map is not docu
 ==========================================================================================
 	Changelog
 ==========================================================================================
+V0.0.5A PRE:
+1. Terminal commands history & autocomplete by feserr.
+2. New os.time()
+3. A work in progress rewrite of snake demo game using the map api.
+4. Fixed images/sprites rotating/scaling down.
+5. New scaling & rotating demo.
+
 V0.0.5 PRE:
 !! Changed appdata folder name from .liko12 to liko12 to be visible in unix systems.
 ## New:
