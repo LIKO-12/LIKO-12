@@ -31,10 +31,49 @@ return function(config) --A function that creates a new HDD peripheral.
   
   --The api starts here--
   local HDD = {}
+  local ad = "C" --The active drive letter
   
   --Returns a list of the available drives.
   function HDD.drivers()
-    
+    local dlist = {}
+    for k,v in ipairs(drives) do
+      dlist[k] = {size=drives[k].size,usage=drives[k].usage}
+    end
+    return true,dlist
+  end
+  
+  --Sets or gets the current active drive.
+  function HDD.drive(letter)
+    if letter then
+      if type(letter) ~= "string" then return false, "The drive letter must be a string, provided: "..type(letter) end --Error
+      ad = letter --Set the active drive letter.
+    else
+      return ad
+    end
+  end
+  
+  function HDD.write(fname,data,size)
+    if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
+    if type(data) == "nil" then return false, "Should provide the data to write" end
+    local data = tostring(data)
+    if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end
+    local path = "/drives/"..ad.."/"..fname
+    local oldsize = (love.filesystem.exists(path) and love.filesystem.isFile(path)) and love.filesystem.getSize(path) or 0 --Old file size.
+    local file,err = love.filesystem.newFile(path,"w")
+    if not file then return false,err end --Error
+    file:write(data,size) --Write to the file (without saving)
+    local newsize = file:getSize() --The size of the new file
+    if drives[ad].size < ((drives[ad].usage - oldsize) + newsize) then file:close() return false, "No more enough space" end --Error
+    file:flush() --Save the new file
+    file:close() --Close the file
+    return true, newsize
+  end
+  
+  function HDD.read(fname,size)
+     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
+     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end
+     local data, err = love.filesystem.read("/drives/"..ad.."/"..fname,size)
+     if data then return true,data else return false,err enx
   end
   
   return HDD
