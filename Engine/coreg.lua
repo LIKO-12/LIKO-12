@@ -18,7 +18,9 @@ end
 --Trigger a value in a key.
 --If the value is a function, then it will call it instant.
 --Else, it will return the value.
---Notice that the first return value is a boolean of "did it ran successfully", if false, the second return value is the error message.
+--Notice that the first return value is a number of "did it ran successfully", if false, the second return value is the error message.
+--Also the first return value could be also a number that specifies how should the coroutine resume (true boolean defaults to 1)
+--Corouting resumming codes: 1: resume instantly, 2: yeilded automatically, 3: stop resuming (Will be yeild later, like when love.update is called).
 function coreg:trigger(key,...)
   local key = key or none
   if type(self.reg[key]) == "nil" then return false, "error, key not found !" end
