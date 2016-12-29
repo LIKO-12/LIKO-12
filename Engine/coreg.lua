@@ -4,7 +4,7 @@ local coreg = {reg={}}
 --Register a value to a specific key.
 --If the value is a table, then the values in the table will be registered at key:tableValueKey
 --If the value is a function, then it will be called instantly, and it must return true as the first argument to tell that it ran successfully.
---Else, the value will be returned to the liko13 code.
+--Else, the value will be returned to the liko12 code.
 function coreg:register(value,key)
   local key = key or "none"
   if type(value) == "table" then

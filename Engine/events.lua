@@ -12,7 +12,7 @@ end
 
 --Unregister a function from the events system.
 function events:unregister(func,name) --Name is optional
-  if type(name) ~= "string" or type(name) ~= "nil" then return error("Name should be a string value. Passed "..type(name).." instead !") end
+  if type(name) ~= "string" and type(name) ~= "nil" then return error("Name should be a string value. Passed "..type(name).." instead !") end
   if type(func) ~= "function" then return error("func should be a function value. Passed "..type(func).." instead !") end
   if name and self.reg[name] then
     self.reg[name][func] = nil
