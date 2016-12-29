@@ -43,13 +43,14 @@ local function P(per,m,conf)
   local conf = conf or {}
   if type(conf) ~= "table" then return false, "Configuration table should be a table, provided "..type(conf) end
   
-  local peripheral, err = pcall(Peripherals[per],conf)
-  if err then err = "Init Err: "..err end
-  if peripheral then
+  local success, peripheral = pcall(Peripherals[per],conf)
+  if success then
     MPer[m] = peripheral
     coreg:register(peripheral,m)
+  else
+    peripheral = "Init Err: "..peripheral
   end
-  return peripheral, err
+  return success, peripheral
 end
 
 if not love.filesystem.exists("/bconf.lua") then
@@ -66,7 +67,15 @@ if not success then
   bconfC()
 end --Load the default BConfig
 
---Coroutine Creation
+--POST screen
+--[[if MPer.GPU then --If there is an initialized gpu
+  MPer.GPU.color(8)
+  for i=1,8 do
+    MPer.GPU.print("Hello World")
+  end
+end]]
+
+--Booting the system !
 
 
 
