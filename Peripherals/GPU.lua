@@ -84,6 +84,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local ofs = {} --Offsets table.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
   ofs.point = {-1,0} --The offset of GPU.point/s.
+  ofs.print = {-1,-1} --The offset of GPU.print.
   ofs.line = {0,0} --The offset of GPU.line/s.
   ofs.rect = {-1,-1} --The offset of GPU.rect with l as false.
   ofs.rectSize = {0,0} --The offset of w,h in GPU.rect with l as false.
@@ -130,6 +131,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local GPU = {}
   
   local ColorStack = {} --The colors stack (pushColor,popColor)
+  local printCursor = {x=1,y=1}
   
   --Call with color id to set the active color.
   --Call with no args to get the current acive color id.
@@ -199,6 +201,32 @@ return function(config) --A function that creates a new GPU peripheral.
     if c then exe(GPU.popColor()) end --Restore the color from the stack.
     
     return true --It ran successfully
+  end
+  
+  --Sets the position of the printing corsor when x,y are supplied
+  --Or returns the current position of the printing cursor when x,y are not supplied
+  function GPU.printCursor(x,y)
+    if x and y then
+      if type(x) ~= "number" then return false, "X pos must be a number or nil." end --Error
+      if type(y) ~= "number" then return false, "Y pos must be a number or nil." end --Error
+      printCursor.x, printCursor.y = x, y --Set the cursor pos
+      return true --It ran successfully.
+    else
+      return true, printCursor.x, printCursor.y --Return the current cursor pos
+    end
+  end
+  
+  --Prints text to the screen,
+  --Requires more work
+  --Acts as a terminal print if x, y are not provided,
+  --Or prints at the specific pos x, y
+  function GPU.print(t,x,y)
+    if x and y then --If the x & y are provided
+      love.graphics.print(t, math.floor((x or 1)+ofs.print[1]), math.floor((y or 1)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
+    else --If they are not, print on the grid
+      love.graphics.print(t, math.floor(((printCursor.x or 1)*8-6)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
+      printCursor.y = printCursor.y +1 --Set the cursor to the next line
+    end
   end
   
   --Clears the whole screen with black or the given color id.
