@@ -46,6 +46,7 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.drive(letter)
     if letter then
       if type(letter) ~= "string" then return false, "The drive letter must be a string, provided: "..type(letter) end --Error
+      if not drives[letter] then return false, "The drive '"..letter.."' doesn't exists" end
       ad = letter --Set the active drive letter.
     else
       return ad
@@ -66,14 +67,52 @@ return function(config) --A function that creates a new HDD peripheral.
     if drives[ad].size < ((drives[ad].usage - oldsize) + newsize) then file:close() return false, "No more enough space" end --Error
     file:flush() --Save the new file
     file:close() --Close the file
+    drives[ad].usage = (drives[ad].usage - oldsize) + newsize --Update the usage
     return true, newsize
   end
   
   function HDD.read(fname,size)
-     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
-     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end
-     local data, err = love.filesystem.read("/drives/"..ad.."/"..fname,size)
-     if data then return true,data else return false,err enx
+    if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
+    if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end --Error
+    local data, err = love.filesystem.read("/drives/"..ad.."/"..fname,size)
+    if data then return true,data else return false,err enx
+  end
+  
+  function HDD.getSize(fname)
+    if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
+    return love.filesystem.getSize("/drives/"..ad.."/"..fname)
+  end
+  
+  function HDD.exists(fname)
+    if type(fname) ~= "string" then return false, "File/Folder name must be a string, provided: "..type(fname) end --Error
+    return true, love.filesystem.exists("/drives/"..ad.."/"..fname)
+  end
+  
+  function HDD.newFolder(fname)
+    if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
+    return love.filesystem.createDirectory("/drives/"..ad.."/"..fname)
+  end
+  
+  function HDD.isFile(fname)
+    if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
+    local path = "/drives/"..ad.."/"..fname
+    if not love.filesystem.exists(path) then return false, "The file doesn't exists" end --Error
+    return true, love.filesystem.isFile(path)
+  end
+  
+  function HDD.isFolder(fname)
+    if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
+    local path = "/drives/"..ad.."/"..fname
+    if not love.filesystem.exists(path) then return false, "The folder doesn't exists" end --Error
+    return true, love.filesystem.isFolder(path)
+  end
+  
+  function HDD.getDirectoryItems(fname)
+    if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
+    local path = "/drives/"..ad.."/"..fname
+    if not love.filesystem.exists(path) then return false, "Folder doesn't exists" end --Error
+    if not love.filesystem.isFolder(path) then return false, "Provided a path to a file instead of a folder" end --Error
+    return true, love.filesystem.getDirectoryItems(path)
   end
   
   return HDD
