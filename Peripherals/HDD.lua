@@ -75,7 +75,7 @@ return function(config) --A function that creates a new HDD peripheral.
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end --Error
     local data, err = love.filesystem.read("/drives/"..ad.."/"..fname,size)
-    if data then return true,data else return false,err enx
+    if data then return true,data else return false,err end
   end
   
   function HDD.getSize(fname)
