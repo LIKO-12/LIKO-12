@@ -53,30 +53,39 @@ local function P(per,m,conf)
   return success, peripheral
 end
 
-if not love.filesystem.exists("/bconf.lua") then
+if not love.filesystem.exists("/bconf.lua") or true then
   love.filesystem.write("/bconf.lua",love.filesystem.read("/BIOS/bconf.lua"))
 end
 
-local bconfC, bconfErr = love.filesystem.load("/bconf.lua")
-if not bconfC then bconfC = love.filesystem.load("/BIOS/bconf.lua") end --Load the default BConfig
-setfenv(bconfC,{P = P}) --BConfig sandboxing
+local bconfC, bconfErr, bconfDErr = love.filesystem.load("/bconf.lua")
+if not bconfC then bconfC, bconfDErr = love.filesystem.load("/BIOS/bconf.lua") end --Load the default BConfig
+if not bconfC then error(bconfDErr) end
+setfenv(bconfC,{P = P,error=error,assert=assert}) --BConfig sandboxing
 local success, bconfRErr = pcall(bconfC)
 if not success then
-  bconfC = love.filesystem.load("/BIOS/bconf.lua")
-  setfenv(bconfC,{P = P}) --BConfig sandboxing
+  bconfC, err = love.filesystem.load("/BIOS/bconf.lua")
+  if not bconfC then error(err) end
+  setfenv(bconfC,{P = P,error=error,assert=assert}) --BConfig sandboxing
   bconfC()
 end --Load the default BConfig
+
+coreg:register(function()
+  local list = {}
+  for per, funcs in pairs(MPer) do
+    list[per] = {}
+    for name, func in pairs(funcs) do
+      table.insert(list[per],name)
+    end
+  end
+  return true, list
+end,"BIOS:listPeripherals")
 
 local function exe(...) --Excute a LIKO12 api function (to handle errors)
   local args = {...}
   if args[1] then
     local nargs = {}
-    for k,v in pairs(args) do --Clone the args, removing the first one
-      if type(k) == "number" then
-        nargs[k-1] = v
-      else
-        nargs[k] = v
-      end
+    for k,v in ipairs(args) do --Clone the args, removing the first one
+      nargs[k-1] = v
     end
     return unpack(nargs)
   else
@@ -92,8 +101,8 @@ local function flushOS(os,path)
     if love.filesystem.isDirectory("/OS/"..os..path..v) then
       flushOS(os,path..v.."/")
     else
-      h.drive("C") --Opereating systems are installed on C drive
-      h.write(path..v,love.filesystem.read("/OS/"..os..path..v))
+      exe(h.drive("C")) --Opereating systems are installed on C drive
+      exe(h.write(path..v,love.filesystem.read("/OS/"..os..path..v)))
     end
   end
 end
@@ -108,15 +117,16 @@ local function noOS()
 end
 
 local function startCoroutine()
-  if not MPer.HDD then return end
+  if not MPer.HDD then return error("No HDD Periphrtal") end
   local h = MPer.HDD
   exe(h.drive("C"))
-  if not exe(h.exists("/boot.lua")) then noOS() end
-  local chunk, err = loadstring(h.read("/boot.lua"))
+  if not exe(h.exists("/boot.lua")) and false then noOS() end
+  local chunk, err = exe(h.load("/boot.lua"))
   if not chunk then error(err) end
   coreg:sandboxCoroutine(chunk)
   local co = coroutine.create(chunk)
   coreg:setCoroutine(co) --For peripherals to use.
+  coreg:resumeCoroutine()
 end
 
 --POST screen
@@ -143,16 +153,19 @@ if MPer.GPU then --If there is an initialized gpu
   local stage = 1
   
   events:register("love:update",function(dt)
-    if stage == 6 then --Create the coroutine
+    if stage == 8 then --Create the coroutine
+      g.color(8)
+      g.clear(1)
+      g.printCursor(1,1)
       startCoroutine()
-      stage = 7 --So coroutine don't get duplicated
+      stage = 9 --So coroutine don't get duplicated
     end
     
-    if stage < 6 then
+    if stage < 8 then
       timer = timer + dt
       if timer > 0.25 then timer = timer -0.25
         stage = stage +1
-        if stage < 5 then drawAnim() elseif stage == 5 then g.clear() end
+        if stage < 6 then drawAnim() elseif stage == 6 then g.clear() end
       end
     end
   end)
