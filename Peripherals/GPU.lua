@@ -219,14 +219,15 @@ return function(config) --A function that creates a new GPU peripheral.
   --Prints text to the screen,
   --Requires more work
   --Acts as a terminal print if x, y are not provided,
-  --Or prints at the specific pos x, y
+  --Or prints at the specific pos x, y3
   function GPU.print(t,x,y)
     if x and y then --If the x & y are provided
       love.graphics.print(t, math.floor((x or 1)+ofs.print[1]), math.floor((y or 1)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
     else --If they are not, print on the grid
-      love.graphics.print(t, math.floor(((printCursor.x or 1)*4-6)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
+      love.graphics.print(t, math.floor(((printCursor.x or 1)*4-3)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
       printCursor.y = printCursor.y +1 --Set the cursor to the next line
     end
+    return true
   end
   
   --Clears the whole screen with black or the given color id.
