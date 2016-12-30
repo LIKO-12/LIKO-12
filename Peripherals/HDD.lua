@@ -5,10 +5,10 @@ local function calcSize(dir)
   local total = 0
   local files = love.filesystem.getDirectoryItems(dir)
   for k,filename in ipairs(files) do
-    if love.filesystem.isDirectory(dir..filename) then
-      total = total + calcSize(path..filename.."/")
+    if love.filesystem.isDirectory(dir.."/"..filename) then
+      total = total + calcSize(dir.."/"..filename.."/")
     else
-      total = total + love.filesystem.getSize(dir..filename)
+      total = total + love.filesystem.getSize(dir.."/"..filename)
     end
   end
   return total
@@ -78,6 +78,12 @@ return function(config) --A function that creates a new HDD peripheral.
     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end --Error
     local data, err = love.filesystem.read("/drives/"..ad.."/"..fname,size)
     if data then return true,data else return false,err end
+  end
+  
+  function HDD.load(fname)
+    if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
+    local chunk, err = love.filesystem.load("/drives/"..ad.."/"..fname)
+    return true, chunk, err
   end
   
   function HDD.getSize(fname)
