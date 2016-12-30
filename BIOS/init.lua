@@ -68,12 +68,42 @@ if not success then
 end --Load the default BConfig
 
 --POST screen
---[[if MPer.GPU then --If there is an initialized gpu
-  MPer.GPU.color(8)
-  for i=1,8 do
-    MPer.GPU.print("Hello World")
+if MPer.GPU then --If there is an initialized gpu
+  local g = MPer.GPU
+  g.color(8)
+  local chars = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","-","_","@","#","$","&","*","!","+","=","%"}
+  --48x16 Terminal Size
+  function drawAnim() g.clear()
+    for x=1,48 do for y=1,16 do
+      math.randomseed(os.clock()*os.time()*x)
+      g.color(math.floor(math.random(2,16)))
+      g.printCursor(x,y)
+      math.randomseed(os.clock()*os.time()*y)
+      local c = chars[math.floor(math.random(1,#chars))]
+      if math.random(0,20) % 2 == 0 then c = c:upper() end
+      g.print(c)
+    end end
   end
-end]]
+  
+  drawAnim()
+  
+  local timer = 0
+  local stage = 1
+  
+  events:register("love:update",function(dt)
+    if stage < 5 then
+      timer = timer + dt
+      if timer > 0.25 then timer = timer -0.25
+        stage = stage +1
+        if stage < 4 then drawAnim() else g.clear() end
+      end
+    end
+    if stage == 5 then --Create the coroutine
+      
+      stage = 6 --So coroutine don't get duplicated
+    end
+  end)
+end
 
 --Booting the system !
 
