@@ -4,6 +4,7 @@ local coreg = require("Engine.coreg")
 return function(config) --A function that creates a new CPU peripheral.
   local EventStack = {}
   local Instant = false
+  local sleepTimer
   
   local function hookEvent(pre,name)
     events:register(pre..":"..name,function(...)
@@ -29,6 +30,16 @@ return function(config) --A function that creates a new CPU peripheral.
   hookEvent("GPU","touchmoved")
   hookEvent("GPU","touchreleased")
   
+  events:register("love:update",function(dt)
+    if sleepTimer then
+      sleepTimer = sleepTimer-dt
+      if sleepTimer <=0 then
+        sleepTimer = nil
+        coreg:resumeCoroutine(true)
+      end
+    end
+  end)
+  
   --The api starts here--
   local CPU = {}
   
@@ -45,6 +56,39 @@ return function(config) --A function that creates a new CPU peripheral.
       EventStack = newEventStack
       return true, unpack(lastEvent)
     end
+  end
+  
+  function CPU.getHostOS()
+    return true, love.system.getOS()
+  end
+  
+  function CPU.isMobile()
+    if love.system.getOS() == "Android" or love.filesystem.getOS() == "iOS" then
+      return true, true
+    else
+      return true, false
+    end
+  end
+  
+  function CPU.clipboard()
+    if text then
+      love.system.setClipboardText(tostring(text))
+      return true
+    else
+      return true,love.system.getClipboardText()
+    end
+  end
+  
+  function CPU.clearClipboard()
+    love.system.setClipboardText()
+    return true
+  end
+  
+  function CPU.sleep(t)
+    if type(t) ~= "number" then return false, "Time must be a number, provided: "..t end
+    if t < 0 then return false, "Time must be a positive number" end
+    sleepTimer = t
+    return 2
   end
   
   return CPU

@@ -196,119 +196,119 @@ Console Editor Tab:
 :: Callbacks
 You should overwrite the callbacks you want to use, ex: function _init() end
 
-_init
+**_init
 	This function is called at the initialization of your game.
 	Start your game drawing from here, because any draw calls at the top level of your code are cleared.
 
-_update dt
+--_update dt
 	This function is called everyframe.
 	
 	- DT (Number): The delta time between _update calls in seconds.
 
-_mpress x,y,b,it
+--_mpress x,y,b,it
 	This function is called when a mouse button is pressed.
 	- x,y (Numbers): The X and Y position of the mouse.
 	- b (Number): The pressed mouse button.
 	- it (Boolean): (istouch) if the mouse press is in fact a touch press.
 
-_mmove x,y,dx,dy,it,iw
+--_mmove x,y,dx,dy,it,iw
 	This function is called whenever the mouse gets moved.
 	- x,y (Numbers): The X and Y position of the mouse.
 	- dx,dy (Numbers): How much the mouse has moved in each direction.
 	- it (Boolean): (istouch) if the mouse press is in fact a touch move.
 	- iw (Boolean): (iswheel) if true then the x,y are how much the mouse wheel has moved.
 
-_mrelease x,y,b,it
+--_mrelease x,y,b,it
 	This function is called when a mouse button is released.
 	- x,y (Numbers): The X and Y position of the mouse.
 	- b (Number): The released mouse button.
 	- it (Boolean): (istouch) if the mouse press is in fact a touch release.
 
-_tpress id,x,y,dx,dy,p
+--_tpress id,x,y,dx,dy,p
 	This function is called when the screen is touched.
 	- id (Light-Number): The id of the touch.
 	- x,y (Numbers): The X and Y position of the touch.
 	- dx,dy (Numbers): How much the touch has moved in each direction, this should be always zero.
 	- p (Number): (pressure) The pressure of the touch.
 
-_tmove id,x,y,dx,dy,p
+--_tmove id,x,y,dx,dy,p
 	This function is called when a screen touch is moved.
 	- id (Light-Number): The id of the touch.
 	- x,y (Numbers): The X and Y position of the touch.
 	- dx,dy (Numbers): How much the touch has moved in each direction.
 	- p (Number): (pressure) The pressure of the touch.
 
-_trelease id,x,y,dx,dy,p
+--_trelease id,x,y,dx,dy,p
 	This function is called when a screen touch is released.
 	- id (Light-Number): The id of the touch.
 	- x,y (Numbers): The X and Y position of the touch.
 	- dx,dy (Numbers): How much the touch has moved in each direction.
 	- p (Number): (pressure) The pressure of the touch.
 
-_kpress k, sc, ir
+--_kpress k, sc, ir
 	This function is called when a keyboard key is pressed.
 	- k (String [KeyConstant]): The key that has been pressed.
 	- sc (Number): The scancode of the pressed key.
 	- ir (Boolean): (IsRepeat) See keyrepeat function.
  
-_krelease k, sc
+--_krelease k, sc
 	This function is called when a keyboard key is released.
 	- k (String [KeyConstant]): The key that has been released.
 	- sc (Number): The scancode of the released key.
 
-_tinput t
+--_tinput t
 	This function is called when text is inputted.
 	- t (String): The text inputted.
 
 :: Graphics
 
-color [c]
+--color [c]
 	Sets the current drawing color to the given color or black
 	- c [Number]: The new color.
 
-pushColor
+--pushColor
 	Push the current color to the colors stack
 
-popColor
+--popColor
 	Pops/restores the last color in the colors stack
 
-clear [c]
+--clear [c]
 	Clears the screen and fills it with the given color black
 	- c [Number]: The color to fill with
 
-stroke [width]
+``stroke [width]
 	Sets the width of the lines and points to the given width or 1
 	- width [Number]: The new width
 
-point/points x1,y1,[x2,y2,...],[c]
+--point/points x1,y1,[x2,y2,...],[c]
 	Draws the give points, if the number of the given args is odd then last one is set as the color.
 	- x,y,... (Numbers): The points locations
 	- c [Number]: The color to set to
 
-line/lines x1,y1,x2,y2,[x3,y3,...],[c]
+--line/lines x1,y1,x2,y2,[x3,y3,...],[c]
 	Draws lines connecting the given points, if the number of the given args is odd then the last one is set as the color.
 	- x,y,... (Numbers): The points locations
 	- c [Number]: The color to set to
  
-circle/circle_line x,y,r,[c]
+--circle/circle_line x,y,r,[c]
 	Draws a circle at the given position
 	- x,y (Numbers): The center pos of the circle
 	- r (Number): The radius of the circle
 	- c [Number]: The color to set to
 
-rect/rect_line x,y,w,h,[c]
+--rect/rect_line x,y,w,h,[c]
 	Draws a rectangle with the given specifications
 	- x,y (Numbers): The position of the topleft corner of the rect.
 	- w,h (Numbers): The width and height of the rectangle.
 	- c [Number]: The color to set to
  
-print/print_grid text,[x],[y]
+--print/print_grid text,[x],[y]
 	Prints text at a specific location in the screen, be sure to set the color using color()
 	print_grid is alligned ta 8x8 cell grid.
 	- text (String or Table): The text to print, it can be a table: {"text",{r,g,b,a}}
 	- x,y [Numbers]: The position to print at.
 
-Sprite sprid, x,y, [r], [sx],[sy], [sprsheet]
+**Sprite sprid, x,y, [r], [sx],[sy], [sprsheet]
 	Draws a specific sprite at the given pos.
 	- sprid (Number): The sprite id as shown in the sprite editor
 	- x,y (Numbers): The topleft corner position of the sprite.
@@ -316,7 +316,7 @@ Sprite sprid, x,y, [r], [sx],[sy], [sprsheet]
 	- sx,sy [Numbers]: The sprite width and hight multiplying factor.
 	- sprsheet [liko12.spriteSheet]: The spritesheet containing the sprite (advanced users only)
 
-SpriteGroup sprid, x,y, w,h, [sx],[sy], [sprsheet]
+**SpriteGroup sprid, x,y, w,h, [sx],[sy], [sprsheet]
 	Draws a group of sprites at the given pos.
 	- sprid (Number): The id of the top left sprite in the group.
 	- x,y (Numbers): The topleft corner position
@@ -324,39 +324,39 @@ SpriteGroup sprid, x,y, w,h, [sx],[sy], [sprsheet]
 	- sx,sy [Numbers]: The sprite width and hight multiplying factor.
 	- sprsheet [liko12.spriteSheet]: The spritesheet containing the sprite (advanced users only)
  
-SpriteMap
+**SpriteMap
 	The carts spritesheet
  
 :: Math
 
-ostime
+--ostime
 	The default lua os.time function
 
-floor
+--floor
 	The original lua math.floor function
  
-rand_seed
+--rand_seed
 	the default love.math.setRandomSeed function
  
-rand
+--rand
 	the default love.math.random function
  
 :: GUI
 
-isInRect x,y,rect
+**isInRect x,y,rect
 	Returns true is the point is in the rect.
 	- x,y (Numbers): The x and y positions of the point.
 	- rect (Table): Rect table: {x,y,w,h}
 	returns (Boolean): is in rect.
  
-whereInGrid x,y,grid
+**whereInGrid x,y,grid
 	Returns false if the point is not in the grid at all.
 	Return cellx, celly if the point is in the grid.
 	- x,y (Numbers): the x and y posotions of the point to test.
 	- grid (Table): The grid config {x,y,cellw,cellh,w,h}
 	returns cx,cy (Numbers): The position in the grid.
 
-btn n, player
+**btn n, player
 	Returns the state of the specific player button, use in _update
 	- n (Number): the id of the button
 	- p (Number): the number of the player (1/2)
@@ -364,30 +364,30 @@ btn n, player
     Each player has four directional keys and two other keys. See the "keys" section above for a
     listing of key ids.
 
-getMPos
+--getMPos
 	Returns the current position of the mouse, may break some touch compatibility..
 	returns x,y (Numbers): The position of the mouse, or the last moved touch.
 
-isMDown b
+--isMDown b
 	Returns if the specific mouse button is pressed down or not, may break some touch compatibility..
 	- b (Number): The id of the button to check: 1:left 2:right 3:middle
 	returns (Boolean): The state of the mouse button, true for button 1 if the screen is touched.
 
 :: Misc
 
-keyrepeat state
+--keyrepeat state
 	To enable _kpress isrepeat function
 
-showKeyboard state
+--showKeyboard state
 	To show the keyboard on mobile devices.
  
-isMobile
+--isMobile
 	Returns true if liko12 is running on a mobile device
 
-setclip
+--setclip
 	Sets the host's clipboard text
 
-getclip
+--getclip
 	Gets the host's clipboard text
  
 Image, ImageData, SpriteSheet, setCursor, newCursor, TextBuffer, Map is not documented here, check api.lua for info about them 

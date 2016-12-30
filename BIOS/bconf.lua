@@ -14,3 +14,6 @@ assert(P("CPU"))
 assert(P("GPU","GPU",{
   _ClearOnRender = true
 }))
+
+--Create a new keyboard api mounted as "KB"
+assert(P("KB"))

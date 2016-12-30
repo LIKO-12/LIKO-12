@@ -1,6 +1,6 @@
-assert(coroutine.yield("GPU:printCursor",2,2))
-assert(coroutine.yield("GPU:color",9))
-assert(coroutine.yield("GPU:print","LIKO-12 V0.6.0"))
+--assert(coroutine.yield("GPU:printCursor",2,2))
+--assert(coroutine.yield("GPU:color",9))
+--assert(coroutine.yield("GPU:print","LIKO-12 V0.6.0"))
 --assert(coroutine.yield("GPU:print","CartOS V0.0"))
 
 --Building the api--
@@ -20,8 +20,33 @@ for peripheral,funcs in pairs(perlist) do
     end
   end
 end
+
+--DebugDraw start--
+--[[GPU.points(1,1, 192,1, 192,128, 1,128, 8)
+GPU.points(0,1, 193,1, 193,128, 0,128, 3)
+GPU.points(1,0, 192,0, 192,129, 1,129, 3)
+GPU.rect(2,2, 190,126, true, 12)
+GPU.line(2,2,191,2,191,127,2,127,2,2,12)
+GPU.line(2,2, 191,127, 9)
+GPU.line(191, 2,2,127, 9)
+GPU.rect(10,42,10,10,false,9)
+GPU.rect(10,30,10,10,false,9)
+GPU.rect(10,30,10,10,true,8)
+GPU.points(10,10, 10,19, 19,19, 19,10, 8)]]
+--DebugDraw end--
+
+GPU.printCursor(1,1)
+GPU.color(9)
+GPU.print("LIKO-12 V0.6.0")
+CPU.sleep(1)
 GPU.color(10)
-GPU.print("Loaded the API")
+GPU.print("Available Peripherals:")
+GPU.color(8)
+CPU.sleep(0.25)
+for per,_ in pairs(perlist) do
+  CPU.sleep(0.25)
+  GPU.print(per)
+end
 
 local mflag = false
 while true do

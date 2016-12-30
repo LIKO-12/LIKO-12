@@ -86,6 +86,10 @@ return function(config) --A function that creates a new GPU peripheral.
   ofs.point = {-1,0} --The offset of GPU.point/s.
   ofs.print = {-1,-1} --The offset of GPU.print.
   ofs.line = {0,0} --The offset of GPU.line/s.
+  ofs.circle = {0,0} --The offset of GPU.circle with l as false (x,y,r).
+  ofs.circle_line = {0,0} --The offset of GPU.circle with l as true (x,y,r).
+  ofs.ellipse = {0,0,0,0} --The offset of GPU.circle with l as false (x,y,rx,ry).
+  ofs.ellipse_line = {0,0,0,0} --The offset of GPU.circle with l as true (x,y,rx,ry).
   ofs.rect = {-1,-1} --The offset of GPU.rect with l as false.
   ofs.rectSize = {0,0} --The offset of w,h in GPU.rect with l as false.
   ofs.rect_line = {0,0} --The offset of GPU.rect with l as true.
@@ -96,7 +100,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --Internal Functions--
   local function _HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
     --x, y = x-_ScreenX, y-_ScreenY
-    return math.floor(x/_LIKOScale)+1, math.floor(y/_LIKOScale)+1
+    return math.floor((x - _LIKO_X)/_LIKOScale )+1, math.floor((y - _LIKO_Y)/_LIKOScale)+1
   end
   
   local function _GetColor(c) return _ColorSet[c or 1] or _ColorSet[1] end --Get the (rgba) table of a color id.
@@ -143,20 +147,20 @@ return function(config) --A function that creates a new GPU peripheral.
   end)
   
   --Touch Hooks (To translate them to LIKO12 screen)--
-  events:register("love:touchpressed",function(x,y,dx,dy,p)
+  events:register("love:touchpressed",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
     local dx, dy = _HostToLiko(dx,dy)
-    events:trigger("GPU:touchpressed",x,y,dx,dy,p)
+    events:trigger("GPU:touchpressed",id,x,y,dx,dy,p)
   end)
-  events:register("love:touchmoved",function(x,y,dx,dy,p)
+  events:register("love:touchmoved",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
     local dx, dy = _HostToLiko(dx,dy)
-    events:trigger("GPU:touchmoved",x,y,dx,dy,p)
+    events:trigger("GPU:touchmoved",id,x,y,dx,dy,p)
   end)
-  events:register("love:touchreleased",function(x,y,dx,dy,p)
+  events:register("love:touchreleased",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
     local dx, dy = _HostToLiko(dx,dy)
-    events:trigger("GPU:touchreleased",x,y,dx,dy,p)
+    events:trigger("GPU:touchreleased",id,x,y,dx,dy,p)
   end)
   
   --The api starts here--
@@ -235,6 +239,62 @@ return function(config) --A function that creates a new GPU peripheral.
     return true --It ran successfully
   end
   
+  --Draws a circle filled, or lines only.
+  function GPU.circle(x,y,r,l,c)
+    local x,y,r,l,c = x or 1, y or 1, r or 1, l or false, c --In case if they are not provided.
+    
+    --It accepts all the args as a table.
+    if x and type(x) == "table" then
+      x,y,r,l,c = unpack(x)
+    end
+    
+    if c then --If the colorid is provided, pushColor then set the color.
+      exe(GPU.pushColor())
+      exe(GPU.color(c))
+    end
+    
+    --Apply the offset.
+    if l then
+      x,y,r = x+ofs.circle_line[1], y+ofs.circle_line[2], r+ofs.circle_line[3]
+    else
+      x,y,r = x+ofs.circle[1], y+ofs.circle[2], r+ofs.circle[3]
+    end
+    
+    love.graphics.circle(l and "line" or "fill",x,y,r) _ShouldDraw = true --Draw and tell that changes has been made.
+    
+    if c then exe(GPU.popColor()) end --Restore the color from the stack.
+    
+    return true --It ran successfully
+  end
+  
+  --Draws a ellipse filled, or lines only.
+  function GPU.ellipse(x,y,r,l,c)
+    local x,y,rx,ry,l,c = x or 1, y or 1, rx or 1, ry or 1, l or false, c --In case if they are not provided.
+    
+    --It accepts all the args as a table.
+    if x and type(x) == "table" then
+      x,y,rx,ry,l,c = unpack(x)
+    end
+    
+    if c then --If the colorid is provided, pushColor then set the color.
+      exe(GPU.pushColor())
+      exe(GPU.color(c))
+    end
+    
+    --Apply the offset.
+    if l then
+      x,y,rx,ry = x+ofs.ellipse_line[1], y+ofs.ellipse_line[2], rx+ofs.ellipse_line[3], ry+ofs.ellipse_line[4]
+    else
+      x,y,rx,ry = x+ofs.ellipse[1], y+ofs.ellipse[2], rx+ofs.ellipse[3], ry+ofs.ellipse[4]
+    end
+    
+    love.graphics.ellipse(l and "line" or "fill",x,y,rx,ry) _ShouldDraw = true --Draw and tell that changes has been made.
+    
+    if c then exe(GPU.popColor()) end --Restore the color from the stack.
+    
+    return true --It ran successfully
+  end
+  
   --Sets the position of the printing corsor when x,y are supplied
   --Or returns the current position of the printing cursor when x,y are not supplied
   function GPU.printCursor(x,y)
@@ -256,7 +316,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if x and y then --If the x & y are provided
       love.graphics.print(t, math.floor((x or 1)+ofs.print[1]), math.floor((y or 1)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
     else --If they are not, print on the grid
-      love.graphics.print(t, math.floor(((printCursor.x or 1)*4-3)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
+      love.graphics.print(t, math.floor(((printCursor.x or 1)*4-2)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
       printCursor.y = printCursor.y +1 --Set the cursor to the next line
     end
     return true
@@ -296,6 +356,20 @@ return function(config) --A function that creates a new GPU peripheral.
     return true --It ran successfully.
   end
   GPU.line = GPU.lines --Just an alt name :P.
+  --Mouse API--
+  
+  --Returns the current position of the mouse.
+  function GPU.getMPos()
+    local x,y = _HostToLiko(love.mouse.getPosition()) --Convert the mouse position
+    return true, x, y --And return it
+  end
+  
+  --Returns if the given mouse button is down
+  function GPU.isMDown(b)
+    if type(b) ~= "number" then return false, "Button must be a number, provided: "..type(b) end --Error
+    local b = math.floor(b)
+    return true, love.mouse.isDown(b)
+  end
   
   --End of API--
   

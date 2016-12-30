@@ -99,13 +99,14 @@ function coreg:sandboxCoroutine(f)
       pi=math.pi,
       pow=math.pow,
       rad=math.rad,
-      random=math.random,
-      randomseed=math.randomseed,
+      random=love.math.random, --Replaced with love.math versions
+      randomseed=love.math.setRandomSeed,
       sin=math.sin,
       sinh=math.sinh,
       sqrt=math.sqrt,
       tan=math.tan,
       tanh=math.tanh,
+      noise = love.math.noise --LOVE releated apis
     },
     coroutine={
       resume = coroutine.resume,
