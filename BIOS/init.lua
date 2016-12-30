@@ -67,6 +67,58 @@ if not success then
   bconfC()
 end --Load the default BConfig
 
+local function exe(...) --Excute a LIKO12 api function (to handle errors)
+  local args = {...}
+  if args[1] then
+    local nargs = {}
+    for k,v in pairs(args) do --Clone the args, removing the first one
+      if type(k) == "number" then
+        nargs[k-1] = v
+      else
+        nargs[k] = v
+      end
+    end
+    return unpack(nargs)
+  else
+    return error(args[2])
+  end
+end
+
+local function flushOS(os,path)
+  local h = MPer.HDD
+  local path = path or "/"
+  local files = love.filesystem.getDirectoryItems("/OS/"..os..path)
+  for k,v in pairs(files) do
+    if love.filesystem.isDirectory("/OS/"..os..path..v) then
+      flushOS(os,path..v.."/")
+    else
+      h.drive("C") --Opereating systems are installed on C drive
+      h.write(path..v,love.filesystem.read("/OS/"..os..path..v))
+    end
+  end
+end
+
+--No OS Screen
+local function noOS()
+  if MPer.GPU then
+    flushOS("CartOS") --Should be replaced by a gui
+  else
+    flushOS("CartOS")
+  end
+end
+
+local function startCoroutine()
+  if not MPer.HDD then return end
+  local h = MPer.HDD
+  exe(h.drive("C"))
+  if not exe(h.exists("/boot.lua")) then noOS() end
+  local chunk, err = loadstring(h.read("/boot.lua"))
+  if not chunk then error(err) end
+  coreg:sandboxCoroutine(chunk)
+  local co = coroutine.create(chunk)
+  coreg:setCoroutine(co) --For peripherals to use.
+end
+
 --POST screen
 if MPer.GPU then --If there is an initialized gpu
   local g = MPer.GPU
@@ -92,7 +144,7 @@ if MPer.GPU then --If there is an initialized gpu
   
   events:register("love:update",function(dt)
     if stage == 6 then --Create the coroutine
-      
+      startCoroutine()
       stage = 7 --So coroutine don't get duplicated
     end
     
@@ -105,7 +157,7 @@ if MPer.GPU then --If there is an initialized gpu
     end
   end)
 else --Incase the gpu doesn't exists (Then can't enter the bios nor do the boot animation
-  
+  startCoroutine()
 end
 
 
