@@ -111,6 +111,10 @@ function coreg:sandboxCoroutine(f)
       resume = coroutine.resume,
       yield = coroutine.yield,
       status = coroutine.status
+    },
+    os={
+      time=os.time,
+      clock=os.clock
     }
   }
   GLOB.loadstring = function(...)
