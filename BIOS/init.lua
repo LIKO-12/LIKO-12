@@ -120,9 +120,9 @@ local function startCoroutine()
   if not MPer.HDD then return error("No HDD Periphrtal") end
   local h = MPer.HDD
   exe(h.drive("C"))
-  if not exe(h.exists("/boot.lua")) and false then noOS() end
+  if (not exe(h.exists("/boot.lua"))) or true then noOS() end
   local chunk, err = exe(h.load("/boot.lua"))
-  if not chunk then error(err) end
+  if not chunk then error(err or "") end
   coreg:sandboxCoroutine(chunk)
   local co = coroutine.create(chunk)
   coreg:setCoroutine(co) --For peripherals to use.
