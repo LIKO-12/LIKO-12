@@ -224,7 +224,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if x and y then --If the x & y are provided
       love.graphics.print(t, math.floor((x or 1)+ofs.print[1]), math.floor((y or 1)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
     else --If they are not, print on the grid
-      love.graphics.print(t, math.floor(((printCursor.x or 1)*8-6)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
+      love.graphics.print(t, math.floor(((printCursor.x or 1)*4-6)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
       printCursor.y = printCursor.y +1 --Set the cursor to the next line
     end
   end
