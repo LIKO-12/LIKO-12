@@ -85,27 +85,28 @@ if MPer.GPU then --If there is an initialized gpu
     end end
   end
   
-  drawAnim()
+  g.clear()
   
   local timer = 0
   local stage = 1
   
   events:register("love:update",function(dt)
-    if stage < 5 then
+    if stage == 6 then --Create the coroutine
+      
+      stage = 7 --So coroutine don't get duplicated
+    end
+    
+    if stage < 6 then
       timer = timer + dt
       if timer > 0.25 then timer = timer -0.25
         stage = stage +1
-        if stage < 4 then drawAnim() else g.clear() end
+        if stage < 5 then drawAnim() elseif stage == 5 then g.clear() end
       end
     end
-    if stage == 5 then --Create the coroutine
-      
-      stage = 6 --So coroutine don't get duplicated
-    end
   end)
+else --Incase the gpu doesn't exists (Then can't enter the bios nor do the boot animation
+  
 end
-
---Booting the system !
 
 
 
