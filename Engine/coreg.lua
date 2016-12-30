@@ -12,11 +12,28 @@ function coreg:setCoroutine(co)
   return self
 end
 
+local function extractArgs(args,factor)
+  local nargs = {}
+  for k,v in ipairs(args) do
+    if k > factor then table.insert(nargs,v) end
+  end
+  return nargs
+end
+
 --Resumes the current active coroutine if exists.
 function coreg:resumeCoroutine(...)
-  if not self.co then return end
-  while true do
-    local command
+  if not self.co or coroutine.status(self.co) == "dead" then return end
+  local args = {coroutine.resume(self.co,...)}
+  if not args[1] then error(args[2]) end --Should have a better error handelling
+  if not args[2] then
+    --if self.co:status() == "dead" then error("done") return end --OS finished ??
+    --self:resumeCoroutine()
+    self.co = nil return
+  end
+  args = {self:trigger(args[2],unpack(extractArgs(args,2)))}
+  if not args[1] then self:resumeCoroutine(args[1],unpack(extractArgs(args,1))) end
+  if not(type(args[1]) == "number" and args[1] == 2) then
+    self:resumeCoroutine(true,unpack(extractArgs(args,1)))
   end
 end
 
@@ -26,7 +43,6 @@ function coreg:sandboxCoroutine(f)
     error=error,
     ipairs=ipairs,
     pairs=pairs,
-    ripairs = lume.ripairs,
     next=next,
     pcall=pcall,
     select=select,
@@ -93,7 +109,8 @@ function coreg:sandboxCoroutine(f)
     },
     coroutine={
       resume = coroutine.resume,
-      yeild = coroutine.yeild
+      yield = coroutine.yield,
+      status = coroutine.status
     }
   }
   GLOB.loadstring = function(...)
@@ -107,7 +124,7 @@ function coreg:sandboxCoroutine(f)
     if not co then return error(err) end
     setfenv(co,GLOB)
     return co 
-  end  
+  end
   GLOB._G=GLOB --Mirror Mirror
   setfenv(f,GLOB)
 end
@@ -131,9 +148,9 @@ end
 --Else, it will return the value.
 --Notice that the first return value is a number of "did it ran successfully", if false, the second return value is the error message.
 --Also the first return value could be also a number that specifies how should the coroutine resume (true boolean defaults to 1)
---Corouting resumming codes: 1: resume instantly, 2: yeilded automatically, 3: stop resuming (Will be yeild later, like when love.update is called).
+--Corouting resumming codes: 1: resume instantly, 2: stop resuming (Will be yeild later, like when love.update is called).
 function coreg:trigger(key,...)
-  local key = key or none
+  local key = key or "none"
   if type(self.reg[key]) == "nil" then return false, "error, key not found !" end
   if type(self.reg[key]) == "function" then
     return self.reg[key](...)
