@@ -153,19 +153,20 @@ if MPer.GPU then --If there is an initialized gpu
   local stage = 1
   
   events:register("love:update",function(dt)
-    if stage == 8 then --Create the coroutine
+    if stage == 7 then --Create the coroutine
       g.color(8)
       g.clear(1)
       g.printCursor(1,1)
       startCoroutine()
-      stage = 9 --So coroutine don't get duplicated
+      stage = 8 --So coroutine don't get duplicated
     end
+    if stage < 4 and stage > 1 then drawAnim() end
     
     if stage < 8 then
       timer = timer + dt
       if timer > 0.25 then timer = timer -0.25
         stage = stage +1
-        if stage < 6 then drawAnim() elseif stage == 6 then g.clear() end
+        if stage < 5 then --[[drawAnim()]] elseif stage == 5 then g.clear() end
       end
     end
   end)
