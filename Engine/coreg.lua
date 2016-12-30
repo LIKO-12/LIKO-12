@@ -12,7 +12,15 @@ function coreg:setCoroutine(co)
   return self
 end
 
-function coreg:sandboxCoroutine(co)
+--Resumes the current active coroutine if exists.
+function coreg:resumeCoroutine(...)
+  if not self.co then return end
+  while true do
+    local command
+  end
+end
+
+function coreg:sandboxCoroutine(f)
   local GLOB = {
     assert=assert,
     error=error,
@@ -98,9 +106,10 @@ function coreg:sandboxCoroutine(co)
     local co,err = pcall(coroutine.create,...)
     if not co then return error(err) end
     setfenv(co,GLOB)
-    return co
+    return co 
   end  
   GLOB._G=GLOB --Mirror Mirror
+  setfenv(f,GLOB)
 end
 
 --Register a value to a specific key.
