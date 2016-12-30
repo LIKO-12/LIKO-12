@@ -20,6 +20,7 @@ return function(config) --A function that creates a new HDD peripheral.
   local drives = {}
   
   --Load the virtual hdds configurations--
+  if not config["C"] then config["C"] = 1024*1024 * 12 end --Defaults to 12 Megabyte
   for letter, size in pairs(config) do
     if not love.filesystem.exists("/drives/"..letter) then
       love.filesystem.createDirectory("/drives/"..letter) --Create the drive directory if doesn't exists
@@ -48,8 +49,9 @@ return function(config) --A function that creates a new HDD peripheral.
       if type(letter) ~= "string" then return false, "The drive letter must be a string, provided: "..type(letter) end --Error
       if not drives[letter] then return false, "The drive '"..letter.."' doesn't exists" end
       ad = letter --Set the active drive letter.
+      return true --It ran successfully
     else
-      return ad
+      return true, ad
     end
   end
   
@@ -100,18 +102,18 @@ return function(config) --A function that creates a new HDD peripheral.
     return true, love.filesystem.isFile(path)
   end
   
-  function HDD.isFolder(fname)
+  function HDD.isDirrctory(fname)
     if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
     if not love.filesystem.exists(path) then return false, "The folder doesn't exists" end --Error
-    return true, love.filesystem.isFolder(path)
+    return true, love.filesystem.isDirectory(path)
   end
   
   function HDD.getDirectoryItems(fname)
     if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
     if not love.filesystem.exists(path) then return false, "Folder doesn't exists" end --Error
-    if not love.filesystem.isFolder(path) then return false, "Provided a path to a file instead of a folder" end --Error
+    if not love.filesystem.isDirectory(path) then return false, "Provided a path to a file instead of a folder" end --Error
     return true, love.filesystem.getDirectoryItems(path)
   end
   
