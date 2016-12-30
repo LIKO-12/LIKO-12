@@ -96,7 +96,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --Internal Functions--
   local function _HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
     --x, y = x-_ScreenX, y-_ScreenY
-    return math.floor(x/_LIKOScale)+1, api.floor(y/_LIKOScale)+1
+    return math.floor(x/_LIKOScale)+1, math.floor(y/_LIKOScale)+1
   end
   
   local function _GetColor(c) return _ColorSet[c or 1] or _ColorSet[1] end --Get the (rgba) table of a color id.
@@ -126,6 +126,38 @@ return function(config) --A function that creates a new GPU peripheral.
       return error(args[2])
     end
   end
+  
+  --Mouse Hooks (To translate them to LIKO12 screen)--
+  events:register("love:mousepressed",function(x,y,b,istouch)
+    local x,y = _HostToLiko(x,y)
+    events:trigger("GPU:mousepressed",x,y,b,istouch)
+  end)
+  events:register("love:mousemoved",function(x,y,dx,dy,istouch)
+    local x,y = _HostToLiko(x,y)
+    local dx, dy = _HostToLiko(dx,dy)
+    events:trigger("GPU:mousemoved",x,y,dx,dy,istouch)
+  end)
+  events:register("love:mousereleased",function(x,y,b,istouch)
+    local x,y = _HostToLiko(x,y)
+    events:trigger("GPU:mousereleased",x,y,b,istouch)
+  end)
+  
+  --Touch Hooks (To translate them to LIKO12 screen)--
+  events:register("love:touchpressed",function(x,y,dx,dy,p)
+    local x,y = _HostToLiko(x,y)
+    local dx, dy = _HostToLiko(dx,dy)
+    events:trigger("GPU:touchpressed",x,y,dx,dy,p)
+  end)
+  events:register("love:touchmoved",function(x,y,dx,dy,p)
+    local x,y = _HostToLiko(x,y)
+    local dx, dy = _HostToLiko(dx,dy)
+    events:trigger("GPU:touchmoved",x,y,dx,dy,p)
+  end)
+  events:register("love:touchreleased",function(x,y,dx,dy,p)
+    local x,y = _HostToLiko(x,y)
+    local dx, dy = _HostToLiko(dx,dy)
+    events:trigger("GPU:touchreleased",x,y,dx,dy,p)
+  end)
   
   --The api starts here--
   local GPU = {}
