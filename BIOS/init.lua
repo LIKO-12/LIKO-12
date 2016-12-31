@@ -38,7 +38,7 @@ local function P(per,m,conf)
   
   local m = m or per
   if type(m) ~= "string" then return false, "Mounting name should be a string, provided "..type(m) end
-  if MPer[m] then return false, "Mounting name '"..m.."' is already taken" end
+  if MPer[m] then return MPer[m] end--return false, "Mounting name '"..m.."' is already taken" end
   
   local conf = conf or {}
   if type(conf) ~= "table" then return false, "Configuration table should be a table, provided "..type(conf) end
@@ -136,7 +136,7 @@ if MPer.GPU then --If there is an initialized gpu
   local chars = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","-","_","@","#","$","&","*","!","+","=","%"}
   --48x16 Terminal Size
   function drawAnim() g.clear()
-    for x=1,48 do for y=1,16 do
+    for x=1,exe(g.termwidth()) do for y=1,exe(g.termheight()) do
       math.randomseed(os.clock()*os.time()*x)
       g.color(math.floor(math.random(2,16)))
       g.printCursor(x,y)
