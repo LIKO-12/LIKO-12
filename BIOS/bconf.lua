@@ -16,4 +16,4 @@ assert(P("GPU","GPU",{
 }))
 
 --Create a new keyboard api mounted as "KB"
-assert(P("KB"))
+assert(P("Keyboard"))
