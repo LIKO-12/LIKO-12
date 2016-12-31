@@ -80,14 +80,15 @@ return function(config) --A function that creates a new HDD peripheral.
     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end
     local path = "/drives/"..ad.."/"..fname
     local oldsize = (love.filesystem.exists(path) and love.filesystem.isFile(path)) and love.filesystem.getSize(path) or 0 --Old file size.
-    local file,err = love.filesystem.newFile(path,"w")
+    local file,err = love.filesystem.newFile(path,"a")
     if not file then return false,err end --Error
     file:write(data,size) --Write to the file (without saving)
     local newsize = file:getSize() --The size of the new file
     if drives[ad].size < ((drives[ad].usage - oldsize) + newsize) then file:close() return false, "No more enough space" end --Error
+    file:flush()
     file:close() --Close the file
-    local ok, err = love.filesystem.append(path,data,size)
-    if not ok then return ok, err end
+    --local ok, err = love.filesystem.append(path,data,size)
+    --if not ok then return ok, err end
     drives[ad].usage = (drives[ad].usage - oldsize) + newsize --Update the usage
     return true, newsize
   end
