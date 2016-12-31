@@ -47,6 +47,7 @@ for per,_ in pairs(perlist) do
   CPU.sleep(0.25)
   GPU.print(per)
 end
+CPU.sleep(0.1)
 
 local mflag = false
 while true do
