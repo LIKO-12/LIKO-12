@@ -117,6 +117,11 @@ return function(config) --A function that creates a new GPU peripheral.
     return 1
   end
   
+  local function magiclines(s)
+    if s:sub(-1)~="\n" then s=s.."\n" end
+    return s:gmatch("(.-)\n")
+  end
+  
   local function exe(...) --Excute a LIKO12 api function (to handle errors)
     local args = {...}
     if args[1] then
@@ -172,6 +177,15 @@ return function(config) --A function that creates a new GPU peripheral.
   local flip = false
   local ColorStack = {} --The colors stack (pushColor,popColor)
   local printCursor = {x=1,y=1}
+  local TERM_W, TERM_H = math.floor(_LIKO_W/4), math.floor(_LIKO_H/7)-2
+  --error(TERM_W)
+  
+  function GPU.size() return true, _LIKO_W, _LIKO_H end
+  function GPU.width() return true, _LIKO_W end
+  function GPU.height() return true, _LIKO_H end
+  function GPU.termsize() return true, TERM_W, TERM_H end
+  function GPU.termwidth() return true, TERM_W end
+  function GPU.termheight() return true, TERM_H end
   
   --Call with color id to set the active color.
   --Call with no args to get the current acive color id.
@@ -324,11 +338,32 @@ return function(config) --A function that creates a new GPU peripheral.
   --Acts as a terminal print if x, y are not provided,
   --Or prints at the specific pos x, y3
   function GPU.print(t,x,y)
+    local t = tostring(t)
     if x and y then --If the x & y are provided
       love.graphics.print(t, math.floor((x or 1)+ofs.print[1]), math.floor((y or 1)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
     else --If they are not, print on the grid
-      love.graphics.print(t, math.floor(((printCursor.x or 1)*4-2)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
-      printCursor.y = printCursor.y +1 --Set the cursor to the next line
+      local anl = true --Auto new line
+      if type(x) == "boolean" then anl = x end
+      local function printgrid(tx,gx,gy) love.graphics.print(tx, math.floor(((gx or 1)*4-2)+ofs.print[1]), math.floor(((gy or 1)*8-6)+ofs.print[2])) _ShouldDraw = true end
+      if not anl then printgrid(txt,printCursor.x,printCursor.y) printCursor.x = printCursor.x + txt:len()+1 return true end
+      local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-6) end
+      local function printLine(txt)
+        if txt:len()+printCursor.x-1 > TERM_W then
+          local tl = txt:len()+printCursor.x-1
+          printLine(txt:sub(0,tl-(tl-TERM_W)))
+          printLine(txt:sub(tl-(tl-TERM_W)+1,-1))
+        else
+          if printCursor.y == TERM_H+1 then cr() printCursor.y = TERM_H end
+          printgrid(txt,printCursor.x, printCursor.y)
+          if printCursor.y < TERM_H+1 then printCursor.y = printCursor.y+1 end
+          printCursor.x = 1
+        end
+      end
+      for line in magiclines(t) do
+        printLine(line)
+      end
+      --love.graphics.print(t, math.floor(((printCursor.x or 1)*4-2)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
+      --printCursor.y = printCursor.y +1 --Set the cursor to the next line
     end
     return true
   end
@@ -466,6 +501,15 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     
     return true, id
+  end
+  
+  function GPU.screenshot(x,y,w,h)
+    --local x, y, w, h = x or 1, y or 2, w or 192, h or 128
+    if x and type(x) ~= "number" then return false, "X must be a number, provided: "..type(x) end
+    if y and type(y) ~= "number" then return false, "Y must be a number, provided: "..type(y) end
+    if w and type(w) ~= "number" then return false, "W must be a number, provided: "..type(w) end
+    if h and type(h) ~= "number" then return false, "H must be a number, provided: "..type(h) end
+    return true, exe(GPU.imagedata(_ScreenCanvas:newImageData(x,y,w,h)))
   end
   
   --Mouse API--
