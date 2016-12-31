@@ -94,6 +94,8 @@ return function(config) --A function that creates a new GPU peripheral.
   ofs.rectSize = {0,0} --The offset of w,h in GPU.rect with l as false.
   ofs.rect_line = {0,0} --The offset of GPU.rect with l as true.
   ofs.rectSize_line = {-1,-1} --The offset of w,h in GPU.rect with l as false.
+  ofs.image = {-1,-1}
+  ofs.quad = {-1,-1}
   
   love.graphics.translate(unpack(ofs.screen)) --Offset all the drawing opereations.
   
@@ -356,6 +358,107 @@ return function(config) --A function that creates a new GPU peripheral.
     return true --It ran successfully.
   end
   GPU.line = GPU.lines --Just an alt name :P.
+  --Image API--
+  function GPU.quad(x,y,w,h,sw,sh)
+    return true, love.graphics.newQuad(x,y,w,h,sw,sh)
+  end
+  
+  function GPU.image(data)
+    local Image
+    if type(data) == "string" then --Load liko12 specialized image format
+      local imageData = exe(GPU.imagedata(data))
+      return true, imageData:image()
+    elseif type(data) == "userdata" and data.typeOf and data:typeOf("ImageData") then
+      Image = love.graphics.newImage(data)
+      --imageData = exe(GPU.imagedata(Image))
+    end
+    
+    local i = {}
+    
+    function i:draw(x,y,r,sx,sy,quad)
+      GPU.pushColor()
+      love.graphics.setColor(255,255,255,255)
+      if quad then
+        love.graphics.draw(Image,quad,x+ofs.quad[1],y+ofs.quad[2],r,sx,sy)
+      else
+        love.graphics.draw(Image,x+ofs.image[1],y+ofs.image[2],r,sx,sy)
+      end
+      GPU.popColor()
+      _ShouldDraw = true
+      return self
+    end
+    function i:size() return Image:getDimensions() end
+    function i:width() return Image:getWidth() end
+    function i:height() return Image:getHeight() end
+    function i:data() return GPU.imagedata(Image:getData()) end
+    function i:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
+    
+    return true, i
+  end
+  
+  function GPU.imagedata(w,h)
+    local imageData
+    if h then
+      imageData = love.image.newImageData(w,h)
+    elseif type(w) == "string" then --Load specialized liko12 image format
+      if w:sub(0,5) == "LK12;" then
+        local w,h,data = string.match(w,"LK12;(%d+)x(%d+);(.+)")
+        imageData = love.image.newImageData(w,h)
+        local Colors = {["0"]=0,["1"]=1,["2"]=2,["3"]=3,["4"]=4,["5"]=5,["6"]=6,["7"]=7,["8"]=8,["9"]=9,a=10,b=11,c=12,d=13,e=14,f=15,g=16}
+        imageData:mapPixel(function(x,y,r,g,b,a)
+          local c = Colors[data:sub(0,1)]
+          data = data:sub(2,-1)
+          return unpack(_GetColor(c))
+        end)
+      else
+        imageData = love.image.newImageData(love.filesystem.newFileData(w,"image.png"))
+      end
+    elseif type(w) == "userdata" and w.typeOf and w:typeOf("ImageData") then
+      imageData = w
+    end
+    
+    local id = {}
+    
+    function id:size() return imageData:getDimensions() end
+    function id:getPixel(x,y) return _GetColorID(imageData:getPixel((x or 1)-1,(y or 1)-1)) end
+    function id:setPixel(x,y,c) imageData:setPixel((x or 1)-1,(y or 1)-1,unpack(_GetColor(c))) return self end
+    function id:map(mf)
+      imageData:mapPixel(
+      function(x,y,r,g,b,a)
+        local newCol = mf(x+1,y+1,_GetColorID(r,g,b,a))
+        newCol = newCol and _GetColor(newCol) or {r,g,b,a}
+        return unpack(newCol)
+      end)
+      return self
+    end
+    function id:height() return imageData:getHeight() end
+    function id:width() return imageData:getWidth() end
+    function id:paste(expdata,dx,dy,sx,sy,sw,sh) local sprData = love.image.newImageData(love.filesystem.newFileData(w,"image.png")) imageData:paste(sprData,(dx or 1)-1,(dy or 1)-1,(sx or 1)-1,(sy or 1)-1,sw or sprData:getWidth(), sh or sprData:getHeight()) return self end
+    function id:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
+    function id:image() return exe(GPU.image(imageData)) end
+    function id:export() return self.imageData:encode("png") end
+    function id:enlarge(scale)
+      local scale = math.floor(scale or 1)
+      if scale <= 0 then scale = 1 end --Protection
+      if scale == 1 then return self end
+      local newData = GPU.imagedata(self:width()*scale,self:height()*scale)
+      self:map(function(x,y,c)
+        for iy=1, scale do for ix=1, scale do
+          newData:setPixel((x-1)*scale + ix,(y-1)*scale + iy,c)
+        end end
+      end)
+      return newData
+    end
+    function id:encode() --Export to liko12 format
+      local data = "LK12;"..self:width().."x"..self.height()..";"
+      local colors = {"1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g";[0]="0"}
+      self:map(function(x,y,c) data = data..colors[c] end)
+      return data
+    end
+    
+    return true, id
+  end
+  
   --Mouse API--
   
   --Returns the current position of the mouse.
