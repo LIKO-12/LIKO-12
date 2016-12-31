@@ -38,6 +38,7 @@ GPU.points(10,10, 10,19, 19,19, 19,10, 8)]]
 GPU.printCursor(1,1)
 GPU.color(9)
 GPU.print("LIKO-12 V0.6.0")
+GPU.flip()
 CPU.sleep(1)
 GPU.color(10)
 GPU.print("Available Peripherals:")
@@ -47,7 +48,7 @@ for per,_ in pairs(perlist) do
   CPU.sleep(0.25)
   GPU.print(per)
 end
-CPU.sleep(0.1)
+GPU.flip()
 
 local mflag = false
 while true do

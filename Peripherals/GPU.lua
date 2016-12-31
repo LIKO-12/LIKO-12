@@ -1,4 +1,5 @@
 local events = require("Engine.events")
+local coreg = require("Engine.coreg")
 
 return function(config) --A function that creates a new GPU peripheral.
   
@@ -168,6 +169,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --The api starts here--
   local GPU = {}
   
+  local flip = false
   local ColorStack = {} --The colors stack (pushColor,popColor)
   local printCursor = {x=1,y=1}
   
@@ -197,6 +199,13 @@ return function(config) --A function that creates a new GPU peripheral.
     exe(GPU.color(ColorStack[#ColorStack])) --Set the last color in the stack to be the active color.
     table.remove(ColorStack,#ColorStack) --Remove the last color in the stack.
     return true --It ran successfully
+  end
+  
+  --Suspend the coroutine till the screen is updated
+  function GPU.flip()
+    _ShouldDraw = true -- Incase if no changes are made so doesn't suspend forever
+    flip = true
+    return 2 --Do not resume automatically
   end
   
   --Draw a rectangle filled, or lines only.
@@ -502,6 +511,10 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.translate(unpack(ofs.screen)) --Reapply the offset.
       _ShouldDraw = false --Reset the flag.
       GPU.popColor() --Restore the active color.
+      if flip then
+        flip = false
+        coreg:resumeCoroutine(true)
+      end
     end
   end)
   
