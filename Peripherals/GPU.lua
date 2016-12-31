@@ -345,22 +345,30 @@ return function(config) --A function that creates a new GPU peripheral.
       local anl = true --Auto new line
       if type(x) == "boolean" then anl = x end
       local function printgrid(tx,gx,gy) love.graphics.print(tx, math.floor(((gx or 1)*4-2)+ofs.print[1]), math.floor(((gy or 1)*8-6)+ofs.print[2])) _ShouldDraw = true end
-      if not anl then printgrid(txt,printCursor.x,printCursor.y) printCursor.x = printCursor.x + txt:len()+1 return true end
+      if y then printgrid(txt,printCursor.x,printCursor.y) printCursor.x = printCursor.x + txt:len()+1 return true end
       local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-6) end
-      local function printLine(txt)
+      local function printLine(txt,f,ff)
         if txt:len()+printCursor.x-1 > TERM_W then
           local tl = txt:len()+printCursor.x-1
-          printLine(txt:sub(0,tl-(tl-TERM_W)))
-          printLine(txt:sub(tl-(tl-TERM_W)+1,-1))
+          printLine(txt:sub(0,txt:len()-(tl-TERM_W)),f,false)
+          printLine(txt:sub(txt:len()-(tl-TERM_W)+1,-1),f,ff)
         else
           if printCursor.y == TERM_H+1 then cr() printCursor.y = TERM_H end
           printgrid(txt,printCursor.x, printCursor.y)
-          if printCursor.y < TERM_H+1 then printCursor.y = printCursor.y+1 end
-          printCursor.x = 1
+          if printCursor.y < TERM_H+1 and not(ff and f) then printCursor.y = printCursor.y+1 end
+          if ff and f then
+            printCursor.x = printCursor.x + txt:len()
+          else
+            printCursor.x = 1
+          end
         end
       end
-      for line in magiclines(t) do
-        printLine(line)
+      local lcount = 0
+      local bkt = t --Make a backup
+      for line in magiclines(t) do lcount = lcount+1 end
+      for line in magiclines(bkt) do 
+        lcount = lcount-1
+        printLine(line,lcount==0,not anl)
       end
       --love.graphics.print(t, math.floor(((printCursor.x or 1)*4-2)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
       --printCursor.y = printCursor.y +1 --Set the cursor to the next line
