@@ -345,7 +345,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local anl = true --Auto new line
       if type(x) == "boolean" then anl = x end
       local function printgrid(tx,gx,gy) love.graphics.print(tx, math.floor(((gx or 1)*4-2)+ofs.print[1]), math.floor(((gy or 1)*8-6)+ofs.print[2])) _ShouldDraw = true end
-      if y then printgrid(txt,printCursor.x,printCursor.y) printCursor.x = printCursor.x + txt:len()+1 return true end
+      if y then printgrid(t,printCursor.x,printCursor.y) printCursor.x = printCursor.x + t:len() return true end
       local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-6) end
       local function printLine(txt,f,ff)
         if txt:len()+printCursor.x-1 > TERM_W then
