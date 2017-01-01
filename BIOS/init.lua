@@ -143,7 +143,7 @@ if MPer.GPU then --If there is an initialized gpu
       math.randomseed(os.clock()*os.time()*y)
       local c = chars[math.floor(math.random(1,#chars))]
       if math.random(0,20) % 2 == 0 then c = c:upper() end
-      g.print(c)
+      g.print(c,_,true)
     end end
   end
   
