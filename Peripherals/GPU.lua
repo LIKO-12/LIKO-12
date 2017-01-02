@@ -176,7 +176,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local flip = false
   local ColorStack = {} --The colors stack (pushColor,popColor)
-  local printCursor = {x=1,y=1}
+  local printCursor = {x=1,y=1,bgc=1}
   local TERM_W, TERM_H = math.floor(_LIKO_W/4), math.floor(_LIKO_H/7)-2
   --error(TERM_W)
   
@@ -322,14 +322,18 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Sets the position of the printing corsor when x,y are supplied
   --Or returns the current position of the printing cursor when x,y are not supplied
-  function GPU.printCursor(x,y)
-    if x and y then
+  function GPU.printCursor(x,y,bgc)
+    if x or y or bgc then
+      local x, y = x or printCursor.x, y or printCursor.y
+      local bgc = bgc or printCursor.bgc
       if type(x) ~= "number" then return false, "X pos must be a number or nil." end --Error
       if type(y) ~= "number" then return false, "Y pos must be a number or nil." end --Error
+      if type(bgc) ~= "number" then return false, "Background Color must be a number or nil." end --Error
       printCursor.x, printCursor.y = x, y --Set the cursor pos
+      printCursor.bgc = bgc
       return true --It ran successfully.
     else
-      return true, printCursor.x, printCursor.y --Return the current cursor pos
+      return true, printCursor.x, printCursor.y, printCursor.bgc --Return the current cursor pos
     end
   end
   
@@ -344,7 +348,10 @@ return function(config) --A function that creates a new GPU peripheral.
     else --If they are not, print on the grid
       local anl = true --Auto new line
       if type(x) == "boolean" then anl = x end
-      local function printgrid(tx,gx,gy) love.graphics.print(tx, math.floor(((gx or 1)*4-2)+ofs.print[1]), math.floor(((gy or 1)*8-6)+ofs.print[2])) _ShouldDraw = true end
+      local function printgrid(tx,gx,gy)
+        if printCursor.bgc > 0 then exe(GPU.rect(math.floor((gx or 1)*4-2)-1, math.floor((gy or 1)*8-6)-1, tx:len()*4 +1, 7, false, printCursor.bgc)) end
+        love.graphics.print(tx, math.floor(((gx or 1)*4-2)+ofs.print[1]), math.floor(((gy or 1)*8-6)+ofs.print[2]))
+      _ShouldDraw = true end
       if y then printgrid(t,printCursor.x,printCursor.y) printCursor.x = printCursor.x + t:len() return true end
       local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-6) end
       local function printLine(txt,f,ff)
