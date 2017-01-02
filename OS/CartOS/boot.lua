@@ -34,7 +34,6 @@ GPU.rect(10,30,10,10,false,9)
 GPU.rect(10,30,10,10,true,8)
 GPU.points(10,10, 10,19, 19,19, 19,10, 8)]]
 --DebugDraw end--
-
 GPU.printCursor(1,1)
 GPU.color(9)
 GPU.print("LIKO-12 V0.6.0")
@@ -49,7 +48,7 @@ for per,_ in pairs(perlist) do
   GPU.print(per)
 end
 GPU.flip()
-
+CPU.clearEStack()
 local mflag = false
 while true do
   local event, a, b, c, d, e = CPU.pullEvent()
