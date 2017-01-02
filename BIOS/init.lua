@@ -126,6 +126,7 @@ local function startCoroutine()
   coreg:sandboxCoroutine(chunk)
   local co = coroutine.create(chunk)
   coreg:setCoroutine(co) --For peripherals to use.
+  if MPer.CPU then MPer.CPU.clearEStack() end
   coreg:resumeCoroutine()
 end
 
@@ -148,6 +149,7 @@ if MPer.GPU then --If there is an initialized gpu
   end
   
   g.clear()
+  g.printCursor(_,_,0)
   
   local timer = 0
   local stage = 1
@@ -156,7 +158,7 @@ if MPer.GPU then --If there is an initialized gpu
     if stage == 7 then --Create the coroutine
       g.color(8)
       g.clear(1)
-      g.printCursor(1,1)
+      g.printCursor(1,1,1)
       startCoroutine()
       stage = 8 --So coroutine don't get duplicated
     end
