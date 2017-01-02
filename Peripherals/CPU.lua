@@ -58,6 +58,11 @@ return function(config) --A function that creates a new CPU peripheral.
     end
   end
   
+  function CPU.clearEStack()
+    EventStack = {}
+    return true
+  end
+  
   function CPU.getHostOS()
     return true, love.system.getOS()
   end
