@@ -171,6 +171,14 @@ return function(config) --A function that creates a new GPU peripheral.
     events:trigger("GPU:touchreleased",id,x,y,dx,dy,p)
   end)
   
+  --The hook the textinput for feltering characters not in the font
+  events:register("love:textinput",function(text)
+    local text_escaped = text:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1")
+    if #text == 1 and _FontChars:find(text_escaped) then
+      events:trigger("GPU:textinput",text_escaped)
+    end
+  end)
+  
   --The api starts here--
   local GPU = {}
   

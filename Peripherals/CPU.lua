@@ -29,6 +29,7 @@ return function(config) --A function that creates a new CPU peripheral.
   hookEvent("GPU","touchpressed")
   hookEvent("GPU","touchmoved")
   hookEvent("GPU","touchreleased")
+  hookEvent("GPU","textinput")
   
   events:register("love:update",function(dt)
     if sleepTimer then
