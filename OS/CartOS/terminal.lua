@@ -1,2 +1,2 @@
 --The terminal !--
-local path
+local path = "C://Programs/;"
