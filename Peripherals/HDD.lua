@@ -35,7 +35,7 @@ return function(config) --A function that creates a new HDD peripheral.
   local ad = "C" --The active drive letter
   
   --Returns a list of the available drives.
-  function HDD.drivers()
+  function HDD.drives()
     local dlist = {}
     for k,v in ipairs(drives) do
       dlist[k] = {size=drives[k].size,usage=drives[k].usage}
@@ -61,6 +61,11 @@ return function(config) --A function that creates a new HDD peripheral.
     local data = tostring(data)
     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end
     local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      p = "/drives/"..d.."/"..p
+    end
     local oldsize = (love.filesystem.exists(path) and love.filesystem.isFile(path)) and love.filesystem.getSize(path) or 0 --Old file size.
     local file,err = love.filesystem.newFile(path,"w")
     if not file then return false,err end --Error
