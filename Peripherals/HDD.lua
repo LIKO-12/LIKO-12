@@ -64,7 +64,7 @@ return function(config) --A function that creates a new HDD peripheral.
     local d, p = fname:match("(.1)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
-      p = "/drives/"..d.."/"..p
+      path = "/drives/"..d.."/"..p
     end
     local oldsize = (love.filesystem.exists(path) and love.filesystem.isFile(path)) and love.filesystem.getSize(path) or 0 --Old file size.
     local file,err = love.filesystem.newFile(path,"w")
@@ -84,6 +84,11 @@ return function(config) --A function that creates a new HDD peripheral.
     local data = tostring(data)
     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end
     local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
     local oldsize = (love.filesystem.exists(path) and love.filesystem.isFile(path)) and love.filesystem.getSize(path) or 0 --Old file size.
     local file,err = love.filesystem.newFile(path,"a")
     if not file then return false,err end --Error
@@ -101,52 +106,99 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.read(fname,size)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end --Error
-    local data, err = love.filesystem.read("/drives/"..ad.."/"..fname,size)
+    local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
+    local data, err = love.filesystem.read(path,size)
     if data then return true,data else return false,err end
   end
   
   function HDD.lines(fname)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
-    if not love.filesystem.exists("/drives/"..ad.."/"..fname) then return false, "The file doesn't exists !" end --Error
-    if love.filesystem.isFolder("/drives/"..ad.."/"..fname) then return false, "Can't read directories !" end --Error
-    local it = love.filesystem.lines("/drives/"..ad.."/"..fname)
+    local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
+    if not love.filesystem.exists(path) then return false, "The file doesn't exists !" end --Error
+    if love.filesystem.isFolder(path) then return false, "Can't read directories !" end --Error
+    local it = love.filesystem.lines(path)
     if not it then return false, "Failed to read" end
     return true, it
   end
   
   function HDD.remove(fname)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
-    if not love.filesystem.exists("/drives/"..ad.."/"..fname) then return false, "The file doesn't exists !" end --Error
-    if love.filesystem.isFolder("/drives/"..ad.."/"..fname) then return false, "Can't delete directories !" end --Error
-    local ok = love.filesystem.remove("/drives/"..ad.."/"..fname)
+    local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
+    if not love.filesystem.exists(path) then return false, "The file doesn't exists !" end --Error
+    if love.filesystem.isFolder(path) then return false, "Can't delete directories !" end --Error
+    local ok = love.filesystem.remove(path)
     if not ok then return false, "Failed to delete" end
     return true
   end
   
   function HDD.load(fname)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
-    local chunk, err = love.filesystem.load("/drives/"..ad.."/"..fname)
+    local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
+    local chunk, err = love.filesystem.load(path)
     return true, chunk, err
   end
   
   function HDD.size(fname)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
-    return love.filesystem.getSize("/drives/"..ad.."/"..fname)
+    local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
+    return love.filesystem.getSize(path)
   end
   
   function HDD.exists(fname)
     if type(fname) ~= "string" then return false, "File/Folder name must be a string, provided: "..type(fname) end --Error
-    return true, love.filesystem.exists("/drives/"..ad.."/"..fname)
+    local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
+    return true, love.filesystem.exists(path)
   end
   
   function HDD.newFolder(fname)
     if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
-    return love.filesystem.createDirectory("/drives/"..ad.."/"..fname)
+    local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
+    return love.filesystem.createDirectory(path)
   end
   
   function HDD.isFile(fname)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
     if not love.filesystem.exists(path) then return false, "The file doesn't exists" end --Error
     return true, love.filesystem.isFile(path)
   end
@@ -154,6 +206,11 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.isDirectory(fname)
     if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
     if not love.filesystem.exists(path) then return false, "The folder doesn't exists" end --Error
     return true, love.filesystem.isDirectory(path)
   end
@@ -161,6 +218,11 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.directoryItems(fname)
     if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
     if not love.filesystem.exists(path) then return false, "Folder doesn't exists" end --Error
     if not love.filesystem.isDirectory(path) then return false, "Provided a path to a file instead of a folder" end --Error
     return true, love.filesystem.getDirectoryItems(path)
@@ -168,7 +230,13 @@ return function(config) --A function that creates a new HDD peripheral.
   
   function HDD.lastModified(fname)
     if type(fname) ~= "string" then return false, "File/Folder name must be a string, provided: "..type(fname) end --Error
-    local modtime, err = love.filesystem.getLastModified("/drives/"..ad.."/"..fname)
+    local path = "/drives/"..ad.."/"..fname
+    local d, p = fname:match("(.1)://(.+)")
+    if d then
+      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      path = "/drives/"..d.."/"..p
+    end
+    local modtime, err = love.filesystem.getLastModified(path)
     if not modtime then return false, err else return true, modtime end
   end
   
