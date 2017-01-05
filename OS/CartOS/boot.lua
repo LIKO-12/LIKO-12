@@ -1,3 +1,5 @@
+local olderr = error
+--error = function() return olderr("HERE") end
 --Building the api--
 local perglob = {GPU = true, CPU = true, Keyboard = true} --The perihperals to make global not in a table.
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
@@ -42,20 +44,24 @@ end
 --Restore Require Function--
 local function extractArgs(args,factor)
   local nargs = {}
-  for k,v in ipairs(nargs) do
+  for k,v in ipairs(args) do
     if k > factor then nargs[k-factor] = v end
   end
   return nargs
 end
 
 package = {loaded  = {}} --Fake package system
-function require(path)
+function require(path,...)
   if type(path) ~= "string" then return error("Require path must be a string, provided: "..type(path)) end
-  path = path:gsub(".","/")
-  if package.loaded[path] then return package.loaded[path] end
+  path = path:gsub("%.","/")..".lua"
+  if package.loaded[path] then return unpack(package.loaded[path]) end
   local chunk, err = fs.load(path)
-  if not chunk then return error(err) end
-  local args = {chunk(path)}
-  if not args[1]
-  package.loaded[path] = chunk
+  if not chunk then return error(err or "Load error ("..tostring(path)..")") end
+  local args = {pcall(chunk,path,...)}
+  if not args[1] then return error(args[2] or "Runtime error") end
+  package.loaded[path] = extractArgs(args,1)
+  return unpack(package.loaded[path])
 end
+
+local terminal = require("C://terminal")
+terminal.loop()
