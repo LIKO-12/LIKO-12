@@ -1,4 +1,5 @@
 local events = require("Engine.events")
+local coreg = require("Engine.coreg")
 
 --A function that calculates the total size of a directory
 local function calcSize(dir)
@@ -61,7 +62,7 @@ return function(config) --A function that creates a new HDD peripheral.
     local data = tostring(data)
     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -84,7 +85,7 @@ return function(config) --A function that creates a new HDD peripheral.
     local data = tostring(data)
     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -107,7 +108,7 @@ return function(config) --A function that creates a new HDD peripheral.
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
     if type(size) ~= "number" and size then return false, "Size must be a number, provided: "..type(size) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -119,7 +120,7 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.lines(fname)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -134,7 +135,7 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.remove(fname)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -149,19 +150,20 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.load(fname)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
-      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      if not drives[d] then return true, false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
     end
     local chunk, err = love.filesystem.load(path)
+    if chunk then coreg:sandbox(chunk) end
     return true, chunk, err
   end
   
   function HDD.size(fname)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -172,7 +174,7 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.exists(fname)
     if type(fname) ~= "string" then return false, "File/Folder name must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -183,7 +185,7 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.newFolder(fname)
     if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -194,7 +196,7 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.isFile(fname)
     if type(fname) ~= "string" then return false, "Filename must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -206,7 +208,7 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.isDirectory(fname)
     if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -218,7 +220,7 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.directoryItems(fname)
     if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
@@ -231,7 +233,7 @@ return function(config) --A function that creates a new HDD peripheral.
   function HDD.lastModified(fname)
     if type(fname) ~= "string" then return false, "File/Folder name must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
-    local d, p = fname:match("(.1)://(.+)")
+    local d, p = fname:match("(.+)://(.+)")
     if d then
       if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")

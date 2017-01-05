@@ -4,7 +4,7 @@ return function(config) --A function that creates a new Keyboard peripheral.
   
   function KB.textinput(state)
     if type(state) ~= "nil" then
-      if (love.keyboard.getTextInput() and state) or (not(love.keyboard.getTextInput) and not(state)) then return true end
+      if (love.keyboard.hasTextInput() and state) or (not(love.keyboard.hasTextInput()) and not(state)) then return true end
       love.keyboard.setTextInput(state)
       return true
     else
