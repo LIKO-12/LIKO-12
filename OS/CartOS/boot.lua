@@ -38,3 +38,24 @@ function split(inputstr, sep)
   end
   return t
 end
+
+--Restore Require Function--
+local function extractArgs(args,factor)
+  local nargs = {}
+  for k,v in ipairs(nargs) do
+    if k > factor then nargs[k-factor] = v end
+  end
+  return nargs
+end
+
+package = {loaded  = {}} --Fake package system
+function require(path)
+  if type(path) ~= "string" then return error("Require path must be a string, provided: "..type(path)) end
+  path = path:gsub(".","/")
+  if package.loaded[path] then return package.loaded[path] end
+  local chunk, err = fs.load(path)
+  if not chunk then return error(err) end
+  local args = {chunk(path)}
+  if not args[1]
+  package.loaded[path] = chunk
+end
