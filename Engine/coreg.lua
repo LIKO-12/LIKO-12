@@ -3,12 +3,13 @@ local coreg = {reg={}}
 
 --Returns the current active coroutine if exists
 function coreg:getCoroutine()
-  return self.co
+  return self.co, self.coglob
 end
 
 --Sets the current active coroutine
-function coreg:setCoroutine(co)
+function coreg:setCoroutine(co,glob)
   self.co  = co
+  self.coglob = glob
   return self
 end
 
@@ -37,7 +38,8 @@ function coreg:resumeCoroutine(...)
   end
 end
 
-function coreg:sandboxCoroutine(f)
+function coreg:sandbox(f)
+  if self.co and self.coglob then setfenv(f,self.coglob) return end
   local GLOB = {
     assert=assert,
     error=error,
@@ -132,6 +134,7 @@ function coreg:sandboxCoroutine(f)
   end
   GLOB._G=GLOB --Mirror Mirror
   setfenv(f,GLOB)
+  return GLOB
 end
 
 --Register a value to a specific key.
