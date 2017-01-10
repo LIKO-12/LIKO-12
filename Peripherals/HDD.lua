@@ -38,10 +38,10 @@ return function(config) --A function that creates a new HDD peripheral.
   --Returns a list of the available drives.
   function HDD.drives()
     local dlist = {}
-    for k,v in ipairs(drives) do
+    for k,v in pairs(drives) do
       dlist[k] = {size=drives[k].size,usage=drives[k].usage}
     end
-    return true,dlist
+    return true, dlist
   end
   
   --Sets or gets the current active drive.

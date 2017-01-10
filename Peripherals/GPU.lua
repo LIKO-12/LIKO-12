@@ -175,7 +175,7 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:textinput",function(text)
     local text_escaped = text:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1")
     if #text == 1 and _FontChars:find(text_escaped) then
-      events:trigger("GPU:textinput",text_escaped)
+      events:trigger("GPU:textinput",text)
     end
   end)
   
