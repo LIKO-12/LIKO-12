@@ -75,7 +75,8 @@ function coreg:sandbox(f)
       insert=table.insert,
       maxn=table.maxn,
       remove=table.remove,
-      sort=table.sort
+      sort=table.sort,
+      concat=table.concat
     },
     math={
       abs=math.abs,
