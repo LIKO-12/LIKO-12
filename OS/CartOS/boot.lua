@@ -9,8 +9,9 @@ for peripheral,funcs in pairs(perlist) do
   if perglob[peripheral] then
     holder = _G
   else
-    _G[peripheral] = {}
-    holder = _G[peripheral]
+    --Rename HDD to fs (Easier to spell)
+    _G[peripheral == "HDD" and "fs" or peripheral] = {}
+    holder = _G[peripheral == "HDD" and "fs" or peripheral]
   end
   
   for _,func in ipairs(funcs) do
@@ -26,9 +27,6 @@ for peripheral,funcs in pairs(perlist) do
     end
   end
 end
-
---Rename HDD to fs (Easier to spell)
-fs = HDD; HDD = nil
 
 --A usefull split function
 function split(inputstr, sep)
