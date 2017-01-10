@@ -1,6 +1,6 @@
 --The terminal !--
 local PATH = "C://Programs/;"
-local curdrive, curdir, curpath = "C", "/", "C://"
+local curdrive, curdir, curpath = "C", "/", "C:///"
 
 local function nextPath(p)
   if p:sub(-1)~=";" then p=p..";" end
@@ -44,26 +44,31 @@ function term.setdrive(d)
   if type(d) ~= "string" then return error("DriveLetter must be a string, provided: "..type(d)) end
   if not fs.drives()[d] then return error("Drive '"..d.."' doesn't exists !") end
   curdrive = d
-  curpath = cudrive..":/"..curdir
+  curpath = curdrive.."://"..curdir
 end
 
 function term.setdirectory(d)
   if type(d) ~= "string" then return error("Directory must be a string, provided: "..type(d)) end
-  if not fs.exists(curdrive..":/"..d) then return error("Directory doesn't exists !") end
-  if not fs.isDirectory(curdrive..":/"..d) then return error("It must be a directory, not a file") end
+  if not fs.exists(curdrive.."://"..d) then return error("Directory doesn't exists !") end
+  if not fs.isDirectory(curdrive.."://"..d) then return error("It must be a directory, not a file") end
+  if d:sub(0,1) ~= "/" then d = "/"..d end
+  if d:sub(-2,-1) ~= "/" then d = d.."/" end
+  d = d:gsub("//","/")
   curdir = d
-  curpath = curdrive..":/"..d
+  curpath = curdrive.."://"..d
 end
 
 function term.setpath(p)
-  if type(p) ~= "string" then return error("Patj must be a string, provided: "..type(p)) end
+  if type(p) ~= "string" then return error("Path must be a string, provided: "..type(p)) end
   local dv, d = p:match("(.+)://(.+)")
   if (not dv) or (not d) then return error("Invalied path: "..p) end
   if not fs.drives()[dv] then return error("Drive '"..dv.."' doesn't exists !") end
   if d:sub(0,1) ~= "/" then d = "/"..d end
-  if not fs.exists(dv..":/"..d) then return error("Directory doesn't exists !") end
-  if not fs.isDirectory(dv..":/"..d) then return error("It must be a directory, not a file") end
-  curdrive, curdir, curpath = dv, d, dv..":/"..d
+  if d:sub(-2,-1) ~= "/" then d = d.."/" end
+  if not fs.exists(dv.."://"..d) then return error("Directory doesn't exists !") end
+  if not fs.isDirectory(dv.."://"..d) then return error("It must be a directory, not a file") end
+  d = d:gsub("//","/")
+  curdrive, curdir, curpath = dv, d, dv.."://"..d
 end
 
 function term.getpath() return curpath end
@@ -99,7 +104,7 @@ end
 
 function term.loop() --Enter the while loop of the terminal
   clearEStack()
-  color(8) checkCursor() print(curdir.."> ",false)
+  color(8) checkCursor() print(term.getpath().."> ",false)
   local buffer = ""
   while true do
     checkCursor()
@@ -112,7 +117,7 @@ function term.loop() --Enter the while loop of the terminal
         table.insert(history, buffer)
         blink = false; checkCursor()
         term.execute(split(buffer)) buffer = ""
-        color(8) checkCursor() print(curdir.."> ",false) blink = true
+        color(8) checkCursor() print(term.getpath().."> ",false) blink = true
       end
     elseif event == "touchpressed" then
       textinput(true)
