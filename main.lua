@@ -29,7 +29,7 @@ function love.run()
 				if name == "quit" then
 					local r = events:trigger("love:quit")
 					for k,v in pairs(r) do
-					  if v then r = nil break end
+					  if v and v[1] then r = nil break end
 					end
 					if r then return a end
 				else
