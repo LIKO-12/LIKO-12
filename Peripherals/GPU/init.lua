@@ -13,7 +13,8 @@ return function(config) --A function that creates a new GPU peripheral.
   local _GIFScale = math.floor(config._GIFScale or 2) --The gif scale factor (must be int).
   local _GIFStartKey = config._GIFStartKey or "f8"
   local _GIFEndKey = config._GIFEndKey or "f9"
-  local _GIFFrameTime = config._GIFFrameTime or 1/60
+  local _GIFPauseKey = config._GIFPauseKey or "f12"
+  local _GIFFrameTime = (config._GIFFrameTime or 1/60)*2
   local _GIFTimer, _GIFRec = 0
   
   local _LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
@@ -145,7 +146,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end
   
-  --Gifrecorder
+  --gifrecorder
   local _GIF = love.filesystem.load(perpath.."gif.lua")( _ColorSet, _GIFScale, _LIKO_W, _LIKO_H )
   events:register("love:keypressed", function(key,sc,isrepeat)
     if key == _GIFStartKey then
@@ -154,14 +155,31 @@ return function(config) --A function that creates a new GPU peripheral.
         _GIFRec = _GIF.continue("/~gifrec.gif")
         return
       end
-      _GIFRec = _GIF.new("~gifrec.gif")
+      _GIFRec = _GIF.new("/~gifrec.gif")
     elseif key == _GIFEndKey then
-      if not _GIFRec then return end
+      if not _GIFRec then
+        if love.filesystem.exists("/~gifrec.gif") then
+          _GIFRec = _GIF.continue("/~gifrec.gif")
+        else return end
+      end
       _GIFRec:close()
       _GIFRec = nil
       love.filesystem.write("/LIKO12-"..os.time()..".gif",love.filesystem.read("/~gifrec.gif"))
       love.filesystem.remove("/~gifrec.gif")
+    elseif key == _GIFPauseKey then
+      if not _GIFRec then return end
+      _GIFRec.file:flush()
+      _GIFRec.file:close()
+      _GIFRec = nil
     end
+  end)
+  events:register("love:quit", function()
+    if _GIFRec then
+      _GIFRec.file:flush()
+      _GIFRec.file:close()
+      _GIFRec = nil
+    end
+    return false
   end)
   
   --Mouse Hooks (To translate them to LIKO12 screen)--
@@ -211,7 +229,6 @@ return function(config) --A function that creates a new GPU peripheral.
   local ColorStack = {} --The colors stack (pushColor,popColor)
   local printCursor = {x=1,y=1,bgc=1}
   local TERM_W, TERM_H = math.floor(_LIKO_W/4), math.floor(_LIKO_H/7)-2
-  --error(TERM_W)
   
   function GPU.size() return true, _LIKO_W, _LIKO_H end
   function GPU.width() return true, _LIKO_W end
