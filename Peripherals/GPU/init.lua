@@ -1,3 +1,4 @@
+local perpath = select(1,...) --The path to the gpu folder
 local events = require("Engine.events")
 local coreg = require("Engine.coreg")
 
@@ -9,7 +10,12 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local _HOST_W, _HOST_H = love.graphics.getDimensions() --The host window size.
   
-  local _GIFSCALE = math.floor(config._GIFSCALE or 2) --The gif scale factor (must be int).
+  local _GIFScale = math.floor(config._GIFScale or 2) --The gif scale factor (must be int).
+  local _GIFStartKey = config._GIFStartKey or "f8"
+  local _GIFEndKey = config._GIFEndKey or "f9"
+  local _GIFFrameTime = config._GIFFrameTime or 1/60
+  local _GIFTimer, _GIFRec = 0
+  
   local _LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
   
   local _FontChars = config._FontChars or 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"\'`-_/1234567890!?[](){}.,;:<>+=%#^*~ ' --Font chars
@@ -67,8 +73,8 @@ return function(config) --A function that creates a new GPU peripheral.
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --Create the screen canvas.
   _ScreenCanvas:setFilter("nearest") --Set the scaling filter to the nearest pixel.
   
-  local _GifCanvas = love.graphics.newCanvas(_LIKO_W*_GIFSCALE,_LIKO_H*_GIFSCALE) --Create the gif canvas, used to apply the gif scale factor.
-  _GifCanvas:setFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
+  local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale) --Create the gif canvas, used to apply the gif scale factor.
+  _GIFCanvas:setFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
   love.graphics.setDefaultFilter("nearest","nearest")
   
   love.graphics.clear(0,0,0,255) --Clear the host screen.
@@ -138,6 +144,25 @@ return function(config) --A function that creates a new GPU peripheral.
       return error(args[2])
     end
   end
+  
+  --Gifrecorder
+  local _GIF = love.filesystem.load(perpath.."gif.lua")( _ColorSet, _GIFScale, _LIKO_W, _LIKO_H )
+  events:register("love:keypressed", function(key,sc,isrepeat)
+    if key == _GIFStartKey then
+      if _GIFRec then return end --If there is an already in progress gif
+      if love.filesystem.exists("/~gifrec.gif") then
+        _GIFRec = _GIF.continue("/~gifrec.gif")
+        return
+      end
+      _GIFRec = _GIF.new("~gifrec.gif")
+    elseif key == _GIFEndKey then
+      if not _GIFRec then return end
+      _GIFRec:close()
+      _GIFRec = nil
+      love.filesystem.write("/LIKO12-"..os.time()..".gif",love.filesystem.read("/~gifrec.gif"))
+      love.filesystem.remove("/~gifrec.gif")
+    end
+  end)
   
   --Mouse Hooks (To translate them to LIKO12 screen)--
   events:register("love:mousepressed",function(x,y,b,istouch)
@@ -582,6 +607,33 @@ return function(config) --A function that creates a new GPU peripheral.
         flip = false
         coreg:resumeCoroutine(true)
       end
+    end
+  end)
+  
+  events:register("love:update",function(dt)
+    if not _GIFRec then return end
+    _GIFTimer = _GIFTimer + dt
+    if _GIFTimer >= _GIFFrameTime then
+      _GIFTimer = _GIFTimer-_GIFFrameTime
+      love.graphics.setCanvas() --Quit the canvas and return to the host screen.
+      love.graphics.origin() --Reset all transformations.
+      
+      GPU.pushColor() --Push the current color to the stack.
+      love.graphics.setColor(255,255,255,255) --I don't want to tint the canvas :P
+      
+      love.graphics.setCanvas(_GIFCanvas)
+      
+      love.graphics.clear(0,0,0,255) --Clear the screen (Some platforms are glitching without this).
+      
+      love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFScale, _GIFScale) --Draw the canvas.
+      
+      love.graphics.setCanvas()
+      
+      love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
+      love.graphics.translate(unpack(ofs.screen)) --Reapply the offset.
+      GPU.popColor() --Restore the active color.
+      
+      _GIFRec:frame(_GIFCanvas:newImageData())
     end
   end)
   
