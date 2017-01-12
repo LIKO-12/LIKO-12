@@ -15,13 +15,18 @@ local function indexPeripherals(path)
   local files = love.filesystem.getDirectoryItems(path)
   for k,filename in ipairs(files) do
     if love.filesystem.isDirectory(path..filename) then
-      indexPeripherals(path..filename.."/")
+      --indexPeripherals(path..filename.."/")
+      if love.filesystem.exists(path..filename.."/init.lua") then
+        local chunk, err = love.filesystem.load(path..filename.."/init.lua")
+        if not chunk then Peripherals[filename] = "Err: "..tostring(err) else
+        Peripherals[filename] = chunk(path..filename.."/") end
+      end
     else
       local p, n, e = splitFilePath(path..filename)
       if e == "lua" then
         local chunk, err = love.filesystem.load(path..n)
         if not chunk then Peripherals[n:sub(0,-5)] = "Err: "..tostring(err) else
-        Peripherals[n:sub(0,-5)] = chunk() end
+        Peripherals[n:sub(0,-5)] = chunk(path) end
       end
     end
   end
@@ -43,14 +48,14 @@ local function P(per,m,conf)
   local conf = conf or {}
   if type(conf) ~= "table" then return false, "Configuration table should be a table, provided "..type(conf) end
   
-  local success, peripheral = pcall(Peripherals[per],conf)
+  local success, peripheral, devkit = pcall(Peripherals[per],conf)
   if success then
     MPer[m] = peripheral
     coreg:register(peripheral,m)
   else
     peripheral = "Init Err: "..peripheral
   end
-  return success, peripheral
+  return success, peripheral, devkit
 end
 
 if not love.filesystem.exists("/bconf.lua") or true then
@@ -62,7 +67,7 @@ if not bconfC then bconfC, bconfDErr = love.filesystem.load("/BIOS/bconf.lua") e
 if not bconfC then error(bconfDErr) end
 setfenv(bconfC,{P = P,error=error,assert=assert}) --BConfig sandboxing
 local success, bconfRErr = pcall(bconfC)
-if not success then
+if not success then error(bconfRErr)
   bconfC, err = love.filesystem.load("/BIOS/bconf.lua")
   if not bconfC then error(err) end
   setfenv(bconfC,{P = P,error=error,assert=assert}) --BConfig sandboxing
