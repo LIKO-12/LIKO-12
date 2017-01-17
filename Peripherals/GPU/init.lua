@@ -13,8 +13,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local _GIFScale = math.floor(config._GIFScale or 2) --The gif scale factor (must be int).
   local _GIFStartKey = config._GIFStartKey or "f8"
   local _GIFEndKey = config._GIFEndKey or "f9"
-  local _GIFPauseKey = config._GIFPauseKey or "f12"
-  local _GIFFrameTime = (config._GIFFrameTime or 1/60)*2
+  local _GIFFrameTime = config._GIFFrameTime or 1/60
   local _GIFTimer, _GIFRec = 0
   
   local _LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
@@ -71,14 +70,23 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
   
   --Initialize the gpu--
+  love.graphics.setDefaultFilter("nearest","nearest")
+  
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --Create the screen canvas.
-  _ScreenCanvas:setFilter("nearest") --Set the scaling filter to the nearest pixel.
+  _ScreenCanvas:setFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
   
   local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale) --Create the gif canvas, used to apply the gif scale factor.
   _GIFCanvas:setFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
-  love.graphics.setDefaultFilter("nearest","nearest")
   
   love.graphics.clear(0,0,0,255) --Clear the host screen.
+  
+  love.graphics.setCanvas(_GIFCanvas) --Activate GIF canvas.
+  love.graphics.clear(0,0,0,255)
+  love.graphics.setLineStyle("rough") --Set the line style.
+  love.graphics.setLineJoin("miter") --Set the line join style.
+  love.graphics.setPointSize(1) --Set the point size to 1px.
+  love.graphics.setLineWidth(1) --Set the line width to 1px.
+  love.graphics.setCanvas()
   
   love.graphics.setCanvas(_ScreenCanvas) --Activate LIKO12 canvas.
   love.graphics.clear(0,0,0,255) --Clear LIKO12 screen for the first time.
@@ -146,7 +154,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end
   
-  --gifrecorder
+  --Gifrecorder
   local _GIF = love.filesystem.load(perpath.."gif.lua")( _ColorSet, _GIFScale, _LIKO_W, _LIKO_H )
   events:register("love:keypressed", function(key,sc,isrepeat)
     if key == _GIFStartKey then
@@ -155,31 +163,14 @@ return function(config) --A function that creates a new GPU peripheral.
         _GIFRec = _GIF.continue("/~gifrec.gif")
         return
       end
-      _GIFRec = _GIF.new("/~gifrec.gif")
+      _GIFRec = _GIF.new("~gifrec.gif")
     elseif key == _GIFEndKey then
-      if not _GIFRec then
-        if love.filesystem.exists("/~gifrec.gif") then
-          _GIFRec = _GIF.continue("/~gifrec.gif")
-        else return end
-      end
+      if not _GIFRec then return end
       _GIFRec:close()
       _GIFRec = nil
       love.filesystem.write("/LIKO12-"..os.time()..".gif",love.filesystem.read("/~gifrec.gif"))
       love.filesystem.remove("/~gifrec.gif")
-    elseif key == _GIFPauseKey then
-      if not _GIFRec then return end
-      _GIFRec.file:flush()
-      _GIFRec.file:close()
-      _GIFRec = nil
     end
-  end)
-  events:register("love:quit", function()
-    if _GIFRec then
-      _GIFRec.file:flush()
-      _GIFRec.file:close()
-      _GIFRec = nil
-    end
-    return false
   end)
   
   --Mouse Hooks (To translate them to LIKO12 screen)--
@@ -229,6 +220,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local ColorStack = {} --The colors stack (pushColor,popColor)
   local printCursor = {x=1,y=1,bgc=1}
   local TERM_W, TERM_H = math.floor(_LIKO_W/4), math.floor(_LIKO_H/7)-2
+  --error(TERM_W)
   
   function GPU.size() return true, _LIKO_W, _LIKO_H end
   function GPU.width() return true, _LIKO_W end
@@ -394,7 +386,7 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.print(t,x,y)
     local t = tostring(t)
     if x and y then --If the x & y are provided
-      love.graphics.print(t, math.floor((x or 1)+ofs.print[1]), math.floor((y or 1)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
+      love.graphics.print(t, math.floor((x or 1)+ofs.print[1]), math.floor((y or 1)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tell that changes has been made.
     else --If they are not, print on the grid
       local anl = true --Auto new line
       if type(x) == "boolean" then anl = x end
