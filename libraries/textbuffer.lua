@@ -31,6 +31,10 @@ function tb:initialize(gx,gy,gw,gh,linel,lengthl,mlength,curcol,blinktime)
   self.shiftTop = 0
   
   self.keymap = {
+    ["tab"] = function(self)
+      self:_tinput(" ")
+    end,
+    
     ["return"] = function(self,ir)
       self:shiftDown(self.cursorY+1)
       self.buffer[self.cursorY+1] = self.buffer[self.cursorY]:sub(self.cursorX,-1)
