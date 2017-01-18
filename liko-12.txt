@@ -50,11 +50,11 @@ Welcome to LIKO-12:
 	In-game player controls:
 
 		player 1
-		id:1,   2,    3,    4,     5,         6
+		id:0,   1,    2,    3,     4,         5
 		 left, right, up, down, {z, c, x}, {x, v, m}
 		
 		player 2
-		id:1, 2, 3, 4,     5,            6
+		id:0, 1, 2, 3,     4,            5
 		   s, f, e, d, {lshift, tab}, {a, q}
 
 :: Specs
