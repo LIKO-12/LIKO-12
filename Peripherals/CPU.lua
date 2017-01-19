@@ -97,5 +97,19 @@ return function(config) --A function that creates a new CPU peripheral.
     return 2
   end
   
+  function CPU.shutdown()
+    love.event.quit()
+    return 2 --I don't want the coroutine to resume while rebooting
+  end
+  
+  function CPU.reboot(hard)
+    if hard then
+      love.event.quit( "restart" )
+    else
+      events:trigger("love:reboot") --Tell main.lua that we have to soft reboot.
+    end
+    return 2 --I don't want the coroutine to resume while rebooting
+  end
+  
   return CPU
 end
