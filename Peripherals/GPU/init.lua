@@ -433,12 +433,27 @@ return function(config) --A function that creates a new GPU peripheral.
     return true
   end
   
+  function GPU.printBackspace(c,skpCr)
+    local c = c or printCursor.bgc
+    if type(c) ~= "number" then return false, "Color must be a number value, provided: "..type(c) end
+    local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,6) end
+    if printCursor.x > 1 then
+      printCursor.x = printCursor.x-1
+      exe(GPU.rect(math.floor((printCursor.x or 1)*4-2)-1, math.floor((printCursor.y or 1)*8-6)-1, 5, 7, false, c))
+    elseif not skpCr then
+      cr()
+      printCursor = 1
+      exe(GPU.rect(math.floor((printCursor.x or 1)*4-2)-1, math.floor((printCursor.y or 1)*8-6)-1, 5, 7, false, c))
+    end
+    return true
+  end
+  
   --Clears the whole screen with black or the given color id.
   function GPU.clear(c)
     local c = c or 1
     if type(c) ~= "number" then return false, "The color id must be a number." end --Error
     if c > 16 or c < 0 then return false, "The color id is out of range." end --Error
-    exe(GPU.rect(1,1,192,128,false,c or 1)) --Draw a rectangle that covers the whole screen.
+    exe(GPU.rect(1,1,_LIKO_W,_LIKO_H,false,c or 1)) --Draw a rectangle that covers the whole screen.
     return true --It ran successfully.
   end
   
