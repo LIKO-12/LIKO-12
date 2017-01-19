@@ -173,6 +173,16 @@ return function(config) --A function that creates a new GPU peripheral.
       _GIFRec = nil
     end
   end)
+  events:register("love:reboot",function(args)
+    if _GIFRec then
+      _GIFRec.file:flush()
+      _GIFRec.file:close()
+      _GIFRec = nil
+      
+      love.filesystem.write("/~gifreboot.gif",love.filesystem.read("/~gifrec.gif"))
+      love.filesystem.remove("/~gifrec.gif")
+    end
+  end)
   events:register("love:quit", function()
     if _GIFRec then
       _GIFRec.file:flush()
@@ -181,6 +191,15 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     return false
   end)
+  
+  --Restoring the gif record if it was made by a reboot
+  if love.filesystem.exists("/~gifreboot.gif") then
+    if not _GIFRec then
+      love.filesystem.write("/~gifrec.gif",love.filesystem.read("/~gifreboot.gif"))
+      love.filesystem.remove("/~gifreboot.gif")
+      _GIFRec = _GIF.continue("/~gifrec.gif")
+    end
+  end
   
   --Mouse Hooks (To translate them to LIKO12 screen)--
   events:register("love:mousepressed",function(x,y,b,istouch)
