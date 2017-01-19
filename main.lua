@@ -11,6 +11,7 @@ function love.run(arg)
   while true do
     events = require("Engine.events")
     events:register("love:reboot",function(args)
+      --events:trigger("love:rebooting",args)
       reboot = args or {}
     end)
    
