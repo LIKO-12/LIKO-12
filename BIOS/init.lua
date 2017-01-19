@@ -104,7 +104,7 @@ local function flushOS(os,path)
   local files = love.filesystem.getDirectoryItems("/OS/"..os..path)
   for k,v in pairs(files) do
     if love.filesystem.isDirectory("/OS/"..os..path..v) then
-      exe(h.newFolder(path..v))
+      exe(h.newDirectory(path..v))
       flushOS(os,path..v.."/")
     else
       exe(h.drive("C")) --Opereating systems are installed on C drive
