@@ -118,6 +118,20 @@ function term.loop() --Enter the while loop of the terminal
         blink = false; checkCursor()
         term.execute(split(buffer)) buffer = ""
         color(8) checkCursor() print(term.getpath().."> ",false) blink = true
+      elseif a == "backspace" then
+        blink = false; checkCursor()
+        if buffer:len() > 0 then
+          buffer = buffer:sub(0,-2)
+          printBackspace()
+        end
+        blink = true; checkCursor()
+      elseif a == "delete" then
+        blink = false; checkCursor()
+        for i=1,buffer:len() do
+          printBackspace()
+        end
+        buffer = ""
+        blink = true; checkCursor()
       end
     elseif event == "touchpressed" then
       textinput(true)
