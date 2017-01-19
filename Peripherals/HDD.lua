@@ -126,7 +126,7 @@ return function(config) --A function that creates a new HDD peripheral.
       path = "/drives/"..d.."/"..(p or "/")
     end
     if not love.filesystem.exists(path) then return false, "The file doesn't exists !" end --Error
-    if love.filesystem.isFolder(path) then return false, "Can't read directories !" end --Error
+    if love.filesystem.isDirectory(path) then return false, "Can't read directories !" end --Error
     local it = love.filesystem.lines(path)
     if not it then return false, "Failed to read" end
     return true, it
@@ -141,7 +141,7 @@ return function(config) --A function that creates a new HDD peripheral.
       path = "/drives/"..d.."/"..(p or "/")
     end
     if not love.filesystem.exists(path) then return false, "The file doesn't exists !" end --Error
-    if love.filesystem.isFolder(path) then return false, "Can't delete directories !" end --Error
+    if love.filesystem.isDirectory(path) then return false, "Can't delete directories !" end --Error
     local ok = love.filesystem.remove(path)
     if not ok then return false, "Failed to delete" end
     return true
@@ -182,8 +182,8 @@ return function(config) --A function that creates a new HDD peripheral.
     return true, love.filesystem.exists(path)
   end
   
-  function HDD.newFolder(fname)
-    if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
+  function HDD.newDirectory(fname)
+    if type(fname) ~= "string" then return false, "Directory name must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
     local d, p = fname:match("(.+)://(.+)")
     if d then
@@ -206,7 +206,7 @@ return function(config) --A function that creates a new HDD peripheral.
   end
   
   function HDD.isDirectory(fname)
-    if type(fname) ~= "string" then return false, "Foldername must be a string, provided: "..type(fname) end --Error
+    if type(fname) ~= "string" then return false, "Directory name must be a string, provided: "..type(fname) end --Error
     local path = "/drives/"..ad.."/"..fname
     local d, p = fname:match("(.+)://(.+)")
     if d then
