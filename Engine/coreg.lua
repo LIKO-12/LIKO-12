@@ -1,6 +1,9 @@
 --Corouting Registry: this file is responsible for providing LIKO12 it's api--
 local coreg = {reg={}}
 
+local basexx = require("Engine.basexx")
+local bit = require("bit")
+
 --Returns the current active coroutine if exists
 function coreg:getCoroutine()
   return self.co, self.coglob
@@ -109,7 +112,11 @@ function coreg:sandbox(f)
       sqrt=math.sqrt,
       tan=math.tan,
       tanh=math.tanh,
-      noise = love.math.noise --LOVE releated apis
+      noise = love.math.noise, --LOVE releated apis
+      b64enc = basexx.to_base64, --Will be replaced by love.math ones in love 0.11
+      b64dec = basexx.from_base64,
+      hexenc = basexx.to_hex,
+      hexdec = basexx.from_hex
     },
     coroutine={
       resume = coroutine.resume,
@@ -119,6 +126,21 @@ function coreg:sandbox(f)
     os={
       time=os.time,
       clock=os.clock
+    },
+    bit={
+      cast=bit.cast,
+      bnot=bit.bnot,
+      band=bit.band,
+      bor=bit.bor,
+      bxor=bit.bxor,
+      lshift=bit.lshift,
+      rshift=bit.rshift,
+      arshift=bit.arshift,
+      tobit=bit.tobit,
+      tohex=bit.tohex,
+      rol=bit.rol,
+      ror=bit.ror,
+      bswap=bit.swap
     }
   }
   GLOB.loadstring = function(...)
