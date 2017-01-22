@@ -59,6 +59,8 @@ function require(path,...)
   return unpack(package.loaded[path])
 end
 
+keyrepeat(true) --Enable keyrepeat
+
 require("C://api") --Load CartOS APIs
 
 local terminal = require("C://terminal")

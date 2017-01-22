@@ -9,7 +9,7 @@ end
 
 printCursor(1,1,1)
 color(9) print("LIKO-12 V0.6.0 DEV")
-color(8) print("CartOS DEV B1")
+color(8) print("DiskOS DEV B1")
 flip() sleep(0.5)
 color(7) print("\nA PICO-8 CLONE OS WITH EXTRA ABILITIES")
 flip() sleep(0.25)
@@ -137,7 +137,6 @@ function term.loop() --Enter the while loop of the terminal
       end
     elseif event == "touchpressed" then
       textinput(true)
-      keyrepeat(true)
     elseif event == "update" then
       btimer = btimer + a
       if btimer > btime then

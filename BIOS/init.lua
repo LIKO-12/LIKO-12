@@ -116,9 +116,9 @@ end
 --No OS Screen
 local function noOS()
   if MPer.GPU then
-    flushOS("CartOS") --Should be replaced by a gui
+    flushOS("DiskOS") --Should be replaced by a gui
   else
-    flushOS("CartOS")
+    flushOS("DiskOS")
   end
 end
 
