@@ -88,14 +88,16 @@ function term.execute(command,...)
     color(8) return true
   end
   for path in nextPath(PATH) do
-    local files = fs.directoryItems(path)
-    for _,file in ipairs(files) do
-      if file == command..".lua" then
-        local chunk, err = fs.load(path..file)
-        if not chunk then color(9) print("\nL-ERR:"..tostring(err)) color(8) return false, tostring(err) end
-        local ok, err = pcall(chunk,...)
-        if not ok then color(9) print("\nERR: "..tostring(err)) color(8) return false, tostring(err) end
-        color(8) return true
+    if fs.exists(path) then
+      local files = fs.directoryItems(path)
+      for _,file in ipairs(files) do
+        if file == command..".lua" then
+          local chunk, err = fs.load(path..file)
+          if not chunk then color(9) print("\nL-ERR:"..tostring(err)) color(8) return false, tostring(err) end
+          local ok, err = pcall(chunk,...)
+          if not ok then color(9) print("\nERR: "..tostring(err)) color(8) return false, tostring(err) end
+          color(8) return true
+        end
       end
     end
   end
