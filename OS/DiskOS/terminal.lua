@@ -21,7 +21,7 @@ local btimer, btime, blink = 0, 0.5, true
 
 local function checkCursor()
   local cx, cy = printCursor()
-  local tw, th = termsize()
+  local tw, th = termSize()
   if cx > tw+1 then cx = tw+1 end
   if cx < 1 then cx = 1 end
   if cy > th+1 then cy = th+1 end
@@ -78,6 +78,34 @@ function term.getdirectory() return curdir end
 function term.setPATH(p) PATH = p end
 function term.getPATH() return PATH end
 
+function term.parsePath(path)
+  if path:sub(1,3) == "../" then
+    local fld = {} --A list of folders in the path
+    for p in string.gmatch(curdir,"(.-)/") do
+      table.insert(fld,p)
+    end
+    if #fld == 0 then return curdrive..":///", fs.exists(curdrive..":///") end
+    table.remove(fld, #fld) --Remove the last directory
+    return curdrive..":///"..table.concat(fld,"/")..path:sub(4,-1), fs.exists(curdrive..":///"..table.concat(fld,"/")..path:sub(4,-1))
+  elseif path:sub(1,2) == "./" then return curpath..sub(3,-1), fs.exists(curpath..sub(3,-1))
+  elseif path == ".." then
+    local fld = {} --A list of folders in the path
+    for p in string.gmatch(curdir,"(.-)/") do
+      table.insert(fld,p)
+    end
+    if #fld == 0 then return curdrive..":///", fs.exists(curdrive..":///") end
+    table.remove(fld, #fld) --Remove the last directory
+    return curdrive..":///"..table.concat(fld,"/"), fs.exists(curdrive..":///"..table.concat(fld,"/"))
+  elseif path == "." or path == "/" then return curpath, fs.exists(curpath) end
+  local d, p = path:match("(.+)://(.+)")
+  if d and p then return path, fs.exists(path) end
+  local d = path:match("(.+):") --ex: D:
+  if d then return d..":///", fs.exists(d..":///") end
+  local d = path:match("/(.+)")
+  if d then return curdrive.."://"..path, fs.exists(curdrive.."://"..path) end
+  return curpath..path
+end
+
 function term.execute(command,...)
   if not command then print("") return false, "No command" end
   if fs.exists(curpath..command..".lua") then
@@ -85,6 +113,7 @@ function term.execute(command,...)
     if not chunk then color(9) print("\nL-ERR:"..tostring(err)) color(8) return false, tostring(err) end
     local ok, err = pcall(chunk,...)
     if not ok then color(9) print("ERR: "..tostring(err)) color(8) return false, tostring(err) end
+    if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
     color(8) return true
   end
   for path in nextPath(PATH) do
@@ -96,6 +125,7 @@ function term.execute(command,...)
           if not chunk then color(9) print("\nL-ERR:"..tostring(err)) color(8) return false, tostring(err) end
           local ok, err = pcall(chunk,...)
           if not ok then color(9) print("\nERR: "..tostring(err)) color(8) return false, tostring(err) end
+          if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
           color(8) return true
         end
       end
