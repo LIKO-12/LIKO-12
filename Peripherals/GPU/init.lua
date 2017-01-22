@@ -249,12 +249,12 @@ return function(config) --A function that creates a new GPU peripheral.
   local printCursor = {x=1,y=1,bgc=1}
   local TERM_W, TERM_H = math.floor(_LIKO_W/4), math.floor(_LIKO_H/7)-2
   
-  function GPU.size() return true, _LIKO_W, _LIKO_H end
-  function GPU.width() return true, _LIKO_W end
-  function GPU.height() return true, _LIKO_H end
-  function GPU.termsize() return true, TERM_W, TERM_H end
-  function GPU.termwidth() return true, TERM_W end
-  function GPU.termheight() return true, TERM_H end
+  function GPU.screenSize() return true, _LIKO_W, _LIKO_H end
+  function GPU.screenWidth() return true, _LIKO_W end
+  function GPU.screenHeight() return true, _LIKO_H end
+  function GPU.termSize() return true, TERM_W, TERM_H end
+  function GPU.termWidth() return true, TERM_W end
+  function GPU.termHeight() return true, TERM_H end
   
   --Call with color id to set the active color.
   --Call with no args to get the current acive color id.

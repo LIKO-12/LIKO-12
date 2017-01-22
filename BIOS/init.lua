@@ -143,7 +143,7 @@ if MPer.GPU then --If there is an initialized gpu
   local chars = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","-","_","@","#","$","&","*","!","+","=","%"}
   --48x16 Terminal Size
   function drawAnim() g.clear()
-    for x=1,exe(g.termwidth()) do for y=1,exe(g.termheight()) do
+    for x=1,exe(g.termWidth()) do for y=1,exe(g.termHeight()) do
       math.randomseed(os.clock()*os.time()*x)
       g.color(math.floor(math.random(2,16)))
       g.printCursor(x,y)
