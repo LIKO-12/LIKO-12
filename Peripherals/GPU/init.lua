@@ -446,8 +446,6 @@ return function(config) --A function that creates a new GPU peripheral.
         lcount = lcount-1
         printLine(line,lcount==0,not anl)
       end
-      --love.graphics.print(t, math.floor(((printCursor.x or 1)*4-2)+ofs.print[1]), math.floor(((printCursor.y or 1)*8-6)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
-      --printCursor.y = printCursor.y +1 --Set the cursor to the next line
     end
     return true
   end
@@ -460,8 +458,13 @@ return function(config) --A function that creates a new GPU peripheral.
       printCursor.x = printCursor.x-1
       exe(GPU.rect(math.floor((printCursor.x or 1)*4-2)-1, math.floor((printCursor.y or 1)*8-6)-1, 5, 7, false, c))
     elseif not skpCr then
-      cr()
-      printCursor = 1
+      if printCursor.y > 1 then
+        printCursor.y = printCursor.y - 1
+        printCursor.x = TERM_W
+      else
+        printCursor.x = TERM_W
+        cr()
+      end
       exe(GPU.rect(math.floor((printCursor.x or 1)*4-2)-1, math.floor((printCursor.y or 1)*8-6)-1, 5, 7, false, c))
     end
     return true
