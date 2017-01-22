@@ -343,13 +343,13 @@ You should overwrite the callbacks you want to use, ex: function _init() end
  
 :: GUI
 
-**isInRect x,y,rect
+--isInRect x,y,rect
 	Returns true is the point is in the rect.
 	- x,y (Numbers): The x and y positions of the point.
 	- rect (Table): Rect table: {x,y,w,h}
 	returns (Boolean): is in rect.
  
-**whereInGrid x,y,grid
+--whereInGrid x,y,grid
 	Returns false if the point is not in the grid at all.
 	Return cellx, celly if the point is in the grid.
 	- x,y (Numbers): the x and y posotions of the point to test.
