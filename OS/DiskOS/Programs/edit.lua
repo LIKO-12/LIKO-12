@@ -1,0 +1,1 @@
+--This file is responsible of openning the editors in standalone mode--
