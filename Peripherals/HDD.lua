@@ -152,8 +152,8 @@ return function(config) --A function that creates a new HDD peripheral.
     end
     local ok = love.filesystem.remove(path)
     if not ok then return false, "Failed to delete" end
-    if not love.filesystem.exists("/drives/"..ad.."/") then love.filesystem.createDirectory("/drives/"..ad.."/") end
-    drives[ad].usage = drives[ad].usage - fsize --Update the size
+    if not love.filesystem.exists("/drives/"..d.."/") then love.filesystem.createDirectory("/drives/"..d.."/") end
+    drives[d].usage = drives[d].usage - fsize --Update the size
     return true
   end
   
@@ -186,7 +186,7 @@ return function(config) --A function that creates a new HDD peripheral.
     local path = "/drives/"..ad.."/"..fname
     local d, p = fname:match("(.+)://(.+)")
     if d then
-      if not drives[d] then return false, "Drive doesn't exists ("..tostring(d)..")" end
+      if not drives[d] then return true, false end--false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
     end
     return true, love.filesystem.exists(path)
