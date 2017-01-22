@@ -141,7 +141,12 @@ return function(config) --A function that creates a new HDD peripheral.
       path = "/drives/"..d.."/"..(p or "/")
     end
     if not love.filesystem.exists(path) then return false, "The file doesn't exists !" end --Error
-    if love.filesystem.isDirectory(path) then return false, "Can't delete directories !" end --Error
+    if love.filesystem.isDirectory(path) then
+      local items = love.filesystem.getDirectoryItems(path)
+      if #items > 0 then
+        return false, "Can't delete non-empty directories !"
+      end
+    end --Error
     local ok = love.filesystem.remove(path)
     if not ok then return false, "Failed to delete" end
     return true
