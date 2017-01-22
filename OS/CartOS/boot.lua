@@ -1,6 +1,4 @@
-local olderr = error
---error = function() return olderr("HERE") end
---Building the api--
+--Building the peripherals APIs--
 local perglob = {GPU = true, CPU = true, Keyboard = true} --The perihperals to make global not in a table.
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
 for peripheral,funcs in pairs(perlist) do
@@ -60,6 +58,8 @@ function require(path,...)
   package.loaded[path] = extractArgs(args,1)
   return unpack(package.loaded[path])
 end
+
+require("C://api") --Load CartOS APIs
 
 local terminal = require("C://terminal")
 terminal.loop()
