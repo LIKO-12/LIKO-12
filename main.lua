@@ -61,8 +61,9 @@ function love.run(arg)
       
       if reboot then
         for k,v in pairs(package.loaded) do
-          package.loaded[k] = nil
-        end --Reset the required packages
+          if k ~= "bit" then package.loaded[k] = nil end
+        end--Reset the required packages
+        
         events = nil --Must undefine this.
         break --Break our game loop
       end
