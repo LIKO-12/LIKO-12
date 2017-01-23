@@ -6,12 +6,12 @@ function SpriteSheet(img,w,h)
     table.insert(ss.quads,ss.img:quad(x*ss.cw-(ss.cw-1),y*ss.ch-(ss.ch-1),ss.cw,ss.ch))
   end end
   
-  function ss.image() return ss.img end
-  function ss.data() return ss.img:data() end
-  function ss.quad(id) return ss.quads[id] end
-  function ss.rect(id) local x,y,w,h = ss.quads[id]:getViewport() return x+1,y+1,w,h end
-  function ss.draw(id,x,y,r,sx,sy) ss.img.draw(x,y,r,sx,sy,self.quads[id]) return self end
-  function ss.extract(id) return imagedata(8,8).paste(ss.data(),1,1,ss.rect(id)) end
+  function ss:image() return self.img end
+  function ss:data() return self.img:data() end
+  function ss:quad(id) return self.quads[id] end
+  function ss:rect(id) local x,y,w,h = self.quads[id]:getViewport() return x+1,y+1,w,h end
+  function ss:draw(id,x,y,r,sx,sy) self.img:draw(x,y,r,sx,sy,self.quads[id]) return self end
+  function ss:extract(id) return imagedata(self.cw,self.ch):paste(self:data():export(),1,1,self:rect(id)) end
   
   return ss
 end
