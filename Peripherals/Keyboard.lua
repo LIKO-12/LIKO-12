@@ -1,10 +1,20 @@
+local events = require("Engine.events")
+
 return function(config) --A function that creates a new Keyboard peripheral.
+  
+  if config._SpaceWalkthrough then
+    events.register("love:keypressed",function(key,sc,isrepeat)
+      if key == "space" then
+        events:trigger("love:textinput"," ")
+      end
+    end)
+  end
+  
   --The api starts here--
   local KB = {}
   
   function KB.textinput(state)
     if type(state) ~= "nil" then
-      if (love.keyboard.hasTextInput() and state) or (not(love.keyboard.hasTextInput()) and not(state)) then return true end
       love.keyboard.setTextInput(state)
       return true
     else
