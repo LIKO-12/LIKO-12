@@ -475,7 +475,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local c = c or 1
     if type(c) ~= "number" then return false, "The color id must be a number." end --Error
     if c > 16 or c < 0 then return false, "The color id is out of range." end --Error
-    exe(GPU.rect(1,1,_LIKO_W,_LIKO_H,false,c or 1)) --Draw a rectangle that covers the whole screen.
+    exe(GPU.rect(1,1,_LIKO_W,_LIKO_H,false,c)) --Draw a rectangle that covers the whole screen.
     return true --It ran successfully.
   end
   
@@ -536,7 +536,7 @@ return function(config) --A function that creates a new GPU peripheral.
     function i:size() return Image:getDimensions() end
     function i:width() return Image:getWidth() end
     function i:height() return Image:getHeight() end
-    function i:data() return GPU.imagedata(Image:getData()) end
+    function i:data() return exe(GPU.imagedata(Image:getData())) end
     function i:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
     
     return true, i
@@ -579,7 +579,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     function id:height() return imageData:getHeight() end
     function id:width() return imageData:getWidth() end
-    function id:paste(expdata,dx,dy,sx,sy,sw,sh) local sprData = love.image.newImageData(love.filesystem.newFileData(w,"image.png")) imageData:paste(sprData,(dx or 1)-1,(dy or 1)-1,(sx or 1)-1,(sy or 1)-1,sw or sprData:getWidth(), sh or sprData:getHeight()) return self end
+    function id:paste(expdata,dx,dy,sx,sy,sw,sh) local sprData = love.image.newImageData(love.filesystem.newFileData(expdata,"image.png")) imageData:paste(sprData,(dx or 1)-1,(dy or 1)-1,(sx or 1)-1,(sy or 1)-1,sw or sprData:getWidth(), sh or sprData:getHeight()) return self end
     function id:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
     function id:image() return exe(GPU.image(imageData)) end
     function id:export() return imageData:encode("png"):getString() end
@@ -635,6 +635,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   function GPU.cursor(imgdata,name,hx,hy)
     if type(imgdata) == "string" then --Set the current cursor
+      if _Cursor == imgdata then return true end
       if (not _CursorsCache[imgdata]) and (imgdata ~= "none") then return false, "Cursor doesn't exists: "..imgdata end
       if _Cursor == "none" then love.mouse.setVisible(true) end
       _Cursor = imgdata
@@ -662,8 +663,10 @@ return function(config) --A function that creates a new GPU peripheral.
       
       _CursorsCache[name] = {cursor=cur,imgdata=imgdata,hx=hx,hy=hy}
       return true --It ran successfully
+    elseif type(imgdata) == "nil" then
+      return true, _Cursor, _CursorsCache[_Cursor].imdata, _CursorsCache[_Cursor].hx+1, _CursorsCache[_Cursor].hy+1
     else --Invalied
-      return false, "The first argument must be a string or an image"
+      return false, "The first argument must be a string, image or nil"
     end
   end
   
@@ -688,6 +691,7 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setPointSize(1) --Set the point size to 1px.
   love.graphics.setLineWidth(1) --Set the line width to 1px.
   love.graphics.setColor(_GetColor(1)) --Set the active color to black.
+  love.mouse.setVisible(false)
   
   exe(GPU.clear()) --Clear the canvas for the first time.
   
