@@ -582,12 +582,12 @@ return function(config) --A function that creates a new GPU peripheral.
     function id:paste(expdata,dx,dy,sx,sy,sw,sh) local sprData = love.image.newImageData(love.filesystem.newFileData(w,"image.png")) imageData:paste(sprData,(dx or 1)-1,(dy or 1)-1,(sx or 1)-1,(sy or 1)-1,sw or sprData:getWidth(), sh or sprData:getHeight()) return self end
     function id:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
     function id:image() return exe(GPU.image(imageData)) end
-    function id:export() return self.imageData:encode("png") end
+    function id:export() return imageData:encode("png"):getString() end
     function id:enlarge(scale)
       local scale = math.floor(scale or 1)
       if scale <= 0 then scale = 1 end --Protection
       if scale == 1 then return self end
-      local newData = GPU.imagedata(self:width()*scale,self:height()*scale)
+      local newData = exe(GPU.imagedata(self:width()*scale,self:height()*scale))
       self:map(function(x,y,c)
         for iy=1, scale do for ix=1, scale do
           newData:setPixel((x-1)*scale + ix,(y-1)*scale + iy,c)
@@ -628,6 +628,58 @@ return function(config) --A function that creates a new GPU peripheral.
     local b = math.floor(b)
     return true, love.mouse.isDown(b)
   end
+  
+  --Cursor API--
+  local _Cursor = "none"
+  local _CursorsCache = {}
+  
+  function GPU.cursor(imgdata,name,hx,hy)
+    if type(imgdata) == "string" then --Set the current cursor
+      if (not _CursorsCache[imgdata]) and (imgdata ~= "none") then return false, "Cursor doesn't exists: "..imgdata end
+      if _Cursor == "none" then love.mouse.setVisible(true) end
+      _Cursor = imgdata
+      if _Cursor == "none" then
+        love.mouse.setVisible(false)
+      else
+        love.mouse.setCursor(_CursorsCache[_Cursor].cursor)
+      end
+      return true --It ran successfully
+    elseif type(imgdata) == "table" then --Create a new cursor from an image.
+      if not( imgdata.enlarge and imgdata.export ) then return false, "Invalied image" end
+      
+      local name = name or "default"
+      if type(name) ~= "string" then return false, "Name must be a string, provided: "..type(name) end
+      
+      local hx, hy = hx or 1, hy or 1
+      if type(hx) ~= "number" then return false, "Hot X must be a number or a nil, provided: "..type(hx) end
+      if type(hy) ~= "number" then return false, "Hot Y must be a number or a nil, provided: "..type(hy) end
+      hx, hy = math.floor(hx)-1, math.floor(hy)-1
+      
+      local enimg = imgdata:enlarge(_LIKOScale)
+      local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
+      local hotx, hoty = hx*_LIKOScale, hy*_LIKOScale --Converted to host scale
+      local cur = love.mouse.newCursor(limg,hotx,hoty)
+      
+      _CursorsCache[name] = {cursor=cur,imgdata=imgdata,hx=hx,hy=hy}
+      return true --It ran successfully
+    else --Invalied
+      return false, "The first argument must be a string or an image"
+    end
+  end
+  
+  events:register("love:resize",function() --The new size will be calculated in the top, because events are called by the order they were registered with
+    for k, cursor in pairs(_CursorsCache) do
+      local enimg = cursor.imgdata:enlarge(_LIKOScale)
+      local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
+      local hotx, hoty = cursor.hx*_LIKOScale, cursor.hy*_LIKOScale --Converted to host scale
+      local cur = love.mouse.newCursor(limg,hotx,hoty)
+      _CursorCache[name].cursor = cur
+    end
+    exe(GPU.cursor(_Cursor))
+  end)
+  
+  exe(GPU.cursor(exe(GPU.imagedata(1,1)):setPixel(1,1,8),"default"))
+  exe(GPU.cursor(_Cursor))
   
   --End of API--
   
