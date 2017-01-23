@@ -60,6 +60,7 @@ function require(path,...)
 end
 
 keyrepeat(true) --Enable keyrepeat
+textinput(true) --Show the keyboard on mobile devices
 
 require("C://api") --Load CartOS APIs
 
