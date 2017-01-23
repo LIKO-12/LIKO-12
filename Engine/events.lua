@@ -6,7 +6,8 @@ function events:register(name,func)
   if type(name) ~= "string" then return error("Name should be a string value. Passed "..type(name).." instead !") end
   if type(func) ~= "function" then return error("func should be a function value. Passed "..type(func).." instead !") end
   if not self.reg[name] then self.reg[name] = {} end
-  self.reg[name][func] = func
+  --self.reg[name][func] = func
+  table.insert(self.reg[name],func)
   return self
 end
 
@@ -15,10 +16,41 @@ function events:unregister(func,name) --Name is optional
   if type(name) ~= "string" and type(name) ~= "nil" then return error("Name should be a string value. Passed "..type(name).." instead !") end
   if type(func) ~= "function" then return error("func should be a function value. Passed "..type(func).." instead !") end
   if name and self.reg[name] then
-    self.reg[name][func] = nil
+    --self.reg[name][func] = nil
+    for k,v in ipairs(self.reg[name]) do
+      if v == func then
+        table.remove(self.reg[name],k)
+      end
+    end
+    --Clear the gaps
+    local newList = {}
+    local gapCount = 0
+    for k,v in ipairs(self.reg[name]) do
+      if type(v) == "nil" then
+        gapCount = gapCount+1
+      else
+        table.insert(newList,k-gapCount,v)
+      end
+    end
+    self.reg[name] = newList
   else --Search through all events
-    for k,v in pairs(self.reg) do
-      v[func] = nil
+    for rk,rv in pairs(self.reg) do
+      for k,v in ipairs(rv) do
+        if v == func then
+          table.remove(rv,k)
+        end
+      end
+      --Clear the gaps
+      local newList = {}
+      local gapCount = 0
+      for k,v in ipairs(rv) do
+        if type(v) == "nil" then
+          gapCount = gapCount+1
+        else
+          table.insert(newList,k-gapCount,v)
+        end
+      end
+      self.reg[rk] = newList
     end
   end
   return self
