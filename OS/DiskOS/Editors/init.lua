@@ -3,6 +3,8 @@ local flavor = 10 --Orange
 local flavorBack = 5 --Brown
 local background = 6 --Dark Grey
 
+local editorsheet = SpriteSheet(image(fs.read("C://editorsheet.lk12")),24,12)
+
 local swidth, sheight = screenSize()
 
 local function drawUI()
