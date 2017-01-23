@@ -96,14 +96,14 @@ function term.parsePath(path)
     if #fld == 0 then return curdrive..":///", fs.exists(curdrive..":///") end
     table.remove(fld, #fld) --Remove the last directory
     return curdrive..":///"..table.concat(fld,"/"), fs.exists(curdrive..":///"..table.concat(fld,"/"))
-  elseif path == "." or path == "/" then return curpath, fs.exists(curpath) end
+  elseif path == "." then return curpath, fs.exists(curpath) end
   local d, p = path:match("(.+)://(.+)")
   if d and p then return path, fs.exists(path) end
   local d = path:match("(.+):") --ex: D:
   if d then return d..":///", fs.exists(d..":///") end
   local d = path:match("/(.+)")
   if d then return curdrive.."://"..path, fs.exists(curdrive.."://"..path) end
-  return curpath..path
+  return curpath..path, fs.exists(curpath..path)
 end
 
 function term.execute(command,...)
