@@ -2,6 +2,9 @@
 local PATH = "C://Programs/;"
 local curdrive, curdir, curpath = "C", "/", "C:///"
 
+local editor = require("C://Editors")
+editor:initialize()
+
 local function nextPath(p)
   if p:sub(-1)~=";" then p=p..";" end
   return p:gmatch("(.-);")
@@ -135,6 +138,7 @@ function term.execute(command,...)
 end
 
 function term.loop() --Enter the while loop of the terminal
+  cursor("none")
   clearEStack()
   color(8) checkCursor() print(term.getpath().."> ",false)
   local buffer = ""
@@ -149,7 +153,7 @@ function term.loop() --Enter the while loop of the terminal
         table.insert(history, buffer)
         blink = false; checkCursor()
         term.execute(split(buffer)) buffer = ""
-        color(8) checkCursor() print(term.getpath().."> ",false) blink = true
+        color(8) checkCursor() print(term.getpath().."> ",false) blink = true cursor("none")
       elseif a == "backspace" then
         blink = false; checkCursor()
         if buffer:len() > 0 then
@@ -164,6 +168,10 @@ function term.loop() --Enter the while loop of the terminal
         end
         buffer = ""
         blink = true; checkCursor()
+      elseif a == "escape" then
+        local screenbk = screenshot()
+        editor:loop() cursor("none")
+        screenbk:image():draw(1,1)
       end
     elseif event == "touchpressed" then
       textinput(true)
