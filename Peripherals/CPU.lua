@@ -111,5 +111,12 @@ return function(config) --A function that creates a new CPU peripheral.
     return 2 --I don't want the coroutine to resume while rebooting
   end
   
+  function CPU.openAppData(tar)
+    local tar = tar or "/"
+    if tar:sub(0,1) ~= "/" then tar = "/"..tar end
+    love.system.openURL("file://"..love.filesystem.getSaveDirectory()..tar)
+    return true --It ran successfully
+  end
+  
   return CPU
 end
