@@ -24,7 +24,7 @@ function SpriteGroup(id,x,y,w,h,sx,sy,sheet)
 end
 
 function isInRect(x,y,rect)
-  if x >= rect[1] and y >= rect[2] and x <= rect[1]+rect[3] and y <= rect[2]+rect[4] then return true end return false
+  if x >= rect[1] and y >= rect[2] and x <= rect[1]+rect[3]-1 and y <= rect[2]+rect[4]-1 then return true end return false
 end
 
 function whereInGrid(x,y, grid) --Grid X, Grid Y, Grid Width, Grid Height, NumOfCells in width, NumOfCells in height
