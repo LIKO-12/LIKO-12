@@ -23,7 +23,7 @@ function edit:initialize()
     table.insert(self.leditors,k,v(self))
   end
 
-  self.modeGrid = {swidth-(#self.editors*8),1,#self.editors*8,8,#self.editors,1} --The editor selection grid
+  self.modeGrid = {swidth-(#self.editors*8)+1,1,#self.editors*8,8,#self.editors,1} --The editor selection grid
   self.modeGridFlag = false
   self.modeGridHover = false
   self:loadCursors()
@@ -42,27 +42,30 @@ function edit:drawUI()
   clear(self.background) --Clear the screen
   rect(1,1,swidth,8,false,self.flavor) --Draw the top bar
   rect(1,sheight-7,swidth,8,false,self.flavor) --Draw the bottom bar
+  
+  SpriteGroup(55, 1,1, 4,1, 1,1, self.editorsheet) --The LIKO12 Logo
+  SpriteGroup(24-#self.editors+1, (swidth-#self.editors*8) +1,1, #self.editors,1, 1,1, self.editorsheet) --The programs selection
+  self.editorsheet:draw(48-(#self.editors-self.active),swidth-(#self.editors-self.active+1)*8+1,1) --The current selected program
 end
 
 function edit:switchEditor(neweditor)
   if neweditor ~= self.active and self.leditors[neweditor] then
-    if self.leditors[self.active].leaved then
-      self.leditors[self.active]:leaved(self.leditors[neweditor])
+    local oldeditor = self.active; self.active = neweditor
+    if self.leditors[oldeditor].leaved then
+      self.leditors[oldeditor]:leaved(self.leditors[neweditor])
     end
     
     if self.leditors[neweditor].entered then
-      if self.leditors[self.active].leaved then
-        self.leditors[neweditor]:entered(self.leditors[self.active],self.leditors[self.active]:leaved(self.leditors[neweditor]))
+      if self.leditors[oldeditor].leaved then
+        self.leditors[neweditor]:entered(self.leditors[oldeditor],self.leditors[oldeditor]:leaved(self.leditors[neweditor]))
       else
-        self.leditors[neweditor]:entered(self.leditors[self.active])
+        self.leditors[neweditor]:entered(self.leditors[oldeditor])
       end
     else
-      if self.leditors[self.active].leaved then
-        self.leditors[self.active]:leaved(self.leditors[neweditor])
+      if self.leditors[oldeditor].leaved then
+        self.leditors[oldeditor]:leaved(self.leditors[neweditor])
       end
     end
-    
-    self.active = neweditor
   end
 end
 
@@ -115,6 +118,11 @@ function edit:loop() --Starts the while loop
           self:switchEditor(cx)
         end
       else
+        if self.modeGridFlag then
+          self.modeGridHover = true
+          self.modeGridFlag = false
+          cursor("normal")
+        end
         if self.leditors[self.active][event] then self.leditors[self.active][event](self.leditors[self.active],a,b,c,d,e,f) end
       end
     else
