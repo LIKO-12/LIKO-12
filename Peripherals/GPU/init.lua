@@ -113,7 +113,7 @@ return function(config) --A function that creates a new GPU peripheral.
     return math.floor((x - _LIKO_X)/_LIKOScale )+1, math.floor((y - _LIKO_Y)/_LIKOScale)+1
   end
   
-  local function _GetColor(c) return _ColorSet[c or 1] or _ColorSet[1] end --Get the (rgba) table of a color id.
+  local function _GetColor(c) return _ColorSet[c or 1] or _ColorSet[0] end --Get the (rgba) table of a color id.
   local function _GetColorID(r,g,b,a) --Get the color id by the (rgba) table.
     local a = type(a) == "nil" and 255 or a
     for id, col in pairs(_ColorSet) do
@@ -121,7 +121,7 @@ return function(config) --A function that creates a new GPU peripheral.
         return id
       end
     end
-    return 1
+    return 0
   end
   
   local function magiclines(s)
