@@ -23,7 +23,7 @@ local sprsmflag = false
 local sprsbquads = {} --SpriteSheets 4 BanksQuads
 local sprsbank = 1 --Current Selected Bank
 for i = 1, 4 do
-  sprsbquads[i] = epi.editorsheet:image():quad(1,(i*8*3-8*3)+1,_,3*8)
+  sprsbquads[i] = eapi.editorsheet:image():quad(1,(i*8*3-8*3)+1,_,3*8)
 end
 
 local temp = 0
@@ -127,6 +127,7 @@ local transformations = {
 
 function se:entered()
   eapi:drawUI()
+  self:_redraw()
 end
 
 function se:leaved()
@@ -138,7 +139,7 @@ function se:export(path)
 end
 
 function se:copy()
-  clipboard(base64enc(SpriteMap:extract(sprsid):encode()))
+  clipboard(b64enc(SpriteMap:extract(sprsid):encode()))
   infotimer = 2 --Show info for 2 seconds
   infotext = "COPIED SPRITE "..sprsid
   self:redrawINFO()
@@ -146,11 +147,10 @@ end
 
 function se:paste()
   local ok, err = pcall(function()
-    local imd = api.ImageData(api.getclip() or "")
-    local dx,dy,dw,dh = api.SpriteMap:rect(sprsid)
-    local sheetdata = api.SpriteMap:data()
-    sheetdata:paste(imd,dx,dy,1,1,dw,dh)
-    api.SpriteMap.img = sheetdata:image()
+    local dx,dy,dw,dh = SpriteMap:rect(sprsid)
+    local sheetdata = SpriteMap:data()
+    sheetdata:paste(b64dec(clipboard() or ""),dx,dy,1,1,dw,dh)
+    SpriteMap.img = sheetdata:image()
     self:_redraw()
   end)
   if not ok then
@@ -162,5 +162,241 @@ function se:paste()
   end
   self:redrawINFO()
 end
+
+function se:load(path)
+  if path then
+    SpriteMap = SpriteSheet(image("/"..path..".lk12"),24,12)
+  else
+    SpriteMap = SpriteSheet(imagedata(24*8,12*8):image(),24,12)
+  end
+end
+
+function se:redrawCP() --Redraw color pallete
+  rect(palrecto)
+  palimg:draw(unpack(paldraw))
+  rect(colsrectR)
+  rect(colsrectL)
+end
+
+function se:redrawSPRS()
+  rect(sprsrecto)
+  SpriteMap:image():draw(sprsdraw[1],sprsdraw[2],sprsdraw[3],sprsdraw[4],sprsdraw[5],sprsbquads[sprsbank])
+  rect(sprssrect)
+  rect(sprsidrect)
+  color(sprsidrect[6])
+  local id = sprsid if id < 10 then id = "00"..id elseif id < 100 then id = "0"..id end
+  print(id,sprsidrect[1]+1,sprsidrect[2]+1)
+  SpriteGroup(97,swidth-32,sprsbanksY,4,1,1,1,eapi.editorsheet)
+  eapi.editorsheet:draw(sprsbank+72,192-(40-sprsbank*8),sprsbanksY)
+end
+
+function se:redrawSPR()
+  rect(imgrecto)
+  SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],SpriteMap:quad(sprsid))
+  rect(sprsidrect[1]-9,sprsidrect[2]-1,8,8,false,1)
+  SpriteMap:image():draw(sprsidrect[1]-9,sprsidrect[2]-1,0,1,1,SpriteMap:quad(sprsid))
+end
+
+function se:redrawTOOLS()
+  --Tools
+  SpriteGroup(unpack(toolsdraw))
+  eapi.editorsheet:draw((toolsdraw[1]+(stool-1))-24,toolsdraw[2]+(stool-1)*8,toolsdraw[3],0,toolsdraw[6],toolsdraw[7])
+  
+  --Transformations
+  SpriteGroup(unpack(transdraw))
+  if strans then eapi.editorsheet:draw((transdraw[1]+(strans-1))-24,transdraw[2]+(strans-1)*8,transdraw[3],0,transdraw[6],transdraw[7]) end
+end
+
+function se:redrawFLAG()
+  SpriteGroup(126,swidth-64,sprsbanksY-18,8,1,1,1,eapi.editorsheet)
+  SpriteGroup(126,swidth-64,sprsbanksY-10,8,1,1,1,eapi.editorsheet)
+end
+
+function se:redrawINFO()
+  rect(1,sheight-7,swidth,8,10)
+  if infotimer > 0 then
+    color(5)
+    print(infotext or "",2,sheight-5)
+  end
+end
+
+function se:_redraw()
+  self:redrawCP()
+  self:redrawSPR()
+  self:redrawSPRS()
+  self:redrawFLAG()
+  self:redrawTOOLS()
+end
+
+function se:update(dt)
+  if tbflag then
+    tbtimer = tbtimer + dt
+    if tbtime <= tbtimer then
+      stool = tbflag
+      tbflag = false
+      self:redrawTOOLS()
+    end
+  end
+  
+  if transtimer then
+    transtimer = transtimer + dt
+    if transtimer > transtime then
+      transtimer, strans = nil, nil
+      self:redrawTOOLS()
+    end
+  end
+  
+  if infotimer > 0 then
+    infotimer = infotimer - dt
+    if infotimer < 0 then
+      infotimer = 0
+      self:redrawINFO()
+    end
+  end
+end
+
+function se:mousepressed(x,y,b,it)
+  --Pallete Color Selection
+  local cx, cy = whereInGrid(x,y,palgrid)
+  if cx then
+    if b == 1 then
+      colsL = (cy-1)*4+cx if colsL == 1 then colsL = 0 end
+      local cx, cy = cx-1, cy-1
+      colsrectL[1] = swidth-(palpsize*4+3)+palpsize*cx
+      colsrectL[2] = 8+3+palpsize*cy
+    elseif b == 2 then
+      colsR = (cy-1)*4+cx if colsR == 1 then colsR = 0 end
+      local cx, cy = cx-1, cy-1
+      colsrectR[1] = swidth-(palpsize*4+2)+palpsize*cx
+      colsrectR[2] = 8+3+1+palpsize*cy
+    end
+    
+    self:redrawCP()
+  end
+  
+  --Bank selection
+  local cx = whereInGrid(x,y,sprsbanksgrid)
+  if cx then
+    sprsbank = cx
+    local idbank = math.floor((sprsid-1)/(24*3))+1
+    if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*24*3 elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*24*3 end
+    self:redrawSPRS() self:redrawSPR()
+  end
+  
+  --Sprite Selection
+  local cx, cy = whereInGrid(x,y,sprsgrid)
+  if cx then
+    sprsid = (cy-1)*24+cx+(sprsbank*24*3-24*3)
+    local cx, cy = cx-1, cy-1
+    sprssrect[1] = cx*8
+    sprssrect[2] = sheight-(8+24+1)+cy*8
+    
+    self:redrawSPRS() self:redrawSPR() sprsmflag = true
+  end
+  
+  --Tool Selection
+  local cx, cy = whereInGrid(x,y,toolsgrid)
+  if cx then
+    if toolshold[cx] then
+      stool = cx
+      self:redrawTOOLS()
+      self:redrawSPRS() self:redrawSPR()
+    else
+      tools[cx](self)
+      tbflag, tbtimer = stool, 0
+      stool = cx
+      self:redrawSPRS() self:redrawSPR() self:redrawTOOLS()
+    end
+  end
+  
+  --Transformation Selection
+  local cx, cy = whereInGrid(x,y,transgrid)
+  if cx and transformations[cx] then
+    transform(transformations[cx]) transtimer, strans = 0, cx
+    self:redrawSPRS() self:redrawSPR() self:redrawTOOLS()
+  end
+  
+  --Image Drawing
+  local cx, cy = whereInGrid(x,y,imggrid)
+  if cx then
+    if not it then mflag = true end
+    tools[stool](self,cx,cy,b)
+    self:redrawSPR() self:redrawSPRS()
+  end
+end
+
+function se:mousemoved(x,y,dx,dy,it,iw)
+  if iw then return end
+  
+  --Image Drawing
+  if (not it and mflag) or it then
+    local cx, cy = whereInGrid(x,y,imggrid)
+    if cx then
+      tools[stool](self,cx,cy)
+      self:redrawSPR() self:redrawSPRS()
+    end
+  end
+  
+  --Sprite Selection
+  if (not it and sprsmflag) or it then
+    local cx, cy = whereInGrid(x,y,sprsgrid)
+    if cx then
+      sprsid = (cy-1)*24+cx+(sprsbank*24*3-24*3)
+      local cx, cy = cx-1, cy-1
+      sprssrect[1] = cx*8
+      sprssrect[2] = sheight-(8+24+1)+cy*8
+      
+      self:redrawSPRS() self:redrawSPR()
+    end
+  end
+end
+
+function se:mouserelease(x,y,b,it)
+  --Image Drawing
+  if (not it and mflag) or it then
+    local cx, cy = whereInGrid(x,y,imggrid)
+    if cx then
+      tools[stool](self,cx,cy,b)
+      self:redrawSPR() self:redrawSPRS()
+    end
+  end
+  mflag = false
+  
+  --Sprite Selection
+  if (not it and sprsmflag) or it then
+    local cx, cy = whereInGrid(x,y,sprsgrid)
+    if cx then
+      sprsid = (cy-1)*24+cx+(sprsbank*24*3-24*3)
+      local cx, cy = cx-1, cy-1
+      sprssrect[1] = cx*8
+      sprssrect[2] = sheight-(8+24+1)+cy*8
+      
+      self:redrawSPRS() self:redrawSPR()
+    end
+  end
+  sprsmflag = false
+end
+
+local bank = function(bank)
+  return function()
+    local idbank = math.floor((sprsid-1)/(24*3))+1
+    sprsbank = bank
+    if idbank > sprsbank then
+      sprsid = sprsid-(idbank-sprsbank)*24*3
+    elseif sprsbank > idbank then
+      sprsid = sprsid+(sprsbank-idbank)*24*3
+    end
+    s:redrawSPRS() s:redrawSPR()
+  end
+end
+
+se.keymap = {
+  ["ctrl-c"] = se.copy,
+  ["ctrl-v"] = se.paste,
+  ["1"] = bank(1), ["2"] = bank(2), ["3"] = bank(3), ["4"] = bank(4),
+  ["z"] = function() stool=1 s:redrawTOOLS() end,
+  ["x"] = function() stool=2 s:redrawTOOLS() end,
+  ["delete"] = function() tools[5](s) se:redrawSPRS() se:redrawSPR() end,
+}
 
 return se
