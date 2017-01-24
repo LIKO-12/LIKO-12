@@ -658,13 +658,14 @@ return function(config) --A function that creates a new GPU peripheral.
       
       local enimg = imgdata:enlarge(_LIKOScale)
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
+      local gifimg = love.graphics.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
       local hotx, hoty = hx*_LIKOScale, hy*_LIKOScale --Converted to host scale
       local cur = love.mouse.newCursor(limg,hotx,hoty)
       
-      _CursorsCache[name] = {cursor=cur,imgdata=imgdata,hx=hx,hy=hy}
+      _CursorsCache[name] = {cursor=cur,imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy}
       return true --It ran successfully
     elseif type(imgdata) == "nil" then
-      return true, _Cursor, _CursorsCache[_Cursor].imdata, _CursorsCache[_Cursor].hx+1, _CursorsCache[_Cursor].hy+1
+      return true, _Cursor, _CursorsCache[_Cursor].imgdata, _CursorsCache[_Cursor].hx+1, _CursorsCache[_Cursor].hy+1
     else --Invalied
       return false, "The first argument must be a string, image or nil"
     end
@@ -736,6 +737,11 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.clear(0,0,0,255) --Clear the screen (Some platforms are glitching without this).
       
       love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFScale, _GIFScale) --Draw the canvas.
+      
+      if _Cursor ~= "none" then --Draw the cursor
+        local cx, cy = exe(GPU.getMPos())
+        love.graphics.draw(_CursorsCache[_Cursor].gifimg,(cx-_CursorsCache[_Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[_Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
+      end
       
       love.graphics.setCanvas()
       
