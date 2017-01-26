@@ -2,60 +2,88 @@ local eapi = select(1,...) --The editor library is provided as an argument
 
 local se = {} --Sprite Editor
 
-local swidth, sheight = screenSize()
+local imgw, imgh = 8, 8 --The sprite size (MUST NOT CHANGE)
 
-local SpriteMap, mflag = SpriteSheet(imagedata(24*8,12*8):image(),24,12), false
-local imgw, imgh = 8, 8
-local psize = 10 --Zoomed pixel size
-local imgdraw = {3+1,8+3+1, 0, psize,psize} --Image Location
-local imgrecto = {3,3+8,psize*imgw+2,psize*imgh+2, false,1}
-local imggrid = {3+1,8+3+1, psize*imgw,psize*imgh, imgw,imgh}
+local swidth, sheight = screenSize() --The screen size
+local sheetW, sheetH = math.floor(swidth/imgw), math.floor(sheight/imgh) --The size of the spritessheet in cells (sprites)
+local bankH = sheetH/4 --The height of each bank in cells (sprites)
+local bsizeH = bankH*imgh --The height of each bank in pixels
+local sizeW, sizeH = sheetW*imgw, sheetH*imgh --The size of the spritessheet in pixels
 
-local sprsrecto = {1,sheight-(8+24+1),swidth,24+2, false, 1} --SpriteSheet Outline Rect
-local sprsdraw = {1,sheight-(8+24)} --SpriteSheet Draw Location
-local sprsgrid = {1,sheight-(8+24),8*24,8*3,24,3}
-local sprssrect = {0,sheight-(8+24+1),8+2,8+2,true,8} --SpriteSheet Select Rect
-local sprsidrect = {swidth-(36+13),sheight-(8+24+9), 13,7, false, 7, 14}
-local sprsbanksY = sheight - (8+24+9)
-local sprsbanksgrid = {swidth-32,sprsbanksY+1, 8*4,8, 4,1}
-local sprsid = 1 --SpriteSheet Selected ID
-local sprsmflag = false
+local SpriteMap, mflag = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH), false --The spritemap, plus mouse drawing flag
+
+--[[The configuration tables scheme:
+draw: spriteID, x,y, w,h, spritesheet| OR: x,y, 0, w,h (marked by IMG_DRAW)
+rect: x,y, w,h, isline, colorid
+grid: gridX,gridY, gridW,gridH, cellW, cellH
+]]
+
+--SpriteSheet Sprite Selection--
+local sprsrecto = {1,sheight-(8+bsizeH+1), swidth,bsizeH+2, false, 1} --SpriteSheet Outline Rect
+local sprsdraw = {1,sheight-(8+bsizeH)} --SpriteSheet Draw Location; IMG_DRAW
+local sprsgrid = {sprsdraw[1],sprsdraw[2], sizeW,bsizeH, sheetW,bankH} --The SpriteSheet selection grid
+local sprssrect = {sprsrecto[1],sprsrecto[2], imgw+2,imgh+2, true, 8} --SpriteSheet Select Rect (that white box on the selected sprite)
+local sprsbanksgrid = {swidth-(4*8+1),sheight-(sprsrecto[1]+8), 8*4,8, 4,1} --The grid of banks selection buttons
+local sprsid = 1 --Selected Sprite ID
+local sprsmflag = false --Sprite selection mouse flag
 local sprsbquads = {} --SpriteSheets 4 BanksQuads
 local sprsbank = 1 --Current Selected Bank
-for i = 1, 4 do
-  sprsbquads[i] = eapi.editorsheet:image():quad(1,(i*8*3-8*3)+1,_,3*8)
+for i = 1, 4 do --Create the banks quads
+  sprsbquads[i] = eapi.editorsheet:image():quad(1,(i*8*bankH-8*bankH)+1,_,bankH*8)
 end
 
-local temp = 0
-local palpsize = 13
-local palimg = imagedata(4,4):map(function() temp = temp + 1 return temp end ):image()
-local palrecto = {swidth-(palpsize*4+3),8+3, palpsize*4+2,palpsize*4+2, true, 1}
-local paldraw = {swidth-(palpsize*4+2),8+3+1,0,palpsize,palpsize}
-local palgrid = {swidth-(palpsize*4+2),8+3+1,palpsize*4,palpsize*4,4,4}
+local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in the biggest sprite id.
+local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*4+3),sprsbanksgrid[2], 1+maxSpriteIDCells*4,7, false, 7, 14} --The rect of sprite id; The extra argument is the color of number print
+local revdraw = {sprsidrect[1]-(imgw+1),sprsrecto[2]-(imgh+1)} --The small image at the right of the id with the actual sprite size
 
-local colsrectL = {swidth-(palpsize*4+3),8+3,palpsize+2,palpsize+2, true, 8}
-local colsrectR = {swidth-(palpsize*4+2),8+3+1,palpsize,palpsize, true, 1}
-local colsL = 0 --Color Select Left
-local colsR = 0 --Color Select Right
+--The current sprite flags--
+local flagsgrid = {swidth-(8*7+2),revdraw[2]-(8+2), 8*7,6, 8,1} --The sprite flags grid
+local flagsdraw = {flagsgrid[1]-1,flagsgrid[2]-1} --The position of the first (leftmost) flag
+local flags = 0 --All 00000000
 
-local toolsdraw = {104, swidth-102,sprsbanksY-2, 5,1, 1,1, eapi.editorsheet} --Tools Draw Config
+--Tools Selection--
+local toolsdraw = {104, revdraw[1]-(8*5+4),revdraw[2], 5,1, 1,1, eapi.editorsheet} --Tools draw arguments
 local toolsgrid = {toolsdraw[2],toolsdraw[3], toolsdraw[4]*8,toolsdraw[5]*8, toolsdraw[4],toolsdraw[5]} --Tools Selection Grid
-local stool = 1
+local stool = 1 --Current selected tool id
 
-local tbtimer = 0
-local tbtime = 0.1125
-local tbflag = false
+local tbtimer = 0 --Tool selection blink timer
+local tbtime = 0.1125 --The blink time
+local tbflag = false --Is the blink timer activated ?
 
-local transdraw = {109, swidth-105,sprsbanksY-15, 5,1, 1,1, eapi.editorsheet} --Transformations Draw Config
+--Transformations Selection--
+local transdraw = {109, flagsgrid[1]-(8*5+3),toolsdraw[3]-(8+2), 5,1, 1,1, eapi.editorsheet} --Transformations draw arguments
 local transgrid = {transdraw[2],transdraw[3], transdraw[4]*8, transdraw[5]*8, transdraw[4], transdraw[5]} --Transformations Selection Grid
 local strans --Selected Transformation
 
-local transtimer
-local transtime = 0.1125
+local transtimer --The transformation blink timer
+local transtime = 0.1125 --The blink time
 
+--------------------------------------------
+
+--The Sprite (That you are editing--
+local psize = 9 --Zoomed pixel size
+local imgdraw = {3+1,8+3+1, 0, psize,psize} --Image Location; IMG_DRAW
+local imgrecto = {3,3+8,psize*imgw+2,psize*imgh+2, false,1} --The image outline rect position
+local imggrid = {3+1,8+3+1, psize*imgw,psize*imgh, imgw,imgh} --The image drawing grid
+
+--The Color Selection Pallete--
+local temp = 0 --Temporary Variable
+local palpsize = 13 --The size of each color box in the color selection pallete
+local palimg = imagedata(4,4):map(function() temp = temp + 1 return temp end ):image() --The image of the color selection pallete
+local palrecto = {swidth-(palpsize*4+3),8+3, palpsize*4+2,palpsize*4+2, true, 1} --The outline rectangle of the color selection pallete
+local paldraw = {swidth-(palpsize*4+2),8+3+1,0,palpsize,palpsize} --The color selection pallete draw arguments; IMG_DRAW
+local palgrid = {swidth-(palpsize*4+2),8+3+1,palpsize*4,palpsize*4,4,4} --The color selection pallete grid
+
+local colsrectL = {swidth-(palpsize*4+3),8+3,palpsize+2,palpsize+2, true, 8} --The color select box for the left mouse button (The black one)
+local colsrectR = {swidth-(palpsize*4+2),8+3+1,palpsize,palpsize, true, 1} --The color select box for the right mouse button (The white one)
+local colsL = 0 --Selected Color for the left mouse
+local colsR = 0 --Selected Color for the right mouse
+
+--Info system variables--
 local infotimer = 0 --The info timer, 0 if no info.
 local infotext = "" --The info text to display
 
+--The tools code--
 local toolshold = {true,true,false,false,false} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
   function(self,cx,cy,b) --Pencil (Default)
@@ -104,6 +132,7 @@ local tools = {
   end
 }
 
+--The transformations code--
 local function transform(tfunc)
   local current = SpriteMap:extract(sprsid)
   local new = imagedata(current:width(),current:height())
@@ -165,9 +194,9 @@ end
 
 function se:load(path)
   if path then
-    SpriteMap = SpriteSheet(image("/"..path..".lk12"),24,12)
+    SpriteMap = SpriteSheet(image("/"..path..".lk12"),sheetW,sheetH)
   else
-    SpriteMap = SpriteSheet(imagedata(24*8,12*8):image(),24,12)
+    SpriteMap = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH)
   end
 end
 
@@ -208,7 +237,7 @@ function se:redrawTOOLS()
 end
 
 function se:redrawFLAG()
-  SpriteGroup(126,swidth-64,sprsbanksY-18,8,1,1,1,eapi.editorsheet)
+  --SpriteGroup(126,swidth-64,sprsbanksY-18,8,1,1,1,eapi.editorsheet)
   SpriteGroup(126,swidth-64,sprsbanksY-10,8,1,1,1,eapi.editorsheet)
 end
 
@@ -286,10 +315,10 @@ function se:mousepressed(x,y,b,it)
   --Sprite Selection
   local cx, cy = whereInGrid(x,y,sprsgrid)
   if cx then
-    sprsid = (cy-1)*24+cx+(sprsbank*24*3-24*3)
+    sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
     local cx, cy = cx-1, cy-1
     sprssrect[1] = cx*8
-    sprssrect[2] = sheight-(8+24+1)+cy*8
+    sprssrect[2] = sheight-(8+bsizeH+1)+cy*8
     
     self:redrawSPRS() self:redrawSPR() sprsmflag = true
   end
@@ -341,10 +370,10 @@ function se:mousemoved(x,y,dx,dy,it,iw)
   if (not it and sprsmflag) or it then
     local cx, cy = whereInGrid(x,y,sprsgrid)
     if cx then
-      sprsid = (cy-1)*24+cx+(sprsbank*24*3-24*3)
+      sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
       local cx, cy = cx-1, cy-1
       sprssrect[1] = cx*8
-      sprssrect[2] = sheight-(8+24+1)+cy*8
+      sprssrect[2] = sheight-(8+bsizeH+1)+cy*8
       
       self:redrawSPRS() self:redrawSPR()
     end
@@ -366,10 +395,10 @@ function se:mousereleased(x,y,b,it)
   if (not it and sprsmflag) or it then
     local cx, cy = whereInGrid(x,y,sprsgrid)
     if cx then
-      sprsid = (cy-1)*24+cx+(sprsbank*24*3-24*3)
+      sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
       local cx, cy = cx-1, cy-1
       sprssrect[1] = cx*8
-      sprssrect[2] = sheight-(8+24+1)+cy*8
+      sprssrect[2] = sheight-(8+bsizeH+1)+cy*8
       
       self:redrawSPRS() self:redrawSPR()
     end
@@ -379,12 +408,12 @@ end
 
 local bank = function(bank)
   return function()
-    local idbank = math.floor((sprsid-1)/(24*3))+1
+    local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
     sprsbank = bank
     if idbank > sprsbank then
-      sprsid = sprsid-(idbank-sprsbank)*24*3
+      sprsid = sprsid-(idbank-sprsbank)*sheetW*bankH
     elseif sprsbank > idbank then
-      sprsid = sprsid+(sprsbank-idbank)*24*3
+      sprsid = sprsid+(sprsbank-idbank)*sheetW*bankH
     end
     se:redrawSPRS() se:redrawSPR()
   end
