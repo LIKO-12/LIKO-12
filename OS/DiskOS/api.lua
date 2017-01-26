@@ -27,13 +27,22 @@ function isInRect(x,y,rect)
   if x >= rect[1] and y >= rect[2] and x <= rect[1]+rect[3]-1 and y <= rect[2]+rect[4]-1 then return true end return false
 end
 
+local debugGrids = false
+
 function whereInGrid(x,y, grid) --Grid X, Grid Y, Grid Width, Grid Height, NumOfCells in width, NumOfCells in height
   local gx,gy,gw,gh,cw,ch = unpack(grid)
+  
   if isInRect(x,y,{gx,gy,gw,gh}) then
     local clw, clh = math.floor(gw/cw), math.floor(gh/ch)
     local x, y = x-gx, y-gy
     local hx = math.floor(x/clw)+1 hx = hx <= cw and hx or hx-1
     local hy = math.floor(y/clh)+1 hy = hy <= ch and hy or hy-1
+    if debugGrids then
+      for x=1,cw do for y=1,ch do
+        rect(gx+(x*clw-clw),gy+(y*clh-clh),clw,clh,true,9)
+      end end
+      rect(gx+(hx*clw-clw),gy+(hy*clh-clh),clw,clh,true,8)
+    end
     return hx,hy
   end
   return false, false
