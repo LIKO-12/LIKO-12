@@ -79,6 +79,22 @@ function edit:loop() --Starts the while loop
         if edit.leditors[edit.active]["entered"] then edit.leditors[edit.active]:entered() end
         break
       else
+        local key, sc = a, b
+        if(isKDown("lalt", "ralt")) then
+          key = "alt-" .. key
+          sc = "alt-" .. sc
+        end
+        if(isKDown("lctrl", "rctrl", "capslock")) then
+          key = "ctrl-" .. key
+          sc = "ctrl-" .. sc
+        end
+        if(isKDown("lshift", "rshift")) then
+          key = "shift-" .. key
+          sc = "ctrl-" .. sc
+        end
+        
+        if self.leditors[self.active].keymap and self.leditors[self.active].keymap[key] then self.leditors[self.active].keymap[key](self.leditors[self.active],c)
+        elseif self.leditors[self.active].keymap and self.leditors[self.active].keymap[sc] then self.leditors[self.active].keymap[sc](self.leditors[self.active],c) end
         if self.leditors[self.active][event] then self.leditors[self.active][event](self.leditors[self.active],a,b,c,d,e,f) end
       end
     elseif event == "mousepressed" then
