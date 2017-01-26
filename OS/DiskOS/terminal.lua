@@ -170,8 +170,10 @@ function term.loop() --Enter the while loop of the terminal
         blink = true; checkCursor()
       elseif a == "escape" then
         local screenbk = screenshot()
+        local oldx, oldy, oldbk = printCursor()
         editor:loop() cursor("none")
-        screenbk:image():draw(1,1)
+        printCursor(oldx,oldy,oldbk)
+        screenbk:image():draw(1,1) color(8)
       end
     elseif event == "touchpressed" then
       textinput(true)

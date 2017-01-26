@@ -76,12 +76,12 @@ return function(config) --A function that creates a new CPU peripheral.
     end
   end
   
-  function CPU.clipboard()
+  function CPU.clipboard(text)
     if text then
       love.system.setClipboardText(tostring(text))
       return true
     else
-      return true,love.system.getClipboardText()
+      return true, love.system.getClipboardText()
     end
   end
   
