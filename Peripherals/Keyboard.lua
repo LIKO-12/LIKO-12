@@ -41,5 +41,9 @@ return function(config) --A function that creates a new Keyboard peripheral.
     return pcall(love.keyboard.getKeyFromScancode, key)
   end
   
+  function KB.isKDown(...)
+    return true, love.keyboard.isDown(...)
+  end
+  
   return KB
 end
