@@ -12,6 +12,8 @@ assert(P("CPU"))
 
 --Create a new gpu mounted as "GPU"
 assert(P("GPU","GPU",{
+  --_LIKO_W = 320,
+  --_LIKO_H = 200,
   _ClearOnRender = true
 }))
 
