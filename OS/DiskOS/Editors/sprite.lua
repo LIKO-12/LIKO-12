@@ -8,14 +8,14 @@ local SpriteMap, mflag = SpriteSheet(imagedata(24*8,12*8):image(),24,12), false
 local imgw, imgh = 8, 8
 local psize = 10 --Zoomed pixel size
 local imgdraw = {3+1,8+3+1, 0, psize,psize} --Image Location
-local imgrecto = {3,3+8,psize*imgw+2,psize*imgh+2,true,1}
+local imgrecto = {3,3+8,psize*imgw+2,psize*imgh+2, false,1}
 local imggrid = {3+1,8+3+1, psize*imgw,psize*imgh, imgw,imgh}
 
-local sprsrecto = {1,sheight-(8+24+1+1),swidth,24+2, true, 1} --SpriteSheet Outline Rect
+local sprsrecto = {1,sheight-(8+24+1),swidth,24+2, false, 1} --SpriteSheet Outline Rect
 local sprsdraw = {1,sheight-(8+24)} --SpriteSheet Draw Location
-local sprsgrid = {1,sheight-(8+24),swidth,8*3,24,3}
-local sprssrect = {0,sheight-(8+24+1+1),8+2,8+2,true,8} --SpriteSheet Select Rect
-local sprsidrect = {swidth-(36+13),sheight-(8+24+9), 13,7, false, 7}
+local sprsgrid = {1,sheight-(8+24),8*24,8*3,24,3}
+local sprssrect = {0,sheight-(8+24+1),8+2,8+2,true,8} --SpriteSheet Select Rect
+local sprsidrect = {swidth-(36+13),sheight-(8+24+9), 13,7, false, 7, 14}
 local sprsbanksY = sheight - (8+24+9)
 local sprsbanksgrid = {swidth-32,sprsbanksY+1, 8*4,8, 4,1}
 local sprsid = 1 --SpriteSheet Selected ID
@@ -68,7 +68,7 @@ local tools = {
 
   function(self,cx,cy,b) --Fill (Bucket)
     local data = SpriteMap:data()
-    local qx,qy = api.SpriteMap:rect(sprsid)
+    local qx,qy = SpriteMap:rect(sprsid)
     local col = (b == 1 or isMDown(1)) and colsL or colsR
     local tofill = data:getPixel(qx+cx-1,qy+cy-1)
     if tofill == col then return end
@@ -100,7 +100,7 @@ local tools = {
       data:setPixel(qx+px,qy+py,0)
     end end
     SpriteMap.img = data:image()
-    infotimer, infotext = 2,"DELETED SPRITE "..sprsid s:redrawINFO()
+    infotimer, infotext = 2,"DELETED SPRITE "..sprsid se:redrawINFO()
   end
 }
 
@@ -139,7 +139,7 @@ function se:export(path)
 end
 
 function se:copy()
-  clipboard(b64enc(SpriteMap:extract(sprsid):encode()))
+  clipboard(math.b64enc(SpriteMap:extract(sprsid):export()))
   infotimer = 2 --Show info for 2 seconds
   infotext = "COPIED SPRITE "..sprsid
   self:redrawINFO()
@@ -149,7 +149,7 @@ function se:paste()
   local ok, err = pcall(function()
     local dx,dy,dw,dh = SpriteMap:rect(sprsid)
     local sheetdata = SpriteMap:data()
-    sheetdata:paste(b64dec(clipboard() or ""),dx,dy,1,1,dw,dh)
+    sheetdata:paste(math.b64dec(clipboard()),dx,dy)
     SpriteMap.img = sheetdata:image()
     self:_redraw()
   end)
@@ -183,11 +183,11 @@ function se:redrawSPRS()
   SpriteMap:image():draw(sprsdraw[1],sprsdraw[2],sprsdraw[3],sprsdraw[4],sprsdraw[5],sprsbquads[sprsbank])
   rect(sprssrect)
   rect(sprsidrect)
-  color(sprsidrect[6])
+  color(sprsidrect[7])
   local id = sprsid if id < 10 then id = "00"..id elseif id < 100 then id = "0"..id end
   print(id,sprsidrect[1]+1,sprsidrect[2]+1)
   SpriteGroup(97,swidth-32,sprsbanksY,4,1,1,1,eapi.editorsheet)
-  eapi.editorsheet:draw(sprsbank+72,192-(40-sprsbank*8),sprsbanksY)
+  eapi.editorsheet:draw(sprsbank+72,swidth-(40-sprsbank*8),sprsbanksY)
 end
 
 function se:redrawSPR()
@@ -213,7 +213,7 @@ function se:redrawFLAG()
 end
 
 function se:redrawINFO()
-  rect(1,sheight-7,swidth,8,10)
+  rect(1,sheight-7,swidth,8,false,10)
   if infotimer > 0 then
     color(5)
     print(infotext or "",2,sheight-5)
@@ -351,7 +351,7 @@ function se:mousemoved(x,y,dx,dy,it,iw)
   end
 end
 
-function se:mouserelease(x,y,b,it)
+function se:mousereleased(x,y,b,it)
   --Image Drawing
   if (not it and mflag) or it then
     local cx, cy = whereInGrid(x,y,imggrid)
@@ -386,7 +386,7 @@ local bank = function(bank)
     elseif sprsbank > idbank then
       sprsid = sprsid+(sprsbank-idbank)*24*3
     end
-    s:redrawSPRS() s:redrawSPR()
+    se:redrawSPRS() se:redrawSPR()
   end
 end
 
@@ -394,8 +394,8 @@ se.keymap = {
   ["ctrl-c"] = se.copy,
   ["ctrl-v"] = se.paste,
   ["1"] = bank(1), ["2"] = bank(2), ["3"] = bank(3), ["4"] = bank(4),
-  ["z"] = function() stool=1 s:redrawTOOLS() end,
-  ["x"] = function() stool=2 s:redrawTOOLS() end,
+  ["z"] = function() stool=1 se:redrawTOOLS() end,
+  ["x"] = function() stool=2 se:redrawTOOLS() end,
   ["delete"] = function() tools[5](s) se:redrawSPRS() se:redrawSPR() end,
 }
 
