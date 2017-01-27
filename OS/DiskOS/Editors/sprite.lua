@@ -58,24 +58,27 @@ local strans --Selected Transformation
 local transtimer --The transformation blink timer
 local transtime = 0.1125 --The blink time
 
---------------------------------------------
-
 --The Sprite (That you are editing--
-local psize = 9 --Zoomed pixel size
+--Temp is a variables used to hold values while calculating positions
+local temp = {SmallestX = transgrid[1] < toolsgrid[1] and transgrid[1] or toolsgrid[1]}
+temp.smallestDistance = sprsrecto[2]-8 < temp.SmallestX and sprsrecto[2]-8 or temp.SmallestX
+temp.size = math.floor((temp.smallestDistance-(3+3))/(imgw > imgh and imgw or imgh))
+
+local psize = temp.size--9 --Zoomed pixel size
 local imgdraw = {3+1,8+3+1, 0, psize,psize} --Image Location; IMG_DRAW
-local imgrecto = {3,3+8,psize*imgw+2,psize*imgh+2, false,1} --The image outline rect position
-local imggrid = {3+1,8+3+1, psize*imgw,psize*imgh, imgw,imgh} --The image drawing grid
+local imgrecto = {imgdraw[1]-1,imgdraw[2]-1,psize*imgw+2,psize*imgh+2, false,1} --The image outline rect position
+local imggrid = {imgdraw[1],imgdraw[2], psize*imgw,psize*imgh, imgw,imgh} --The image drawing grid
 
 --The Color Selection Pallete--
-local temp = 0 --Temporary Variable
-local palpsize = 13 --The size of each color box in the color selection pallete
-local palimg = imagedata(4,4):map(function() temp = temp + 1 return temp end ):image() --The image of the color selection pallete
+temp = {col=0,height=transdraw[3]-(3+3)} --Temporary Variable
+local palpsize = math.floor(temp.height/4) --The size of each color box in the color selection pallete
+local palimg = imagedata(4,4):map(function() temp.col = temp.col + 1 return temp.col end ):image() --The image of the color selection pallete
 local palrecto = {swidth-(palpsize*4+3),8+3, palpsize*4+2,palpsize*4+2, true, 1} --The outline rectangle of the color selection pallete
-local paldraw = {swidth-(palpsize*4+2),8+3+1,0,palpsize,palpsize} --The color selection pallete draw arguments; IMG_DRAW
-local palgrid = {swidth-(palpsize*4+2),8+3+1,palpsize*4,palpsize*4,4,4} --The color selection pallete grid
+local paldraw = {palrecto[1]+1,palrecto[2]+1,0,palpsize,palpsize} --The color selection pallete draw arguments; IMG_DRAW
+local palgrid = {paldraw[1],paldraw[2],palpsize*4,palpsize*4,4,4} --The color selection pallete grid
 
-local colsrectL = {swidth-(palpsize*4+3),8+3,palpsize+2,palpsize+2, true, 8} --The color select box for the left mouse button (The black one)
-local colsrectR = {swidth-(palpsize*4+2),8+3+1,palpsize,palpsize, true, 1} --The color select box for the right mouse button (The white one)
+local colsrectL = {palrecto[1],palrecto[2],palpsize+2,palpsize+2, true, 8} --The color select box for the left mouse button (The black one)
+local colsrectR = {paldraw[1],paldraw[2],palpsize,palpsize, true, 1} --The color select box for the right mouse button (The white one)
 local colsL = 0 --Selected Color for the left mouse
 local colsR = 0 --Selected Color for the right mouse
 
@@ -207,13 +210,20 @@ function se:redrawCP() --Redraw color pallete
   rect(colsrectL)
 end
 
+--------------------------------------------
+
 function se:redrawSPRS()
   rect(sprsrecto)
   SpriteMap:image():draw(sprsdraw[1],sprsdraw[2],sprsdraw[3],sprsdraw[4],sprsdraw[5],sprsbquads[sprsbank])
   rect(sprssrect)
   rect(sprsidrect)
   color(sprsidrect[7])
-  local id = sprsid if id < 10 then id = "00"..id elseif id < 100 then id = "0"..id end
+  local id == ""
+  local digits = tostring(sprid):len()
+  --local id = sprsid if id < 10 then id = "00"..id elseif id < 100 then id = "0"..id end
+  local missing = maxSpriteIDCells-digits
+  for i=1, missing do id = id .. "0" end
+  id = id .. tostring(sprid)
   print(id,sprsidrect[1]+1,sprsidrect[2]+1)
   SpriteGroup(97,swidth-32,sprsbanksY,4,1,1,1,eapi.editorsheet)
   eapi.editorsheet:draw(sprsbank+72,swidth-(40-sprsbank*8),sprsbanksY)
