@@ -107,6 +107,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   love.graphics.translate(unpack(ofs.screen)) --Offset all the drawing opereations.
   
+  local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
+  
   --Internal Functions--
   local function _HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
     --x, y = x-_ScreenX, y-_ScreenY
@@ -641,7 +643,7 @@ return function(config) --A function that creates a new GPU peripheral.
       _Cursor = imgdata
       if _Cursor == "none" then
         love.mouse.setVisible(false)
-      else
+      elseif not _Mobile then
         love.mouse.setCursor(_CursorsCache[_Cursor].cursor)
       end
       return true --It ran successfully
@@ -660,7 +662,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
       local gifimg = love.graphics.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
       local hotx, hoty = hx*_LIKOScale, hy*_LIKOScale --Converted to host scale
-      local cur = love.mouse.newCursor(limg,hotx,hoty)
+      local cur = _Mobile and {} or love.mouse.newCursor(limg,hotx,hoty)
       
       _CursorsCache[name] = {cursor=cur,imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy}
       return true --It ran successfully
@@ -672,6 +674,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   events:register("love:resize",function() --The new size will be calculated in the top, because events are called by the order they were registered with
+    if _Mobile then return end
     for k, cursor in pairs(_CursorsCache) do
       local enimg = cursor.imgdata:enlarge(_LIKOScale)
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
