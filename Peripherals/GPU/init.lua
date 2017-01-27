@@ -677,7 +677,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
       local hotx, hoty = cursor.hx*_LIKOScale, cursor.hy*_LIKOScale --Converted to host scale
       local cur = love.mouse.newCursor(limg,hotx,hoty)
-      _CursorsCache[k].cursor = cur
+      _Cursor = "none"; _CursorsCache[k].cursor = cur
     end
     exe(GPU.cursor(_Cursor))
   end)
