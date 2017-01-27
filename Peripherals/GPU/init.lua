@@ -608,12 +608,12 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   function GPU.screenshot(x,y,w,h)
-    --local x, y, w, h = x or 1, y or 2, w or 192, h or 128
+    local x, y, w, h = x or 1, y or 1, w or _LIKO_W, h or _LIKO_H
     if x and type(x) ~= "number" then return false, "X must be a number, provided: "..type(x) end
     if y and type(y) ~= "number" then return false, "Y must be a number, provided: "..type(y) end
     if w and type(w) ~= "number" then return false, "W must be a number, provided: "..type(w) end
     if h and type(h) ~= "number" then return false, "H must be a number, provided: "..type(h) end
-    return true, exe(GPU.imagedata(_ScreenCanvas:newImageData(x,y,w,h)))
+    return true, exe(GPU.imagedata(_ScreenCanvas:newImageData(x-1,y-1,w,h)))
   end
   
   --Mouse API--
