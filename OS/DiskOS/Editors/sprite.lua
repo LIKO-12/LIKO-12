@@ -11,6 +11,8 @@ local bsizeH = bankH*imgh --The height of each bank in pixels
 local sizeW, sizeH = sheetW*imgw, sheetH*imgh --The size of the spritessheet in pixels
 
 local SpriteMap, mflag = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH), false --The spritemap, plus mouse drawing flag
+local flagsData = "" --A string contain each flag (byte) as a char
+for i=1, sheetW*sheetH do flagsData = flagsData..string.char(0) end
 
 --[[The configuration tables scheme:
 draw: spriteID, x,y, w,h, spritesheet| OR: x,y, 0, w,h (marked by IMG_DRAW)
@@ -20,26 +22,25 @@ grid: gridX,gridY, gridW,gridH, cellW, cellH
 
 --SpriteSheet Sprite Selection--
 local sprsrecto = {1,sheight-(8+bsizeH+1), swidth,bsizeH+2, false, 1} --SpriteSheet Outline Rect
-local sprsdraw = {1,sheight-(8+bsizeH)} --SpriteSheet Draw Location; IMG_DRAW
+local sprsdraw = {1,sheight-(8+bsizeH), 0, 1,1} --SpriteSheet Draw Location; IMG_DRAW
 local sprsgrid = {sprsdraw[1],sprsdraw[2], sizeW,bsizeH, sheetW,bankH} --The SpriteSheet selection grid
-local sprssrect = {sprsrecto[1],sprsrecto[2], imgw+2,imgh+2, true, 8} --SpriteSheet Select Rect (that white box on the selected sprite)
-local sprsbanksgrid = {swidth-(4*8+1),sheight-(sprsrecto[1]+8), 8*4,8, 4,1} --The grid of banks selection buttons
+local sprssrect = {sprsrecto[1]-1,sprsrecto[2], imgw+2,imgh+2, true, 8} --SpriteSheet Select Rect (that white box on the selected sprite)
+local sprsbanksgrid = {swidth-(4*8+1),sprsrecto[2]-8, 8*4,8, 4,1} --The grid of banks selection buttons
 local sprsid = 1 --Selected Sprite ID
 local sprsmflag = false --Sprite selection mouse flag
 local sprsbquads = {} --SpriteSheets 4 BanksQuads
 local sprsbank = 1 --Current Selected Bank
 for i = 1, 4 do --Create the banks quads
-  sprsbquads[i] = eapi.editorsheet:image():quad(1,(i*8*bankH-8*bankH)+1,_,bankH*8)
+  sprsbquads[i] = SpriteMap:image():quad(1,(i*bsizeH-bsizeH)+1,sizeW,bsizeH)
 end
 
 local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in the biggest sprite id.
 local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*4+3),sprsbanksgrid[2], 1+maxSpriteIDCells*4,7, false, 7, 14} --The rect of sprite id; The extra argument is the color of number print
-local revdraw = {sprsidrect[1]-(imgw+1),sprsrecto[2]-(imgh+1)} --The small image at the right of the id with the actual sprite size
+local revdraw = {sprsidrect[1]-(imgw+1),sprsrecto[2]-(imgh+1), imgw, imgh} --The small image at the right of the id with the actual sprite size
 
 --The current sprite flags--
-local flagsgrid = {swidth-(8*7+2),revdraw[2]-(8+2), 8*7,6, 8,1} --The sprite flags grid
+local flagsgrid = {swidth-(8*7),revdraw[2]-(8), 8*7,6, 8,1} --The sprite flags grid
 local flagsdraw = {flagsgrid[1]-1,flagsgrid[2]-1} --The position of the first (leftmost) flag
-local flags = 0 --All 00000000
 
 --Tools Selection--
 local toolsdraw = {104, revdraw[1]-(8*5+4),revdraw[2], 5,1, 1,1, eapi.editorsheet} --Tools draw arguments
@@ -70,7 +71,7 @@ local imgrecto = {imgdraw[1]-1,imgdraw[2]-1,psize*imgw+2,psize*imgh+2, false,1} 
 local imggrid = {imgdraw[1],imgdraw[2], psize*imgw,psize*imgh, imgw,imgh} --The image drawing grid
 
 --The Color Selection Pallete--
-temp = {col=0,height=transdraw[3]-(3+3)} --Temporary Variable
+temp = {col=0,height=transdraw[3]-(8+3+3)} --Temporary Variable
 local palpsize = math.floor(temp.height/4) --The size of each color box in the color selection pallete
 local palimg = imagedata(4,4):map(function() temp.col = temp.col + 1 return temp.col end ):image() --The image of the color selection pallete
 local palrecto = {swidth-(palpsize*4+3),8+3, palpsize*4+2,palpsize*4+2, true, 1} --The outline rectangle of the color selection pallete
@@ -210,45 +211,44 @@ function se:redrawCP() --Redraw color pallete
   rect(colsrectL)
 end
 
---------------------------------------------
-
-function se:redrawSPRS()
+function se:redrawSPRS() _ = nil
   rect(sprsrecto)
-  SpriteMap:image():draw(sprsdraw[1],sprsdraw[2],sprsdraw[3],sprsdraw[4],sprsdraw[5],sprsbquads[sprsbank])
+  SpriteMap:image():draw(sprsdraw[1],sprsdraw[2], sprsdraw[3], sprsdraw[4],sprsdraw[5], sprsbquads[sprsbank])
   rect(sprssrect)
   rect(sprsidrect)
   color(sprsidrect[7])
-  local id == ""
-  local digits = tostring(sprid):len()
-  --local id = sprsid if id < 10 then id = "00"..id elseif id < 100 then id = "0"..id end
-  local missing = maxSpriteIDCells-digits
-  for i=1, missing do id = id .. "0" end
-  id = id .. tostring(sprid)
+  local id = ""; for i=1, maxSpriteIDCells-(tostring(sprsid):len()) do id = id .. "0" end; id = id .. tostring(sprsid)
   print(id,sprsidrect[1]+1,sprsidrect[2]+1)
-  SpriteGroup(97,swidth-32,sprsbanksY,4,1,1,1,eapi.editorsheet)
-  eapi.editorsheet:draw(sprsbank+72,swidth-(40-sprsbank*8),sprsbanksY)
+  SpriteGroup(97,sprsbanksgrid[1],sprsbanksgrid[2],sprsbanksgrid[5],sprsbanksgrid[6],1,1,eapi.editorsheet)
+  eapi.editorsheet:draw(sprsbank+72,sprsbanksgrid[1]+(sprsbank-1)*8,sprsbanksgrid[2])
 end
 
 function se:redrawSPR()
   rect(imgrecto)
   SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],SpriteMap:quad(sprsid))
-  rect(sprsidrect[1]-9,sprsidrect[2]-1,8,8,false,1)
-  SpriteMap:image():draw(sprsidrect[1]-9,sprsidrect[2]-1,0,1,1,SpriteMap:quad(sprsid))
+  rect(revdraw[1],revdraw[2], revdraw[3],revdraw[4] ,false,1)
+  SpriteMap:image():draw(revdraw[1],revdraw[2], 0, 1,1, SpriteMap:quad(sprsid))
 end
 
 function se:redrawTOOLS()
   --Tools
   SpriteGroup(unpack(toolsdraw))
-  eapi.editorsheet:draw((toolsdraw[1]+(stool-1))-24,toolsdraw[2]+(stool-1)*8,toolsdraw[3],0,toolsdraw[6],toolsdraw[7])
+  eapi.editorsheet:draw((toolsdraw[1]+(stool-1))-24, toolsdraw[2]+(stool-1)*8,toolsdraw[3], 0, toolsdraw[6],toolsdraw[7])
   
   --Transformations
   SpriteGroup(unpack(transdraw))
-  if strans then eapi.editorsheet:draw((transdraw[1]+(strans-1))-24,transdraw[2]+(strans-1)*8,transdraw[3],0,transdraw[6],transdraw[7]) end
+  if strans then eapi.editorsheet:draw((transdraw[1]+(strans-1))-24, transdraw[2]+(strans-1)*8,transdraw[3], 0, transdraw[6],transdraw[7]) end
 end
 
 function se:redrawFLAG()
-  --SpriteGroup(126,swidth-64,sprsbanksY-18,8,1,1,1,eapi.editorsheet)
-  SpriteGroup(126,swidth-64,sprsbanksY-10,8,1,1,1,eapi.editorsheet)
+  local flags = string.byte(flagsData:sub(sprsid,sprsid))
+  for i=1,8 do --Bit number
+    if bit.band(bit.rshift(flags,i-1),1) == 1 then
+      eapi.editorsheet:draw(125+i,flagsdraw[1]+(i-1)*7,flagsdraw[2]) --It's ON
+    else
+      eapi.editorsheet:draw(125,flagsdraw[1]+(i-1)*7,flagsdraw[2])--It's OFF
+    end
+  end
 end
 
 function se:redrawINFO()
@@ -301,13 +301,13 @@ function se:mousepressed(x,y,b,it)
     if b == 1 then
       colsL = (cy-1)*4+cx if colsL == 1 then colsL = 0 end
       local cx, cy = cx-1, cy-1
-      colsrectL[1] = swidth-(palpsize*4+3)+palpsize*cx
-      colsrectL[2] = 8+3+palpsize*cy
+      colsrectL[1] = palrecto[1] + cx*palpsize
+      colsrectL[2] = palrecto[2] + cy*palpsize
     elseif b == 2 then
       colsR = (cy-1)*4+cx if colsR == 1 then colsR = 0 end
       local cx, cy = cx-1, cy-1
-      colsrectR[1] = swidth-(palpsize*4+2)+palpsize*cx
-      colsrectR[2] = 8+3+1+palpsize*cy
+      colsrectR[1] = paldraw[1] + cx*palpsize
+      colsrectR[2] = paldraw[2] + cy*palpsize
     end
     
     self:redrawCP()
@@ -317,9 +317,9 @@ function se:mousepressed(x,y,b,it)
   local cx = whereInGrid(x,y,sprsbanksgrid)
   if cx then
     sprsbank = cx
-    local idbank = math.floor((sprsid-1)/(24*3))+1
-    if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*24*3 elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*24*3 end
-    self:redrawSPRS() self:redrawSPR()
+    local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
+    if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*sheetW*bankH elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*sheetW*bankH end
+    self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
   end
   
   --Sprite Selection
@@ -328,9 +328,9 @@ function se:mousepressed(x,y,b,it)
     sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
     local cx, cy = cx-1, cy-1
     sprssrect[1] = cx*8
-    sprssrect[2] = sheight-(8+bsizeH+1)+cy*8
+    sprssrect[2] = sprsrecto[2]+cy*8
     
-    self:redrawSPRS() self:redrawSPR() sprsmflag = true
+    self:redrawSPRS() self:redrawSPR() self:redrawFLAG() sprsmflag = true
   end
   
   --Tool Selection
@@ -362,6 +362,15 @@ function se:mousepressed(x,y,b,it)
     tools[stool](self,cx,cy,b)
     self:redrawSPR() self:redrawSPRS()
   end
+  
+  --Setting Flags
+  local cx, cy = whereInGrid(x,y,flagsgrid)
+  if cx then
+    local flags = string.byte(flagsData:sub(sprsid))
+    flags = bit.bxor(flags,bit.lshift(1,cx-1))
+    flagsData = flagsData:sub(0,sprsid-1)..string.char(flags)..flagsData:sub(sprsid+1,-1)
+    self:redrawFLAG()
+  end
 end
 
 function se:mousemoved(x,y,dx,dy,it,iw)
@@ -383,9 +392,9 @@ function se:mousemoved(x,y,dx,dy,it,iw)
       sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
       local cx, cy = cx-1, cy-1
       sprssrect[1] = cx*8
-      sprssrect[2] = sheight-(8+bsizeH+1)+cy*8
+      sprssrect[2] = sprsrecto[2]+cy*8
       
-      self:redrawSPRS() self:redrawSPR()
+      self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
     end
   end
 end
@@ -408,9 +417,9 @@ function se:mousereleased(x,y,b,it)
       sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
       local cx, cy = cx-1, cy-1
       sprssrect[1] = cx*8
-      sprssrect[2] = sheight-(8+bsizeH+1)+cy*8
+      sprssrect[2] = sprsrecto[2]+cy*8
       
-      self:redrawSPRS() self:redrawSPR()
+      self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
     end
   end
   sprsmflag = false
