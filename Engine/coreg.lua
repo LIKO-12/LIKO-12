@@ -59,6 +59,8 @@ function coreg:sandbox(f)
     xpcall=xpcall,
     getfenv=getfenv,
     setfenv=setfenv,
+    setmetatable=setmetatable,
+    getmetatable=getmetatable,
     string={
       byte=string.byte,
       char=string.char,
