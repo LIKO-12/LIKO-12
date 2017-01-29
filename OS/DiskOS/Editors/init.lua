@@ -11,7 +11,7 @@ function edit:initialize()
   self.editorsheet = SpriteSheet(image(fs.read("C://editorsheet.lk12")),24,12)
 
   self.active = 3
-  self.editors = {"sprite","sprite","sprite","sprite","sprite","sprite"}
+  self.editors = {"sprite","code","sprite","sprite","sprite","sprite"}
   self.chunks = {}
   self.leditors = {}
 
