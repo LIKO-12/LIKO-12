@@ -1,6 +1,8 @@
+local eapi = select(1,...) --The editor library is provided as an argument
+
 local ce = {} --Code editor
 
-local buffer = {} --A table containing lines of code
+local buffer = {""} --A table containing lines of code
 
 local screenW, screenH = screenSize()
 local lume = require("C://Libraries/lume")
@@ -13,8 +15,8 @@ comment = 14,
 str = 13
 }
 
-ce.bkc = 6--Background Color
-ce.cx, cy = 1, 1 --Cursor Position
+ce.bgc = 6--Background Color
+ce.cx, ce.cy = 1, 1 --Cursor Position
 ce.tw, ce.th = termSize() --The terminal size
 ce.th = ce.th-2 --Because of the top and bottom bars
 ce.vx, ce.vy = 1,1 --View postions
@@ -22,11 +24,11 @@ ce.vx, ce.vy = 1,1 --View postions
 --A usefull print function with color support !
 function ce:colorPrint(tbl,gx,gy)
   pushColor()
-  for i=1, #tbl, i=i+2 do
+  for i=1, #tbl, 2 do
     local col = tbl[i]
     local txt = tbl[i+1]
     color(col)
-    print(txt,_,true)--Disable auto newline
+    print(txt,false,true)--Disable auto newline
   end
   print("")--A new line
   popColor()
@@ -57,16 +59,31 @@ end
 
 --Draw the code on the screen
 function ce:drawBuffer()
-  local cbuffer = clua(lume.clone(lume.slice(buffer,self.shy,self.shy+self.th)),cluacolors)
-  rect(1,9,screenW,screenH-8*2,false,self.bkc)
+  local cbuffer = clua(lume.clone(lume.slice(buffer,self.vy,self.vy+self.th)),cluacolors)
+  rect(1,9,screenW,screenH-8*2,false,self.bgc)
   for k, l in ipairs(cbuffer) do
-    printCursor(-(self.shx-1),k+1,0)
+    printCursor(-(self.vx-2),k+1,0)
     self:colorPrint(l)
   end
 end
 
+function ce:drawLine()
+  local cline = clua({buffer[self.cy]},cluacolors)
+  rect(1,(self.cy-self.vy+2)*7-5, screenW,7, false,self.bgc)
+  printCursor(-(self.vx-2),(self.cy-self.vy+1)+1,self.bgc)
+  self:colorPrint(cline[1])
+end
+
+function ce:textinput(t)
+  buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
+  self.cx = self.cx + t:len()
+  self:checkPos()
+  self:drawLine()
+end
+
 function ce:entered()
-  
+  eapi:drawUI()
+  ce:drawBuffer()
 end
 
 function ce:leaved()
