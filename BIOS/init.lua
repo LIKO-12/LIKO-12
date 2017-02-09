@@ -140,41 +140,43 @@ end
 if MPer.GPU then --If there is an initialized gpu
   local g = MPer.GPU
   g.color(8)
-  local chars = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","-","_","@","#","$","&","*","!","+","=","%"}
+  local chars = {"#","%","="}
   --48x16 Terminal Size
-  function drawAnim() g.clear()
+  local function drawAnim() g.clear()
     for x=1,exe(g.termWidth()) do for y=1,exe(g.termHeight()) do
-      math.randomseed(os.clock()*os.time()*x)
-      g.color(math.floor(math.random(2,16)))
-      g.printCursor(x,y)
+      --[[math.randomseed(os.clock()*os.time()*x)
+      g.color(math.floor(math.random(8,16)))
+      --g.printCursor(x,y)
       math.randomseed(os.clock()*os.time()*y)
       local c = chars[math.floor(math.random(1,#chars))]
-      if math.random(0,20) % 2 == 0 then c = c:upper() end
-      g.print(c,_,true)
+      --if math.random(0,20) % 2 == 0 then c = c:upper() end]]
+      g.color(8 + (x+y) % 8)
+      g.print(chars[((y+x) % 2)+2],false)
     end end
   end
   
   g.clear()
   g.printCursor(_,_,0)
   
+  local time = 0.25
   local timer = 0
-  local stage = 1
+  local stage = 0
   
   events:register("love:update",function(dt)
-    if stage == 7 then --Create the coroutine
+    if stage == 3 then --Create the coroutine
       g.color(8)
       g.clear(1)
       g.printCursor(1,1,1)
       startCoroutine()
-      stage = 8 --So coroutine don't get duplicated
+      stage = 4 --So coroutine don't get duplicated
     end
-    if stage < 4 and stage > 1 then drawAnim() end
+    if stage == 0 then drawAnim() stage = 1 end
     
-    if stage < 8 then
+    if stage < 3 then
       timer = timer + dt
-      if timer > 0.25 then timer = timer -0.25
+      if timer > time then timer = timer - time
         stage = stage +1
-        if stage < 5 then --[[drawAnim()]] elseif stage == 5 then g.clear() end
+        if stage == 2 then g.clear() end
       end
     end
   end)

@@ -11,9 +11,8 @@ local function nextPath(p)
 end
 
 printCursor(1,1,1)
-color(9) print("LIKO-12 V0.6.0 DEV")
-color(8) print("DiskOS DEV B1")
-flip() sleep(0.5)
+color(9) print("LIKO-12 V0.6.0 DEV") flip() sleep(0.5)
+color(8) print("DiskOS DEV B1") flip() sleep(0.5)
 color(7) print("\nA PICO-8 INSPIRED OS WITH EXTRA ABILITIES")
 flip() sleep(0.25)
 color(10) print("TYPE HELP FOR HELP")
