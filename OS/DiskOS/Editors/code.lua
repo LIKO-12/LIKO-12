@@ -21,8 +21,12 @@ ce.tw, ce.th = termSize() --The terminal size
 ce.th = ce.th-2 --Because of the top and bottom bars
 ce.vx, ce.vy = 1,1 --View postions
 
+ce.btimer = 0 --The cursor blink timer
+ce.btime = 0.5 --The cursor blink time
+ce.bflag = true --The cursor is blinking atm ?
+
 --A usefull print function with color support !
-function ce:colorPrint(tbl,gx,gy)
+function ce:colorPrint(tbl)
   pushColor()
   for i=1, #tbl, 2 do
     local col = tbl[i]
@@ -30,7 +34,7 @@ function ce:colorPrint(tbl,gx,gy)
     color(col)
     print(txt,false,true)--Disable auto newline
   end
-  print("")--A new line
+  --print("")--A new line
   popColor()
 end
 
@@ -57,6 +61,13 @@ function ce:checkPos()
   end
 end
 
+--Draw the cursor blink
+function ce:drawBlink()
+  if self.bflag then
+    rect((self.cx-self.vx+1)*4-2,(self.cy-self.vy+1)*8+2, 4,5, false, 5)
+  end
+end
+
 --Draw the code on the screen
 function ce:drawBuffer()
   local cbuffer = clua(lume.clone(lume.slice(buffer,self.vy,self.vy+self.th)),cluacolors)
@@ -65,13 +76,15 @@ function ce:drawBuffer()
     printCursor(-(self.vx-2),k+1,0)
     self:colorPrint(l)
   end
+  self:drawBlink()
 end
 
 function ce:drawLine()
   local cline = clua({buffer[self.cy]},cluacolors)
-  rect(1,(self.cy-self.vy+2)*7-5, screenW,7, false,self.bgc)
+  rect(1,(self.cy-self.vy+2)*8-7, screenW,7, false,self.bgc)
   printCursor(-(self.vx-2),(self.cy-self.vy+1)+1,self.bgc)
   self:colorPrint(cline[1])
+  self:drawBlink()
 end
 
 function ce:textinput(t)
@@ -80,6 +93,19 @@ function ce:textinput(t)
   self:checkPos()
   self:drawLine()
 end
+
+ce.keymap = {
+  ["return"] = function(self)
+    self.cx, self.cy = 1, self.cy+1
+    if self.cy > #buffer then
+      table.insert(buffer,"")
+    else
+      buffer = lume.concat(lume.slice(buffer,0,self.cy-1),{""},lume.slice(buffer,self.cy,-1))
+    end
+    self:checkPos()
+    self:drawBuffer()
+  end
+}
 
 function ce:entered()
   eapi:drawUI()
@@ -90,6 +116,17 @@ function ce:leaved()
   
 end
 
+function ce:touchpressed() textinput(true) end
+
+function ce:update(dt)
+  --Blink timer
+  self.btimer = self.btimer + dt
+  if self.btimer >= self.btime then
+    self.btimer = self.btimer - self.btime
+    self.bflag = not self.bflag
+    self:drawLine() --Redraw the current line
+  end
+end
 
 
 return ce
