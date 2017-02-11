@@ -104,6 +104,28 @@ ce.keymap = {
     end
     self:checkPos()
     self:drawBuffer()
+  end,
+  ["left"] = function(self)
+    if self.cx > 1 then 
+      self.cx = self.cx - 1
+    end
+    self:checkPos()
+    self:drawLine()
+  end,
+  ["right"] = function(self)
+    if self.cx < self.tw then
+      self.cx = self.cx + 1
+    end
+    self:checkPos()
+    self:drawLine()
+  end,
+  ["backspace"] = function(self)
+    if self.cx > 1 then 
+      self.cx = self.cx - 1
+    end
+    buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)
+    self:checkPos()
+    self:drawLine()
   end
 }
 
@@ -127,6 +149,5 @@ function ce:update(dt)
     self:drawLine() --Redraw the current line
   end
 end
-
 
 return ce
