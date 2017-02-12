@@ -163,6 +163,16 @@ ce.keymap = {
       self.cx = self.cx-1
       if self:checkPos() then self:drawBuffer() else self:drawLine() end
     end
+  end,
+  
+  ["home"] = function(self)
+    self.cx = 1
+    drawLine()
+  end,
+  
+  ["end"] = function(self)
+    self.cx = buffer[self.cy]:len()+1
+    drawLine()
   end
 }
 
