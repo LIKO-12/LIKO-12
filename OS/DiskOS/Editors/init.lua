@@ -1,6 +1,51 @@
 --This file is responsible about the editors shown after pressing escape--
 local edit = {}
 
+--=Contributing Guide=--
+--[[
+Creating an editor:
+1. Create a new file at Editors folder
+2. Make a new table at the top of the file and add it as an return value in the file ex: local ce = {}; return ce
+3. Edit self.editors in edit:initialize and change the name of a slot to the name of .lua file of your editor (without adding the .lua)
+
+* The editor api is passed as an argument to the editor file, to access it add this to the top of your file:
+local eapi = select(1,...)
+
+* The only usefull function in the editor api is eapi:drawUI()
+which clears the whole screen and draws the top and bottom bars of every editor
+Besure to call this at editor:entered()
+
+* editor:entered() is called when the user switches to your editor
+The first argument passed tk this callback is the previos editor table, be warned it could be a nil when yur editor is the first to be chosed !
+The rest arguments are the return values of oldeditor:leaved()
+Be sure to call eapi:drawUI() here to clear the screen
+
+* editor:leaved() is called when the user is switching to an other editor than your
+The first argument is the table of the new editor
+You can return values that are passed to editor:entered() [see above]
+
+* You don't have to do the while loop in your editor (see written editors)
+The editor api automatically handles the pullEvent() for you
+When an event happens editor:"event name" is called with the arguments of the event, ex:
+function editor:mousepressed(x,y, button, is touch) end
+function editor:update(dt) end
+
+* editor.keymap = {} here you can assign you key binds:
+editor.keymap["backspace"] = function(self,isrepeat) end
+The key name can be any love2d key constant or and scancode
+You can combine it with ctrl, alt or shift, ex: editor.keymap["ctrl-c"]
+
+* Note when reading existing editors:
+The may use some api functions defined at DiskOS/api.lua
+
+Good luck !
+
+==Contributers to this file==
+(Add your name when contributing to this file)
+
+- Rami Sabbagh (RamiLego4Game)
+]]
+
 local swidth, sheight = screenSize()
 
 function edit:initialize()
@@ -90,7 +135,7 @@ function edit:loop() --Starts the while loop
         end
         if(isKDown("lshift", "rshift")) then
           key = "shift-" .. key
-          sc = "ctrl-" .. sc
+          sc = "shift-" .. sc
         end
         
         if self.leditors[self.active].keymap and self.leditors[self.active].keymap[key] then self.leditors[self.active].keymap[key](self.leditors[self.active],c)
