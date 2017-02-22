@@ -24,6 +24,12 @@ Be sure to call eapi:drawUI() here to clear the screen
 The first argument is the table of the new editor
 You can return values that are passed to editor:entered() [see above]
 
+* editor:export() is called when the editors are saving the data to a disk, you must 
+pass a string of the editor data that may be loaded later at editor:import see down V
+
+* editor:import(data) is called when the editors are loading from a disk, you will be passed the data string the editor passed in editor:export
+it won't be called if there is no data to load.
+
 * You don't have to do the while loop in your editor (see written editors)
 The editor api automatically handles the pullEvent() for you
 When an event happens editor:"event name" is called with the arguments of the event, ex:
@@ -57,6 +63,7 @@ function edit:initialize()
 
   self.active = 3
   self.editors = {"sprite","code","sprite","sprite","sprite","sprite"}
+  self.tosave =  {false,   true,  true,    false,   false,   false   }
   self.chunks = {}
   self.leditors = {}
 
@@ -112,6 +119,32 @@ function edit:switchEditor(neweditor)
       end
     end
   end
+end
+
+function edit:import(data) --Import editors data
+  local chunk = loadstring(data)
+  setfenv(chunk,{})
+  data = chunk()
+  for e, d in pairs(data) do
+    if self.leditors[e] and self.leditors[e].import then
+      self.leditors[e]:import(d)
+    end
+  end
+end
+
+function edit:export() --Export editors data
+  local code = "return {"
+  
+  for k,v in ipairs(self.tosave) do
+    if v and self.leditors[k].export then
+      local data = self.leditors[k]:export()
+      if type(data) ~= "nil" then
+        code = code.."\n["..tostring(k).."] = "..string.format("%q",data)..","
+      end
+    end
+  end
+  
+  code = code .. "\n}"
 end
 
 function edit:loop() --Starts the while loop
