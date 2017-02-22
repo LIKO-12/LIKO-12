@@ -201,12 +201,14 @@ ce.keymap = {
   
   ["home"] = function(self)
     self.cx = 1
-    drawLine()
+    self:checkPos()
+    self:drawLine()
   end,
   
   ["end"] = function(self)
     self.cx = buffer[self.cy]:len()+1
-    drawLine()
+    self:checkPos()
+    self:drawLine()
   end
 }
 
