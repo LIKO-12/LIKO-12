@@ -171,6 +171,15 @@ function se:export(path)
   return SpriteMap:data():encode()
 end
 
+function se:import(data)
+  if data then
+    SpriteMap = SpriteSheet(imagedata(data):image(),sheetW,sheetH)
+  else
+    SpriteMap = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH)
+  end
+  self:_redraw()
+end
+
 function se:copy()
   clipboard(math.b64enc(SpriteMap:extract(sprsid):export()))
   infotimer = 2 --Show info for 2 seconds
@@ -194,14 +203,6 @@ function se:paste()
     infotext = "PASTED TO SPRITE "..sprsid
   end
   self:redrawINFO()
-end
-
-function se:load(path)
-  if path then
-    SpriteMap = SpriteSheet(image("/"..path..".lk12"),sheetW,sheetH)
-  else
-    SpriteMap = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH)
-  end
 end
 
 function se:redrawCP() --Redraw color pallete

@@ -243,5 +243,28 @@ function ce:update(dt)
   end
 end
 
+local function magiclines(s)
+  if s:sub(-1)~="\n" then s=s.."\n" end
+  return s:gmatch("(.-)\n")
+end
+
+function ce:import(data)
+  buffer = {}
+  for line in magiclines do
+    table.insert(buffer,line)
+  end
+  if not buffer[1] then buffer[1] = "" end
+  self.cx, self.cy, self.vx, self.vy = 1,1,1,1
+  self:drawBuffer()
+end
+
+function ce:export()
+  local data = ""
+  for k, line in ipairs(buffer) do
+    data = data .. "\n" .. tostring(line)
+  end
+  return data
+end
+
 
 return ce
