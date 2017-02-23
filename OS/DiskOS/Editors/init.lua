@@ -145,6 +145,8 @@ function edit:export() --Export editors data
   end
   
   code = code .. "\n}"
+  
+  return code
 end
 
 function edit:loop() --Starts the while loop
