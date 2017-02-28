@@ -4,7 +4,6 @@ local curdrive, curdir, curpath = "C", "/", "C:///"
 
 local editor = require("C://Editors")
 editor:initialize()
-_Editor = editor
 
 local function nextPath(p)
   if p:sub(-1)~=";" then p=p..";" end
