@@ -550,7 +550,7 @@ return function(config) --A function that creates a new GPU peripheral.
       imageData = love.image.newImageData(w,h)
     elseif type(w) == "string" then --Load specialized liko12 image format
       if w:sub(0,12) == "LK12;GPUIMG;" then
-        local w,h,data = string.match(w,"LK12;(%d+)x(%d+);(.+)")
+        local w,h,data = string.match(w,"LK12;GPUIMG;(%d+)x(%d+);(.+)")
         imageData = love.image.newImageData(w,h)
         local Colors = {["0"]=0,["1"]=1,["2"]=2,["3"]=3,["4"]=4,["5"]=5,["6"]=6,["7"]=7,["8"]=8,["9"]=9,a=10,b=11,c=12,d=13,e=14,f=15,g=16}
         imageData:mapPixel(function(x,y,r,g,b,a)
