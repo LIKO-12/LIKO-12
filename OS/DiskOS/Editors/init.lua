@@ -63,7 +63,7 @@ function edit:initialize()
 
   self.active = 3
   self.editors = {"sprite","code","sprite","sprite","sprite","sprite"}
-  self.tosave =  {false,   true,  true,    false,   false,   false   }
+  self.saveid =  {-1 , "luacode", "spritesheet", -1, -1, -1}
   self.chunks = {}
   self.leditors = {}
 
@@ -125,9 +125,9 @@ function edit:import(data) --Import editors data
   local chunk = loadstring(data)
   setfenv(chunk,{})
   data = chunk()
-  for e, d in pairs(data) do
-    if self.leditors[e] and self.leditors[e].import then
-      self.leditors[e]:import(d)
+  for k, id in ipairs(self.saveid) do
+    if id ~= -1 and data[tostring(id)] and self.leditor[k].import then
+      self.leditors[k]:import(data[tostring(id)])
     end
   end
 end
@@ -135,11 +135,11 @@ end
 function edit:export() --Export editors data
   local code = "return {"
   
-  for k,v in ipairs(self.tosave) do
-    if v and self.leditors[k].export then
+  for k,v in ipairs(self.saveid) do
+    if v ~= -1 and self.leditors[k].export then
       local data = self.leditors[k]:export()
       if type(data) ~= "nil" then
-        code = code.."\n["..tostring(k).."] = "..string.format("%q",data)..","
+        code = code.."\n['"..tostring(v).."'] = "..string.format("%q",data)..","
       end
     end
   end
