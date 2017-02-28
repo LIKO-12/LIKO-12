@@ -118,7 +118,9 @@ function coreg:sandbox(f)
       b64enc = basexx.to_base64, --Will be replaced by love.math ones in love 0.11
       b64dec = basexx.from_base64,
       hexenc = basexx.to_hex,
-      hexdec = basexx.from_hex
+      hexdec = basexx.from_hex,
+      compress = function(...) return love.math.compress(...):getString() end,
+      decompress = love.math.decompress
     },
     coroutine={
       resume = coroutine.resume,
