@@ -7,6 +7,7 @@ Creating an editor:
 1. Create a new file at Editors folder
 2. Make a new table at the top of the file and add it as an return value in the file ex: local ce = {}; return ce
 3. Edit self.editors in edit:initialize and change the name of a slot to the name of .lua file of your editor (without adding the .lua)
+4. Edit self.saveid in edit:initialize and change the value of a slot to a save id for your editor, leave -1 if it doesn't save.
 
 * The editor api is passed as an argument to the editor file, to access it add this to the top of your file:
 local eapi = select(1,...)
