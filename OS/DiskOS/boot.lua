@@ -51,13 +51,14 @@ function require(path,...)
   if type(path) ~= "string" then return error("Require path must be a string, provided: "..type(path)) end
   path = path:gsub("%.","/")
   if package.loaded[path] then return unpack(package.loaded[path]) end
+  local origPath = path
   if not fs.exists(path..".lua") then path = path.."/init" end
   local chunk, err = fs.load(path..".lua")
   if not chunk then return error(err or "Load error ("..tostring(path)..")") end
   local args = {pcall(chunk,path,...)}
   if not args[1] then return error(args[2] or "Runtime error") end
-  package.loaded[path] = extractArgs(args,1)
-  return unpack(package.loaded[path])
+  package.loaded[origPath] = extractArgs(args,1)
+  return unpack(package.loaded[origPath])
 end
 
 keyrepeat(true) --Enable keyrepeat
