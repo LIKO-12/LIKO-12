@@ -549,7 +549,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if h then
       imageData = love.image.newImageData(w,h)
     elseif type(w) == "string" then --Load specialized liko12 image format
-      if w:sub(0,5) == "LK12;" then
+      if w:sub(0,12) == "LK12;GPUIMG;" then
         local w,h,data = string.match(w,"LK12;(%d+)x(%d+);(.+)")
         imageData = love.image.newImageData(w,h)
         local Colors = {["0"]=0,["1"]=1,["2"]=2,["3"]=3,["4"]=4,["5"]=5,["6"]=6,["7"]=7,["8"]=8,["9"]=9,a=10,b=11,c=12,d=13,e=14,f=15,g=16}
@@ -598,7 +598,7 @@ return function(config) --A function that creates a new GPU peripheral.
       return newData
     end
     function id:encode() --Export to liko12 format
-      local data = "LK12;"..self:width().."x"..self.height()..";"
+      local data = "LK12;GPUIMG;"..self:width().."x"..self.height()..";"
       local colors = {"1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g";[0]="0"}
       self:map(function(x,y,c) data = data..colors[c] end)
       return data
