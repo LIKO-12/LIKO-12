@@ -250,12 +250,15 @@ end
 
 function ce:import(data)
   buffer = {}
-  for line in magiclines do
-    table.insert(buffer,line)
+  local firstline = true
+  for line in magiclines(data) do
+    if not(firstline and line == "") then
+      table.insert(buffer,line)
+    end
+    firstline = false
   end
   if not buffer[1] then buffer[1] = "" end
   self.cx, self.cy, self.vx, self.vy = 1,1,1,1
-  self:drawBuffer()
 end
 
 function ce:export()

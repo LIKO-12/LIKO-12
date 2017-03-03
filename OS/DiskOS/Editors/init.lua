@@ -127,7 +127,7 @@ function edit:import(data) --Import editors data
   setfenv(chunk,{})
   data = chunk()
   for k, id in ipairs(self.saveid) do
-    if id ~= -1 and data[tostring(id)] and self.leditor[k].import then
+    if id ~= -1 and data[tostring(id)] and self.leditors[k].import then
       self.leditors[k]:import(data[tostring(id)])
     end
   end

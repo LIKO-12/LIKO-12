@@ -177,7 +177,6 @@ function se:import(data)
   else
     SpriteMap = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH)
   end
-  self:_redraw()
 end
 
 function se:copy()

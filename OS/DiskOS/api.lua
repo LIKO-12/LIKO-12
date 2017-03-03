@@ -1,4 +1,6 @@
 --Build DiskOS APIs--
+_DiskVer = 1 --It's a global
+
 function SpriteSheet(img,w,h)
   local ss = {img=img,w=w,h=h} --SpriteSheet
   ss.cw, ss.ch, ss.quads = ss.img:width()/ss.w, ss.img:height()/ss.h, {}
