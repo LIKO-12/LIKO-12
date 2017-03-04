@@ -89,6 +89,9 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Post initialization (Setup the in liko12 gpu settings)--
   
+  local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo()
+  --love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice)
+  
   local ofs = {} --Offsets table.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
   ofs.point = {-1,0} --The offset of GPU.point/s.
@@ -104,6 +107,16 @@ return function(config) --A function that creates a new GPU peripheral.
   ofs.rectSize_line = {-1,-1} --The offset of w,h in GPU.rect with l as false.
   ofs.image = {-1,-1}
   ofs.quad = {-1,-1}
+  
+  if gpuVersion == "OpenGL ES 3.1 v1.r7p0-03rel0.b8759509ece0e6dda5325cb53763bcf0" then
+    --GPU glitch fix for this driver, happens at my samsung j700h
+    ofs.screen = {0,-1}
+    ofs.point = {0,0}
+    ofs.print = {-1,0}
+    ofs.rect = {-1,0}
+    ofs.image = {-1,0}
+    ofs.quad = {-1,0}
+  end
   
   love.graphics.translate(unpack(ofs.screen)) --Offset all the drawing opereations.
   
