@@ -102,7 +102,7 @@ function gif:frame(data)
 	for y=y0, y1 do
 		for x=x0, x1 do
 			local r, g, b=data:getPixel(x, y)
-			local index=string.char(palmap[bit.lshift(r, 16)+bit.lshift(g, 8)+b] or error("R:"..tostring(r).." G:"..tostring(g).." B:"..tostring(b))) --FIXME PLEASE
+			local index=string.char(palmap[bit.lshift(r, 16)+bit.lshift(g, 8)+b] or error("R:"..tostring(r).." G:"..tostring(g).." B:"..tostring(b).." X:"..x.." Y:"..y)) --FIXME PLEASE
 			local temp=buffer..index
 			if codetbl[temp] then
 				buffer=temp
