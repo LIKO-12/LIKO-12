@@ -43,7 +43,7 @@ local datares = nextarg()
 if not datares then color(9) print("Invalid Data !") return end
 local dataw, datah = string.match(datares,"(%d+)x(%d+)")
 if not (dataw and datah) then color(9) print("Invalid Data !") return end dataw, datah = tonumber(dataw), tonumber(datah)
-if dataw ~= sw or datah ~= sh then color(9) print("This disk is made for GPUs with "..dataw.."x"..datah.."res, current GPU is "..sw.."x"..sh) return end
+if dataw ~= sw or datah ~= sh then color(9) print("This disk is made for GPUs with "..dataw.."x"..datah.." resolution, current GPU is "..sw.."x"..sh) return end
 
 local compress = nextarg()
 if not compress then color(9) print("Invalid Data !") return end
