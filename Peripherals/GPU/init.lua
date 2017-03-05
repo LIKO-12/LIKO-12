@@ -50,8 +50,6 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local _ShouldDraw = false --This flag means that the gpu has to update the screen for the user.
   
-  local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing)
-  
   --Hook the resize function--
   events:register("love:resize",function(w,h) --Do some calculations
     _HOST_W, _HOST_H = w, h
@@ -71,12 +69,10 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
   
   --Initialize the gpu--
+  love.graphics.setDefaultFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --Create the screen canvas.
-  _ScreenCanvas:setFilter("nearest") --Set the scaling filter to the nearest pixel.
-  
   local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale) --Create the gif canvas, used to apply the gif scale factor.
-  _GIFCanvas:setFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
-  love.graphics.setDefaultFilter("nearest","nearest")
+  local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing)
   
   love.graphics.clear(0,0,0,255) --Clear the host screen.
   
@@ -540,9 +536,9 @@ return function(config) --A function that creates a new GPU peripheral.
       GPU.pushColor()
       love.graphics.setColor(255,255,255,255)
       if quad then
-        love.graphics.draw(Image,quad,x+ofs.quad[1],y+ofs.quad[2],r,sx,sy)
+        love.graphics.draw(Image,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,math.floor(sx),math.floor(sy))
       else
-        love.graphics.draw(Image,x+ofs.image[1],y+ofs.image[2],r,sx,sy)
+        love.graphics.draw(Image,math.floor(x+ofs.image[1]),ath.floor(y+ofs.image[2]),r,math.floor(sx),math.floor(sy))
       end
       GPU.popColor()
       _ShouldDraw = true
@@ -751,6 +747,8 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setCanvas(_GIFCanvas)
       
       love.graphics.clear(0,0,0,255) --Clear the screen (Some platforms are glitching without this).
+      
+      love.graphics.setColor(255,255,255,255)
       
       love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFScale, _GIFScale) --Draw the canvas.
       
