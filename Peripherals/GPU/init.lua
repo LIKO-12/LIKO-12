@@ -533,12 +533,13 @@ return function(config) --A function that creates a new GPU peripheral.
     local i = {}
     
     function i:draw(x,y,r,sx,sy,quad)
+      local x, y, sx, sy = x or 1, y or 1, sx or 1, sy or 1
       GPU.pushColor()
       love.graphics.setColor(255,255,255,255)
       if quad then
         love.graphics.draw(Image,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,math.floor(sx),math.floor(sy))
       else
-        love.graphics.draw(Image,math.floor(x+ofs.image[1]),ath.floor(y+ofs.image[2]),r,math.floor(sx),math.floor(sy))
+        love.graphics.draw(Image,math.floor(x+ofs.image[1]),math.floor(y+ofs.image[2]),r,math.floor(sx),math.floor(sy))
       end
       GPU.popColor()
       _ShouldDraw = true
