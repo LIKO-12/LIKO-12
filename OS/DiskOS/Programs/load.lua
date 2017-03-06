@@ -1,6 +1,7 @@
 local source = select(1,...)
 
 local term = require("C://terminal")
+local eapi = require("C://Editors")
 
 if source then source = term.parsePath(source)..".lk12" end
 
@@ -21,7 +22,16 @@ nextarg() --Skip LK12;
 
 local filetype = nextarg()
 if not filetype then color(9) print("Invalid Data !") return end
-if filetype ~= "OSData" then color(9) print("Can't load '"..filetype.."' files !") return end
+if filetype ~= "OSData" then
+  if filetype == "GPUIMG" then --Import it
+    if eapi.leditors[3] then
+      eapi.leditors[3]:import(saveData)
+      color(12) print("Imported to sprite editor successfully") return
+    end
+  else
+    color(9) print("Can't load '"..filetype.."' files !") return
+  end
+end
 
 local osname = nextarg()
 if not osname then color(9) print("Invalid Data !") return end
@@ -63,7 +73,6 @@ if compress ~= "none" then --Decompress
   data = math.decompress(data,compress,clevel)
 end
 
-local eapi = require("C://Editors")
 eapi:import(data)
 
 color(12) print("Loaded successfully")
