@@ -60,7 +60,7 @@ function edit:initialize()
   self.flavorBack = 5 --Brown
   self.background = 6 --Dark Grey
 
-  self.editorsheet = SpriteSheet(image(fs.read("C://editorsheet.lk12")),24,12)
+  self.editorsheet = SpriteSheet(image(fs.read("C://editorsheet.lk12")),24,16)
 
   self.active = 3
   self.editors = {"sprite","code","sprite","sprite","sprite","sprite"}
@@ -80,6 +80,14 @@ function edit:initialize()
   self.modeGridFlag = false
   self.modeGridHover = false
   self:loadCursors()
+end
+
+function edit:clearData()
+  --Will restart the editors simply
+  self.leditors = {}
+  for k,v in ipairs(self.chunks) do
+    table.insert(self.leditors,k,v(self))
+  end
 end
 
 function edit:loadCursors()
