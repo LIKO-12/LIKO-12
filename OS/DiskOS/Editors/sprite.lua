@@ -168,12 +168,23 @@ function se:leaved()
 end
 
 function se:export(path)
-  return SpriteMap:data():encode()
+  return SpriteMap:data():encode()..flagsData
 end
 
 function se:import(data)
   if data then
-    SpriteMap = SpriteSheet(imagedata(data):image(),sheetW,sheetH)
+    local w,h,imgdata = string.match(data,"LK12;GPUIMG;(%d+)x(%d+);(.+)")
+    flagsData = imgdata:sub(w*h+1,-1)
+    if flagsData:len() < sheetW*sheetH then
+      local missing = sheetW*sheetH
+      local zerochar = string.char(0)
+      for i=1,missing do
+        flagsData = flagsData..zerochar
+      end
+    end
+    imgdata = imgdata:sub(0,w*h)
+    imgdata = "LK12;GPUIMG;"..w.."x"..h..";"..imgdata
+    SpriteMap = SpriteSheet(imagedata(imgdata):image(),sheetW,sheetH)
   else
     SpriteMap = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH)
   end
