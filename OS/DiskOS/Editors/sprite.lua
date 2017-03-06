@@ -186,6 +186,8 @@ function se:import(data)
     imgdata = "LK12;GPUIMG;"..w.."x"..h..";"..imgdata
     SpriteMap = SpriteSheet(imagedata(imgdata):image(),sheetW,sheetH)
   else
+    local flagsData = ""
+    for i=1, sheetW*sheetH do flagsData = flagsData..string.char(0) end
     SpriteMap = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH)
   end
 end
