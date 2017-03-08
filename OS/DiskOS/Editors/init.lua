@@ -63,7 +63,7 @@ function edit:initialize()
   self.editorsheet = SpriteSheet(image(fs.read("C://editorsheet.lk12")),24,16)
 
   self.active = 3
-  self.editors = {"sprite","code","sprite","sprite","sprite","sprite"}
+  self.editors = {"soon","code","sprite","soon","soon","soon"}
   self.saveid =  {-1 , "luacode", "spritesheet", -1, -1, -1}
   self.chunks = {}
   self.leditors = {}
@@ -235,5 +235,7 @@ function edit:loop() --Starts the while loop
     end
   end
 end
+
+edit:initialize()
 
 return edit
