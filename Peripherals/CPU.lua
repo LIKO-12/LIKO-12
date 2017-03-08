@@ -15,11 +15,11 @@ return function(config) --A function that creates a new CPU peripheral.
       --[[local args = {...}
       local nargs = {name}
       for k,v in ipairs(args) do table.insert(nargs,v) end]]
+      table.insert(EventStack,{name,...})
+      
       if RawPull then
         RawPull = false coreg:resumeCoroutine(true,name,...)
       end
-      
-      table.insert(EventStack,{name,...})
     end
     end)
   end
