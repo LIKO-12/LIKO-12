@@ -153,11 +153,17 @@ function coreg:sandbox(f)
     setfenv(chunk,GLOB)
     return chunk
   end
-  GLOB.coroutine.create = function(...)
-    local co,err = pcall(coroutine.create,...)
-    if not co then return error(err) end
-    setfenv(co,GLOB)
+  GLOB.coroutine.create = function(chunk)
+    if type(chunk) == "function" then setfenv(chunk,GLOB) end
+    local ok,co = pcall(coroutine.create,chunk)
+    if not ok then return error(co) end
     return co 
+  end
+  GLOB.coroutine.sethook = function(co,...)
+    if type(co) ~= "thread" then return error("wrong argument #1 (thread expected, got "..type(co)..")") end
+    local ok, err = pcall(debug.sethook,co,...)
+    if not ok then return error(err) end
+    return err
   end
   GLOB._G=GLOB --Mirror Mirror
   setfenv(f,GLOB)
