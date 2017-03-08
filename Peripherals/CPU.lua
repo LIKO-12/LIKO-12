@@ -4,6 +4,7 @@ local coreg = require("Engine.coreg")
 return function(config) --A function that creates a new CPU peripheral.
   local EventStack = {}
   local Instant = false
+  local RawPull = false
   local sleepTimer
   
   local function hookEvent(pre,name)
@@ -14,6 +15,10 @@ return function(config) --A function that creates a new CPU peripheral.
       --[[local args = {...}
       local nargs = {name}
       for k,v in ipairs(args) do table.insert(nargs,v) end]]
+      if RawPull then
+        RawPull = false coreg:resumeCoroutine(true,name,...)
+      end
+      
       table.insert(EventStack,{name,...})
     end
     end)
@@ -57,6 +62,20 @@ return function(config) --A function that creates a new CPU peripheral.
       EventStack = newEventStack
       return true, unpack(lastEvent)
     end
+  end
+  
+  function CPU.rawPullEvent()
+    RawPull = true
+    return 2
+  end
+  
+  function CPU.triggerEvent(name,...)
+    if type(name) ~= "string" then
+      return false, "The event name must be a string, got a "..type(name)
+    end
+    
+    table.insert(EventStack,{name,...})
+    return true
   end
   
   function CPU.clearEStack()
