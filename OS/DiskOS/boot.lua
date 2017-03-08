@@ -1,3 +1,20 @@
+--Backup the fresh clean globals
+local function copy(t)
+  local new = {}
+  for k,v in pairs(t) do
+    if type(v) == "table" then
+      if k ~= "_G" then new[k] = copy(v) end
+    else
+      new[k] = v
+    end
+  end
+  return new
+end
+
+local freshglob = copy(_G)
+function _FreshGlobals()
+  return copy(freshglob)
+end
 --Building the peripherals APIs--
 local perglob = {GPU = true, CPU = true, Keyboard = true} --The perihperals to make global not in a table.
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
