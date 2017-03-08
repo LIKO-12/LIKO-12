@@ -45,7 +45,7 @@ glob.loadstring = function(...)
 end
 
 glob.coroutine.create = function(chunk)
-  if type(chunk) == "function" then setfenv(chunk,glob) end
+  --if type(chunk) == "function" then setfenv(chunk,glob) end
   local ok,co = pcall(coroutine.create,chunk)
   if not ok then return error(co) end
   return co 
@@ -104,21 +104,20 @@ end
 local lastArgs = {}
 while true do
   if coroutine.status(co) == "dead" then break end
+  
+  local name, key = rawPullEvent()
+  if name == "keypressed" and key == "escape" then
+    break
+  end
+  
   local args = {coroutine.resume(co,unpack(lastArgs))}
   if not args[1] then color(9) print("\nERR: "..tostring(args[2])) break end --Should have a better error handelling
   if args[2] then
     lastArgs = {coroutine.yield(args[2],unpack(extractArgs(args,2)))}
     lastclock = os.clock()
   end
-  local name, key = rawPullEvent()
-  if name == "keypressed" and key == "escape" then
-    break
-  end
-  --[[if not args[1] then self:resumeCoroutine(args[1],unpack(extractArgs(args,1))) end
-  if not(type(args[1]) == "number" and args[1] == 2) then
-    self:resumeCoroutine(true,unpack(extractArgs(args,1)))
-  end]]
 end
 
 coroutine.sethook(co)
 clearEStack()
+print("")

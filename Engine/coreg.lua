@@ -154,7 +154,7 @@ function coreg:sandbox(f)
     return chunk
   end
   GLOB.coroutine.create = function(chunk)
-    if type(chunk) == "function" then setfenv(chunk,GLOB) end
+    --if type(chunk) == "function" then setfenv(chunk,GLOB) end
     local ok,co = pcall(coroutine.create,chunk)
     if not ok then return error(co) end
     return co 
