@@ -90,7 +90,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local ofs = {} --Offsets table.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
-  ofs.point = {-1,0} --The offset of GPU.point/s.
+  ofs.point = {0,0} --The offset of GPU.point/s.
   ofs.print = {-1,-1} --The offset of GPU.print.
   ofs.line = {0,0} --The offset of GPU.line/s.
   ofs.circle = {0,0} --The offset of GPU.circle with l as false (x,y,r).
@@ -107,7 +107,7 @@ return function(config) --A function that creates a new GPU peripheral.
   if gpuVersion == "OpenGL ES 3.1 v1.r7p0-03rel0.b8759509ece0e6dda5325cb53763bcf0" then
     --GPU glitch fix for this driver, happens at my samsung j700h
     ofs.screen = {0,-1}
-    ofs.point = {0,0}
+    --ofs.point = {0,0}
     ofs.print = {-1,0}
     ofs.rect = {-1,0}
     ofs.image = {-1,0}
