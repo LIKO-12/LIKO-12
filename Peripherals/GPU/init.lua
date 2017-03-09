@@ -93,8 +93,8 @@ return function(config) --A function that creates a new GPU peripheral.
   ofs.point = {0,0} --The offset of GPU.point/s.
   ofs.print = {-1,-1} --The offset of GPU.print.
   ofs.line = {0,0} --The offset of GPU.line/s.
-  ofs.circle = {0,0} --The offset of GPU.circle with l as false (x,y,r).
-  ofs.circle_line = {0,0} --The offset of GPU.circle with l as true (x,y,r).
+  ofs.circle = {0,0,0} --The offset of GPU.circle with l as false (x,y,r).
+  ofs.circle_line = {0,0,0} --The offset of GPU.circle with l as true (x,y,r).
   ofs.ellipse = {0,0,0,0} --The offset of GPU.circle with l as false (x,y,rx,ry).
   ofs.ellipse_line = {0,0,0,0} --The offset of GPU.circle with l as true (x,y,rx,ry).
   ofs.rect = {-1,-1} --The offset of GPU.rect with l as false.
