@@ -89,9 +89,11 @@ setfenv(diskchunk,glob)
 local co = coroutine.create(diskchunk)
 
 --Too Long Without Yielding
+local checkclock = true
+local eventclock = os.clock()
 local lastclock = os.clock()
 coroutine.sethook(co,function()
-  if os.clock() > lastclock + 3.5 then
+  if os.clock() > lastclock + 3.5 and checkclock then
     error("Too Long Without Yielding",2)
   end
 end,"",10000)
@@ -109,16 +111,36 @@ local lastArgs = {}
 while true do
   if coroutine.status(co) == "dead" then break end
   
-  local name, key = rawPullEvent()
+  --[[local name, key = rawPullEvent()
   if name == "keypressed" and key == "escape" then
     break
+  end]]
+  
+  if os.clock() > eventclock + 3.5 then
+    color(9) print("\nToo Long Without Pulling Event / Flipping") break
   end
   
   local args = {coroutine.resume(co,unpack(lastArgs))}
+  checkclock = false
   if not args[1] then color(9) print("\nERR: "..tostring(args[2])) break end --Should have a better error handelling
   if args[2] then
     lastArgs = {coroutine.yield(args[2],unpack(extractArgs(args,2)))}
+    if args[2] == "CPU:pullEvent" or args[2] == "CPU:rawPullEvent" or args[2] == "GPU:flip" then
+      eventclock = os.clock()
+      if args[2] == "GPU:flip" then
+        local name, key = rawPullEvent()
+        if name == "keypressed" and key == "escape" then
+          break
+        end
+      else
+        if lastArgs[1] and lastArgs[2] == "keypressed" and lastArgs[3] == "escape" then
+          break
+        end
+      end
+    end
     lastclock = os.clock()
+    checkclock = true
+    --lastclock = os.clock()
   end
 end
 
