@@ -165,9 +165,12 @@ return function(config) --A function that creates a new HDD peripheral.
       if not drives[d] then return true, false, "Drive doesn't exists ("..tostring(d)..")" end
       path = "/drives/"..d.."/"..(p or "/")
     end
-    local chunk, err = love.filesystem.load(path)
-    if chunk then coreg:sandbox(chunk) end
-    return true, chunk, err
+    if not love.filesystem.exists(path) then return true, false, "File doesn't exists ("..tostring(fname)..")" end
+    local ok, chunk, err = pcall(love.filesystem.load, path)
+    if not ok then return true, ok, chunk end
+    if not chunk then return true, chunk, err end
+    coreg:sandbox(chunk)
+    return true, chunk
   end
   
   function HDD.size(fname)
