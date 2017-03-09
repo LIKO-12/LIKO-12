@@ -33,6 +33,7 @@ function mousereleased(x,y)\
  mflag = false\
 end\
 \
+cursor(\"point\")\
 clear(1)\
 init()\
 eventLoop()",
