@@ -69,7 +69,9 @@ function edit:initialize()
   self.leditors = {}
 
   for k,v in ipairs(self.editors) do
-    table.insert(self.chunks,k,fs.load("C://editors/"..v..".lua"))
+	local chunk, err = fs.load("C://Editors/"..v..".lua")
+	if not chunk then error(err or "Error loading: "..tostring(v)) end
+    table.insert(self.chunks,k,chunk)
   end
 
   for k,v in ipairs(self.chunks) do
