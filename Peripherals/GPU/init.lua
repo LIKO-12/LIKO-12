@@ -373,7 +373,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Draws a ellipse filled, or lines only.
-  function GPU.ellipse(x,y,r,l,c)
+  function GPU.ellipse(x,y,rx,ry,l,c)
     local x,y,rx,ry,l,c = x or 1, y or 1, rx or 1, ry or 1, l or false, c --In case if they are not provided.
     
     --It accepts all the args as a table.
