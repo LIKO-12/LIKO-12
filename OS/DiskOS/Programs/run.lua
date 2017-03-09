@@ -78,6 +78,10 @@ setfenv(apiloader,glob) apiloader()
 glob.SpriteMap = SpriteMap
 glob.SheetFlagsData = FlagsData
 
+local helpersloader, err = loadstring(fs.read("C://Libraries/diskHelpers.lua"))
+if not helpersloader then error(err) end
+setfenv(helpersloader,glob) helpersloader()
+
 --Apply the sandbox
 setfenv(diskchunk,glob)
 
