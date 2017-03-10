@@ -777,5 +777,34 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end)
   
-  return GPU --Return the table containing all of the api functions.
+  local devkit = {}
+  devkit._LIKO_W = _LIKO_W
+  devkit._LIKO_X = _LIKO_Y
+  devkit._HOST_W = _HOST_H
+  devkit._GIFScale = _GIFScale
+  devkit._GIFStartKey = _GIFStartKey
+  devkit._GIFEndKey = _GIFEndKey
+  devkit._GIFPauseKey = _GIFPauseKey
+  devkit._GIFFrameTime = _GIFFrameTime
+  devkit._LIKOScale = _LIKOScale
+  devkit._FontChars = _FontChars
+  devkit._FontPath = _FontPath
+  devkit._FontExtraSpacing = _FontExtraSpacing
+  devkit._ColorSet = _ColorSet
+  devkit._ClearOnRender = _ClearOnRender
+  devkit._ScreenCanvas = _ScreenCanvas
+  devkit._GIFCanvas = _GIFCanvas
+  devkit._Font = _Font
+  devkit.ofs = ofs
+  devkit._HostToLiko = _HostToLiko
+  devkit._GetColor = _GetColor
+  devkit._GetColorID = _GetColorID
+  devkit.exe = exe
+  devkit._GIF = _GIF
+  devkit.ColorStack = ColorStack
+  devkit.TERM_W = TERM_W
+  devkit.TERM_H = TERM_H
+  devkit._CursorsCache = _CursorsCache
+  
+  return GPU, devkit --Return the table containing all of the api functions.
 end
