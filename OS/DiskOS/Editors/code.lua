@@ -227,7 +227,7 @@ function ce:mousepressed(x, y, button, istouch)
     self.cx = self.vx + (cx-1)
     self.cy = self.vy + (cy-1)
     self:checkPos()
-    --self:drawBuffer()
+    self:drawBuffer()
   end
 end
 
