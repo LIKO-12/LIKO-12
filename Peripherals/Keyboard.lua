@@ -10,6 +10,17 @@ return function(config) --A function that creates a new Keyboard peripheral.
     end)
   end
   
+  if config.CPUKit then --Register Keyboard events
+	local cpukit = config.CPUKit
+	events:register("love:keypressed", function(...)
+	  cpukit.triggerEvent("keypressed",...)
+	end)
+	
+	events:register("love:keyreleased", function(...)
+	  cpukit.triggerEvent("keyreleased",...)
+    end)
+  end
+  
   --The api starts here--
   local KB = {}
   

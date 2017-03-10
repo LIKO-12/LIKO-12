@@ -45,6 +45,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local _ClearOnRender = config._ClearOnRender --Should clear the screen when render, some platforms have glitches when this is disabled.
   if type(_ClearOnRender) == "nil" then _ClearOnRender = true end --Defaults to be enabled.
+  local cpukit
+  if config.CPUKit then cpukit = config.CPUKit end
   --End of config loading--
   
   
@@ -216,15 +218,18 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:mousepressed",function(x,y,b,istouch)
     local x,y = _HostToLiko(x,y)
     events:trigger("GPU:mousepressed",x,y,b,istouch)
+    if cpukit then cpukit.triggerEvent("mousepressed",x,y,b,istouch) end
   end)
   events:register("love:mousemoved",function(x,y,dx,dy,istouch)
     local x,y = _HostToLiko(x,y)
     local dx, dy = _HostToLiko(dx,dy)
     events:trigger("GPU:mousemoved",x,y,dx,dy,istouch)
+    if cpukit then cpukit.triggerEvent("mousemoved",x,y,dx,dy,istouch) end
   end)
   events:register("love:mousereleased",function(x,y,b,istouch)
     local x,y = _HostToLiko(x,y)
     events:trigger("GPU:mousereleased",x,y,b,istouch)
+    if cpukit then cpukit.triggerEvent("mousereleased",x,y,b,istouch) end
   end)
   
   --Touch Hooks (To translate them to LIKO12 screen)--
@@ -232,16 +237,19 @@ return function(config) --A function that creates a new GPU peripheral.
     local x,y = _HostToLiko(x,y)
     local dx, dy = _HostToLiko(dx,dy)
     events:trigger("GPU:touchpressed",id,x,y,dx,dy,p)
+    if cpukit then cpukit.triggerEvent("touchpressed",id,x,y,dx,dy,p) end
   end)
   events:register("love:touchmoved",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
     local dx, dy = _HostToLiko(dx,dy)
     events:trigger("GPU:touchmoved",id,x,y,dx,dy,p)
+    if cpukit then cpukit.triggerEvent("touchmoved",id,x,y,dx,dy,p) end
   end)
   events:register("love:touchreleased",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
     local dx, dy = _HostToLiko(dx,dy)
     events:trigger("GPU:touchreleased",id,x,y,dx,dy,p)
+    if cpukit then cpukit.triggerEvent("touchreleased",id,x,y,dx,dy,p) end
   end)
   
   --The hook the textinput for feltering characters not in the font
@@ -249,6 +257,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local text_escaped = text:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1")
     if #text == 1 and _FontChars:find(text_escaped) then
       events:trigger("GPU:textinput",text)
+      if cpukit then cpukit.triggerEvent("textinput",text) end
     end
   end)
   
