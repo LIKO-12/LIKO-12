@@ -14,7 +14,7 @@ function fget(id,n)
   local id = math.floor(id)
   local n = n; if n then n = math.floor(n) end
   local flags = SheetFlagsData or string.char(0)
-  if type(flags) ~= "string" then return error("Corrupted SheetFlagsData") end
+  if type(flags) ~= "string" or flags:len() == 0 then return error("Corrupted SheetFlagsData") end
   if id < 1 then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
   if id > flags:len() then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
   local flag = string.byte(flags:sub(id,id))
@@ -34,7 +34,7 @@ function fset(id,n,v)
   local id = math.floor(id)
   
   local flags = SheetFlagsData or string.char(0)
-  if type(flags) ~= "string" then return error("Corrupted FlagsData") end
+  if type(flags) ~= "string" or flags:len() == 0 then return error("Corrupted FlagsData") end
   
   if id < 1 then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
   if id > flags:len() then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
