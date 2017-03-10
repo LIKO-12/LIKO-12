@@ -252,15 +252,6 @@ return function(config) --A function that creates a new GPU peripheral.
     if cpukit then cpukit.triggerEvent("touchreleased",id,x,y,dx,dy,p) end
   end)
   
-  --The hook the textinput for feltering characters not in the font
-  events:register("love:textinput",function(text)
-    local text_escaped = text:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1")
-    if #text == 1 and _FontChars:find(text_escaped) then
-      events:trigger("GPU:textinput",text)
-      if cpukit then cpukit.triggerEvent("textinput",text) end
-    end
-  end)
-  
   --The api starts here--
   local GPU = {}
   

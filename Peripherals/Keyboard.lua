@@ -11,13 +11,23 @@ return function(config) --A function that creates a new Keyboard peripheral.
   end
   
   if config.CPUKit then --Register Keyboard events
-	local cpukit = config.CPUKit
-	events:register("love:keypressed", function(...)
-	  cpukit.triggerEvent("keypressed",...)
-	end)
+    local cpukit = config.CPUKit
+	   events:register("love:keypressed", function(...)
+	     cpukit.triggerEvent("keypressed",...)
+	   end)
 	
-	events:register("love:keyreleased", function(...)
-	  cpukit.triggerEvent("keyreleased",...)
+	   events:register("love:keyreleased", function(...)
+	     cpukit.triggerEvent("keyreleased",...)
+    end)
+    
+    local gpukit = config.GPUKit
+    
+    --The hook the textinput for feltering characters not in the font
+    events:register("love:textinput",function(text)
+      local text_escaped = text:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1")
+      if #text == 1 and ((not gpukit) or gpukit._FontChars:find(text_escaped)) then
+        cpukit.triggerEvent("textinput",text)
+      end
     end)
   end
   
