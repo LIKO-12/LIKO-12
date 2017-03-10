@@ -7,36 +7,25 @@ return function(config) --A function that creates a new CPU peripheral.
   local RawPull = false
   local sleepTimer
   
-  local function hookEvent(pre,name)
-    events:register(pre..":"..name,function(...)
-    if Instant then
+  local devkit = {}
+  
+  function devkit.triggerEvent(name,...)
+	if Instant then
       Instant = false coreg:resumeCoroutine(true,name,...)
     else
-      --[[local args = {...}
-      local nargs = {name}
-      for k,v in ipairs(args) do table.insert(nargs,v) end]]
       table.insert(EventStack,{name,...})
       
       if RawPull then
         RawPull = false coreg:resumeCoroutine(true,name,...)
       end
     end
-    end)
   end
   
-  hookEvent("love","update")
-  hookEvent("love","keypressed")
-  hookEvent("love","keyreleased")
+  events:register("love:update", function(...) --Update event
+	devkit.triggerEvent("update",...)
+  end)
   
-  hookEvent("GPU","mousepressed") --So they are translated to the LIKO-12 screen
-  hookEvent("GPU","mousemoved")
-  hookEvent("GPU","mousereleased")
-  hookEvent("GPU","touchpressed")
-  hookEvent("GPU","touchmoved")
-  hookEvent("GPU","touchreleased")
-  hookEvent("GPU","textinput")
-  
-  events:register("love:update",function(dt)
+  events:register("love:update",function(dt) --Sleep Timer
     if sleepTimer then
       sleepTimer = sleepTimer-dt
       if sleepTimer <=0 then
@@ -137,5 +126,5 @@ return function(config) --A function that creates a new CPU peripheral.
     return true --It ran successfully
   end
   
-  return CPU
+  return CPU, devkit
 end
