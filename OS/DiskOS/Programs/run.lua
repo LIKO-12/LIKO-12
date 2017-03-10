@@ -2,6 +2,7 @@
 
 --First we will start by obtaining the disk data
 --We will run the current code in the editor
+print("")
 local eapi = require("C://Editors")
 
 local sprid = "spritesheet"
@@ -30,8 +31,15 @@ if diskdata[sprid] then
 end
 
 --Load the code
-local luacode = diskdata[codeid]
-local diskchunk = loadstring(luacode)
+local luacode = diskdata[codeid]:sub(2,-1) --Remove the first empty line
+local diskchunk, err = loadstring(luacode)
+if not diskchunk then
+  local err = tostring(err)
+  local pos = string.find(err,":")
+  err = err:sub(pos+1,-1)
+  color(9) print("Compile ERR: "..err )
+  return
+end
 
 --Create the sandboxed global variables
 local glob = _FreshGlobals()
@@ -117,12 +125,16 @@ while true do
   end]]
   
   if os.clock() > eventclock + 3.5 then
-    color(9) print("\nToo Long Without Pulling Event / Flipping") break
+    color(9) print("Too Long Without Pulling Event / Flipping") break
   end
   
   local args = {coroutine.resume(co,unpack(lastArgs))}
   checkclock = false
-  if not args[1] then color(9) print("\nERR: "..tostring(args[2])) break end --Should have a better error handelling
+  if not args[1] then
+    local err = tostring(args[2])
+    local pos = string.find(err,":")
+    err = err:sub(pos+1,-1); color(9) print("ERR: "..err ); break
+  end
   if args[2] then
     lastArgs = {coroutine.yield(args[2],unpack(extractArgs(args,2)))}
     if args[2] == "CPU:pullEvent" or args[2] == "CPU:rawPullEvent" or args[2] == "GPU:flip" then
