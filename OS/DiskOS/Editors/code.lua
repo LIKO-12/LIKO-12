@@ -209,6 +209,10 @@ ce.keymap = {
     self.cx = buffer[self.cy]:len()+1
     self:checkPos()
     self:drawLine()
+  end,
+  
+  ["tab"] = function(self)
+    self:textinput(" ")
   end
 }
 
