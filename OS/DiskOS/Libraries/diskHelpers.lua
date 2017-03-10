@@ -7,6 +7,64 @@ function SpriteGroup(id,x,y,w,h,sx,sy,sheet)
   end end
 end
 
+--Flags API
+function fget(id,n)
+  if type(id) ~= "number" then return error("SpriteId must be a number, provided: "..type(id)) end
+  if n and type(n) ~= "number" then return error("BitNumber must be a number, provided: "..type(n)) end
+  local id = math.floor(id)
+  local n = n; if n then n = math.floor(n) end
+  local flags = SheetFlagsData or string.char(0)
+  if type(flags) ~= "string" then return error("Corrupted SheetFlagsData") end
+  if id < 1 then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
+  if id > flags:len() then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
+  local flag = string.byte(flags:sub(id,id))
+  if n then
+    if n < 1 then return error("BitNumber is out of range ("..n..") expected [1,8]") end
+    if n > 8 then return error("BitNumber is out of range ("..n..") expected [1,8]") end
+    n = n-1
+    n = (n==0) and 1 or (2^n)
+    return bit.band(flag,n) == n
+  else
+    return flag
+  end
+end
+
+function fset(id,n,v)
+  if type(id) ~= "number" then return error("SpriteId must be a number, provided: "..type(id)) end
+  local id = math.floor(id)
+  
+  local flags = SheetFlagsData or string.char(0)
+  if type(flags) ~= "string" then return error("Corrupted FlagsData") end
+  
+  if id < 1 then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
+  if id > flags:len() then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
+  local flag = string.byte(flags:sub(id,id))
+  
+  if type(v) == "boolean" then
+    if type(n) ~= "number" then return error("BitNumber must be a number, provided: "..type(n)) end
+    n = math.floor(n)
+    if n < 1 then return error("BitNumber is out of range ("..n..") expected [1,8]") end
+    if n > 8 then return error("BitNumber is out of range ("..n..") expected [1,8]") end
+    if type(v) ~= "boolean" and type(v) ~= "nil" then return error("BitValue must be a boolean") end
+    n = n-1
+    n = (n==0) and 1 or (2^n)
+    if v then
+      flag = bit.bor(flag,n)
+    else
+      n = bit.bnot(n)
+      flag = bit.band(flag,n)
+    end
+    SheetFlagsData = flags:sub(0,id-1)..string.char(flag)..flags:sub(id+1,-1)
+  else
+    if type(n) ~= "number" then return error("FlagValue must be a number") end
+    n = math.floor(n)
+    if n < 1 then return error("FlagValue is out of range ("..n..") expected [1,255]") end
+    if n > 255 then return error("FlagValue is out of range ("..n..") expected [1,255]") end
+    flag = string.char(n)
+    SheetFlagsData = flags:sub(0,id-1)..flag..flags:sub(id+1,-1)
+  end
+end
+
 --Enter the while true loop and pull events, including the call of calbacks in _G
 function eventLoop()
   while true do
