@@ -5,7 +5,7 @@
 local CPU, CPUKit = assert(P("CPU"))
 
 --Create a new gpu mounted as "GPU"
-assert(P("GPU","GPU",{
+local GPU, GPUKit = assert(P("GPU","GPU",{
   --_LIKO_W = 8*48, --384
   --_LIKO_H = 8*32, --256
   _ClearOnRender = true,
@@ -13,7 +13,7 @@ assert(P("GPU","GPU",{
 }))
 
 --Create a new keyboard api mounted as "KB"
-assert(P("Keyboard","Keyboard",{CPUKit = CPUKit}))
+assert(P("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit}))
 
 --Create a new virtual hdd system mounted as "HDD"
 assert(P("HDD","HDD",{
