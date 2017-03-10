@@ -53,7 +53,7 @@ local function P(per,m,conf)
     MPer[m] = peripheral
     coreg:register(peripheral,m)
   else
-    peripheral = "Init Err: "..peripheral
+    peripheral = "Init Err: "..tostring(peripheral)
   end
   return success, peripheral, devkit
 end
@@ -62,15 +62,20 @@ if not love.filesystem.exists("/bconf.lua") or true then
   love.filesystem.write("/bconf.lua",love.filesystem.read("/BIOS/bconf.lua"))
 end
 
+local passert = function(ok, per, devkit) --Peripheral assert
+  if not ok then return error(per) end
+  return per, devkit
+end
+
 local bconfC, bconfErr, bconfDErr = love.filesystem.load("/bconf.lua")
 --if not bconfC then bconfC, bconfDErr = love.filesystem.load("/BIOS/bconf.lua") end --Load the default BConfig
 if not bconfC then error(bconfDErr) end
-setfenv(bconfC,{P = P,error=error,assert=assert}) --BConfig sandboxing
+setfenv(bconfC,{P = P,error=error,assert=passert}) --BConfig sandboxing
 local success, bconfRErr = pcall(bconfC)
 if not success then error(bconfRErr)
   bconfC, err = love.filesystem.load("/BIOS/bconf.lua")
   if not bconfC then error(err) end
-  setfenv(bconfC,{P = P,error=error,assert=assert}) --BConfig sandboxing
+  setfenv(bconfC,{P = P,error=error,assert=passert}) --BConfig sandboxing
   bconfC()
 end --Load the default BConfig
 
