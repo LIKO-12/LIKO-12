@@ -57,7 +57,7 @@ ce.btime = 0.5 --The cursor blink time
 ce.bflag = true --The cursor is blinking atm ?
 
 ce.sw, ce.sh = screenSize()
-local charGrid = {1,9, ce.sw,ce.sh-16, ce.tw, ce.th-2}
+local charGrid = {1,9, ce.sw,ce.sh-16, ce.tw, ce.th}
 
 --A usefull print function with color support !
 function ce:colorPrint(tbl)
@@ -211,6 +211,10 @@ ce.keymap = {
     self.cx = buffer[self.cy]:len()+1
     self:checkPos()
     self:drawLine()
+  end,
+  
+  ["tab"] = function(self)
+    self:textinput(" ")
   end
 }
 
