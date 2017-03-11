@@ -126,15 +126,15 @@ end
 
 function ce:drawLineNum()
   eapi:drawBottomBar()
-  local linestr = tostring(self.cy).."/"..tostring(#buffer)
-  local linelen = linestr:len()*4 -1
-  color(5) print(linestr,self.sw-linelen, self.sh-5)
+  local linestr = "LINE "..tostring(self.cy).."/"..tostring(#buffer).."  CHAR "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len())
+  color(eapi.flavorBack) print(linestr,2, self.sh-5)
 end
 
 function ce:textinput(t)
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
   self.cx = self.cx + t:len()
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
+  self:drawLineNum()
 end
 
 ce.keymap = {
@@ -165,7 +165,8 @@ ce.keymap = {
         flag = true
       end
     end
-    if self:checkPos() or flag then self:drawBuffer() self:drawLineNum() else self:drawLine() end
+    if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
+    self:drawLineNum()
   end,
   
   ["right"] = function(self)
@@ -178,7 +179,8 @@ ce.keymap = {
         flag = true
       end
     end
-    if self:checkPos() or flag then self:drawBuffer() self:drawLineNum() else self:drawLine() end
+    if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
+    self:drawLineNum()
   end,
   
   ["up"] = function(self)
@@ -209,7 +211,8 @@ ce.keymap = {
     else
       buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-2) .. buffer[self.cy]:sub(self.cx, -1)
       self.cx = self.cx-1
-      if self:checkPos() then self:drawBuffer() self:drawLineNum() else self:drawLine() end
+      if self:checkPos() then self:drawBuffer() else self:drawLine() end
+      self:drawLineNum()
     end
   end,
   
@@ -217,12 +220,14 @@ ce.keymap = {
     self.cx = 1
     self:checkPos()
     self:drawLine()
+    self:drawLineNum()
   end,
   
   ["end"] = function(self)
     self.cx = buffer[self.cy]:len()+1
     self:checkPos()
     self:drawLine()
+    self:drawLineNum()
   end,
   
   ["tab"] = function(self)
