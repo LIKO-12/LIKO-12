@@ -231,6 +231,10 @@ return function(config) --A function that creates a new GPU peripheral.
     events:trigger("GPU:mousereleased",x,y,b,istouch)
     if cpukit then cpukit.triggerEvent("mousereleased",x,y,b,istouch) end
   end)
+  events:register("love:wheelmoved",function(x,y)
+    events:trigger("GPU:wheelmoved",x,y)
+    if cpukit then cpukit.triggerEvent("wheelmoved",x,y) end
+  end)
   
   --Touch Hooks (To translate them to LIKO12 screen)--
   events:register("love:touchpressed",function(id,x,y,dx,dy,p)
