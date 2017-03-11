@@ -134,7 +134,9 @@ ce.keymap = {
   ["return"] = function(self)
     local newLine = buffer[self.cy]:sub(self.cx,-1)
     buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)
-    self.cx, self.cy = 1, self.cy+1
+    local snum = string.find(buffer[self.cy],"%S")-1 --Number of spaces
+    newLine = string.rep(" ",snum)..newLine
+    self.cx, self.cy = snum+1, self.cy+1
     if self.cy > #buffer then
       table.insert(buffer,newLine)
     else
