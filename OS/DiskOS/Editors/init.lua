@@ -101,14 +101,21 @@ function edit:loadCursors()
   cursor(self.editorsheet:extract(7),"point",2,2)
 end
 
-function edit:drawUI()
-  clear(self.background) --Clear the screen
-  rect(1,1,swidth,8,false,self.flavor) --Draw the top bar
-  rect(1,sheight-7,swidth,8,false,self.flavor) --Draw the bottom bar
-  
+function edit:drawBottomBar()
+  rect(1,sheight-7,swidth,8,false,self.flavor)
+end
+
+function edit:drawTopBar()
+  rect(1,1,swidth,8,false,self.flavor)
   SpriteGroup(55, 1,1, 4,1, 1,1, self.editorsheet) --The LIKO12 Logo
   SpriteGroup(24-#self.editors+1, (swidth-#self.editors*8) +1,1, #self.editors,1, 1,1, self.editorsheet) --The programs selection
   self.editorsheet:draw(48-(#self.editors-self.active),swidth-(#self.editors-self.active+1)*8+1,1) --The current selected program
+end
+
+function edit:drawUI()
+  clear(self.background) --Clear the screen
+  self:drawTopBar() --Draw the top bar
+  self:drawBottomBar() --Draw the bottom bar
 end
 
 function edit:switchEditor(neweditor)
