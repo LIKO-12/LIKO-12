@@ -124,6 +124,13 @@ function ce:drawLine()
   self:drawBlink()
 end
 
+function ce:drawLineNum()
+  eapi:drawBottomBar()
+  local linestr = tostring(self.cy).."/"..tostring(#buffer)
+  local linelen = linestr:len()*4 -1
+  color(5) print(linestr,self.sw-linelen, self.sh-5)
+end
+
 function ce:textinput(t)
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
   self.cx = self.cx + t:len()
@@ -134,7 +141,8 @@ ce.keymap = {
   ["return"] = function(self)
     local newLine = buffer[self.cy]:sub(self.cx,-1)
     buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)
-    local snum = string.find(buffer[self.cy],"%S")-1 --Number of spaces
+    local snum = string.find(buffer[self.cy],"%S") --Number of spaces
+    snum = snum and snum-1 or 0
     newLine = string.rep(" ",snum)..newLine
     self.cx, self.cy = snum+1, self.cy+1
     if self.cy > #buffer then
@@ -144,6 +152,7 @@ ce.keymap = {
     end
     self:checkPos()
     self:drawBuffer()
+    self:drawLineNum()
   end,
   
   ["left"] = function(self)
@@ -156,7 +165,7 @@ ce.keymap = {
         flag = true
       end
     end
-    if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
+    if self:checkPos() or flag then self:drawBuffer() self:drawLineNum() else self:drawLine() end
   end,
   
   ["right"] = function(self)
@@ -169,19 +178,21 @@ ce.keymap = {
         flag = true
       end
     end
-    if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
+    if self:checkPos() or flag then self:drawBuffer() self:drawLineNum() else self:drawLine() end
   end,
   
   ["up"] = function(self)
     self.cy = self.cy -1
     self:checkPos()
     self:drawBuffer()
+    self:drawLineNum()
   end,
   
   ["down"] = function(self)
     self.cy = self.cy +1
     self:checkPos()
     self:drawBuffer()
+    self:drawLineNum()
   end,
   
   ["backspace"] = function(self)
@@ -193,11 +204,12 @@ ce.keymap = {
         self.cy = self.cy-1
         self:checkPos()
         self:drawBuffer()
+        self:drawLineNum()
       end
     else
       buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-2) .. buffer[self.cy]:sub(self.cx, -1)
       self.cx = self.cx-1
-      if self:checkPos() then self:drawBuffer() else self:drawLine() end
+      if self:checkPos() then self:drawBuffer() self:drawLineNum() else self:drawLine() end
     end
   end,
   
@@ -220,7 +232,8 @@ ce.keymap = {
 
 function ce:entered()
   eapi:drawUI()
-  ce:drawBuffer()
+  self:drawBuffer()
+  self:drawLineNum()
 end
 
 function ce:leaved()
