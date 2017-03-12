@@ -30,18 +30,17 @@ local function sprint(text)
   if cx+tlen >= tw then
     print("") pushColor() color(10)
     print(msg,false) popColor()
+    flip()
     local quit = waitkey()
     printCursor(1,th)
     rect(1,sh-8,sw,8,false,1)
     if quit then return true end
     screenshot():image():draw(1,-7)
-    flip()
     printCursor(cx, th-2)
     print(text.." ",false) return
   else
     print(text.." ",false) return
   end
-  flip()
 end
 
 if peri then
