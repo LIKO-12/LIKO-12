@@ -12,13 +12,15 @@ end
 printCursor(1,1,1)
 color(9) print("LIKO-12 V0.6.0 DEV") flip() sleep(0.5)
 color(8) print("DiskOS DEV B1") flip() sleep(0.5)
-color(7) print("\nA PICO-8 INSPIRED OS WITH EXTRA ABILITIES")
+color(7) print("http://github.com/ramilego4game/liko12")
+--color(7) print("\nA PICO-8 INSPIRED OS WITH EXTRA ABILITIES")
 flip() sleep(0.25)
-color(10) print("TYPE HELP FOR HELP")
+color(10) print("\nTYPE HELP FOR HELP")
 flip() sleep(0.25)
 
 local history = {}
 local btimer, btime, blink = 0, 0.5, true
+local fw, fh = fontSize()
 
 local function checkCursor()
   local cx, cy = printCursor()
@@ -28,7 +30,7 @@ local function checkCursor()
   if cy > th+1 then cy = th+1 end
   if cy < 1 then cy = 1 end
   printCursor(cx,cy) cy = cy-1
-  rect(cx*4-2,cy*8+2,4,5,false,blink and 5 or 1)
+  rect(cx*(fw+1)-2,cy*(fh+3)+2,fw+1,fh,false,blink and 5 or 1)
 end
 
 local function split(str)

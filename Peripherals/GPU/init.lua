@@ -19,8 +19,9 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local _LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
   
-  local _FontChars = config._FontChars or 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"\'`-_/1234567890!?[](){}.,;:<>+=%#^*~\\|$@&` ' --Font chars
-  local _FontPath, _FontExtraSpacing = config._FontPath or "/Engine/font.png", config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
+  local fw, fh = 4, 5
+  local _FontChars = config._FontChars or 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!?[](){}.,;:<>+=%#^*~/\\|$@&`"\'-_ ' --Font chars
+  local _FontPath, _FontExtraSpacing = config._FontPath or "/Engine/font5x4.png", config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
   
   local _ColorSet = config._ColorSet or {
     {0,0,0,255}, --Black 1
@@ -262,7 +263,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local flip = false
   local ColorStack = {} --The colors stack (pushColor,popColor)
   local printCursor = {x=1,y=1,bgc=1}
-  local TERM_W, TERM_H = math.floor(_LIKO_W/4), math.floor(_LIKO_H/7)-2
+  local TERM_W, TERM_H = math.floor(_LIKO_W/(fw+1)), math.floor(_LIKO_H/(fh+2))-2
   
   function GPU.screenSize() return true, _LIKO_W, _LIKO_H end
   function GPU.screenWidth() return true, _LIKO_W end
@@ -270,6 +271,9 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.termSize() return true, TERM_W, TERM_H end
   function GPU.termWidth() return true, TERM_W end
   function GPU.termHeight() return true, TERM_H end
+  function GPU.fontSize() return true, fw, fh end
+  function GPU.fontWidth() return true, fw end
+  function GPU.fontHeight() return true, fh end
   
   --Call with color id to set the active color.
   --Call with no args to get the current acive color id.
@@ -433,11 +437,11 @@ return function(config) --A function that creates a new GPU peripheral.
       local anl = true --Auto new line
       if type(x) == "boolean" then anl = x end
       local function printgrid(tx,gx,gy)
-        if printCursor.bgc > 0 then exe(GPU.rect(math.floor((gx or 1)*4-2)-1, math.floor((gy or 1)*8-6)-1, tx:len()*4 +1, 7, false, printCursor.bgc)) end
-        love.graphics.print(tx, math.floor(((gx or 1)*4-2)+ofs.print[1]), math.floor(((gy or 1)*8-6)+ofs.print[2]))
+        if printCursor.bgc > 0 then exe(GPU.rect(math.floor((gx or 1)*(fw+1)-2)-1, math.floor((gy or 1)*(fh+3)-(fh+1))-1, tx:len()*(fw+1) +1, fh+2, false, printCursor.bgc)) end
+        love.graphics.print(tx, math.floor(((gx or 1)*(fw+1)-2)+ofs.print[1]), math.floor(((gy or 1)*(fh+3)-(fh+1))+ofs.print[2]))
       _ShouldDraw = true end
       if y then printgrid(t,printCursor.x,printCursor.y) printCursor.x = printCursor.x + t:len() return true end
-      local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-7) end
+      local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-(fh+2)) end
       local function printLine(txt,f,ff)
         if txt:len()+printCursor.x-1 > TERM_W then
           local tl = txt:len()+printCursor.x-1
@@ -471,7 +475,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,6) end
     if printCursor.x > 1 then
       printCursor.x = printCursor.x-1
-      exe(GPU.rect(math.floor((printCursor.x or 1)*4-2)-1, math.floor((printCursor.y or 1)*8-6)-1, 5, 7, false, c))
+      exe(GPU.rect(math.floor((printCursor.x or 1)*(fw+1)-2)-1, math.floor((printCursor.y or 1)*(fh+3)-(fh+1))-1, fw+2, fh+2, false, c))
     elseif not skpCr then
       if printCursor.y > 1 then
         printCursor.y = printCursor.y - 1
@@ -480,7 +484,7 @@ return function(config) --A function that creates a new GPU peripheral.
         printCursor.x = TERM_W
         cr()
       end
-      exe(GPU.rect(math.floor((printCursor.x or 1)*4-2)-1, math.floor((printCursor.y or 1)*8-6)-1, 5, 7, false, c))
+      exe(GPU.rect(math.floor((printCursor.x or 1)*(fw+1)-2)-1, math.floor((printCursor.y or 1)*(fh+3)-(fh+1))-1, fw+2, fh+2, false, c))
     end
     return true
   end
@@ -801,6 +805,8 @@ return function(config) --A function that creates a new GPU peripheral.
   devkit.TERM_W = TERM_W
   devkit.TERM_H = TERM_H
   devkit._CursorsCache = _CursorsCache
+  devkit.fw = fw
+  devkit.fh = fh
   
   return GPU, devkit --Return the table containing all of the api functions.
 end

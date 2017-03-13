@@ -4,6 +4,7 @@ local se = {} --Sprite Editor
 
 local imgw, imgh = 8, 8 --The sprite size (MUST NOT CHANGE)
 
+local fw, fh = fontSize() --A font character size
 local swidth, sheight = screenSize() --The screen size
 local sheetW, sheetH = math.floor(swidth/imgw), math.floor(sheight/imgh) --The size of the spritessheet in cells (sprites)
 local bankH = sheetH/4 --The height of each bank in cells (sprites)
@@ -35,7 +36,7 @@ for i = 1, 4 do --Create the banks quads
 end
 
 local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in the biggest sprite id.
-local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*4+3),sprsbanksgrid[2], 1+maxSpriteIDCells*4,7, false, 7, 14} --The rect of sprite id; The extra argument is the color of number print
+local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*(fw+1)+3),sprsbanksgrid[2], 1+maxSpriteIDCells*(fw+1),fh+2, false, 7, 14} --The rect of sprite id; The extra argument is the color of number print
 local revdraw = {sprsidrect[1]-(imgw+1),sprsrecto[2]-(imgh+1), imgw, imgh} --The small image at the right of the id with the actual sprite size
 
 --The current sprite flags--

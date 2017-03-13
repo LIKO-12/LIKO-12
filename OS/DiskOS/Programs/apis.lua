@@ -20,7 +20,7 @@ end
 
 local tw, th = termSize()
 local sw, sh = screenSize()
-local msg = "[press any key to continue, press q to quit]"
+local msg = "[press any key to continue, q to quit]"
 local msglen = msg:len()
 
 local function sprint(text)

@@ -48,6 +48,7 @@ str = 13
 
 ce.bgc = 6--Background Color
 ce.cx, ce.cy = 1, 1 --Cursor Position
+ce.fw, ce.fh = fontSize() --The font character size
 ce.tw, ce.th = termSize() --The terminal size
 ce.th = ce.th-2 --Because of the top and bottom bars
 ce.vx, ce.vy = 1,1 --View postions
@@ -101,7 +102,7 @@ end
 --Draw the cursor blink
 function ce:drawBlink()
   if self.bflag then
-    rect((self.cx-self.vx+1)*4-2,(self.cy-self.vy+1)*8+2, 4,5, false, 5)
+    rect((self.cx-self.vx+1)*(self.fw+1)-2,(self.cy-self.vy+1)*(self.fh+3)+2, self.fw+1,self.fh, false, 5)
   end
 end
 
@@ -118,7 +119,7 @@ end
 
 function ce:drawLine()
   local cline = clua({buffer[self.cy]},cluacolors)
-  rect(1,(self.cy-self.vy+2)*8-7, screenW,7, false,self.bgc)
+  rect(1,(self.cy-self.vy+2)*(self.fh+3)-(self.fh+2), screenW,self.fh+2, false,self.bgc)
   printCursor(-(self.vx-2),(self.cy-self.vy+1)+1,self.bgc)
   self:colorPrint(cline[1])
   self:drawBlink()
@@ -127,7 +128,7 @@ end
 function ce:drawLineNum()
   eapi:drawBottomBar()
   local linestr = "LINE "..tostring(self.cy).."/"..tostring(#buffer).."  CHAR "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len())
-  color(eapi.flavorBack) print(linestr,2, self.sh-5)
+  color(eapi.flavorBack) print(linestr,2, self.sh-self.fh)
 end
 
 function ce:textinput(t)
