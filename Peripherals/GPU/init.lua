@@ -513,6 +513,7 @@ return function(config) --A function that creates a new GPU peripheral.
     exe(GPU.pushColor()) --Push the current color.
     if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
     for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
+    if #args < 4 then return false, "Need at least two vertices to draw a line." end --Error
     for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.line[2] else args[k] = v + ofs.line[1] end end --Apply the offset.
     love.graphics.line(unpack(args)) _ShouldDraw = true --Draw the lines and tell that changes has been made.
     exe(GPU.popColor()) --Pop the last color in the stack.
