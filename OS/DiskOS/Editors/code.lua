@@ -219,14 +219,14 @@ ce.keymap = {
   ["home"] = function(self)
     self.cx = 1
     self:checkPos()
-    self:drawLine()
+    if self:checkPos() then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
   
   ["end"] = function(self)
     self.cx = buffer[self.cy]:len()+1
     self:checkPos()
-    self:drawLine()
+    if self:checkPos() then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
   
