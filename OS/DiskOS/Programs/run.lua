@@ -137,9 +137,9 @@ while true do
   end
   if args[2] then
     lastArgs = {coroutine.yield(args[2],unpack(extractArgs(args,2)))}
-    if args[2] == "CPU:pullEvent" or args[2] == "CPU:rawPullEvent" or args[2] == "GPU:flip" then
+    if args[2] == "CPU:pullEvent" or args[2] == "CPU:rawPullEvent" or args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
       eventclock = os.clock()
-      if args[2] == "GPU:flip" then
+      if args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
         local name, key = rawPullEvent()
         if name == "keypressed" and key == "escape" then
           break
