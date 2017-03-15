@@ -76,6 +76,7 @@ end
 --Check the position of the cursor so the view includes it
 function ce:checkPos()
   local flag = false --Flag if the whole buffer requires redrawing
+  
   --Y position checking--
   if self.cy > #buffer then self.cy = #buffer end --Passed the end of the file
   
@@ -101,6 +102,7 @@ end
 
 --Draw the cursor blink
 function ce:drawBlink()
+  if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   if self.bflag then
     rect((self.cx-self.vx+1)*(self.fw+1)-2,(self.cy-self.vy+1)*(self.fh+3)+2, self.fw+1,self.fh, false, 5)
   end
@@ -118,6 +120,7 @@ function ce:drawBuffer()
 end
 
 function ce:drawLine()
+  if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   local cline = clua({buffer[self.cy]},cluacolors)
   rect(1,(self.cy-self.vy+2)*(self.fh+3)-(self.fh+2), screenW,self.fh+2, false,self.bgc)
   printCursor(-(self.vx-2),(self.cy-self.vy+1)+1,self.bgc)
@@ -253,7 +256,15 @@ function ce:mousepressed(x, y, button, istouch)
     self.cy = self.vy + (cy-1)
     self:checkPos()
     self:drawBuffer()
+    self:drawLineNum()
   end
+end
+
+function ce:wheelmoved(x, y)
+  self.vy = math.floor(self.vy-y)
+  if self.vy > #buffer then self.vy = #buffer end
+  if self.vy < 1 then self.vy = 1 end
+  self:drawBuffer()
 end
 
 function ce:touchpressed() textinput(true) end
