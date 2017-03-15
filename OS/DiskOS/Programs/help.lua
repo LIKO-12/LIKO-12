@@ -91,7 +91,7 @@ local function sprint(text) --Smart print with the "press any key to continue" m
 end
 
 for line in fs.lines(doc) do
-  sprint(line)
+  if sprint(line) then break end
 end
 
 print("")
