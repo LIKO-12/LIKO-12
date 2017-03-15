@@ -1,2 +1,22 @@
 Welcome to LIKO-12 V0.6 !
-The api documentation is still under progress
+ 
+LIKO-12 is a fantasy console inspired by PICO-8 but with extra abilities, different API and bigger screen width.
+ 
+We are working on this because PICO-8 is not available under a free license that allows improvements and sharing,
+and also to lift some of the more restrictive limitations on games like the token limit.
+ 
+What's PICO-8 ??
+ 
+PICO-8 is a fantasy console for making, sharing and playing tiny games and other computer programs.
+When you turn it on, the machine greets you with a shell for typing in Lua programs straight away and provides simple built-in tools for creating sprites, maps and sound.
+ 
+And what about LIKO12 ?
+ 
+When you turn LIKO12 on, the machine shows a 'POST' screen and then boots to the installed opereating system,
+ 
+By default it comes with 'DiskOS' pre-installed, which is an opereating system that's inspired by CraftOS (The OS of ComputerCraft) by implementing a terminal, filesystem, lua programs, multiple harddisk drives.
+and it's also inspired by PICO-8's SpriteEditor and CodeEditor.
+ 
+So you can basically create spritesheets, and games using this console.
+ 
+Type "help GettingStarted" (without the "") to get started !
