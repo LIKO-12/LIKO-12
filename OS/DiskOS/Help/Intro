@@ -1,0 +1,19 @@
+You when you turn on LIKO-12, The engine will load the bios configuration and initializes the peripherals, then shows up the POST screen giving you a little time to press Delete to enter the bios.
+ 
+The liko12 bios is actually made of a host specs info screen and a code editor.
+The code editor will allow you to edit the bios configuration, this configuration code specifies for liko12 which peripherals to load and what configuration you would use for them,
+For example: Set the GPU color pallete and the screen resolution.
+ 
+The default bios configuration boots liko12 with the following list of peripherals:
+GPU: 192x128 res, pico8 color pallete, 4x5 font.
+CPU: responsible for handelling events.
+Keyboard: Provides the keyboard input interface.
+HDD: The virtual files system; 2 Drives (C, D) each one with 50 mbyte of data.
+ 
+Note that the mouse is part of the GPU.
+ 
+* The bios screen has been not programmed yet.
+ 
+Then the engine looks for a file called 'boot.lua' in the C drive, this file (in DiskOS) wraps all the peripherals apis and make them ready for use anywhere, and also simulates a 'require' system for handy use.
+After that the boot.lua loads terminal.lua which greets you with a shell to type commands in.
+

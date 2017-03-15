@@ -1,0 +1,19 @@
+The list of the default DiskOS Programs:
+ 
+help - The Current help program.
+drives - Lists the available storage drives and their space usage.
+ls - Lists the files and directories in the current directory.
+cd - Changes the current directory.
+rm - Remove/Delete a file or a folder, cunnot undo , be warned !
+mkdir - Create a new directory.
+cls - Clears the screen.
+folder - Open the current folder in the host explorer.
+reboot - Reboot LIKO-12.
+shutdown - Shutdown LIKO-12 ! and quit.
+save - Save the current game data from the editors.
+load - Load a game data to the editors.
+new - Clear the game data in the editors.
+run - Run the current game in the editors.
+portCart - A script for loading old LIKO-12 games.
+apis - List the peripherals api functions.
+peripherals - List the available peripherals.
