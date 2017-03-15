@@ -61,13 +61,15 @@ end
 
 --Add peripherals api
 local blocklist = { HDD = true }
+local perglob = {GPU = true, CPU = true, Keyboard = true} --The perihperals to make global not in a table.
 
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
-for k, v in pairs(blocklist) do perlist[v] = nil end
+for k, v in pairs(blocklist) do perlist[k] = nil end
 for peripheral,funcs in pairs(perlist) do
+  local holder = glob; if not perglob[peripheral] then glob[peripheral] = {}; holder = glob[peripheral] end
   for _,func in ipairs(funcs) do
     local command = peripheral..":"..func
-    glob[func] = function(...)
+    holder[func] = function(...)
       local args = {coroutine.yield(command,...)}
       if not args[1] then return error(args[2]) end
       local nargs = {}
