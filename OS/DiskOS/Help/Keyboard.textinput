@@ -1,0 +1,11 @@
+Keyboard.textinput(<state>)
+ 
+<state> Boolean: The new state of the text input
+ 
+Enables or disables text input (shows the onscreen keyboard for Android users)
+ 
+state = Keyboard.textinput()
+ 
+(state) boolean: The current state of text input
+ 
+Returns the currrent state of text input
