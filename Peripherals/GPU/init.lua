@@ -105,7 +105,7 @@ return function(config) --A function that creates a new GPU peripheral.
   ofs.rect_line = {0,0} --The offset of GPU.rect with l as true.
   ofs.rectSize_line = {-1,-1} --The offset of w,h in GPU.rect with l as false.
   ofs.triangle = {0,0} --The offset of each vertices in GPU.triangle with l as false.
-  ofs.triangle_ line = {0,0} --The offset of each vertices in GPU.triangle with l as true.
+  ofs.triangle_line = {0,0} --The offset of each vertices in GPU.triangle with l as true.
   ofs.image = {-1,-1}
   ofs.quad = {-1,-1}
   
@@ -394,17 +394,24 @@ return function(config) --A function that creates a new GPU peripheral.
     if type(y3) ~= "number" then return false, "y3 must be a number, provided: "..type(y3) end
     if col and type(col) ~= "number" then return false, "color must be a number, provided: "..type(col) end
     
-    x1,y1,x2,y2,x3,y3,col = math.floor(x1),math.floor(y1),math.floor(x2),math.floor(y2),math.floor(x3),math.floor(y3),math.floor(col)
+    x1,y1,x2,y2,x3,y3 = math.floor(x1),math.floor(y1),math.floor(x2),math.floor(y2),math.floor(x3),math.floor(y3)
+    if col then col = math.floor(col) end
     if col and (col < 0 or col > 16) then return false, "color is out of range ("..col..") expected [0,16]" end
     
     if col then exe(GPU.pushColor()) exe(GPU.color(col)) end
     
     --Apply the offset
     if l then
-	  x1,y1,x2,y2,x3,y3 = x1 + ofs.triangle_line[1], x1 + ofs.triangle_line[1], x1 + ofs.triangle_line[1], x1 + ofs.triangle_line[1], x1 + ofs.triangle_line[1], x1 + ofs.triangle_line[1]
+      x1,y1,x2,y2,x3,y3 = x1 + ofs.triangle_line[1], y1 + ofs.triangle_line[2], x2 + ofs.triangle_line[1], y2 + ofs.triangle_line[2], x3 + ofs.triangle_line[1], y3 + ofs.triangle_line[2]
     else
-      x1,y1,x2,y2,x3,y3 = x1 + ofs.triangle_line[1], x1 + ofs.triangle_line[1], x1 + ofs.triangle_line[1], x1 + ofs.triangle_line[1], x1 + ofs.triangle_line[1], x1 + ofs.triangle_line[1]
+      x1,y1,x2,y2,x3,y3 = x1 + ofs.triangle[1], y1 + ofs.triangle[2], x2 + ofs.triangle[1], y2 + ofs.triangle[2], x3 + ofs.triangle[1], y3 + ofs.triangle[2]
     end
+    
+    love.graphics.polygon(l and "line" or "fill", x1,y1,x2,y2,x3,y3)
+    
+    if col then exe(GPU.popColor()) end
+    
+    return true --It ran successfully
   end
   
   --Draws a ellipse filled, or lines only.
