@@ -284,10 +284,16 @@ return function(config) --A function that creates a new GPU peripheral.
       if type(id) ~= "number" then return false, "The color id must be a number." end --Error
       if id > 16 or id < 0 then return false, "The color id is out of range." end --Error
       id = math.floor(id) --Remove the float digits.
-      love.graphics.setColor(_GetColor(id)) --Set the active color.
+      if id == 0 then --Set the active color.
+        love.graphics.setColor(0,0,0,0)
+      else
+        love.graphics.setColor(id-1,0,0,255)
+      end
       return true --It ran successfuly.
     else
-      return true, _GetColorID(love.graphics.getColor()) --Return the current color.
+      local r,g,b,a = love.graphics.getColor()
+      if a == 0 then return true,0 end
+      return true, r+1 --Return the current color.
     end
   end
   
@@ -609,7 +615,11 @@ return function(config) --A function that creates a new GPU peripheral.
         imageData:mapPixel(function(x,y,r,g,b,a)
           local c = Colors[data:sub(0,1)]
           data = data:sub(2,-1)
-          return unpack(_GetColor(c))
+          if c == 0 then
+            return 0,0,0,0
+          else
+            return c-1,0,0,255
+          end
         end)
       else
         imageData = love.image.newImageData(love.filesystem.newFileData(w,"image.png"))
@@ -621,14 +631,26 @@ return function(config) --A function that creates a new GPU peripheral.
     local id = {}
     
     function id:size() return imageData:getDimensions() end
-    function id:getPixel(x,y) return _GetColorID(imageData:getPixel((x or 1)-1,(y or 1)-1)) end
-    function id:setPixel(x,y,c) imageData:setPixel((x or 1)-1,(y or 1)-1,unpack(_GetColor(c))) return self end
+    function id:getPixel(x,y)
+      local r,g,b,a = imageData:getPixel((x or 1)-1,(y or 1)-1)
+      if a == 0 then return 0 else return a+1 end
+    end
+    function id:setPixel(x,y,c)
+      if type(c) ~= "number" then return error("Color must be a number, provided "..type(c)) end
+      c = math.floor(c) if c < 0 or c > 16 then return error("Color out of range ("..c..") expected [0,16]") end
+      local r,g,b,a = c == 0 and 0 or c-1 ,0,0, c == 0 and 0 or 255
+      imageData:setPixel((x or 1)-1,(y or 1)-1,r,g,b,a)
+      return self
+    end
     function id:map(mf)
       imageData:mapPixel(
       function(x,y,r,g,b,a)
-        local newCol = mf(x+1,y+1,_GetColorID(r,g,b,a))
-        newCol = newCol and _GetColor(newCol) or {r,g,b,a}
-        return unpack(newCol)
+        local col = a == 0 and 0 or r+1
+        local c = mf(x+1,y+1,col)
+        if c and type(c) ~= "number" then error("Color must be a number, provided "..type(c)) elseif c then c = math.floor(c) end
+        if c and (c < 0 or c > 16) then return error("Color out of range ("..c..") expected [0,16]") end
+        c = c and (c==0 and {0,0,0,0} or {c-1,0,0,255}) or {r,g,b,a}
+        return unpack(c)
       end)
       return self
     end
