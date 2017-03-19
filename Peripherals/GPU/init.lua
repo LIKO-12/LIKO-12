@@ -91,25 +91,53 @@ return function(config) --A function that creates a new GPU peripheral.
   local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo()
   --love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice)
   
+  local _DrawPalette = {}
+  local _ImageTransparent = {}
   local _DisplayPalette = {}
+  
   for i=1,16 do
+    _ImageTransparent[i] = (i==1 and 0 or 1)
+    _DrawPalette[i] = i-1
     _DisplayPalette[i] = _ColorSet[i]
   end
   _DisplayPalette[17] = {0,0,0,0} --A bug in unpack ???
+  _DrawPalette[17] = 1
+  _ImageTransparent[17] = 0
   
-  local _DisplayShader=love.graphics.newShader([[
+  local _DrawShader = love.graphics.newShader([[
+  extern float palette[16];
+  
+  vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+    int index=int(color.r*255.0+0.5);
+    return vec4(palette[index]/255.0, 0.0, 0.0, 1.0);
+  }]])
+  _DrawShader:send('palette', unpack(_DrawPalette))
+  
+  local _TransparentShader = love.graphics.newShader([[
+  extern float palette[16];
+  extern float transparent[16];
+  
+  vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+    int index=int(Texel(texture, texture_coords).r*255.0+0.5);
+    return vec4(palette[index]/255.0, 0.0, 0.0, transparent[index]);
+  }]])
+  _TransparentShader:send('palette', unpack(_DrawPalette))
+  _TransparentShader:send('transparent', unpack(_ImageTransparent))
+  
+  local _DisplayShader = love.graphics.newShader([[
     extern vec4 palette[16];
+    
     vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
-	     int index=int(Texel(texture, texture_coords).r*255.0+0.5);
-	     // lookup the colour in the palette by index
-	     return palette[index]/255.0;
+      int index=int(Texel(texture, texture_coords).r*255.0+0.5);
+      // lookup the colour in the palette by index
+      return palette[index]/255.0;
   }]])
   _DisplayShader:send('palette', unpack(_DisplayPalette))
   
   local ofs = {} --Offsets table.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
   ofs.point = {0,0} --The offset of GPU.point/s.
-  ofs.print = {-1,-1} --The offset of GPU.print.
+  ofs.print = {-2,-1} --The offset of GPU.print.
   ofs.line = {0,0} --The offset of GPU.line/s.
   ofs.circle = {0,0,0} --The offset of GPU.circle with l as false (x,y,r).
   ofs.circle_line = {0,0,0} --The offset of GPU.circle with l as true (x,y,r).
