@@ -91,6 +91,20 @@ return function(config) --A function that creates a new GPU peripheral.
   local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo()
   --love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice)
   
+  local _DisplayPalette = {}
+  for i=0,15 do
+    _DisplayPalette[i] = _ColorSet[i+1]
+  end
+  
+  local _DisplayShader=love.graphics.newShader([[
+    extern vec4 palette[16];
+    vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+	     int index=int(Texel(texture, texture_coords).r*255.0+0.5);
+	     // lookup the colour in the palette by index
+	     return palette[index]/255.0;
+  }]])
+  _DisplayShader:send('palette', unpack(_DisplayPalette))
+  
   local ofs = {} --Offsets table.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
   ofs.point = {0,0} --The offset of GPU.point/s.
@@ -778,6 +792,7 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:graphics",function()
     if _ShouldDraw then --When it's required to draw (when changes has been made to the canvas)
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
+      love.graphics.setShader(_DisplayShader) --Activate the display shader
       love.graphics.origin() --Reset all transformations.
       
       GPU.pushColor() --Push the current color to the stack.
@@ -788,6 +803,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.draw(_ScreenCanvas, _LIKO_X, _LIKO_Y, 0, _LIKOScale, _LIKOScale) --Draw the canvas.
       
       love.graphics.present() --Present the screen to the host & the user.
+      love.graphics.setShader() --Deactivate the display shader
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
       love.graphics.translate(unpack(ofs.screen)) --Reapply the offset.
       _ShouldDraw = false --Reset the flag.
