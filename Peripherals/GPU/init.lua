@@ -92,16 +92,19 @@ return function(config) --A function that creates a new GPU peripheral.
   --love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice)
   
   local _DrawPalette = {}
+  local _ImagePalette = {}
   local _ImageTransparent = {}
   local _DisplayPalette = {}
   
   for i=1,16 do
     _ImageTransparent[i] = 1 --(i==1 and 0 or 1)
     _DrawPalette[i] = i-1
+    _ImagePalette[i] = i-1
     _DisplayPalette[i] = _ColorSet[i]
   end
   _DisplayPalette[17] = {0,0,0,0} --A bug in unpack ???
   _DrawPalette[17] = 0
+  _ImagePalette[17] = 0
   _ImageTransparent[17] = 0
   
   local _DrawShader = love.graphics.newShader([[
@@ -123,7 +126,7 @@ return function(config) --A function that creates a new GPU peripheral.
     float ta=float(Texel(texture,texture_coords).a);
     return vec4(palette[index]/255.0, 0.0, 0.0, transparent[index]*ta);
   }]])
-  _TransparentShader:send('palette', unpack(_DrawPalette))
+  _TransparentShader:send('palette', unpack(_ImagePalette))
   _TransparentShader:send('transparent', unpack(_ImageTransparent))
   
   local _DisplayShader = love.graphics.newShader([[
@@ -359,6 +362,86 @@ return function(config) --A function that creates a new GPU peripheral.
     exe(GPU.color(ColorStack[#ColorStack])) --Set the last color in the stack to be the active color.
     table.remove(ColorStack,#ColorStack) --Remove the last color in the stack.
     return true --It ran successfully
+  end
+  
+  --Map pallete colors
+  function GPU.pal(c0,c1,p)
+    local drawchange = false
+    local imagechange = false
+    if (not c0) and (not c1) then
+      if p then
+        for i=1, 16 do
+          if _DrawPalette[i] ~= i-1 and p == 1 then
+            drawchange = true
+            _DrawPalette[i] = i-1
+          end
+          
+          if _ImagePalette[i] ~= i-1 and p > 1 then
+            imagechange = true
+            _ImagePalette[i] = i-1
+          end
+        end
+      else
+        for i=1, 16 do
+          if _DrawPalette[i] ~= i-1 then
+            drawchange = true
+            _DrawPalette[i] = i-1
+          end
+          
+          if _ImagePalette[i] ~= i-1 then
+            imagechange = true
+            _ImagePalette[i] = i-1
+          end
+        end
+      end
+    elseif not(c1) then
+      if p then
+        if p == 1 and _DrawPalette[c0] ~= c0-1 then
+          drawchange = true
+          _DrawPalette[c0] = c0-1
+        elseif p > 1 and _ImagePalette[c0] ~= c0-1 then
+          imagechange = true
+          _ImagePalette[c0] = c0-1
+        end
+      else
+        if _DrawPalette[c0] ~= c0-1 then
+          drawchange = true
+          _DrawPalette[c0] = c0-1
+        end
+        
+        if _ImagePalette[c0] ~= c0-1 then
+          imagechange = true
+          _ImagePalette[c0] = c0-1
+        end
+      end
+    elseif c0 and c1 then
+      if p then
+        if p == 1 and _DrawPalette[c0] ~= c1-1 then
+          drawchange = true
+          _DrawPalette[c0] = c1-1
+        elseif p > 1 and _ImagePalette[c0] ~= c1-1 then
+          imagechange = true
+          _ImagePalette[c0] = c1-1
+        end
+      else
+        if _DrawPalette[c0] ~= c1-1 then
+          drawchange = true
+          _DrawPalette[c0] = c1-1
+        end
+        
+        if _ImagePalette[c0] ~= c1-1 then
+          imagechange = true
+          _ImagePalette[c0] = c1-1
+        end
+      end
+    end
+    if drawchange then
+      _DrawShader:send('palette',unpack(_DrawPalette))
+    end
+    if imagechange then
+      _TransparentShader:send('palette',unpack(_ImagePalette))
+    end
+    return true
   end
   
   --Suspend the coroutine till the screen is updated
