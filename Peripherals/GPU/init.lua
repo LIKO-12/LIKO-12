@@ -96,12 +96,12 @@ return function(config) --A function that creates a new GPU peripheral.
   local _DisplayPalette = {}
   
   for i=1,16 do
-    _ImageTransparent[i] = (i==1 and 0 or 1)
+    _ImageTransparent[i] = 1 --(i==1 and 0 or 1)
     _DrawPalette[i] = i-1
     _DisplayPalette[i] = _ColorSet[i]
   end
   _DisplayPalette[17] = {0,0,0,0} --A bug in unpack ???
-  _DrawPalette[17] = 1
+  _DrawPalette[17] = 0
   _ImageTransparent[17] = 0
   
   local _DrawShader = love.graphics.newShader([[
@@ -109,7 +109,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
     int index=int(color.r*255.0+0.5);
-    return vec4(palette[index]/255.0, 0.0, 0.0, 1.0);
+    float ta=float(Texel(texture,texture_coords).a);
+    return vec4(palette[index]/255.0, 0.0, 0.0, color.a*ta);
   }]])
   _DrawShader:send('palette', unpack(_DrawPalette))
   
@@ -119,7 +120,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
     int index=int(Texel(texture, texture_coords).r*255.0+0.5);
-    return vec4(palette[index]/255.0, 0.0, 0.0, transparent[index]);
+    float ta=float(Texel(texture,texture_coords).a);
+    return vec4(palette[index]/255.0, 0.0, 0.0, transparent[index]*ta);
   }]])
   _TransparentShader:send('palette', unpack(_DrawPalette))
   _TransparentShader:send('transparent', unpack(_ImageTransparent))
@@ -163,6 +165,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   love.graphics.translate(unpack(ofs.screen)) --Offset all the drawing opereations.
+  love.graphics.setShader(_DrawShader)
   
   local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
   
@@ -631,12 +634,14 @@ return function(config) --A function that creates a new GPU peripheral.
     function i:draw(x,y,r,sx,sy,quad)
       local x, y, sx, sy = x or 1, y or 1, sx or 1, sy or 1
       GPU.pushColor()
+      love.graphics.setShader(_TransparentShader)
       love.graphics.setColor(255,255,255,255)
       if quad then
         love.graphics.draw(Image,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,math.floor(sx),math.floor(sy))
       else
         love.graphics.draw(Image,math.floor(x+ofs.image[1]),math.floor(y+ofs.image[2]),r,math.floor(sx),math.floor(sy))
       end
+      love.graphics.setShader(_DrawShader)
       GPU.popColor()
       _ShouldDraw = true
       return self
@@ -837,7 +842,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.draw(_ScreenCanvas, _LIKO_X, _LIKO_Y, 0, _LIKOScale, _LIKOScale) --Draw the canvas.
       
       love.graphics.present() --Present the screen to the host & the user.
-      love.graphics.setShader() --Deactivate the display shader
+      love.graphics.setShader(_DrawShader) --Deactivate the display shader
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
       love.graphics.translate(unpack(ofs.screen)) --Reapply the offset.
       _ShouldDraw = false --Reset the flag.
@@ -876,7 +881,7 @@ return function(config) --A function that creates a new GPU peripheral.
       end
       
       love.graphics.setCanvas()
-      love.graphics.setShader()
+      love.graphics.setShader(_DrawShader)
       
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
       love.graphics.translate(unpack(ofs.screen)) --Reapply the offset.
