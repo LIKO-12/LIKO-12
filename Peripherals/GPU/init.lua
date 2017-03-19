@@ -92,9 +92,10 @@ return function(config) --A function that creates a new GPU peripheral.
   --love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice)
   
   local _DisplayPalette = {}
-  for i=0,15 do
-    _DisplayPalette[i] = _ColorSet[i+1]
+  for i=1,16 do
+    _DisplayPalette[i] = _ColorSet[i]
   end
+  _DisplayPalette[17] = {0,0,0,0} --A bug in unpack ???
   
   local _DisplayShader=love.graphics.newShader([[
     extern vec4 palette[16];
@@ -832,6 +833,8 @@ return function(config) --A function that creates a new GPU peripheral.
       
       love.graphics.setColor(255,255,255,255)
       
+      love.graphics.setShader(_DisplayShader)
+      
       love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFScale, _GIFScale) --Draw the canvas.
       
       if _Cursor ~= "none" then --Draw the cursor
@@ -840,6 +843,7 @@ return function(config) --A function that creates a new GPU peripheral.
       end
       
       love.graphics.setCanvas()
+      love.graphics.setShader()
       
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
       love.graphics.translate(unpack(ofs.screen)) --Reapply the offset.
