@@ -154,6 +154,10 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     return 0
   end
+  local function _ExportImage(x,y, r,g,b,a) --Convert from LIKO12 to Love2d format
+	if a == 0 then return 0,0,0,0 end
+	return unpack(_ColorSet[r+1])
+  end
   
   local function magiclines(s)
     if s:sub(-1)~="\n" then s=s.."\n" end
@@ -751,6 +755,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local enimg = imgdata:enlarge(_LIKOScale)
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
       local gifimg = love.graphics.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
+      limg:mapPixel(_ExportImage) --Convert image to have real colors.
       local hotx, hoty = hx*_LIKOScale, hy*_LIKOScale --Converted to host scale
       local cur = _Mobile and {} or love.mouse.newCursor(limg,hotx,hoty)
       
