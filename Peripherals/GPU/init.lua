@@ -154,6 +154,7 @@ return function(config) --A function that creates a new GPU peripheral.
   ofs.rectSize_line = {-1,-1} --The offset of w,h in GPU.rect with l as false.
   ofs.triangle = {0,0} --The offset of each vertices in GPU.triangle with l as false.
   ofs.triangle_line = {0,0} --The offset of each vertices in GPU.triangle with l as true.
+  ofs.polygon = {0,0} --The offset of each vertices in GPU.polygon.
   ofs.image = {-1,-1}
   ofs.quad = {-1,-1}
   
@@ -613,6 +614,19 @@ return function(config) --A function that creates a new GPU peripheral.
     if col then exe(GPU.popColor()) end
     
     return true --It ran successfully
+  end
+  
+  --Draw a polygon
+  function GPU.polygon(...)
+    local args = {...} --The table of args
+    exe(GPU.pushColor()) --Push the current color.
+    if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
+    for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
+    if #args < 6 then return false, "Need at least three vertices to draw a polygon." end --Error
+    for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.polygon[2] else args[k] = v + ofs.polygon[1] end end --Apply the offset.
+    love.graphics.polygon("fill",unpack(args)) _ShouldDraw = true --Draw the lines and tell that changes has been made.
+    exe(GPU.popColor()) --Pop the last color in the stack.
+    return true --It ran successfully.
   end
   
   --Draws a ellipse filled, or lines only.
