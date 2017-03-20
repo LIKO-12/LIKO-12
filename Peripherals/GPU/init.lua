@@ -470,9 +470,11 @@ return function(config) --A function that creates a new GPU peripheral.
     
     if mode then
       if mode == "translate" then
-        love.graphics.translate((a or 0)+ofs.screen[1],(b or 0)+ofs.screen[2])
+        love.graphics.translate(a or 0,b or 0)
       elseif mode == "scale" then
         love.graphics.scale(a or 1, b or 1)
+      elseif mode == "rotate" then
+        love.graphics.rotate(a or 0)
       else
         return false, "Unknown mode: "..model
       end
@@ -706,10 +708,12 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Clears the whole screen with black or the given color id.
   function GPU.clear(c)
-    local c = c or 1
+    local c = math.floor(c or 1)
     if type(c) ~= "number" then return false, "The color id must be a number." end --Error
     if c > 16 or c < 0 then return false, "The color id is out of range." end --Error
-    exe(GPU.rect(1,1,_LIKO_W,_LIKO_H,false,c)) --Draw a rectangle that covers the whole screen.
+    local a = c > 0 and 255 or 0
+    if c == 0 then c = 1 end
+    love.graphics.clear(c-1,0,0,a) _ShouldDraw = true
     return true --It ran successfully.
   end
   
