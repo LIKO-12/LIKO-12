@@ -27,20 +27,41 @@ So now the LIKO-12 has an OS called "DiskOS", that you can edit and hack yoursel
 ## How can I run the W.I.P V0.6 with all the new features ?
 In other words, you can say: "How can I run the DEV version that you tweet about ?"
 
-The DEV version as it's called is a __*development*__ version, so you have to keep in mind:
+#### The DEV version as it's called is a __*development*__ version, so you have to keep in mind:
 * Things are not stable, so crashes can happen at __ANY__ time, so always save your data.
 * Some API changes can happen at any time breaking any written games.
 * Things are not polished nor finished, so expect some non-userfriendly content.
 
-About the current BIOS:
+#### About the current BIOS:
 * It automatically __REFLASHES__ the DISKOS at boot, so any modification to it will revert at reboot, instead edit /OS/DISKOS/ in the SRC.
 * The boot animation will be changed soon.
 * The bios configuration screen still doesn't exists.
 
-About the current BIOS Configuration:
+#### About the current BIOS Configuration:
 * Loads the GPU with pico-8 16 color palette at 192x168 resolution.
 * Creates 2 virtual harddrives, C & D, each with 50 megabyte space.
 * Creates a Keyboard and a mouse.
+
+#### Running LIKO12 V0.6 DEV version:
+You will have to clone the LIKO-12 repo, __Be sure to clone the WIP branch__.
+
+##### Then you will have to install love2d:
+###### Windows:
+1. Go to http://love2d.org/ and download the love2d installer for your platform (32bit/64bit).
+2. Install love2d.
+3. Create a text file at your desktop, call it "run liko12"
+4. Type in (Replace them with your pathes): 
+```batch
+"path to love" "path to clone directory"
+```
+For default 32bit installation, replace _likopath_ with the path to the cloned folder, it should contain main.lua.
+```batch
+"C://Program Files/LOVE/love" "likopath"
+```
+5. Save the text file as "run liko12__.bat___"
+6. Run the batch file.
+7. Be sure to always pull updates from the repo.
+8. Enjoy :)
 
 ## Questions ?
 Direct Message me at twitter (see link bellow), I will response as soon as possible.
