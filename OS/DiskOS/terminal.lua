@@ -117,7 +117,7 @@ function term.execute(command,...)
     local ok, err = pcall(chunk,...)
     if not ok then color(9) print("ERR: "..tostring(err)) color(8) return false, tostring(err) end
     if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
-    color(8) pal() cam() return true
+    color(8) pal() cam() clip() return true
   end
   for path in nextPath(PATH) do
     if fs.exists(path) then
@@ -129,7 +129,7 @@ function term.execute(command,...)
           local ok, err = pcall(chunk,...)
           if not ok then color(9) print("\nERR: "..tostring(err)) color(8) return false, tostring(err) end
           if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
-          color(8) pal() cam() return true
+          color(8) pal() cam() clip() return true
         end
       end
     end
