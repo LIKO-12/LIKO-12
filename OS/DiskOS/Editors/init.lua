@@ -107,8 +107,8 @@ end
 
 function edit:drawTopBar()
   rect(1,1,swidth,8,false,self.flavor)
-  SpriteGroup(55, 1,1, 4,1, 1,1, self.editorsheet) --The LIKO12 Logo
-  SpriteGroup(24-#self.editors+1, (swidth-#self.editors*8) +1,1, #self.editors,1, 1,1, self.editorsheet) --The programs selection
+  SpriteGroup(55, 1,1, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
+  SpriteGroup(24-#self.editors+1, (swidth-#self.editors*8) +1,1, #self.editors,1, 1,1, false, self.editorsheet) --The programs selection
   self.editorsheet:draw(48-(#self.editors-self.active),swidth-(#self.editors-self.active+1)*8+1,1) --The current selected program
 end
 

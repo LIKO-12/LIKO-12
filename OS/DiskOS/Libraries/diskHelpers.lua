@@ -1,10 +1,20 @@
 
 function Sprite(id,x,y,r,sx,sy,sheet) (sheet or SpriteMap):draw(id,x,y,r,sx,sy) end
-function SpriteGroup(id,x,y,w,h,sx,sy,sheet)
+function SpriteGroup(id,x,y,w,h,sx,sy,r,sheet)
   local sx,sy = math.floor(sx or 1), math.floor(sy or 1)
+  if r then
+    if type(r) ~= "number" then return error("R must be a number, provided: "..type(r)) end
+    pushMatrix()
+    cam("translate",x,y)
+    cam("rotate",r)
+    x,y = 0,0
+  end
   for spry = 1, h or 1 do for sprx = 1, w or 1 do
     (sheet or SpriteMap):draw((id-1)+sprx+(spry*24-24),x+(sprx*sx*8-sx*8),y+(spry*sy*8-sy*8),0,sx,sy)
   end end
+  if r then
+    popMatrix()
+  end
 end
 
 --Flags API

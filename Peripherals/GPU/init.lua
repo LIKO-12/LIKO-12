@@ -462,6 +462,37 @@ return function(config) --A function that creates a new GPU peripheral.
     return 2 --Do not resume automatically
   end
   
+  --Camera Functions
+  function GPU.cam(mode,a,b)
+    if mode and type(mode) ~= "string" then return false, "Mode must be a string, providied: "..type(mode) end
+    if a and type(a) ~= "number" then return false, "a must be a number, providied: "..type(a) end
+    if b and type(b) ~= "number" then return false, "b must be a number, providied: "..type(b) end
+    
+    if mode then
+      if mode == "translate" then
+        love.graphics.translate((a or 0)+ofs.screen[1],(b or 0)+ofs.screen[2])
+      elseif mode == "scale" then
+        love.graphics.scale(a or 1, b or 1)
+      else
+        return false, "Unknown mode: "..model
+      end
+    else
+      exe(GPU.pushColor())
+      love.graphics.origin()
+      love.graphics.translate(unpack(ofs.screen))
+      exe(GPU.popColor())
+    end
+    return true
+  end
+  
+  function GPU.pushMatrix()
+    return pcall(love.graphics.push)
+  end
+  
+  function GPU.popMatrix()
+    return pcall(love.graphics.pop)
+  end
+  
   --Draw a rectangle filled, or lines only.
   --X pos, Y pos, W width, H height, L linerect, C colorid.
   function GPU.rect(x,y,w,h,l,c)
@@ -925,6 +956,7 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:graphics",function()
     if _ShouldDraw then --When it's required to draw (when changes has been made to the canvas)
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
+      love.graphics.push()
       love.graphics.setShader(_DisplayShader) --Activate the display shader
       love.graphics.origin() --Reset all transformations.
       
@@ -937,8 +969,8 @@ return function(config) --A function that creates a new GPU peripheral.
       
       love.graphics.present() --Present the screen to the host & the user.
       love.graphics.setShader(_DrawShader) --Deactivate the display shader
+      love.graphics.pop()
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
-      love.graphics.translate(unpack(ofs.screen)) --Reapply the offset.
       _ShouldDraw = false --Reset the flag.
       GPU.popColor() --Restore the active color.
       if flip then
@@ -954,6 +986,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if _GIFTimer >= _GIFFrameTime then
       _GIFTimer = _GIFTimer-_GIFFrameTime
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
+      love.graphics.push()
       love.graphics.origin() --Reset all transformations.
       
       GPU.pushColor() --Push the current color to the stack.
@@ -977,8 +1010,8 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setCanvas()
       love.graphics.setShader(_DrawShader)
       
+      love.graphics.pop() --Reapply the offset.
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
-      love.graphics.translate(unpack(ofs.screen)) --Reapply the offset.
       GPU.popColor() --Restore the active color.
       
       _GIFRec:frame(_GIFCanvas:newImageData())

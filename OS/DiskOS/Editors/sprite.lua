@@ -44,7 +44,7 @@ local flagsgrid = {swidth-(8*7),revdraw[2]-(8), 8*7,6, 8,1} --The sprite flags g
 local flagsdraw = {flagsgrid[1]-1,flagsgrid[2]-1} --The position of the first (leftmost) flag
 
 --Tools Selection--
-local toolsdraw = {104, revdraw[1]-(8*5+4),revdraw[2], 5,1, 1,1, eapi.editorsheet} --Tools draw arguments
+local toolsdraw = {104, revdraw[1]-(8*5+4),revdraw[2], 5,1, 1,1,false, eapi.editorsheet} --Tools draw arguments
 local toolsgrid = {toolsdraw[2],toolsdraw[3], toolsdraw[4]*8,toolsdraw[5]*8, toolsdraw[4],toolsdraw[5]} --Tools Selection Grid
 local stool = 1 --Current selected tool id
 
@@ -53,7 +53,7 @@ local tbtime = 0.1125 --The blink time
 local tbflag = false --Is the blink timer activated ?
 
 --Transformations Selection--
-local transdraw = {109, flagsgrid[1]-(8*5+3),toolsdraw[3]-(8+2), 5,1, 1,1, eapi.editorsheet} --Transformations draw arguments
+local transdraw = {109, flagsgrid[1]-(8*5+3),toolsdraw[3]-(8+2), 5,1, 1,1,false, eapi.editorsheet} --Transformations draw arguments
 local transgrid = {transdraw[2],transdraw[3], transdraw[4]*8, transdraw[5]*8, transdraw[4], transdraw[5]} --Transformations Selection Grid
 local strans --Selected Transformation
 
@@ -233,7 +233,7 @@ function se:redrawSPRS() _ = nil
   color(sprsidrect[7])
   local id = ""; for i=1, maxSpriteIDCells-(tostring(sprsid):len()) do id = id .. "0" end; id = id .. tostring(sprsid)
   print(id,sprsidrect[1]+1,sprsidrect[2]+1)
-  SpriteGroup(97,sprsbanksgrid[1],sprsbanksgrid[2],sprsbanksgrid[5],sprsbanksgrid[6],1,1,eapi.editorsheet)
+  SpriteGroup(97,sprsbanksgrid[1],sprsbanksgrid[2],sprsbanksgrid[5],sprsbanksgrid[6],1,1,false,eapi.editorsheet)
   eapi.editorsheet:draw(sprsbank+72,sprsbanksgrid[1]+(sprsbank-1)*8,sprsbanksgrid[2])
 end
 
