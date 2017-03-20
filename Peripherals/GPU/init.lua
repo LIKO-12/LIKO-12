@@ -368,6 +368,17 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.pal(c0,c1,p)
     local drawchange = false
     local imagechange = false
+    
+    if c0 and type(c0) ~= "number" then return false, "C0 must be a number, provided: "..type(c0) end
+    if c1 and type(c1) ~= "number" then return false, "C1 must be a number, provided: "..type(c1) end
+    if p and type(p) ~= "number" then return false, "P must be a number, provided: "..type(p) end
+    if c0 then c0 = math.floor(c0) end
+    if c1 then c1 = math.floor(c1) end
+    if p then p = math.floor(p) end
+    if c0 and (c0 < 1 or c0 > 16) then return false, "C0 is out of range ("..c0..") expected [1,16]" end
+    if c1 and (c1 < 1 or c1 > 16) then return false, "C1 is out of range ("..c1..") expected [1,16]" end
+    if p and (p < 1 or p > 2) then return false, "P is out of range ("..p..") expected [1,2]" end
+    
     if (not c0) and (not c1) then
       if p then
         for i=1, 16 do
