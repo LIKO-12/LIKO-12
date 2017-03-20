@@ -316,6 +316,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local GPU = {}
   
   local flip = false
+  local Clip
   local ColorStack = {} --The colors stack (pushColor,popColor)
   local printCursor = {x=1,y=1,bgc=1}
   local TERM_W, TERM_H = math.floor(_LIKO_W/(fw+1)), math.floor(_LIKO_H/(fh+2))-2
@@ -475,6 +476,8 @@ return function(config) --A function that creates a new GPU peripheral.
         love.graphics.scale(a or 1, b or 1)
       elseif mode == "rotate" then
         love.graphics.rotate(a or 0)
+      elseif mode == "shear" then
+        love.graphics.shear(a or 0, b or 0)
       else
         return false, "Unknown mode: "..model
       end
@@ -493,6 +496,21 @@ return function(config) --A function that creates a new GPU peripheral.
   
   function GPU.popMatrix()
     return pcall(love.graphics.pop)
+  end
+  
+  function GPU.clip(x,y,w,h)
+    if x then
+      if type(x) ~= "number" then return false, "X must be a number, provided: "..type(x) end
+      if type(y) ~= "number" then return false, "Y must be a number, provided: "..type(y) end
+      if type(w) ~= "number" then return false, "W must be a number, provided: "..type(w) end
+      if type(h) ~= "number" then return false, "H must be a number, provided: "..type(h) end
+      Clip = {x-1,y-1,w,h}
+      love.graphics.setScissor(unpack(Clip))
+    else
+      Clip = false
+      love.graphics.setScissor()
+    end
+    return true
   end
   
   --Draw a rectangle filled, or lines only.
@@ -963,6 +981,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.push()
       love.graphics.setShader(_DisplayShader) --Activate the display shader
       love.graphics.origin() --Reset all transformations.
+      if Clip then love.graphics.setScissor() end
       
       GPU.pushColor() --Push the current color to the stack.
       love.graphics.setColor(255,255,255,255) --I don't want to tint the canvas :P
@@ -975,6 +994,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setShader(_DrawShader) --Deactivate the display shader
       love.graphics.pop()
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
+      if Clip then love.graphics.setScissor(unpack(Clip)) end
       _ShouldDraw = false --Reset the flag.
       GPU.popColor() --Restore the active color.
       if flip then
@@ -992,6 +1012,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
       love.graphics.push()
       love.graphics.origin() --Reset all transformations.
+      if Clip then love.graphics.setScissor() end
       
       GPU.pushColor() --Push the current color to the stack.
       love.graphics.setColor(255,255,255,255) --I don't want to tint the canvas :P
@@ -1016,6 +1037,7 @@ return function(config) --A function that creates a new GPU peripheral.
       
       love.graphics.pop() --Reapply the offset.
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
+      if Clip then love.graphics.setScissor(unpack(Clip)) end
       GPU.popColor() --Restore the active color.
       
       _GIFRec:frame(_GIFCanvas:newImageData())
