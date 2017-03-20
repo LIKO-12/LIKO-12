@@ -58,10 +58,28 @@ For default 32bit installation, replace _likopath_ with the path to the cloned f
 ```batch
 "C://Program Files/LOVE/love" "likopath"
 ```
-5. Save the text file as "run liko12__.bat___"
+5. Save the text file as "run liko12 __.bat__ "
 6. Run the batch file.
 7. Be sure to always pull updates from the repo.
 8. Enjoy :)
+
+###### Linux (Ubuntu or Mint):
+1. First open the terminal.
+2. Add love2d repo by running those commands:
+```sh
+sudo add-apt-repository ppa:bartbes/love-stable
+sudo apt-get update
+```
+3. Install love2d by running this command:
+```sh
+sudo apt-get install love
+```
+4. Enter the cloned LIKO-12 repo directory (that contains main.lua) and type this command to run:
+```sh
+love .
+```
+5. Be sure to always pull updates from the repo.
+6. Enjoy :)
 
 ## Questions ?
 Direct Message me at twitter (see link bellow), I will response as soon as possible.
