@@ -145,7 +145,8 @@ return function(config) --A function that creates a new GPU peripheral.
   local ofs = {} --Offsets table.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
   ofs.point = {0,0} --The offset of GPU.point/s.
-  ofs.print = {-2,-1} --The offset of GPU.print.
+  ofs.print = {-1,-1} --The offset of GPU.print.
+  ofs.print_grid = {-2,-1} --The offset of GPU.print with grid mode.
   ofs.line = {0,0} --The offset of GPU.line/s.
   ofs.circle = {0,0,0} --The offset of GPU.circle with l as false (x,y,r).
   ofs.circle_line = {0,0,0} --The offset of GPU.circle with l as true (x,y,r).
@@ -755,7 +756,7 @@ return function(config) --A function that creates a new GPU peripheral.
       if type(x) == "boolean" then anl = x end
       local function printgrid(tx,gx,gy)
         if printCursor.bgc > 0 then exe(GPU.rect(math.floor((gx or 1)*(fw+1)-2)-1, math.floor((gy or 1)*(fh+3)-(fh+1))-1, tx:len()*(fw+1) +1, fh+2, false, printCursor.bgc)) end
-        love.graphics.print(tx, math.floor(((gx or 1)*(fw+1)-2)+ofs.print[1]), math.floor(((gy or 1)*(fh+3)-(fh+1))+ofs.print[2]))
+        love.graphics.print(tx, math.floor(((gx or 1)*(fw+1)-2)+ofs.print_grid[1]), math.floor(((gy or 1)*(fh+3)-(fh+1))+ofs.print_grid[2]))
       _ShouldDraw = true end
       if y then printgrid(t,printCursor.x,printCursor.y) printCursor.x = printCursor.x + t:len() return true end
       local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-(fh+2)) end
@@ -897,11 +898,7 @@ return function(config) --A function that creates a new GPU peripheral.
         imageData:mapPixel(function(x,y,r,g,b,a)
           local c = Colors[data:sub(0,1)]
           data = data:sub(2,-1)
-          if c == 0 then
-            return 0,0,0,0
-          else
-            return c-1,0,0,255
-          end
+          return c-1,0,0,255
         end)
       else
         imageData = love.image.newImageData(love.filesystem.newFileData(w,"image.png"))
