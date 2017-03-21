@@ -97,7 +97,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local _DisplayPalette = {}
   
   for i=1,16 do
-    _ImageTransparent[i] = 1 --(i==1 and 0 or 1)
+    _ImageTransparent[i] = (i==1 and 0 or 1)
     _DrawPalette[i] = i-1
     _ImagePalette[i] = i-1
     _DisplayPalette[i] = _ColorSet[i]
@@ -145,7 +145,8 @@ return function(config) --A function that creates a new GPU peripheral.
   local ofs = {} --Offsets table.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
   ofs.point = {0,0} --The offset of GPU.point/s.
-  ofs.print = {-2,-1} --The offset of GPU.print.
+  ofs.print = {-1,-1} --The offset of GPU.print.
+  ofs.print_grid = {-2,-1} --The offset of GPU.print with grid mode.
   ofs.line = {0,0} --The offset of GPU.line/s.
   ofs.circle = {0,0,0} --The offset of GPU.circle with l as false (x,y,r).
   ofs.circle_line = {0,0,0} --The offset of GPU.circle with l as true (x,y,r).
@@ -194,6 +195,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   local function _ExportImage(x,y, r,g,b,a) --Convert from LIKO12 to Love2d format
 	if a == 0 then return 0,0,0,0 end
+  if _ImageTransparent[r+1] == 0 then return 0,0,0,0 end
 	return unpack(_ColorSet[r+1])
   end
   
@@ -322,6 +324,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local flip = false
   local Clip
   local ColorStack = {} --The colors stack (pushColor,popColor)
+  local PaletteStack = {} --The palette stack (pushPalette,popPalette)
   local printCursor = {x=1,y=1,bgc=1}
   local TERM_W, TERM_H = math.floor(_LIKO_W/(fw+1)), math.floor(_LIKO_H/(fh+2))-2
   
@@ -457,6 +460,68 @@ return function(config) --A function that creates a new GPU peripheral.
     if imagechange then
       _TransparentShader:send('palette',unpack(_ImagePalette))
     end
+    return true
+  end
+  
+    function GPU.palt(c,t)
+    local changed = false
+    if c and type(c) ~= "number" then return false, "Color must be a number, provided: "..type(c) end
+    if c then c = math.floor(c) end
+    if c and (c < 1 or c > 16) then return false, "Color out of range ("..c..") expected [1,16]" end
+    if c then
+      if t then
+        if _ImageTransparent[c] == 1 then
+          _ImageTransparent[c] = 0
+          changed = true
+        end
+      else
+        if _ImageTransparent[c] == 0 then
+          _ImageTransparent[c] = 1
+          changed = true
+        end
+      end
+    else
+      for i=1,16 do
+        if i == 1 then
+          if _ImageTransparent[i] == 1 then
+            changed = true
+            _ImageTransparent[i] = 0
+          end
+        else
+          if _ImageTransparent[i] == 0 then
+            changed = true
+            _ImageTransparent[i] = 1
+          end
+        end
+      end
+    end
+    if changed then _TransparentShader:send('transparent', unpack(_ImageTransparent)) end
+    return true
+  end
+  
+  function GPU.pushPalette()
+    local pal = {}
+    pal.draw = {}
+    pal.img = {}
+    pal.trans = {}
+    for i=1, 16 do
+      table.insert(pal.draw,_DrawPalette[i]+1)
+      table.insert(pal.img,_ImagePalette[i]+1)
+      table.insert(pal.trans,_ImageTransparent[i])
+    end
+    table.insert(PaletteStack,pal)
+    return true
+  end
+  
+  function GPU.popPalette()
+    if #PaletteStack == 0 then return false, "No more palettes to pop." end --Error
+    local pal = PaletteStack[#PaletteStack]
+    for i=1,16 do
+      exe(GPU.pal(i,pal.draw[i],1))
+      exe(GPU.pal(i,pal.img[i],2))
+      exe(GPU.palt(i,pal.trans[i] == 0 and true or false))
+    end
+    table.remove(PaletteStack,#PaletteStack)
     return true
   end
   
@@ -686,11 +751,12 @@ return function(config) --A function that creates a new GPU peripheral.
     if x and y then --If the x & y are provided
       love.graphics.print(t, math.floor((x or 1)+ofs.print[1]), math.floor((y or 1)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
     else --If they are not, print on the grid
+      exe(GPU.pushPalette()) exe(GPU.palt())
       local anl = true --Auto new line
       if type(x) == "boolean" then anl = x end
       local function printgrid(tx,gx,gy)
         if printCursor.bgc > 0 then exe(GPU.rect(math.floor((gx or 1)*(fw+1)-2)-1, math.floor((gy or 1)*(fh+3)-(fh+1))-1, tx:len()*(fw+1) +1, fh+2, false, printCursor.bgc)) end
-        love.graphics.print(tx, math.floor(((gx or 1)*(fw+1)-2)+ofs.print[1]), math.floor(((gy or 1)*(fh+3)-(fh+1))+ofs.print[2]))
+        love.graphics.print(tx, math.floor(((gx or 1)*(fw+1)-2)+ofs.print_grid[1]), math.floor(((gy or 1)*(fh+3)-(fh+1))+ofs.print_grid[2]))
       _ShouldDraw = true end
       if y then printgrid(t,printCursor.x,printCursor.y) printCursor.x = printCursor.x + t:len() return true end
       local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-(fh+2)) end
@@ -717,6 +783,7 @@ return function(config) --A function that creates a new GPU peripheral.
         lcount = lcount-1
         printLine(line,lcount==0,not anl)
       end
+      exe(GPU.popPalette())
     end
     return true
   end
@@ -827,15 +894,11 @@ return function(config) --A function that creates a new GPU peripheral.
       if w:sub(0,12) == "LK12;GPUIMG;" then
         local w,h,data = string.match(w,"LK12;GPUIMG;(%d+)x(%d+);(.+)")
         imageData = love.image.newImageData(w,h)
-        local Colors = {["0"]=0,["1"]=1,["2"]=2,["3"]=3,["4"]=4,["5"]=5,["6"]=6,["7"]=7,["8"]=8,["9"]=9,a=10,b=11,c=12,d=13,e=14,f=15,g=16}
+        local Colors = {["0"]=1,["1"]=1,["2"]=2,["3"]=3,["4"]=4,["5"]=5,["6"]=6,["7"]=7,["8"]=8,["9"]=9,a=10,b=11,c=12,d=13,e=14,f=15,g=16}
         imageData:mapPixel(function(x,y,r,g,b,a)
           local c = Colors[data:sub(0,1)]
           data = data:sub(2,-1)
-          if c == 0 then
-            return 0,0,0,0
-          else
-            return c-1,0,0,255
-          end
+          return c-1,0,0,255
         end)
       else
         imageData = love.image.newImageData(love.filesystem.newFileData(w,"image.png"))
@@ -890,7 +953,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     function id:encode() --Export to liko12 format
       local data = "LK12;GPUIMG;"..self:width().."x"..self.height()..";"
-      local colors = {"1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g";[0]="0"}
+      local colors = {"1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g"}
       self:map(function(x,y,c) data = data..colors[c] end)
       return data
     end

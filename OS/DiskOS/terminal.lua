@@ -129,7 +129,7 @@ function term.execute(command,...)
           local ok, err = pcall(chunk,...)
           if not ok then color(9) print("\nERR: "..tostring(err)) color(8) return false, tostring(err) end
           if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
-          color(8) pal() cam() clip() return true
+          color(8) pal() palt() cam() clip() return true
         end
       end
     end
@@ -173,7 +173,7 @@ function term.loop() --Enter the while loop of the terminal
         local oldx, oldy, oldbk = printCursor()
         editor:loop() cursor("none")
         printCursor(oldx,oldy,oldbk)
-        screenbk:image():draw(1,1) color(8)
+        palt(1,false) screenbk:image():draw(1,1) color(8) palt(1,true)
       end
     elseif event == "touchpressed" then
       textinput(true)
