@@ -11,7 +11,8 @@ local bankH = sheetH/4 --The height of each bank in cells (sprites)
 local bsizeH = bankH*imgh --The height of each bank in pixels
 local sizeW, sizeH = sheetW*imgw, sheetH*imgh --The size of the spritessheet in pixels
 
-local SpriteMap, mflag = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH), false --The spritemap, plus mouse drawing flag
+se.SpriteMap = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH) --The spritemap
+local mflag = false
 local flagsData = "" --A string contain each flag (byte) as a char
 for i=1, sheetW*sheetH do flagsData = flagsData..string.char(0) end
 
@@ -32,7 +33,7 @@ local sprsmflag = false --Sprite selection mouse flag
 local sprsbquads = {} --SpriteSheets 4 BanksQuads
 local sprsbank = 1 --Current Selected Bank
 for i = 1, 4 do --Create the banks quads
-  sprsbquads[i] = SpriteMap:image():quad(1,(i*bsizeH-bsizeH)+1,sizeW,bsizeH)
+  sprsbquads[i] = se.SpriteMap:image():quad(1,(i*bsizeH-bsizeH)+1,sizeW,bsizeH)
 end
 
 local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in the biggest sprite id.
@@ -92,16 +93,16 @@ local infotext = "" --The info text to display
 local toolshold = {true,true,false,false,false} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
   function(self,cx,cy,b) --Pencil (Default)
-    local data = SpriteMap:data()
-    local qx,qy = SpriteMap:rect(sprsid)
+    local data = self.SpriteMap:data()
+    local qx,qy = self.SpriteMap:rect(sprsid)
     local col = (b == 1 or isMDown(1)) and colsL or colsR
     data:setPixel(qx+cx-1,qy+cy-1,col)
-    SpriteMap.img = data:image()
+    self.SpriteMap.img = data:image()
   end,
 
   function(self,cx,cy,b) --Fill (Bucket)
-    local data = SpriteMap:data()
-    local qx,qy = SpriteMap:rect(sprsid)
+    local data = self.SpriteMap:data()
+    local qx,qy = self.SpriteMap:rect(sprsid)
     local col = (b == 1 or isMDown(1)) and colsL or colsR
     local tofill = data:getPixel(qx+cx-1,qy+cy-1)
     if tofill == col then return end
@@ -115,7 +116,7 @@ local tools = {
       if gpixel(x,y-1) and gpixel(x,y-1) == tofill then mapPixel(x,y-1) end
     end
     mapPixel(qx+cx-1,qy+cy-1)
-    SpriteMap.img = data:image()
+    self.SpriteMap.img = data:image()
   end,
 
   function(self) --Clone (Copy)
@@ -127,28 +128,28 @@ local tools = {
   end,
 
   function(self) --Delete (Erase)
-    local data = SpriteMap:data()
-    local qx,qy = SpriteMap:rect(sprsid)
+    local data = self.SpriteMap:data()
+    local qx,qy = self.SpriteMap:rect(sprsid)
     for px = 0, 7 do for py = 0, 7 do
       data:setPixel(qx+px,qy+py,0)
     end end
-    SpriteMap.img = data:image()
+    self.SpriteMap.img = data:image()
     infotimer, infotext = 2,"DELETED SPRITE "..sprsid se:redrawINFO()
   end
 }
 
 --The transformations code--
 local function transform(tfunc)
-  local current = SpriteMap:extract(sprsid)
+  local current = self.SpriteMap:extract(sprsid)
   local new = imagedata(current:width(),current:height())
   current:map(function(x,y,c)
     local nx,ny,nc = tfunc(x,y,c,current:width(),current:height())
     new:setPixel(nx or x,ny or y,nc or c)
   end)
-  local x,y = SpriteMap:rect(sprsid)
-  local data = SpriteMap:data()
+  local x,y = self.SpriteMap:rect(sprsid)
+  local data = self.SpriteMap:data()
   data:paste(new:export(),x,y)
-  SpriteMap.img = data:image()
+  self.SpriteMap.img = data:image()
 end
 
 local transformations = {
@@ -168,8 +169,8 @@ function se:leaved()
   
 end
 
-function se:export(path)
-  return SpriteMap:data():encode()..flagsData
+function se:export()
+  return self.SpriteMap:data():encode()..flagsData
 end
 
 function se:import(data)
@@ -185,16 +186,16 @@ function se:import(data)
     end
     imgdata = imgdata:sub(0,w*h)
     imgdata = "LK12;GPUIMG;"..w.."x"..h..";"..imgdata
-    SpriteMap = SpriteSheet(imagedata(imgdata):image(),sheetW,sheetH)
+    self.SpriteMap = SpriteSheet(imagedata(imgdata):image(),sheetW,sheetH)
   else
     local flagsData = ""
     for i=1, sheetW*sheetH do flagsData = flagsData..string.char(0) end
-    SpriteMap = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH)
+    self.SpriteMap = SpriteSheet(imagedata(sizeW,sizeH):image(),sheetW,sheetH)
   end
 end
 
 function se:copy()
-  clipboard(math.b64enc(SpriteMap:extract(sprsid):export()))
+  clipboard(math.b64enc(self.SpriteMap:extract(sprsid):export()))
   infotimer = 2 --Show info for 2 seconds
   infotext = "COPIED SPRITE "..sprsid
   self:redrawINFO()
@@ -202,10 +203,10 @@ end
 
 function se:paste()
   local ok, err = pcall(function()
-    local dx,dy,dw,dh = SpriteMap:rect(sprsid)
-    local sheetdata = SpriteMap:data()
+    local dx,dy,dw,dh = self.SpriteMap:rect(sprsid)
+    local sheetdata = self.SpriteMap:data()
     sheetdata:paste(math.b64dec(clipboard()),dx,dy)
-    SpriteMap.img = sheetdata:image()
+    self.SpriteMap.img = sheetdata:image()
     self:_redraw()
   end)
   if not ok then
@@ -227,7 +228,7 @@ end
 
 function se:redrawSPRS() _ = nil
   rect(sprsrecto)
-  SpriteMap:image():draw(sprsdraw[1],sprsdraw[2], sprsdraw[3], sprsdraw[4],sprsdraw[5], sprsbquads[sprsbank])
+  self.SpriteMap:image():draw(sprsdraw[1],sprsdraw[2], sprsdraw[3], sprsdraw[4],sprsdraw[5], sprsbquads[sprsbank])
   rect(sprssrect)
   rect(sprsidrect)
   color(sprsidrect[7])
@@ -239,9 +240,9 @@ end
 
 function se:redrawSPR()
   rect(imgrecto)
-  SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],SpriteMap:quad(sprsid))
+  self.SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],self.SpriteMap:quad(sprsid))
   rect(revdraw[1],revdraw[2], revdraw[3],revdraw[4] ,false,1)
-  SpriteMap:image():draw(revdraw[1],revdraw[2], 0, 1,1, SpriteMap:quad(sprsid))
+  self.SpriteMap:image():draw(revdraw[1],revdraw[2], 0, 1,1, self.SpriteMap:quad(sprsid))
 end
 
 function se:redrawTOOLS()
