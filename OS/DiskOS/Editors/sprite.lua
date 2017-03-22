@@ -82,8 +82,8 @@ local palgrid = {paldraw[1],paldraw[2],palpsize*4,palpsize*4,4,4} --The color se
 
 local colsrectL = {palrecto[1],palrecto[2],palpsize+2,palpsize+2, true, 8} --The color select box for the left mouse button (The black one)
 local colsrectR = {paldraw[1],paldraw[2],palpsize,palpsize, true, 1} --The color select box for the right mouse button (The white one)
-local colsL = 0 --Selected Color for the left mouse
-local colsR = 0 --Selected Color for the right mouse
+local colsL = 1 --Selected Color for the left mouse
+local colsR = 1 --Selected Color for the right mouse
 
 --Info system variables--
 local infotimer = 0 --The info timer, 0 if no info.
@@ -314,12 +314,12 @@ function se:mousepressed(x,y,b,it)
   local cx, cy = whereInGrid(x,y,palgrid)
   if cx then
     if b == 1 then
-      colsL = (cy-1)*4+cx if colsL == 1 then colsL = 0 end
+      colsL = (cy-1)*4+cx
       local cx, cy = cx-1, cy-1
       colsrectL[1] = palrecto[1] + cx*palpsize
       colsrectL[2] = palrecto[2] + cy*palpsize
     elseif b == 2 then
-      colsR = (cy-1)*4+cx if colsR == 1 then colsR = 0 end
+      colsR = (cy-1)*4+cx
       local cx, cy = cx-1, cy-1
       colsrectR[1] = paldraw[1] + cx*palpsize
       colsrectR[2] = paldraw[2] + cy*palpsize
