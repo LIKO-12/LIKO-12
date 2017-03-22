@@ -131,7 +131,7 @@ local tools = {
     local data = self.SpriteMap:data()
     local qx,qy = self.SpriteMap:rect(sprsid)
     for px = 0, 7 do for py = 0, 7 do
-      data:setPixel(qx+px,qy+py,0)
+      data:setPixel(qx+px,qy+py,1)
     end end
     self.SpriteMap.img = data:image()
     infotimer, infotext = 2,"DELETED SPRITE "..sprsid se:redrawINFO()
@@ -140,16 +140,16 @@ local tools = {
 
 --The transformations code--
 local function transform(tfunc)
-  local current = self.SpriteMap:extract(sprsid)
+  local current = se.SpriteMap:extract(sprsid)
   local new = imagedata(current:width(),current:height())
   current:map(function(x,y,c)
     local nx,ny,nc = tfunc(x,y,c,current:width(),current:height())
     new:setPixel(nx or x,ny or y,nc or c)
   end)
-  local x,y = self.SpriteMap:rect(sprsid)
-  local data = self.SpriteMap:data()
+  local x,y = se.SpriteMap:rect(sprsid)
+  local data = se.SpriteMap:data()
   data:paste(new:export(),x,y)
-  self.SpriteMap.img = data:image()
+  se.SpriteMap.img = data:image()
 end
 
 local transformations = {
