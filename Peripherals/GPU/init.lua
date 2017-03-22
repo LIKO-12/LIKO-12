@@ -14,15 +14,16 @@ return function(config) --A function that creates a new GPU peripheral.
   local _GIFStartKey = config._GIFStartKey or "f8"
   local _GIFEndKey = config._GIFEndKey or "f9"
   local _GIFPauseKey = config._GIFPauseKey or "f12"
-  local _GIFFrameTime = (config._GIFFrameTime or 1/60)*2
+  local _GIFFrameTime = (config._GIFFrameTime or 1/60)*2  --The delta timr between each gif frame.
   local _GIFTimer, _GIFRec = 0
   
   local _LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
   
-  local fw, fh = 4, 5
+  local _FontW, _FontH = config._FontW or 4, config._FontH or 5 --Font character size
   local _FontChars = config._FontChars or 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!?[](){}.,;:<>+=%#^*~/\\|$@&`"\'-_ ' --Font chars
   local _FontPath, _FontExtraSpacing = config._FontPath or "/Engine/font5x4.png", config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
   
+  --The colorset (PICO-8 Palette by default)
   local _ColorSet = config._ColorSet or {
     {0,0,0,255}, --Black 1
     {28,43,83,255}, --Dark Blue 2
@@ -46,10 +47,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local _ClearOnRender = config._ClearOnRender --Should clear the screen when render, some platforms have glitches when this is disabled.
   if type(_ClearOnRender) == "nil" then _ClearOnRender = true end --Defaults to be enabled.
-  local cpukit
-  if config.CPUKit then cpukit = config.CPUKit end
+  local cpukit if config.CPUKit then cpukit = config.CPUKit end --Get the cpukit (api) for triggering mouse events.
   --End of config loading--
-  
   
   local _ShouldDraw = false --This flag means that the gpu has to update the screen for the user.
   
@@ -75,7 +74,7 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setDefaultFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --Create the screen canvas.
   local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale) --Create the gif canvas, used to apply the gif scale factor.
-  local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing)
+  local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.1
   
   love.graphics.clear(0,0,0,255) --Clear the host screen.
   
@@ -84,20 +83,21 @@ return function(config) --A function that creates a new GPU peripheral.
   
   events:trigger("love:resize", _HOST_W, _HOST_H) --Calculate LIKO12 scale to the host window for the first time.
   
-  love.graphics.setFont(_Font) --Apply the default font.
+  love.graphics.setFont(_Font) --Activate the default font.
   
   --Post initialization (Setup the in liko12 gpu settings)--
   
-  local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo()
+  local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo() --Used to apply some device specific bugfixes.
   --love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice)
   
-  local _DrawPalette = {}
-  local _ImagePalette = {}
-  local _ImageTransparent = {}
-  local _DisplayPalette = {}
+  local _DrawPalette = {} --The palette mapping for all drawing opereations expect image:draw (p = 1).
+  local _ImagePalette = {} --The palette mapping for image:draw opereations (p = 2).
+  local _ImageTransparent = {} --The transparent colors palette, 1 for solid, 0 for transparent.
+  local _DisplayPalette = {} --The final display shader palette, converts the red pixel values to a palette color.
   
+  --Build the default palettes.
   for i=1,16 do
-    _ImageTransparent[i] = (i==1 and 0 or 1)
+    _ImageTransparent[i] = (i==1 and 0 or 1) --Black is transparent by default.
     _DrawPalette[i] = i-1
     _ImagePalette[i] = i-1
     _DisplayPalette[i] = _ColorSet[i]
@@ -107,6 +107,8 @@ return function(config) --A function that creates a new GPU peripheral.
   _ImagePalette[17] = 0
   _ImageTransparent[17] = 0
   
+  --Note: Those are modified version of picolove shaders.
+  --The draw palette shader
   local _DrawShader = love.graphics.newShader([[
   extern float palette[16];
   
@@ -115,9 +117,10 @@ return function(config) --A function that creates a new GPU peripheral.
     float ta=float(Texel(texture,texture_coords).a);
     return vec4(palette[index]/255.0, 0.0, 0.0, color.a*ta);
   }]])
-  _DrawShader:send('palette', unpack(_DrawPalette))
+  _DrawShader:send('palette', unpack(_DrawPalette)) --Upload the initial palette.
   
-  local _TransparentShader = love.graphics.newShader([[
+  --The image:draw palette shader
+  local _ImageShader = love.graphics.newShader([[
   extern float palette[16];
   extern float transparent[16];
   
@@ -126,9 +129,10 @@ return function(config) --A function that creates a new GPU peripheral.
     float ta=float(Texel(texture,texture_coords).a);
     return vec4(palette[index]/255.0, 0.0, 0.0, transparent[index]*ta);
   }]])
-  _TransparentShader:send('palette', unpack(_ImagePalette))
-  _TransparentShader:send('transparent', unpack(_ImageTransparent))
+  _ImageShader:send('palette', unpack(_ImagePalette)) --Upload the inital palette.
+  _ImageShader:send('transparent', unpack(_ImageTransparent)) --Upload the initial palette.
   
+  --The final display shader.
   local _DisplayShader = love.graphics.newShader([[
     extern vec4 palette[16];
     
@@ -140,7 +144,7 @@ return function(config) --A function that creates a new GPU peripheral.
       col.a = col.a*color.a*ta;
       return col;
   }]])
-  _DisplayShader:send('palette', unpack(_DisplayPalette))
+  _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the colorset.
   
   local ofs = {} --Offsets table.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
@@ -165,17 +169,17 @@ return function(config) --A function that creates a new GPU peripheral.
   if gpuVersion == "OpenGL ES 3.1 v1.r7p0-03rel0.b8759509ece0e6dda5325cb53763bcf0" then
     --GPU glitch fix for this driver, happens at my samsung j700h
     ofs.screen = {0,-1}
-    --ofs.point = {0,0}
     ofs.print = {-1,0}
+    ofs.print_grid = {-1,0}
     ofs.rect = {-1,0}
     ofs.image = {-1,0}
     ofs.quad = {-1,0}
   end
   
   love.graphics.translate(unpack(ofs.screen)) --Offset all the drawing opereations.
-  love.graphics.setShader(_DrawShader)
+  love.graphics.setShader(_DrawShader) --Activate the drawing shader.
   
-  local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
+  local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS" --Used to disable the cursors system (partly)
   
   --Internal Functions--
   local function _HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
@@ -193,18 +197,22 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     return 0
   end
-  local function _ExportImage(x,y, r,g,b,a) --Convert from LIKO12 to Love2d format
-	if a == 0 then return 0,0,0,0 end
-  if _ImageTransparent[r+1] == 0 then return 0,0,0,0 end
-	return unpack(_ColorSet[r+1])
+  
+  --Convert from LIKO12 palette to real colors.
+  local function _ExportImage(x,y, r,g,b,a)
+    if a == 0 then return 0,0,0,0 end
+    if _ImageTransparent[r+1] == 0 then return 0,0,0,0 end
+    return unpack(_ColorSet[r+1])
   end
   
+  --Used for print function (in grid mode)
   local function magiclines(s)
     if s:sub(-1)~="\n" then s=s.."\n" end
     return s:gmatch("(.-)\n")
   end
   
-  local function exe(...) --Excute a LIKO12 api function (to handle errors)
+  --Excute a LIKO12 api function (to handle errors)
+  local function exe(...)
     local args = {...}
     if args[1] then
       local nargs = {}
@@ -221,8 +229,9 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end
   
-  --gifrecorder
-  local _GIF = love.filesystem.load(perpath.."gif.lua")( _ColorSet, _GIFScale, _LIKO_W, _LIKO_H )
+  --GifRecorder
+  local _GIF = love.filesystem.load(perpath.."gif.lua")( _ColorSet, _GIFScale, _LIKO_W, _LIKO_H ) --Load the gif library
+  --To handle gif control buttons
   events:register("love:keypressed", function(key,sc,isrepeat)
     if key == _GIFStartKey then
       if _GIFRec then return end --If there is an already in progress gif
@@ -248,6 +257,7 @@ return function(config) --A function that creates a new GPU peripheral.
       _GIFRec = nil
     end
   end)
+  --To save the gif before rebooting.
   events:register("love:reboot",function(args)
     if _GIFRec then
       _GIFRec.file:flush()
@@ -258,6 +268,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.filesystem.remove("/~gifrec.gif")
     end
   end)
+  --To save the gif before quitting.
   events:register("love:quit", function()
     if _GIFRec then
       _GIFRec.file:flush()
@@ -321,22 +332,23 @@ return function(config) --A function that creates a new GPU peripheral.
   --The api starts here--
   local GPU = {}
   
-  local flip = false
-  local Clip
+  local flip = false --Is the code waiting for the screen to draw, used to resume the coroutine.
+  local Clip = false --The current active clipping region.
   local ColorStack = {} --The colors stack (pushColor,popColor)
   local PaletteStack = {} --The palette stack (pushPalette,popPalette)
-  local printCursor = {x=1,y=1,bgc=1}
-  local TERM_W, TERM_H = math.floor(_LIKO_W/(fw+1)), math.floor(_LIKO_H/(fh+2))-2
+  local printCursor = {x=1,y=1,bgc=1} --The print grid cursor pos.
+  local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2))-2 --The size of characters that the screen can fit.
   
+  --Those explains themselves.
   function GPU.screenSize() return true, _LIKO_W, _LIKO_H end
   function GPU.screenWidth() return true, _LIKO_W end
   function GPU.screenHeight() return true, _LIKO_H end
   function GPU.termSize() return true, TERM_W, TERM_H end
   function GPU.termWidth() return true, TERM_W end
   function GPU.termHeight() return true, TERM_H end
-  function GPU.fontSize() return true, fw, fh end
-  function GPU.fontWidth() return true, fw end
-  function GPU.fontHeight() return true, fh end
+  function GPU.fontSize() return true, _FontW, _FontH end
+  function GPU.fontWidth() return true, _FontW end
+  function GPU.fontHeight() return true, _FontH end
   
   --Call with color id to set the active color.
   --Call with no args to get the current acive color id.
@@ -374,9 +386,10 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Map pallete colors
   function GPU.pal(c0,c1,p)
-    local drawchange = false
-    local imagechange = false
+    local drawchange = false  --Has any changes been made to the draw palette (p=1).
+    local imagechange = false  --Has any changes been made to the image:draw palette (p=2).
     
+    --Error check all the arguments.
     if c0 and type(c0) ~= "number" then return false, "C0 must be a number, provided: "..type(c0) end
     if c1 and type(c1) ~= "number" then return false, "C1 must be a number, provided: "..type(c1) end
     if p and type(p) ~= "number" then return false, "P must be a number, provided: "..type(p) end
@@ -387,115 +400,68 @@ return function(config) --A function that creates a new GPU peripheral.
     if c1 and (c1 < 1 or c1 > 16) then return false, "C1 is out of range ("..c1..") expected [1,16]" end
     if p and (p < 1 or p > 2) then return false, "P is out of range ("..p..") expected [1,2]" end
     
+    --Reset the palettes.
     if (not c0) and (not c1) then
-      if p then
-        for i=1, 16 do
-          if _DrawPalette[i] ~= i-1 and p == 1 then
-            drawchange = true
-            _DrawPalette[i] = i-1
-          end
-          
-          if _ImagePalette[i] ~= i-1 and p > 1 then
-            imagechange = true
-            _ImagePalette[i] = i-1
-          end
+      for i=1, 16 do
+        if _DrawPalette[i] ~= i-1 and ((not p) or p == 1) then
+          drawchange = true
+          _DrawPalette[i] = i-1
         end
-      else
-        for i=1, 16 do
-          if _DrawPalette[i] ~= i-1 then
-            drawchange = true
-            _DrawPalette[i] = i-1
-          end
-          
-          if _ImagePalette[i] ~= i-1 then
-            imagechange = true
-            _ImagePalette[i] = i-1
-          end
+        
+        if _ImagePalette[i] ~= i-1 and ((not p) or p > 1) then
+          imagechange = true
+          _ImagePalette[i] = i-1
         end
       end
+    --Reset a specific color
     elseif not(c1) then
-      if p then
-        if p == 1 and _DrawPalette[c0] ~= c0-1 then
-          drawchange = true
-          _DrawPalette[c0] = c0-1
-        elseif p > 1 and _ImagePalette[c0] ~= c0-1 then
-          imagechange = true
-          _ImagePalette[c0] = c0-1
-        end
-      else
-        if _DrawPalette[c0] ~= c0-1 then
-          drawchange = true
-          _DrawPalette[c0] = c0-1
-        end
-        
-        if _ImagePalette[c0] ~= c0-1 then
-          imagechange = true
-          _ImagePalette[c0] = c0-1
-        end
+      if ((not p) or p == 1) and _DrawPalette[c0] ~= c0-1 then
+        drawchange = true
+        _DrawPalette[c0] = c0-1
+      elseif ((not p) or p > 1) and _ImagePalette[c0] ~= c0-1 then
+        imagechange = true
+        _ImagePalette[c0] = c0-1
       end
+    --Modify the palette
     elseif c0 and c1 then
-      if p then
-        if p == 1 and _DrawPalette[c0] ~= c1-1 then
-          drawchange = true
-          _DrawPalette[c0] = c1-1
-        elseif p > 1 and _ImagePalette[c0] ~= c1-1 then
-          imagechange = true
-          _ImagePalette[c0] = c1-1
-        end
-      else
-        if _DrawPalette[c0] ~= c1-1 then
-          drawchange = true
-          _DrawPalette[c0] = c1-1
-        end
-        
-        if _ImagePalette[c0] ~= c1-1 then
-          imagechange = true
-          _ImagePalette[c0] = c1-1
-        end
+      if ((not p) or p == 1) and _DrawPalette[c0] ~= c1-1 then
+        drawchange = true
+        _DrawPalette[c0] = c1-1
+      elseif ((not p) or p > 1) and _ImagePalette[c0] ~= c1-1 then
+        imagechange = true
+        _ImagePalette[c0] = c1-1
       end
     end
-    if drawchange then
-      _DrawShader:send('palette',unpack(_DrawPalette))
-    end
-    if imagechange then
-      _TransparentShader:send('palette',unpack(_ImagePalette))
-    end
-    return true
+    --If changes has been made then upload the data to the shaders.
+    if drawchange then _DrawShader:send('palette',unpack(_DrawPalette)) end
+    if imagechange then _ImageShader:send('palette',unpack(_ImagePalette)) end
+    return true --It ran successfully.
   end
   
-    function GPU.palt(c,t)
+  function GPU.palt(c,t)
     local changed = false
-    if c and type(c) ~= "number" then return false, "Color must be a number, provided: "..type(c) end
-    if c then c = math.floor(c) end
-    if c and (c < 1 or c > 16) then return false, "Color out of range ("..c..") expected [1,16]" end
     if c then
-      if t then
-        if _ImageTransparent[c] == 1 then
-          _ImageTransparent[c] = 0
-          changed = true
-        end
-      else
-        if _ImageTransparent[c] == 0 then
-          _ImageTransparent[c] = 1
-          changed = true
-        end
+      if type(c) ~= "number" then return false, "Color must be a number, provided: "..type(c) end
+      c = math.floor(c)
+      if (c < 1 or c > 16) then return false, "Color out of range ("..c..") expected [1,16]" end
+      
+      if _ImageTransparent[c] == (t and 1 or 0) then
+        _ImageTransparent[c] = (t and 0 or 1)
+        changed = true
       end
     else
-      for i=1,16 do
-        if i == 1 then
-          if _ImageTransparent[i] == 1 then
-            changed = true
-            _ImageTransparent[i] = 0
-          end
-        else
-          if _ImageTransparent[i] == 0 then
-            changed = true
-            _ImageTransparent[i] = 1
-          end
+      for i=2,16 do
+        if _ImageTransparent[i] == 0 then
+          changed = true
+          _ImageTransparent[i] = 1
         end
       end
+      if _ImageTransparent[1] == 1 then
+        changed = true
+        _ImageTransparent[1] = 0
+      end
     end
-    if changed then _TransparentShader:send('transparent', unpack(_ImageTransparent)) end
+    if changed then _ImageShader:send('transparent', unpack(_ImageTransparent)) end
     return true
   end
   
@@ -505,8 +471,8 @@ return function(config) --A function that creates a new GPU peripheral.
     pal.img = {}
     pal.trans = {}
     for i=1, 16 do
-      table.insert(pal.draw,_DrawPalette[i]+1)
-      table.insert(pal.img,_ImagePalette[i]+1)
+      table.insert(pal.draw,_DrawPalette[i])
+      table.insert(pal.img,_ImagePalette[i])
       table.insert(pal.trans,_ImageTransparent[i])
     end
     table.insert(PaletteStack,pal)
@@ -516,11 +482,26 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.popPalette()
     if #PaletteStack == 0 then return false, "No more palettes to pop." end --Error
     local pal = PaletteStack[#PaletteStack]
+    local drawchange, imgchange, transchange = false,false,false
     for i=1,16 do
-      exe(GPU.pal(i,pal.draw[i],1))
-      exe(GPU.pal(i,pal.img[i],2))
-      exe(GPU.palt(i,pal.trans[i] == 0 and true or false))
+      if _DrawPalette[i] ~= pal.draw[i] then
+        drawchange = true
+        _DrawPalette[i] = pal.draw[i]
+      end
+      
+      if _ImagePalette[i] ~= pal.img[i] then
+        imgchange = true
+        _ImagePalette[i] = pal.img[i]
+      end
+      
+      if _ImageTransparent[i] ~= pal.trans[i] then
+        transchange = true
+        _ImageTransparent[i] = pal.trans[i]
+      end
     end
+    if drawchange then _DrawShader:send('palette',unpack(_DrawPalette)) end
+    if imgchange then _ImageShader:send('palette',unpack(_ImagePalette)) end
+    if transchange then _ImageShader:send('transparent', unpack(_ImageTransparent)) end
     table.remove(PaletteStack,#PaletteStack)
     return true
   end
@@ -755,11 +736,11 @@ return function(config) --A function that creates a new GPU peripheral.
       local anl = true --Auto new line
       if type(x) == "boolean" then anl = x end
       local function printgrid(tx,gx,gy)
-        if printCursor.bgc > 0 then exe(GPU.rect(math.floor((gx or 1)*(fw+1)-2)-1, math.floor((gy or 1)*(fh+3)-(fh+1))-1, tx:len()*(fw+1) +1, fh+2, false, printCursor.bgc)) end
-        love.graphics.print(tx, math.floor(((gx or 1)*(fw+1)-2)+ofs.print_grid[1]), math.floor(((gy or 1)*(fh+3)-(fh+1))+ofs.print_grid[2]))
+        if printCursor.bgc > 0 then exe(GPU.rect(math.floor((gx or 1)*(_FontW+1)-2)-1, math.floor((gy or 1)*(_FontH+3)-(_FontH+1))-1, tx:len()*(_FontW+1) +1, _FontH+2, false, printCursor.bgc)) end
+        love.graphics.print(tx, math.floor(((gx or 1)*(_FontW+1)-2)+ofs.print_grid[1]), math.floor(((gy or 1)*(_FontH+3)-(_FontH+1))+ofs.print_grid[2]))
       _ShouldDraw = true end
       if y then printgrid(t,printCursor.x,printCursor.y) printCursor.x = printCursor.x + t:len() return true end
-      local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-(fh+2)) end
+      local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-(_FontH+2)) end
       local function printLine(txt,f,ff)
         if txt:len()+printCursor.x-1 > TERM_W then
           local tl = txt:len()+printCursor.x-1
@@ -794,7 +775,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,6) end
     if printCursor.x > 1 then
       printCursor.x = printCursor.x-1
-      exe(GPU.rect(math.floor((printCursor.x or 1)*(fw+1)-2)-1, math.floor((printCursor.y or 1)*(fh+3)-(fh+1))-1, fw+2, fh+2, false, c))
+      exe(GPU.rect(math.floor((printCursor.x or 1)*(_FontW+1)-2)-1, math.floor((printCursor.y or 1)*(_FontH+3)-(_FontH+1))-1, _FontW+2, _FontH+2, false, c))
     elseif not skpCr then
       if printCursor.y > 1 then
         printCursor.y = printCursor.y - 1
@@ -803,7 +784,7 @@ return function(config) --A function that creates a new GPU peripheral.
         printCursor.x = TERM_W
         cr()
       end
-      exe(GPU.rect(math.floor((printCursor.x or 1)*(fw+1)-2)-1, math.floor((printCursor.y or 1)*(fh+3)-(fh+1))-1, fw+2, fh+2, false, c))
+      exe(GPU.rect(math.floor((printCursor.x or 1)*(_FontW+1)-2)-1, math.floor((printCursor.y or 1)*(_FontH+3)-(_FontH+1))-1, _FontW+2, _FontH+2, false, c))
     end
     return true
   end
@@ -865,7 +846,7 @@ return function(config) --A function that creates a new GPU peripheral.
     function i:draw(x,y,r,sx,sy,quad)
       local x, y, sx, sy = x or 1, y or 1, sx or 1, sy or 1
       GPU.pushColor()
-      love.graphics.setShader(_TransparentShader)
+      love.graphics.setShader(_ImageShader)
       love.graphics.setColor(255,255,255,255)
       if quad then
         love.graphics.draw(Image,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,math.floor(sx),math.floor(sy))
@@ -1014,8 +995,10 @@ return function(config) --A function that creates a new GPU peripheral.
       
       local enimg = imgdata:enlarge(_LIKOScale)
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
-      local gifimg = love.graphics.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
+      local gifimg = love.image.newImageData(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
       limg:mapPixel(_ExportImage) --Convert image to have real colors.
+      gifimg:mapPixel(_ExportImage)
+      gifimg = love.graphics.newImage(gifimg)
       local hotx, hoty = hx*_LIKOScale, hy*_LIKOScale --Converted to host scale
       local cur = _Mobile and {} or love.mouse.newCursor(limg,hotx,hoty)
       
@@ -1107,6 +1090,8 @@ return function(config) --A function that creates a new GPU peripheral.
       
       love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFScale, _GIFScale) --Draw the canvas.
       
+      love.graphics.setShader()
+      
       if _Cursor ~= "none" then --Draw the cursor
         local cx, cy = exe(GPU.getMPos())
         love.graphics.draw(_CursorsCache[_Cursor].gifimg,(cx-_CursorsCache[_Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[_Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
@@ -1127,13 +1112,23 @@ return function(config) --A function that creates a new GPU peripheral.
   local devkit = {}
   devkit._LIKO_W = _LIKO_W
   devkit._LIKO_X = _LIKO_Y
-  devkit._HOST_W = _HOST_H
+  devkit._HOST_W = _HOST_W
+  devkit._HOST_H = _HOST_H
+  devkit._DrawPalette = _DrawPalette
+  devkit._ImagePalette = _ImagePalette
+  devkit._ImageTransparent = _ImageTransparent
+  devkit._DrawShader = _DrawShader
+  devkit._ImageShader = _ImageShader
+  devkit._DisplayShader = _DisplayShader
+  devkit._GIF = _GIF
   devkit._GIFScale = _GIFScale
   devkit._GIFStartKey = _GIFStartKey
   devkit._GIFEndKey = _GIFEndKey
   devkit._GIFPauseKey = _GIFPauseKey
   devkit._GIFFrameTime = _GIFFrameTime
   devkit._LIKOScale = _LIKOScale
+  devkit._FontW = _FontW
+  devkit._FontH = _FontH
   devkit._FontChars = _FontChars
   devkit._FontPath = _FontPath
   devkit._FontExtraSpacing = _FontExtraSpacing
@@ -1152,8 +1147,6 @@ return function(config) --A function that creates a new GPU peripheral.
   devkit.TERM_W = TERM_W
   devkit.TERM_H = TERM_H
   devkit._CursorsCache = _CursorsCache
-  devkit.fw = fw
-  devkit.fh = fh
   
   return GPU, devkit --Return the table containing all of the api functions.
 end
