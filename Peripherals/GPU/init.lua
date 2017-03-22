@@ -899,17 +899,16 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     function id:setPixel(x,y,c)
       if type(c) ~= "number" then return error("Color must be a number, provided "..type(c)) end
-      c = math.floor(c) if c < 0 or c > 16 then return error("Color out of range ("..c..") expected [0,16]") end
+      c = math.floor(c) if c < 1 or c > 16 then return error("Color out of range ("..c..") expected [1,16]") end
       imageData:setPixel((x or 1)-1,(y or 1)-1,c-1,0,0,255)
       return self
     end
     function id:map(mf)
       imageData:mapPixel(
       function(x,y,r,g,b,a)
-        local col = a == 0 and 0 or r+1
-        local c = mf(x+1,y+1,col)
+        local c = mf(x+1,y+1,r+1)
         if c and type(c) ~= "number" then error("Color must be a number, provided "..type(c)) elseif c then c = math.floor(c) end
-        if c and (c < 0 or c > 16) then return error("Color out of range ("..c..") expected [0,16]") end
+        if c and (c < 1 or c > 16) then return error("Color out of range ("..c..") expected [1,16]") end
         if c then return c-1,0,0,255 else return r,g,b,a end
       end)
       return self
