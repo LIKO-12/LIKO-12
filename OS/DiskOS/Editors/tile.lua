@@ -36,6 +36,9 @@ local Map = MapObj(mapW,mapH)
 local mapgrid = {1,9,swidth,mapH*8,mapW,mapH}
 local mapmflag = false
 
+local bgsprite = eapi.editorsheet:extract(59):image()
+local bgquad = bgsprite:quad(1,1,mapW*8,mapH*8)
+
 function t:export()
   return Map:export()
 end
@@ -64,6 +67,7 @@ function t:_redraw()
 end
 
 function t:redrawMap()
+  bgsprite:draw(1,9,0,1,1,bgquad)
   rect(1,9,Map:width()*8,Map:height()*8,false,1)
   Map:draw(1,9,false,false,false,false,false,false,SpriteMap)
 end
