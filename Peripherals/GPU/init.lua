@@ -838,6 +838,7 @@ return function(config) --A function that creates a new GPU peripheral.
       return true, imageData:image()
     elseif type(data) == "userdata" and data.typeOf and data:typeOf("ImageData") then
       Image = love.graphics.newImage(data)
+      Image:setWrap("repeat")
       --imageData = exe(GPU.imagedata(Image))
     end
     
@@ -871,6 +872,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local imageData
     if h then
       imageData = love.image.newImageData(w,h)
+      imageData:mapPixel(function() return 0,0,0,255 end)
     elseif type(w) == "string" then --Load specialized liko12 image format
       if w:sub(0,12) == "LK12;GPUIMG;" then
         local w,h,data = string.match(w,"LK12;GPUIMG;(%d+)x(%d+);(.+)")
@@ -893,13 +895,12 @@ return function(config) --A function that creates a new GPU peripheral.
     function id:size() return imageData:getDimensions() end
     function id:getPixel(x,y)
       local r,g,b,a = imageData:getPixel((x or 1)-1,(y or 1)-1)
-      if a == 0 then return 0 else return a+1 end
+      return r+1
     end
     function id:setPixel(x,y,c)
       if type(c) ~= "number" then return error("Color must be a number, provided "..type(c)) end
       c = math.floor(c) if c < 0 or c > 16 then return error("Color out of range ("..c..") expected [0,16]") end
-      local r,g,b,a = c == 0 and 0 or c-1 ,0,0, c == 0 and 0 or 255
-      imageData:setPixel((x or 1)-1,(y or 1)-1,r,g,b,a)
+      imageData:setPixel((x or 1)-1,(y or 1)-1,c-1,0,0,255)
       return self
     end
     function id:map(mf)
@@ -909,8 +910,7 @@ return function(config) --A function that creates a new GPU peripheral.
         local c = mf(x+1,y+1,col)
         if c and type(c) ~= "number" then error("Color must be a number, provided "..type(c)) elseif c then c = math.floor(c) end
         if c and (c < 0 or c > 16) then return error("Color out of range ("..c..") expected [0,16]") end
-        c = c and (c==0 and {0,0,0,0} or {c-1,0,0,255}) or {r,g,b,a}
-        return unpack(c)
+        if c then return c-1,0,0,255 else return r,g,b,a end
       end)
       return self
     end
