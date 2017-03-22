@@ -28,6 +28,10 @@ for i = 1, 4 do --Create the banks quads
   sprsbquads[i] = eapi.editorsheet:image():quad(1,(i*bsizeH-bsizeH)+1,sizeW,bsizeH)
 end
 
+local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in the biggest sprite id.
+local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*(fw+1)+3),sprsbanksgrid[2], 1+maxSpriteIDCells*(fw+1),fh+2, false, 7, 14} --The rect of sprite id; The extra argument is the color of number print
+local revdraw = {sprsidrect[1]-(imgw+1),sprsrecto[2]-(imgh+1), imgw, imgh} --The small image at the right of the id with the actual sprite size
+
 local mapH = sheetH - (1+2+bankH+1)
 local mapW = sheetW
 
@@ -68,18 +72,20 @@ end
 
 function t:redrawMap()
   bgsprite:draw(1,9,0,1,1,bgquad)
-  rect(1,9,Map:width()*8,Map:height()*8,false,1)
-  Map:draw(1,9,false,false,false,false,false,false,SpriteMap)
+  rect(1,9,Map:width()*8,Map:height()*8+2,false,1)
+  Map:draw(1,10,false,false,false,false,false,false,SpriteMap)
 end
 
 function t:redrawSPRS() _ = nil
   rect(sprsrecto)
   SpriteMap.img:draw(sprsdraw[1],sprsdraw[2], sprsdraw[3], sprsdraw[4],sprsdraw[5], sprsbquads[sprsbank])
   rect(sprssrect)
-  --[[rect(sprsidrect)
+  rect(sprsidrect)
   color(sprsidrect[7])
   local id = ""; for i=1, maxSpriteIDCells-(tostring(sprsid):len()) do id = id .. "0" end; id = id .. tostring(sprsid)
-  print(id,sprsidrect[1]+1,sprsidrect[2]+1)]]
+  print(id,sprsidrect[1]+1,sprsidrect[2]+1)
+  rect(revdraw[1],revdraw[2], revdraw[3],revdraw[4] ,false,1)
+  SpriteMap:image():draw(revdraw[1],revdraw[2], 0, 1,1, SpriteMap:quad(sprsid))
   SpriteGroup(97,sprsbanksgrid[1],sprsbanksgrid[2],sprsbanksgrid[5],sprsbanksgrid[6],1,1,false,eapi.editorsheet)
   eapi.editorsheet:draw(sprsbank+72,sprsbanksgrid[1]+(sprsbank-1)*8,sprsbanksgrid[2])
 end
