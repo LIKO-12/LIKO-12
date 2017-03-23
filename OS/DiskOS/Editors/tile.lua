@@ -32,17 +32,19 @@ local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in
 local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*(fw+1)+3),sprsbanksgrid[2], 1+maxSpriteIDCells*(fw+1),fh+2, false, 7, 14} --The rect of sprite id; The extra argument is the color of number print
 local revdraw = {sprsidrect[1]-(imgw+1),sprsrecto[2]-(imgh+1), imgw, imgh} --The small image at the right of the id with the actual sprite size
 
-local mapH = sheetH - (1+2+bankH+1)
-local mapW = sheetW
+local MapW, MapH = swidth, sheight/2
+local MapVH = sheetH - (1+2+bankH+1)
+local MapVW = sheetW
 
-local Map = MapObj(mapW,mapH)
+local Map = MapObj(MapW,MapH)
 
-local maprect = {1,10,swidth,mapH*8}
-local mapgrid = {1,10,swidth,mapH*8,mapW,mapH}
+local mapdx, mapdy = 0,0
+local maprect = {1,10,swidth,MapVH*8}
+local mapgrid = {1,10,swidth+8,MapVH*8+8,MapVW+1,MapVH+1}
 local mapmflag = false
 
 local bgsprite = eapi.editorsheet:extract(59):image()
-local bgquad = bgsprite:quad(1,1,mapW*8,mapH*8)
+local bgquad = bgsprite:quad(1,1,MapVW*8,MapVH*8)
 
 local mflag = false
 
@@ -55,10 +57,13 @@ local tbtimer = 0 --Tool selection blink timer
 local tbtime = 0.1125 --The blink time
 local tbflag = false --Is the blink timer activated ?
 
+local panoldx, panoldy
+
 --The tools code--
 local toolshold = {true,true,true,false,false,true,true} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
   function(self,state,x,y,cx,cy,dx,dy) --Pencil (Default)
+    if cx < 1 or cy < 1 or cx > MapW or cy > MapH then return end --Out of range
     Map:cell(cx,cy,sprsid)
   end,
 
@@ -67,6 +72,7 @@ local tools = {
   end,
   
   function(self,state,x,y,cx,cy,dx,dy) --Eraser
+    if cx < 1 or cy < 1 or cx > MapW or cy > MapH then return end --Out of range
     Map:cell(cx,cy,0)
   end,
   
@@ -78,12 +84,23 @@ local tools = {
     
   end,
 
-  function(self,state,x,y,dx,dy) --Selection
+  function(self,state,x,y,cx,cy,dx,dy) --Selection
     
   end,
   
-  function(self,state,x,y,dx,dy) --Pan
-  
+  function(self,state,x,y,cx,cy,dx,dy) --Pan
+    local x,y = x+mapdx, y+mapdy
+    if state == "press" and not(panoldx and panoldy) then
+      panoldx, panoldy = x,y
+    elseif state == "move" and panoldx and panoldy then
+      local dx,dy = x-panoldx, y-panoldy
+      panoldx, panoldy = x,y
+      mapdx, mapdy = mapdx+dx, mapdy+dy
+    elseif state == "release" and panoldx and panoldy  then
+      local dx,dy = x-panoldx, y-panoldy
+      panoldx, panoldy = false, false
+      mapdx, mapdy = mapdx+dx, mapdy+dy
+    end
   end
 }
 
@@ -95,7 +112,7 @@ function t:import(data)
   if data then
     Map:import(data)
   else
-    Map = MapObj(mapW,mapH)
+    Map = MapObj(MapW,MapH)
   end
 end
 
@@ -117,9 +134,11 @@ end
 
 function t:redrawMap()
   palt(1,false)
-  bgsprite:draw(1,9,0,1,1,bgquad)
+  bgsprite:draw(1,10,0,1,1,bgquad)
   --rect(1,9,Map:width()*8,Map:height()*8+2,false,1)
-  Map:draw(1,10,false,false,false,false,false,false,SpriteMap)
+  clip(unpack(maprect))
+  Map:draw(1+mapdx,10+mapdy,false,false,false,false,false,false,SpriteMap)
+  clip()
   palt(1,true)
 end
 
@@ -191,10 +210,10 @@ function t:mousepressed(x,y,b,it)
   
   --Tools Action
   if isInRect(x,y,maprect) then
-    local cx, cy = whereInGrid(x,y,mapgrid)
+    local cx, cy = whereInGrid(x-(mapdx%8),y-(mapdy%8),mapgrid)
     if cx then
       if not it then mflag = true end
-      tools[stool](self,"press",x,y,cx,cy,0,0)
+      tools[stool](self,"press",x-mapdx,y-mapdy,cx-math.floor(mapdx/8),cy-math.floor(mapdy/8),0,0)
       self:redrawMap()
     end
   end
@@ -223,9 +242,9 @@ function t:mousemoved(x,y,dx,dy,it)
   
   --Tools Action
   if isInRect(x,y,maprect) then
-    local cx, cy = whereInGrid(x,y,mapgrid)
+    local cx, cy = whereInGrid(x-(mapdx%8),y-(mapdy%8),mapgrid)
     if cx and (it or mflag) then
-      tools[stool](self,"move",x,y,cx,cy,0,0)
+      tools[stool](self,"move",x-mapdx,y-mapdy,cx-math.floor(mapdx/8),cy-math.floor(mapdy/8),dx,dy)
       self:redrawMap()
     end
   end
@@ -256,9 +275,9 @@ function t:mousereleased(x,y,b,it)
   
   --Tools Action
   if isInRect(x,y,maprect) then
-    local cx, cy = whereInGrid(x,y,mapgrid)
+    local cx, cy = whereInGrid(x-(mapdx%8),y-(mapdy%8),mapgrid)
     if cx and (it or mflag) then
-      tools[stool](self,"release",x,y,cx,cy,0,0)
+      tools[stool](self,"release",x-mapdx,y-mapdy,cx-math.floor(mapdx/8),cy-math.floor(mapdy/8),0,0)
       self:redrawMap() mflag = false
     end
   end
