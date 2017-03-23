@@ -137,7 +137,7 @@ function t:redrawMap()
   bgsprite:draw(1,10,0,1,1,bgquad)
   --rect(1,9,Map:width()*8,Map:height()*8+2,false,1)
   clip(unpack(maprect))
-  Map:draw(1+mapdx,10+mapdy,false,false,false,false,false,false,SpriteMap)
+  Map:draw(1-8+(mapdx%8),10-8+(mapdy%8),-math.floor(mapdx/8),-math.floor(mapdy/8),MapVW+2,MapVH+2,false,false,SpriteMap)
   clip()
   palt(1,true)
 end
