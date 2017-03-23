@@ -63,7 +63,7 @@ local panoldx, panoldy
 local toolshold = {true,true,true,false,false,true,true} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
   function(self,state,x,y,cx,cy,dx,dy) --Pencil (Default)
-    if cx < 1 or cy < 1 or cx > MapW or cy > MapH then return end --Out of range
+    if cx < 1 or cy < 1 or cx > MapW or cy > MapH or state == "outmove" or state == "outrelease" then return end --Out of range
     Map:cell(cx,cy,sprsid)
   end,
 
@@ -72,7 +72,7 @@ local tools = {
   end,
   
   function(self,state,x,y,cx,cy,dx,dy) --Eraser
-    if cx < 1 or cy < 1 or cx > MapW or cy > MapH then return end --Out of range
+    if cx < 1 or cy < 1 or cx > MapW or cy > MapH or state == "outmove" or state == "outrelease" then return end --Out of range
     Map:cell(cx,cy,0)
   end,
   
@@ -92,11 +92,11 @@ local tools = {
     local x,y = x+mapdx, y+mapdy
     if state == "press" and not(panoldx and panoldy) then
       panoldx, panoldy = x,y
-    elseif state == "move" and panoldx and panoldy then
+    elseif (state == "move" or state == "outmove") and panoldx and panoldy then
       local dx,dy = x-panoldx, y-panoldy
       panoldx, panoldy = x,y
       mapdx, mapdy = mapdx+dx, mapdy+dy
-    elseif state == "release" and panoldx and panoldy  then
+    elseif (state == "release" or state == "outrelease") and panoldx and panoldy  then
       local dx,dy = x-panoldx, y-panoldy
       panoldx, panoldy = false, false
       mapdx, mapdy = mapdx+dx, mapdy+dy
@@ -247,6 +247,9 @@ function t:mousemoved(x,y,dx,dy,it)
       tools[stool](self,"move",x-mapdx,y-mapdy,cx-math.floor(mapdx/8),cy-math.floor(mapdy/8),dx,dy)
       self:redrawMap()
     end
+  elseif mflag then
+    tools[stool](self,"outmove",x-mapdx,y-mapdy,0,0,dx,dy)
+    self:redrawMap()
   end
   
   --Map
@@ -280,6 +283,9 @@ function t:mousereleased(x,y,b,it)
       tools[stool](self,"release",x-mapdx,y-mapdy,cx-math.floor(mapdx/8),cy-math.floor(mapdy/8),0,0)
       self:redrawMap() mflag = false
     end
+  elseif mflag then
+    tools[stool](self,"outrelease",x-mapdx,y-mapdy,0,0,0,0)
+    self:redrawMap() mflag = false
   end
   
   --Map
