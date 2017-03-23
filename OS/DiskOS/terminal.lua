@@ -9,18 +9,20 @@ local function nextPath(p)
   return p:gmatch("(.-);")
 end
 
-printCursor(1,1,1)
-color(9) print("LIKO-12 V0.6.0 DEV") flip() sleep(0.5)
-color(8) print("DiskOS DEV B1") flip() sleep(0.5)
+local fw, fh = fontSize()
+
+SpriteGroup(49,2,5,6,1,1,1,0,editor.editorsheet)
+printCursor(1,4,1)
+color(9) print("V0.6.0 DEV",2,5+8+2) flip() sleep(0.5)
+cam("translate",0,-2) color(13) print("D",false) color(7) print("isk",false) color(13) print("OS",false) color(7) print("  B1") editor.editorsheet:draw(60,(fw+1)*6+2,(fh+2)*3+3) flip() sleep(0.5) cam()
 color(7) print("http://github.com/ramilego4game/liko12")
 --color(7) print("\nA PICO-8 INSPIRED OS WITH EXTRA ABILITIES")
 flip() sleep(0.25)
-color(10) print("\nTYPE HELP FOR HELP")
+color(10) print("TYPE HELP FOR HELP")
 flip() sleep(0.25)
 
 local history = {}
 local btimer, btime, blink = 0, 0.5, true
-local fw, fh = fontSize()
 
 local function checkCursor()
   local cx, cy = printCursor()
