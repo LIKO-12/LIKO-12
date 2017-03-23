@@ -91,7 +91,7 @@ local tools = {
   function(self,state,x,y,cx,cy,dx,dy) --Pan
     local x,y = x+mapdx, y+mapdy
     if state == "press" and not(panoldx and panoldy) then
-      panoldx, panoldy = x,y
+      panoldx, panoldy = x,y cursor("hand")
     elseif (state == "move" or state == "outmove") and panoldx and panoldy then
       local dx,dy = x-panoldx, y-panoldy
       panoldx, panoldy = x,y
@@ -99,7 +99,7 @@ local tools = {
     elseif (state == "release" or state == "outrelease") and panoldx and panoldy  then
       local dx,dy = x-panoldx, y-panoldy
       panoldx, panoldy = false, false
-      mapdx, mapdy = mapdx+dx, mapdy+dy
+      mapdx, mapdy = mapdx+dx, mapdy+dy cursor("normal")
     end
   end
 }
@@ -134,7 +134,16 @@ end
 
 function t:redrawMap()
   palt(1,false)
-  bgsprite:draw(1,10,0,1,1,bgquad)
+  if mapdx < 1 or mapdy < 1 or mapdx > (MapW-MapVW)*8 or mapdy > (MapH-MapVH)*8 then
+    pal(2,3)
+    bgsprite:draw(1,10,0,1,1,bgquad)
+    pal()
+    clip(1-8+(mapdx%8),10-8+(mapdy%8),-mapdx,-mapdy)
+    bgsprite:draw(1,10,0,1,1,bgquad)
+    clip()
+  else
+    bgsprite:draw(1,10,0,1,1,bgquad)
+  end
   --rect(1,9,Map:width()*8,Map:height()*8+2,false,1)
   clip(unpack(maprect))
   Map:draw(1-8+(mapdx%8),10-8+(mapdy%8),-math.floor(mapdx/8),-math.floor(mapdy/8),MapVW+2,MapVH+2,false,false,SpriteMap)
