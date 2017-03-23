@@ -459,7 +459,7 @@ se.keymap = {
   ["1"] = bank(1), ["2"] = bank(2), ["3"] = bank(3), ["4"] = bank(4),
   ["z"] = function() stool=1 se:redrawTOOLS() end,
   ["x"] = function() stool=2 se:redrawTOOLS() end,
-  ["delete"] = function() tools[5](s) se:redrawSPRS() se:redrawSPR() end,
+  ["delete"] = function() tools[5](se) se:redrawSPRS() se:redrawSPR() end,
 }
 
 return se
