@@ -1,0 +1,16 @@
+GPU.color(<id>)
+ 
+<id>: The color id, must be in range [0,16]
+ 
+Sets the current active color for drawing opreations like rect, circle, ...
+ 
+id = GPU.color()
+ 
+id (number): The currect active color id.
+ 
+Returns the current active color id.
+ 
+Notes:
+* Color 0 is transparent
+* The active color doesn't effects images.
+ 
