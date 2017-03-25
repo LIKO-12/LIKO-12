@@ -134,13 +134,29 @@ end
 
 function t:redrawMap()
   palt(1,false)
-  if mapdx < 1 or mapdy < 1 or mapdx > (MapW-MapVW)*8 or mapdy > (MapH-MapVH)*8 then
-    pal(2,3)
+  if mapdx > 0 or mapdy > 0 or mapdx < -(MapW-MapVW)*8 or mapdy < -(MapH-MapVH)*8 then
+    pal(2,3,2)
     bgsprite:draw(1,10,0,1,1,bgquad)
     pal()
-    clip(1-8+(mapdx%8),10-8+(mapdy%8),-mapdx,-mapdy)
-    bgsprite:draw(1,10,0,1,1,bgquad)
-    clip()
+    if mapdx < MapVW*8 and mapdy < MapVH*8 and mapdx > -MapW*8 and mapdy > -MapH*8 then
+      local cx,cy,cw,ch = 0,0,MapVW*8,MapVH*8
+      if mapdx > 0 then
+        cx = mapdx
+      end
+      if mapdy > 0 then
+        cy = mapdy
+      end
+      if mapdx < -(MapW-MapVW)*8 then
+        cw = MapVW*8 - (-(MapW-MapVW)*8 -mapdx)
+      end
+      if mapdy < -(MapH-MapVH)*8 then
+        ch = MapVH*8 - (-(MapH-MapVH)*8 -mapdy)
+      end
+      
+      clip(cx+1,cy+10,cw,ch)
+      bgsprite:draw(1,10,0,1,1,bgquad)
+      clip()
+     end
   else
     bgsprite:draw(1,10,0,1,1,bgquad)
   end
