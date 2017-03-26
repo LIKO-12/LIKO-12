@@ -616,6 +616,16 @@ return function(config) --A function that creates a new GPU peripheral.
       l,c = l or false, c --In case if they are not provided.
     end
     
+    --Args types verification
+    if type(x) ~= "number" then return false, "X pos must be a number." end --Error
+    if type(y) ~= "number" then return false, "Y pos must be a number." end --Error
+    if type(r) ~= "number" then return false, "R radius must be a number." end --Error
+    if type(l) ~= "boolean" then return false, "L linecircle must be a number or nil." end --Error
+    if c and type(c) ~= "number" then return false, "The color id must be a number or nil." end --Error
+    
+    --Remove float digits
+    x,y,r,c = math.floor(x), math.floor(y), math.floor(r), c and math.floor(c) or c
+    
     if c then --If the colorid is provided, pushColor then set the color.
       exe(GPU.pushColor())
       exe(GPU.color(c))
