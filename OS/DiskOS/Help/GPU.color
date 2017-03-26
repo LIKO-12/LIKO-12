@@ -1,6 +1,6 @@
 GPU.color(<id>)
  
-<id>: The color id, must be in range [0,16]
+<id> (number): The color id, must be in range [0,16]
  
 Sets the current active color for drawing opreations like rect, circle, ...
  
