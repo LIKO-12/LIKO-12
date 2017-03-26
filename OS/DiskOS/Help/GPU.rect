@@ -1,0 +1,16 @@
+GPU.rect(<X>, <Y>, <W>, <H>, [L], [C])
+ 
+<X> (number): Top-left corner x pos.
+<Y> (number): Top-left corner y pos.
+<W> (number): Rect width in pixels.
+<H> (number): Rect height in pixels.
+[L] (boolean): Drawmode: (true) line; (false) fill.
+[C] (number): Rectangle draw color id.
+ 
+Draws a rectangle at a specific position.
+ 
+GPU.rect(<T>)
+ 
+<T> (table): A table containing the above arguments.
+ 
+Another version that accepts the arguments as a table, ex: {5,5,15,20,false,8}
