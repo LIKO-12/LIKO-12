@@ -566,18 +566,19 @@ return function(config) --A function that creates a new GPU peripheral.
   --Draw a rectangle filled, or lines only.
   --X pos, Y pos, W width, H height, L linerect, C colorid.
   function GPU.rect(x,y,w,h,l,c)
-    local x,y,w,h,l,c = x or 1, y or 1, w or 1, h or 1, l or false, c --In case if they are not provided.
+    local x,y,w,h,l,c = x, y, w, h, l or false, c --In case if they are not provided.
     
     --It accepts all the args as a table.
-    if x and type(x) == "table" then
+    if type(x) == "table" then
       x,y,w,h,l,c = unpack(x)
+      l,c = l or false, c --In case if they are not provided.
     end
     
     --Args types verification
-    if type(x) ~= "number" then return false, "X pos must be a number or nil." end --Error
-    if type(y) ~= "number" then return false, "Y pos must be a number or nil." end --Error
-    if type(w) ~= "number" then return false, "W width must be a number or nil." end --Error
-    if type(h) ~= "number" then return false, "H height must be a number or nil." end --Error
+    if type(x) ~= "number" then return false, "X pos must be a number." end --Error
+    if type(y) ~= "number" then return false, "Y pos must be a number." end --Error
+    if type(w) ~= "number" then return false, "W width must be a number." end --Error
+    if type(h) ~= "number" then return false, "H height must be a number." end --Error
     if type(l) ~= "boolean" then return false, "L linerect must be a number or nil." end --Error
     if c and type(c) ~= "number" then return false, "The color id must be a number or nil." end --Error
     
@@ -607,11 +608,12 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Draws a circle filled, or lines only.
   function GPU.circle(x,y,r,l,c)
-    local x,y,r,l,c = x or 1, y or 1, r or 1, l or false, c --In case if they are not provided.
+    local x,y,r,l,c = x, y, r, l or false, c --In case if they are not provided.
     
     --It accepts all the args as a table.
     if x and type(x) == "table" then
       x,y,r,l,c = unpack(x)
+      l,c = l or false, c --In case if they are not provided.
     end
     
     if c then --If the colorid is provided, pushColor then set the color.
@@ -828,7 +830,7 @@ return function(config) --A function that creates a new GPU peripheral.
   GPU.line = GPU.lines --Just an alt name :P.
   --Image API--
   function GPU.quad(x,y,w,h,sw,sh)
-    return true, love.graphics.newQuad(x,y,w,h,sw,sh)
+    return pcall(love.graphics.newQuad,x,y,w,h,sw,sh)
   end
   
   function GPU.image(data)
