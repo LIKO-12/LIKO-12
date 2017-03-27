@@ -169,12 +169,16 @@ function se:leaved()
   
 end
 
-function se:export()
-  return self.SpriteMap:data():encode()..flagsData
+function se:export(imageonly)
+  local data = self.SpriteMap:data():encode()
+  if imageonly then return data else
+    return data..flagsData
+  end
 end
 
 function se:import(data)
   if data then
+    data = data:gsub("\n","")
     local w,h,imgdata = string.match(data,"LK12;GPUIMG;(%d+)x(%d+);(.+)")
     flagsData = imgdata:sub(w*h+1,-1)
     if flagsData:len() < sheetW*sheetH then
