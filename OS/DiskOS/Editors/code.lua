@@ -60,14 +60,21 @@ ce.bflag = true --The cursor is blinking atm ?
 ce.sw, ce.sh = screenSize()
 local charGrid = {1,9, ce.sw,ce.sh-16, ce.tw, ce.th}
 
+ce.colorize = true --Color lua syntax
+
 --A usefull print function with color support !
 function ce:colorPrint(tbl)
   pushColor()
-  for i=1, #tbl, 2 do
-    local col = tbl[i]
-    local txt = tbl[i+1]
-    color(col)
-    print(txt,false,true)--Disable auto newline
+  if type(tbl) == "string" then
+    color(cluacolors.text)
+    print(tbl,false,true)
+  else
+    for i=1, #tbl, 2 do
+      local col = tbl[i]
+      local txt = tbl[i+1]
+      color(col)
+      print(txt,false,true)--Disable auto newline
+    end
   end
   --print("")--A new line
   popColor()
@@ -104,13 +111,13 @@ end
 function ce:drawBlink()
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   if self.bflag then
-    rect((self.cx-self.vx+1)*(self.fw+1)-2,(self.cy-self.vy+1)*(self.fh+3)+2, self.fw+1,self.fh, false, 5)
+    rect((self.cx-self.vx+1)*(self.fw+1)-3,(self.cy-self.vy+1)*(self.fh+3)+2, self.fw+1,self.fh, false, 5)
   end
 end
 
 --Draw the code on the screen
 function ce:drawBuffer()
-  local cbuffer = clua(lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)),cluacolors)
+  local cbuffer = self.colorize and clua(lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)),cluacolors) or lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1))
   rect(1,9,screenW,screenH-8*2,false,self.bgc)
   for k, l in ipairs(cbuffer) do
     printCursor(-(self.vx-2),k+1,0)
@@ -121,7 +128,7 @@ end
 
 function ce:drawLine()
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
-  local cline = clua({buffer[self.cy]},cluacolors)
+  local cline = self.colorize and clua({buffer[self.cy]},cluacolors) or {buffer[self.cy]}
   rect(1,(self.cy-self.vy+2)*(self.fh+3)-(self.fh+2), screenW,self.fh+2, false,self.bgc)
   printCursor(-(self.vx-2),(self.cy-self.vy+1)+1,self.bgc)
   self:colorPrint(cline[1])
