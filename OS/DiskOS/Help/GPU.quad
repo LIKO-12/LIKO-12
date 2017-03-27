@@ -1,0 +1,12 @@
+quad = GPU.quad(<X>, <Y>, <W>, <H>)
+ 
+<X> (number): Top-left corner x pos.
+<Y> (number): Top-left corner y pos.
+<W> (number): Quad width.
+<H> (number): Quad height.
+ 
+quad (Love2D Quad): The created quad.
+ 
+Creates a quad object, used to draw a part of an image.
+ 
+Type "help quad" for the documentation of the quad object.
