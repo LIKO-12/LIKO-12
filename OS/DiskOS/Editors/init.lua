@@ -69,8 +69,8 @@ function edit:initialize()
   self.leditors = {}
 
   for k,v in ipairs(self.editors) do
-	local chunk, err = fs.load("C://Editors/"..v..".lua")
-	if not chunk then error(err or "Error loading: "..tostring(v)) end
+	   local chunk, err = fs.load("C://Editors/"..v..".lua")
+	   if not chunk then error(err or "Error loading: "..tostring(v)) end
     table.insert(self.chunks,k,chunk)
   end
 
@@ -177,7 +177,7 @@ function edit:loop() --Starts the while loop
     local event, a, b, c, d, e, f = pullEvent()
     if event == "keypressed" then
       if a == "escape" then --Quit the loop and return to the terminal
-        if edit.leditors[edit.active]["entered"] then edit.leditors[edit.active]:entered() end
+        if edit.leditors[edit.active]["leaved"] then edit.leditors[edit.active]:leaved() end
         break
       else
         local key, sc = a, b
