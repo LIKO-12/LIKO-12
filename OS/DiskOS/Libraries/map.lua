@@ -78,8 +78,15 @@ return function(w,h,sheet)
     local w,h,mdata = string.match(data,"LK12;TILEMAP;(%d+)x(%d+);(.+)")
     local nextid = mdata:gmatch("(.-);")
     self:map(function(x,y,sprid)
-      return tonumber(nextid())
+      return 0
     end)
+    
+    for x=1,w do
+      for y=1,h do
+        self:cell(x,y,tonumber(nextid()))
+      end
+    end
+    
     return self
   end
   
