@@ -11,6 +11,13 @@ if fs.exists(destination) and fs.isDirectory(destination) then color(9) print("D
 
 local sw, sh = screenSize()
 
+if string.lower(flag) == "-s" then --Sheet export
+  local data = eapi.leditors[3]:export(true)
+  fs.write(destination,data)
+  color(12) print("\nExported Spritesheet successfully")
+  return
+end
+
 local data = eapi:export()
 --              LK12;OSData;OSName;DataType;Version;Compression;CompressLevel;data"
 local header = "LK12;OSData;DiskOS;DiskGame;V".._DiskVer..";"..sw.."x"..sh..";C:"
