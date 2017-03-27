@@ -7,6 +7,7 @@ local eapi = require("C://Editors")
 
 local sprid = "spritesheet"
 local codeid = "luacode"
+local tileid = "tilemap"
 
 local diskdata = eapi:export()
 diskdata = loadstring(diskdata)()
