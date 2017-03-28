@@ -1,0 +1,10 @@
+image:draw(<X>,<Y>,[R],[SW],[SH],[Quad])
+ 
+<X> (number): Top left corner x pos.
+<Y> (number): Rop left corner y pos.
+[R] (number) (0): Rotation in RADIANS.
+[SW] (number) (1): Width Scale.
+[SH] (number) (1): Height Scale.
+[Quad]: The quad to draw the image with.
+ 
+Draw the image at a specific position.

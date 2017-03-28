@@ -1,0 +1,11 @@
+img = GPU.image(<data>)
+ 
+<data> (string): The .LK12 image data.
+ 
+img (LK12 Image): The image object.
+ 
+Creates a new image object.
+ 
+The image data starts with "LK12;GPUIMG;" header.
+ 
+Check "help image" for more info about liko12 image object.

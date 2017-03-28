@@ -1,0 +1,5 @@
+H = image:height()
+ 
+H (number): The image height.
+ 
+Returns the image height in pixels.

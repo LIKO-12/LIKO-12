@@ -1,0 +1,6 @@
+W, H = image:size()
+ 
+W (number): The image width.
+H (number): The image height.
+ 
+Returns the image size in pixels.
