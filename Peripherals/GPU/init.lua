@@ -892,7 +892,8 @@ return function(config) --A function that creates a new GPU peripheral.
         imageData = love.image.newImageData(w,h)
         local Colors = {["0"]=1,["1"]=2,["2"]=3,["3"]=4,["4"]=5,["5"]=6,["6"]=7,["7"]=8,["8"]=9,["9"]=10,a=11,b=12,c=13,d=14,e=15,f=16,g=16}
         imageData:mapPixel(function(x,y,r,g,b,a)
-          local c = Colors[data:sub(0,1)]
+          local c = Colors[string.lower(data:sub(0,1))]
+          if not c then error("Invalid color ! ("..data:sub(0,1)..")") end
           data = data:sub(2,-1)
           return c-1,0,0,255
         end)
