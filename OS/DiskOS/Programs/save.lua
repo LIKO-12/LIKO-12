@@ -11,10 +11,15 @@ if fs.exists(destination) and fs.isDirectory(destination) then color(9) print("D
 
 local sw, sh = screenSize()
 
-if string.lower(flag) == "-s" then --Sheet export
+if string.lower(flag) == "--sheet" then --Sheet export
   local data = eapi.leditors[3]:export(true)
   fs.write(destination,data)
   color(12) print("\nExported Spritesheet successfully")
+  return
+elseif string.lower(flag) == "--code" then
+  local data = eapi.leditors[2]:export(true)
+  fs.write(destination:sub(0,-6),data)
+  color(12) print("\nExported Lua code successfully")
   return
 end
 
