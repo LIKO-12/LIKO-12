@@ -1,7 +1,7 @@
 The LIKO-12 image object, creatable by 2 ways:
  
 1. Using GPU:image(data)
-2. By calling imagedata:image() at imagedatas.
+2. By calling imagedata:image() on imagedatas.
  
 Functions List:
  
