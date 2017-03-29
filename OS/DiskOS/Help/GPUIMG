@@ -1,5 +1,7 @@
 * GPUIMG Format:
  
+It's usually saved as .lk12 file, you have to use hdd.read and pass the data to GPU.image or GPU.imagedata.
+ 
 The LIKO-12's GPU image format is so simple, it's consisted of a header, and data body:
  
 * The header:
