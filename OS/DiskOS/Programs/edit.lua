@@ -6,7 +6,7 @@ local tar = table.concat(args," ") --The path may include whitespaces
 local term = require("C://terminal")
 tar = term.parsePath(tar)
 
-if not fs.exists(tar) then color(9) print("File doesn't exists !") return end
+if not fs.exists(tar) then fs.write(tar,"") end
 if fs.isDirectory(tar) then color(9) print("Can't edit directories !") return end
 local eapi = require("C://Editors")
 local edit = {}
