@@ -16,6 +16,7 @@ diskdata = loadstring(diskdata)()
 local SpriteMap, FlagsData
 if diskdata[sprid] then
   local sheetData = diskdata[sprid]
+  sheetData = sheetData:gsub("\n","")
   local w,h,imgdata = string.match(sheetData,"LK12;GPUIMG;(%d+)x(%d+);(.+)")
   local sheetW, sheetH = w/8, h/8
   FlagsData = imgdata:sub(w*h+1,-1)
