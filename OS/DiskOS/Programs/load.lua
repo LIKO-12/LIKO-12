@@ -3,7 +3,7 @@ local source = select(1,...)
 local term = require("C://terminal")
 local eapi = require("C://Editors")
 
-if source then source = term.parsePath(source)..".lk12" end
+if source then source = term.parsePath(source)..".lk12" else source = eapi.filePath end
 
 print("") --NewLine
 
@@ -73,6 +73,7 @@ if compress ~= "none" then --Decompress
   data = math.decompress(data,compress,clevel)
 end
 
+eapi.filePath = source
 eapi:import(data)
 
 color(12) print("Loaded successfully")

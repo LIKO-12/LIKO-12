@@ -5,7 +5,12 @@ local clvl = tonumber(select(4,...) or "-1")
 
 local term = require("C://terminal")
 local eapi = require("C://Editors")
-destination = term.parsePath(destination)..".lk12"
+
+if destination then destination = term.parsePath(destination)..".lk12" else
+  destination = eapi.filePath
+end
+
+if not destination then color(9) print("\nMust provide the destination file path") return end
 
 if fs.exists(destination) and fs.isDirectory(destination) then color(9) print("Destination must not be a directory") return end
 
@@ -23,6 +28,7 @@ elseif string.lower(flag) == "--code" then
   return
 end
 
+eapi.filePath = destination
 local data = eapi:export()
 --              LK12;OSData;OSName;DataType;Version;Compression;CompressLevel;data"
 local header = "LK12;OSData;DiskOS;DiskGame;V".._DiskVer..";"..sw.."x"..sh..";C:"
