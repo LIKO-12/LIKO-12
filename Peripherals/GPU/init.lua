@@ -908,13 +908,25 @@ return function(config) --A function that creates a new GPU peripheral.
     
     function id:size() return imageData:getDimensions() end
     function id:getPixel(x,y)
-      local r,g,b,a = imageData:getPixel((x or 1)-1,(y or 1)-1)
+      if not x then return error("Must provide X") end
+      if not y then return error("Must provide Y") end
+      x,y = math.floor(x), math.floor(y)
+      if x < 1 or x > self:width() or y < 1 or y > self:height() then
+        return 1
+      end
+      local r,g,b,a = imageData:getPixel(x-1,y-1)
       return r+1
     end
     function id:setPixel(x,y,c)
       if type(c) ~= "number" then return error("Color must be a number, provided "..type(c)) end
+      if not x then return error("Must provide X") end
+      if not y then return error("Must provide Y") end
+      x,y = math.floor(x), math.floor(y)
+      if x < 1 or x > self:width() or y < 1 or y > self:height() then
+        return self
+      end
       c = math.floor(c) if c < 1 or c > 16 then return error("Color out of range ("..c..") expected [1,16]") end
-      imageData:setPixel((x or 1)-1,(y or 1)-1,c-1,0,0,255)
+      imageData:setPixel(x-1,y-1,c-1,0,0,255)
       return self
     end
     function id:map(mf)
