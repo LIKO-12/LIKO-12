@@ -25,7 +25,7 @@ if not filetype then color(9) print("Invalid Data !") return end
 if filetype ~= "OSData" then
   if filetype == "GPUIMG" then --Import it
     if eapi.leditors[3] then
-      eapi.leditors[3]:import(saveData:sub(0,-2))
+      eapi.leditors[3]:import(saveData..";"..string.char(0)) --saveData:sub(0,-2))
       color(12) print("Imported to sprite editor successfully") return
     end
   else
@@ -45,7 +45,8 @@ local dataver = nextarg()
 if not dataver then color(9) print("Invalid Data !") return end
 dataver = tonumber(string.match(dataver,"V(%d+)"))
 if not dataver then color(9) print("Invalid Data !") return end
-if dataver > _DiskVer then color(9) print("Can't load disks newer than V".._DiskVer..", provided: "..dataver) return end
+if dataver > _DiskVer then color(9) print("Can't load disks newer than V".._DiskVer..", provided: V"..dataver) return end
+if dataver < _DiskVer then color(9) print("Can't load disks older than V".._DiskVer..", provided: V"..dataver) return end
 
 local sw, sh = screenSize()
 
