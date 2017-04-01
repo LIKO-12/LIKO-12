@@ -143,18 +143,36 @@ function edit:switchEditor(neweditor)
 end
 
 function edit:import(data) --Import editors data
-  local chunk = loadstring(data)
+  --[[local chunk = loadstring(data)
   setfenv(chunk,{})
   data = chunk()
   for k, id in ipairs(self.saveid) do
     if id ~= -1 and data[tostring(id)] and self.leditors[k].import then
       self.leditors[k]:import(data[tostring(id)])
     end
+  end]]
+  local savePos = {}
+  for k,v in ipairs(self.saveid) do
+    if v ~= -1 and self.leditors[k].import then
+      local dstart, dend = string.find(data,"__"..tostring(v).."__")
+      if dstart then
+        dstart = dend+1
+        local dend, nextstart = string.find(data,"__",dstart)
+        if dend then
+          dend = dend-1
+        else
+          dend = -2 --The end of the file ignoring the last new line
+        end
+        local save = string.sub(data,dstart,dend)
+        fs.write("d_"..v,save)
+        self.leditors[k]:import(save)
+      end
+    end
   end
 end
 
 function edit:export() --Export editors data
-  local code = "return {"
+  --[[local code = "return {"
   
   for k,v in ipairs(self.saveid) do
     if v ~= -1 and self.leditors[k].export then
@@ -167,7 +185,18 @@ function edit:export() --Export editors data
   
   code = code .. "\n}"
   
-  return code
+  return code]]
+  local save = ""
+  for k,v in ipairs(self.saveid) do
+    if v ~= -1 and self.leditors[k].export then
+      local data = self.leditors[k]:export()
+      if type(data) ~= "nil" then
+        --code = code.."\n['"..tostring(v).."'] = "..string.format("%q",data)..","
+        save = save.."__"..tostring(v).."__\n"..data.."\n"
+      end
+    end
+  end
+  return save
 end
 
 function edit:loop() --Starts the while loop

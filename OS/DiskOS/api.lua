@@ -1,5 +1,5 @@
 --Build DiskOS APIs--
-_DiskVer = 1 --It's a global
+_DiskVer = 2 --It's a global
 
 function SpriteSheet(img,w,h)
   local ss = {img=img,w=w,h=h} --SpriteSheet
