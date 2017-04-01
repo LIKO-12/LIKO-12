@@ -172,15 +172,23 @@ end
 function se:export(imageonly)
   local data = self.SpriteMap:data():encode()
   if imageonly then return data else
-    return data..flagsData
+    local fdata = ""
+    for char in string.gmatch(flagsData,".") do
+      fdata = fdata..";"..string.format("%X",string.byte(char))
+    end
+    return data.."\n"..fdata
   end
 end
 
 function se:import(data)
   if data then
+    fs.write("stest.txt",data)
     data = data:gsub("\n","")
-    local w,h,imgdata = string.match(data,"LK12;GPUIMG;(%d+)x(%d+);(.+)")
-    flagsData = imgdata:sub(w*h+1,-1)
+    local w,h,imgdata, fdata = string.match(data,"LK12;GPUIMG;(%d+)x(%d+);(.+);(.+)")
+    flagsData = ""
+    for flag in fdata:gmatch(";(%x+)") do
+      
+    end
     if flagsData:len() < sheetW*sheetH then
       local missing = sheetW*sheetH
       local zerochar = string.char(0)
