@@ -293,12 +293,8 @@ end
 
 function ce:import(data)
   buffer = {}
-  local firstline = true
   for line in magiclines(data) do
-    if not(firstline and line == "") then
-      table.insert(buffer,line)
-    end
-    firstline = false
+    table.insert(buffer,line)
   end
   if not buffer[1] then buffer[1] = "" end
   self.cx, self.cy, self.vx, self.vy = 1,1,1,1
@@ -307,7 +303,11 @@ end
 function ce:export()
   local data = ""
   for k, line in ipairs(buffer) do
-    data = data .. "\n" .. tostring(line)
+    if k == 1 then
+      data = data .. tostring(line)
+    else
+      data = data .. "\n" .. tostring(line)
+    end
   end
   return data:gsub("___","")
 end
