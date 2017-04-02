@@ -241,6 +241,20 @@ ce.keymap = {
     self:drawLineNum()
   end,
   
+  ["pageup"] = function(self)
+    self.vy = self.vy-self.th
+    if self.vy > #buffer then self.vy = #buffer end
+    if self.vy < 1 then self.vy = 1 end
+    self:drawBuffer()
+  end,
+  
+  ["pagedown"] = function(self)
+    self.vy = self.vy+self.th
+    if self.vy > #buffer then self.vy = #buffer end
+    if self.vy < 1 then self.vy = 1 end
+    self:drawBuffer()
+  end,
+  
   ["tab"] = function(self)
     self:textinput(" ")
   end
@@ -309,7 +323,7 @@ function ce:export()
       data = data .. "\n" .. tostring(line)
     end
   end
-  return data:gsub("___","")
+  return data
 end
 
 
