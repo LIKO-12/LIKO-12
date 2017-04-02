@@ -22,6 +22,7 @@ color(10) print("TYPE HELP FOR HELP")
 flip() sleep(0.25)
 
 local history = {}
+local hispos
 local btimer, btime, blink = 0, 0.5, true
 
 local function checkCursor()
@@ -152,6 +153,7 @@ function term.loop() --Enter the while loop of the terminal
       print(a,false)
     elseif event == "keypressed" then
       if a == "return" then
+        if hispos then table.remove(history,#history) hispos = false end
         table.insert(history, buffer)
         blink = false; checkCursor()
         term.execute(split(buffer)) buffer = ""
@@ -176,6 +178,38 @@ function term.loop() --Enter the while loop of the terminal
         editor:loop() cursor("none")
         printCursor(oldx,oldy,oldbk)
         palt(1,false) screenbk:image():draw(1,1) color(8) palt(1,true)
+      elseif a == "up" then
+        if not hispos then
+          table.insert(history,buffer)
+          hispos = #history
+        end
+        
+        if hispos > 1 then
+          hispos = hispos-1
+          blink = false; checkCursor()
+          for i=1,buffer:len() do
+            printBackspace()
+          end
+          buffer = history[hispos]
+          for char in string.gmatch(buffer,".") do
+            print(char,false)
+          end
+          blink = true; checkCursor()
+        end
+      elseif a == "down" then
+        if hispos and hispos < #history then
+          hispos = hispos+1
+          blink = false; checkCursor()
+          for i=1,buffer:len() do
+            printBackspace()
+          end
+          buffer = history[hispos]
+          for char in string.gmatch(buffer,".") do
+            print(char,false)
+          end
+          if hispos == #history then table.remove(history,#history) hispos = false end
+          blink = true; checkCursor()
+        end
       end
     elseif event == "touchpressed" then
       textinput(true)
