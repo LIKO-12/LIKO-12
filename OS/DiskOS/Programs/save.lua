@@ -40,6 +40,6 @@ else
   header = header.."none;CLvl:0;"
 end
 
-fs.write(destination,header..data)
+fs.write(destination,header.."\n"..data)
 
 color(12) print("\nSaved successfully")
