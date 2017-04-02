@@ -11,13 +11,21 @@ if not source then color(9) print("Must provide path to the file to load") retur
 if not fs.exists(source) then color(9) print("File doesn't exists") return end
 if fs.isDirectory(source) then color(9) print("Couldn't load a directory !") return end
 
-local saveData = fs.read(source) .. ";"
+local saveData = fs.read(source)
 if not saveData:sub(0,5) == "LK12;" then color(9) print("This is not a valid LK12 file !!") return end
 
 --LK12;OSData;OSName;DataType;Version;Compression;CompressLevel; data"
 --local header = "LK12;OSData;DiskOS;DiskGame;V"..saveVer..";"..sw.."x"..sh..";C:"
 
-local nextarg = saveData:gmatch("(.-);")
+local datasum = 0
+local nextargiter = saveData:gmatch("(.-);")
+local function nextarg()
+  local n = nextargiter()
+  if n then
+    datasum = datasum + n:len()
+    return n
+  else return n end
+end
 nextarg() --Skip LK12;
 
 local filetype = nextarg()
@@ -66,9 +74,7 @@ if not clevel then color(9) print("Invalid Data !") return end
 clevel = string.match(clevel,"CLvl:(.+)")
 if not clevel then color(9) print("Invalid Data !") return end clevel = tonumber(clevel)
 
-local data = ""
-for d in nextarg do data = data..d..";" end --Read the data itself
-data = data:sub(0,-2) --Strip the last ;
+local data = saveData:sub(datasum+2,-1)
 
 if compress ~= "none" then --Decompress
   data = math.decompress(data,compress,clevel)
