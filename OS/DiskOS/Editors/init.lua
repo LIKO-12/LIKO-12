@@ -156,10 +156,10 @@ function edit:import(data) --Import editors data
     if v ~= -1 and self.leditors[k].import then
       local dstart, dend = string.find(data,"___"..tostring(v).."___")
       if dstart then
-        dstart = dend+1
+        dstart = dend+2
         local dend, nextstart = string.find(data,"___",dstart)
         if dend then
-          dend = dend-1
+          dend = dend-2
         else
           dend = -2 --The end of the file ignoring the last new line
         end
