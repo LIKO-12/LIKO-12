@@ -64,6 +64,7 @@ function love.run(arg)
           if k ~= "bit" then package.loaded[k] = nil end
         end--Reset the required packages
         
+        love.graphics.reset() --Reset the GPU
         events = nil --Must undefine this.
         break --Break our game loop
       end
