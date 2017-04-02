@@ -191,7 +191,7 @@ function edit:export() --Export editors data
       local data = self.leditors[k]:export()
       if type(data) ~= "nil" then
         --code = code.."\n['"..tostring(v).."'] = "..string.format("%q",data)..","
-        save = save.."___"..tostring(v).."___\n"..data.."\n"
+        save = save.."___"..tostring(v).."___\n"..data:gsub("___","").."\n"
       end
     end
   end
