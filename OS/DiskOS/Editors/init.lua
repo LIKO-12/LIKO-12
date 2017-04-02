@@ -154,17 +154,16 @@ function edit:import(data) --Import editors data
   local savePos = {}
   for k,v in ipairs(self.saveid) do
     if v ~= -1 and self.leditors[k].import then
-      local dstart, dend = string.find(data,"__"..tostring(v).."__")
+      local dstart, dend = string.find(data,"___"..tostring(v).."___")
       if dstart then
         dstart = dend+1
-        local dend, nextstart = string.find(data,"__",dstart)
+        local dend, nextstart = string.find(data,"___",dstart)
         if dend then
           dend = dend-1
         else
           dend = -2 --The end of the file ignoring the last new line
         end
         local save = string.sub(data,dstart,dend)
-        fs.write("d_"..v,save)
         self.leditors[k]:import(save)
       end
     end
@@ -192,7 +191,7 @@ function edit:export() --Export editors data
       local data = self.leditors[k]:export()
       if type(data) ~= "nil" then
         --code = code.."\n['"..tostring(v).."'] = "..string.format("%q",data)..","
-        save = save.."__"..tostring(v).."__\n"..data.."\n"
+        save = save.."___"..tostring(v).."___\n"..data.."\n"
       end
     end
   end

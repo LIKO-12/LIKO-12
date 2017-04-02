@@ -309,7 +309,7 @@ function ce:export()
   for k, line in ipairs(buffer) do
     data = data .. "\n" .. tostring(line)
   end
-  return data:gsub("__","")
+  return data:gsub("___","")
 end
 
 
