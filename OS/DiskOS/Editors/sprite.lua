@@ -184,15 +184,13 @@ function se:import(data)
   if data then
     data = data:gsub("\n","")
     local w,h,imgdata, fdata = string.match(data,"LK12;GPUIMG;(%d+)x(%d+);(.-);(.+)")
-    flagsData = ""
-    fs.write("fdata",fdata)
-    fdata = ";"..fdata..";"
+    flagsData, fdata = "", ";"..fdata:gsub(";",";;")..";"
     for flag in fdata:gmatch(";(%x+);") do
+      if flag ~= "0" then print(flag) end
       flagsData = flagsData..string.char(tonumber(flag,16))
     end
     if flagsData:len() < sheetW*sheetH then
       local missing = sheetW*sheetH - flagsData:len()
-      print("Missing Flags: "..missing)
       local zerochar = string.char(0)
       for i=1,missing do
         flagsData = flagsData..zerochar
