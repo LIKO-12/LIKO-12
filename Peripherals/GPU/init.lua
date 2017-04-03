@@ -890,12 +890,9 @@ return function(config) --A function that creates a new GPU peripheral.
         w = w:gsub("\n","")
         local w,h,data = string.match(w,"LK12;GPUIMG;(%d+)x(%d+);(.+)")
         imageData = love.image.newImageData(w,h)
-        local Colors = {["0"]=1,["1"]=2,["2"]=3,["3"]=4,["4"]=5,["5"]=6,["6"]=7,["7"]=8,["8"]=9,["9"]=10,a=11,b=12,c=13,d=14,e=15,f=16,g=16}
+        local nextColor = string.gmatch(data,"%x")
         imageData:mapPixel(function(x,y,r,g,b,a)
-          local c = Colors[string.lower(data:sub(0,1))]
-          if not c then error("Invalid color ! ("..data:sub(0,1)..")") end
-          data = data:sub(2,-1)
-          return c-1,0,0,255
+          return tonumber(nextColor() or "0",16),0,0,255
         end)
       else
         imageData = love.image.newImageData(love.filesystem.newFileData(w,"image.png"))
@@ -959,8 +956,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     function id:encode() --Export to liko12 format
       local data = "LK12;GPUIMG;"..self:width().."x"..self.height()..";"
-      local colors = {"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"}
-      self:map(function(x,y,c) if x == 1 then data = data.."\n" end data = data..colors[c] end)
+      self:map(function(x,y,c) if x == 1 then data = data.."\n" end data = data..string.format("%X",c-1) end)
       return data
     end
     
