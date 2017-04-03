@@ -143,14 +143,6 @@ function edit:switchEditor(neweditor)
 end
 
 function edit:import(data) --Import editors data
-  --[[local chunk = loadstring(data)
-  setfenv(chunk,{})
-  data = chunk()
-  for k, id in ipairs(self.saveid) do
-    if id ~= -1 and data[tostring(id)] and self.leditors[k].import then
-      self.leditors[k]:import(data[tostring(id)])
-    end
-  end]]
   local savePos = {}
   for k,v in ipairs(self.saveid) do
     if v ~= -1 and self.leditors[k].import then
@@ -171,20 +163,6 @@ function edit:import(data) --Import editors data
 end
 
 function edit:export() --Export editors data
-  --[[local code = "return {"
-  
-  for k,v in ipairs(self.saveid) do
-    if v ~= -1 and self.leditors[k].export then
-      local data = self.leditors[k]:export()
-      if type(data) ~= "nil" then
-        code = code.."\n['"..tostring(v).."'] = "..string.format("%q",data)..","
-      end
-    end
-  end
-  
-  code = code .. "\n}"
-  
-  return code]]
   local save = ""
   for k,v in ipairs(self.saveid) do
     if v ~= -1 and self.leditors[k].export then
