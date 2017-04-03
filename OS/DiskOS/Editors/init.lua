@@ -200,6 +200,26 @@ function edit:loop() --Starts the while loop
           sc = "shift-" .. sc
         end
         
+        local term = require("C://terminal")
+        
+        if key == "ctrl-s" then
+          local oldprint = print
+          print = function() end
+          term.execute("save")
+          print = oldprint
+        elseif key == "ctrl-l" then
+          local oldprint = print
+          print = function() end
+          term.execute("load")
+          print = oldprint
+        elseif key == "ctrl-r" then
+          local sbk = screenshot()
+          local px,py,pc = printCursor()
+          term.execute("run")
+          printCursor(px,py,pc)
+          sbk:image():draw(1,1)
+        end
+        
         if self.leditors[self.active].keymap and self.leditors[self.active].keymap[key] then self.leditors[self.active].keymap[key](self.leditors[self.active],c)
         elseif self.leditors[self.active].keymap and self.leditors[self.active].keymap[sc] then self.leditors[self.active].keymap[sc](self.leditors[self.active],c) end
         if self.leditors[self.active][event] then self.leditors[self.active][event](self.leditors[self.active],a,b,c,d,e,f) end
