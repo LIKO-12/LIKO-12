@@ -5,35 +5,37 @@
 print("")
 local eapi = require("C://Editors")
 
-local sprid = "spritesheet"
-local codeid = "luacode"
-local tileid = "tilemap"
+local sprid = 3 --"spritesheet"
+local codeid = 2 --"luacode"
+local tileid = 4 --"tilemap"
 
-local diskdata = eapi:export()
-diskdata = loadstring(diskdata)()
+--[[local diskdata = eapi:export()
+diskdata = loadstring(diskdata)()]]
 
 --Load the spritesheet
 local SpriteMap, FlagsData
-if diskdata[sprid] then
-  local sheetData = diskdata[sprid]
-  sheetData = sheetData:gsub("\n","")
-  local w,h,imgdata = string.match(sheetData,"LK12;GPUIMG;(%d+)x(%d+);(.+)")
-  local sheetW, sheetH = w/8, h/8
-  FlagsData = imgdata:sub(w*h+1,-1)
-  if FlagsData:len() < sheetW*sheetH then
-    local missing = sheetW*sheetH
-    local zerochar = string.char(0)
-    for i=1,missing do
-      FlagsData = FlagsData..zerochar
-    end
-  end
-  imgdata = imgdata:sub(0,w*h)
-  imgdata = "LK12;GPUIMG;"..w.."x"..h..";"..imgdata
-  SpriteMap = SpriteSheet(imagedata(imgdata):image(),sheetW,sheetH)
+local sheetData = eapi.leditors[sprid]:export()
+sheetData = sheetData:gsub("\n","")
+local w,h,imgdata,fdata = string.match(sheetData,"LK12;GPUIMG;(%d+)x(%d+);(.-);(.+)")
+local sheetW, sheetH = w/8, h/8
+FlagsData, fdata = "", ";"..fdata:gsub(";",";;")..";"
+for flag in fdata:gmatch(";(%x+);") do
+  if flag ~= "0" then print(flag) end
+  FlagsData = FlagsData..string.char(tonumber(flag,16))
 end
+if FlagsData:len() < sheetW*sheetH then
+  local missing = sheetW*sheetH - FlagsData:len()
+  local zerochar = string.char(0)
+  for i=1,missing do
+    FlagsData = FlagsData..zerochar
+  end
+end
+imgdata = imgdata:sub(0,w*h)
+imgdata = "LK12;GPUIMG;"..w.."x"..h..";"..imgdata
+SpriteMap = SpriteSheet(imagedata(imgdata):image(),sheetW,sheetH)
 
 --Load the code
-local luacode = diskdata[codeid]:sub(2,-1) --Remove the first empty line
+local luacode = eapi.leditors[codeid]:export()
 local diskchunk, err = loadstring(luacode)
 if not diskchunk then
   local err = tostring(err)
