@@ -2,6 +2,7 @@
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
 
 print("")
+palt(1,false) --Make black opaque
 
 local peri = select(1,...)
 
