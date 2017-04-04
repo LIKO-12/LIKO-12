@@ -418,7 +418,9 @@ return function(config) --A function that creates a new GPU peripheral.
       if ((not p) or p == 1) and _DrawPalette[c0] ~= c0-1 then
         drawchange = true
         _DrawPalette[c0] = c0-1
-      elseif ((not p) or p > 1) and _ImagePalette[c0] ~= c0-1 then
+      end
+      
+      if ((not p) or p > 1) and _ImagePalette[c0] ~= c0-1 then
         imagechange = true
         _ImagePalette[c0] = c0-1
       end
@@ -427,7 +429,9 @@ return function(config) --A function that creates a new GPU peripheral.
       if ((not p) or p == 1) and _DrawPalette[c0] ~= c1-1 then
         drawchange = true
         _DrawPalette[c0] = c1-1
-      elseif ((not p) or p > 1) and _ImagePalette[c0] ~= c1-1 then
+      end
+      
+      if ((not p) or p > 1) and _ImagePalette[c0] ~= c1-1 then
         imagechange = true
         _ImagePalette[c0] = c1-1
       end
