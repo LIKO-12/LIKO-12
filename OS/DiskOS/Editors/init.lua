@@ -191,7 +191,7 @@ function edit:loop() --Starts the while loop
           key = "alt-" .. key
           sc = "alt-" .. sc
         end
-        if(isKDown("lctrl", "rctrl", "capslock")) then
+        if(isKDown("lctrl", "rctrl")) then
           key = "ctrl-" .. key
           sc = "ctrl-" .. sc
         end
@@ -215,7 +215,9 @@ function edit:loop() --Starts the while loop
         elseif key == "ctrl-r" then
           local sbk = screenshot()
           local px,py,pc = printCursor()
+          cam()
           term.execute("run")
+          cam()
           printCursor(px,py,pc)
           sbk:image():draw(1,1)
         end
