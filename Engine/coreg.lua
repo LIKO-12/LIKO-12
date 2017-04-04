@@ -26,18 +26,21 @@ end
 
 --Resumes the current active coroutine if exists.
 function coreg:resumeCoroutine(...)
-  if not self.co or coroutine.status(self.co) == "dead" then return end
-  local args = {coroutine.resume(self.co,...)}
-  if not args[1] then error(args[2]) end --Should have a better error handelling
-  if not args[2] then
-    --if self.co:status() == "dead" then error("done") return end --OS finished ??
-    --self:resumeCoroutine()
-    self.co = nil return
-  end
-  args = {self:trigger(args[2],unpack(extractArgs(args,2)))}
-  if not args[1] then self:resumeCoroutine(args[1],unpack(extractArgs(args,1))) end
-  if not(type(args[1]) == "number" and args[1] == 2) then
-    self:resumeCoroutine(true,unpack(extractArgs(args,1)))
+  local lastargs = {...}
+  while true do
+    if not self.co or coroutine.status(self.co) == "dead" then return end
+    local args = {coroutine.resume(self.co,unpack(lastargs))}
+    if not args[1] then error(args[2]) end --Should have a better error handelling
+    if not args[2] then
+      --if self.co:status() == "dead" then error("done") return end --OS finished ??
+      --self:resumeCoroutine()
+      self.co = nil return
+    end
+    args = {self:trigger(args[2],unpack(extractArgs(args,2)))}
+    if not args[1] then lastargs = {args[1],unpack(extractArgs(args,1))}
+    elseif not(type(args[1]) == "number" and args[1] == 2) then
+      lastargs = {true,unpack(extractArgs(args,1))}
+    else break end
   end
 end
 
