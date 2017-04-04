@@ -311,7 +311,7 @@ function ce:import(data)
     table.insert(buffer,line)
   end
   if not buffer[1] then buffer[1] = "" end
-  self.cx, self.cy, self.vx, self.vy = 1,1,1,1
+  self:checkPos()
 end
 
 function ce:export()
