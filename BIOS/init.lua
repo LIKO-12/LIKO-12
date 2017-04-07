@@ -145,25 +145,19 @@ end
 if MPer.GPU then --If there is an initialized gpu
   local g = MPer.GPU
   g.color(8)
-  local chars = {"#","%","="}
+  local chars = {"@","%","*"}
   --48x16 Terminal Size
   local function drawAnim() g.clear()
-    for x=1,exe(g.termWidth()) do for y=1,exe(g.termHeight()) do
-      --[[math.randomseed(os.clock()*os.time()*x)
-      g.color(math.floor(math.random(8,16)))
-      --g.printCursor(x,y)
-      math.randomseed(os.clock()*os.time()*y)
-      local c = chars[math.floor(math.random(1,#chars))]
-      --if math.random(0,20) % 2 == 0 then c = c:upper() end]]
+    for y=1,exe(g.termHeight())+1 do for x=1,exe(g.termWidth())+1 do
       g.color(8 + (x+y) % 8)
-      g.print(chars[((y+x) % 2)+2],false)
-    end end
+      g.print(chars[((y+x) % 2)+1],false,true)
+    end g.printCursor(1,y+1,false) end
   end
   
   g.clear()
   g.printCursor(_,_,0)
   
-  local time = 0.25
+  local time = 0.3
   local timer = 0
   local stage = 0
   
