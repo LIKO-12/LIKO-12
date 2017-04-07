@@ -33,7 +33,7 @@ local function checkCursor()
   if cy > th+1 then cy = th+1 end
   if cy < 1 then cy = 1 end
   printCursor(cx,cy,1) cy = cy-1
-  rect(cx*(fw+1)-3,blink and cy*(fh+3)+2 or cy*(fh+3)+1,fw+1,blink and fh or fh+2,false,blink and 5 or 1) --The blink
+  rect(cx*(fw+1)-3,blink and cy*(fh+2)+2 or cy*(fh+2)+1,fw+1,blink and fh or fh+2,false,blink and 5 or 1) --The blink
 end
 
 local function split(str)
