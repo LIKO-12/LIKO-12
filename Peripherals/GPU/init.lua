@@ -74,7 +74,7 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setDefaultFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --Create the screen canvas.
   local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale) --Create the gif canvas, used to apply the gif scale factor.
-  local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.1
+  local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
   
   love.graphics.clear(0,0,0,255) --Clear the host screen.
   
@@ -150,7 +150,7 @@ return function(config) --A function that creates a new GPU peripheral.
   ofs.screen = {0,0} --The offset of all the drawing opereations.
   ofs.point = {0,0} --The offset of GPU.point/s.
   ofs.print = {-1,-1} --The offset of GPU.print.
-  ofs.print_grid = {-2,-1} --The offset of GPU.print with grid mode.
+  ofs.print_grid = {-1,-1} --The offset of GPU.print with grid mode.
   ofs.line = {0,0} --The offset of GPU.line/s.
   ofs.circle = {0,0,0} --The offset of GPU.circle with l as false (x,y,r).
   ofs.circle_line = {0,0,0} --The offset of GPU.circle with l as true (x,y,r).
@@ -337,7 +337,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local ColorStack = {} --The colors stack (pushColor,popColor)
   local PaletteStack = {} --The palette stack (pushPalette,popPalette)
   local printCursor = {x=1,y=1,bgc=1} --The print grid cursor pos.
-  local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2))-2 --The size of characters that the screen can fit.
+  local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2)) --The size of characters that the screen can fit.
   
   --Those explains themselves.
   function GPU.screenSize() return true, _LIKO_W, _LIKO_H end
@@ -740,58 +740,115 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Prints text to the screen,
-  --Requires more work
   --Acts as a terminal print if x, y are not provided,
-  --Or prints at the specific pos x, y3
-  function GPU.print(t,x,y)
-    local t = tostring(t)
-    if x and y then --If the x & y are provided
-      love.graphics.print(t, math.floor((x or 1)+ofs.print[1]), math.floor((y or 1)+ofs.print[2])) _ShouldDraw = true --Print the text to the screen and tall that changes has been made.
-    else --If they are not, print on the grid
-      exe(GPU.pushPalette()) exe(GPU.palt())
-      local anl = true --Auto new line
-      if type(x) == "boolean" then anl = x end
-      local function printgrid(tx,gx,gy)
-        if printCursor.bgc > 0 then exe(GPU.rect(math.floor((gx or 1)*(_FontW+1)-2)-1, math.floor((gy or 1)*(_FontH+3)-(_FontH+1))-1, tx:len()*(_FontW+1) +1, _FontH+2, false, printCursor.bgc)) end
-        love.graphics.print(tx, math.floor(((gx or 1)*(_FontW+1)-2)+ofs.print_grid[1]), math.floor(((gy or 1)*(_FontH+3)-(_FontH+1))+ofs.print_grid[2]))
-      _ShouldDraw = true end
-      if y then printgrid(t,printCursor.x,printCursor.y) printCursor.x = printCursor.x + t:len() return true end
-      local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,-(_FontH+2)) end
-      local function printLine(txt,f,ff)
-        if txt:len()+printCursor.x-1 > TERM_W then
-          local tl = txt:len()+printCursor.x-1
-          printLine(txt:sub(0,txt:len()-(tl-TERM_W)),f,false)
-          printLine(txt:sub(txt:len()-(tl-TERM_W)+1,-1),f,ff)
-        else
-          if printCursor.y == TERM_H+1 then cr() printCursor.y = TERM_H end
-          printgrid(txt,printCursor.x, printCursor.y)
-          if printCursor.y < TERM_H+1 and not(ff and f) then printCursor.y = printCursor.y+1 end
-          if ff and f then
-            printCursor.x = printCursor.x + txt:len()
-          else
-            printCursor.x = 1
-          end
+  --Or prints at the specific pos x, y
+  function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky)
+    local t = tostring(t) --Make sure it's a string
+    if x and y then --Print at a specific position on the screen
+      --Error handelling
+      if type(x) ~= "number" then return false, "X position must be a number, provided: "..type(x) end
+      if type(y) ~= "number" then return false, "Y position must be a number, provided: "..type(y) end
+      if limit and type(limit) ~= "number" then return false, "Line limit be a number or a nil, provided: "..type(x) end
+      if align then
+        if type(align) ~= "string" then return false," Line align must be a string or a nil, provided: "..type(align) end
+        if align ~= "left" or align ~= "center" or align ~= "right" or align ~= "justify" then
+          return false, "Invalid line alignment '"..align.."' !"
         end
       end
-      local lcount = 0
-      local bkt = t --Make a backup
-      for line in magiclines(t) do lcount = lcount+1 end
-      for line in magiclines(bkt) do 
-        lcount = lcount-1
-        printLine(line,lcount==0,not anl)
+      if r and type(r) ~= "number" then return false, "Rotation must be a number, provided: "..type(r) end
+      if sx and type(sx) ~= "number" then return false, "X Scale factor must be a number, provided: "..type(sx) end
+      if sy and type(sy) ~= "number" then return false, "Y Scale factor must be a number, provided: "..type(sy) end
+      if ox and type(ox) ~= "number" then return false, "X Origin offset must be a number, provided: "..type(ox) end
+      if oy and type(oy) ~= "number" then return false, "Y Origin offset must be a number, provided: "..type(oy) end
+      if kx and type(kx) ~= "number" then return false, "X Shearing factor must be a number, provided: "..type(kx) end
+      if ky and type(ky) ~= "number" then return false, "Y Shearing factor must be a number, provided: "..type(ky) end
+      
+      --Print to the screen
+      if limit then --Wrapped
+        love.graphics.printf(t,x+ofs.print[1],y+ofs.print[2],limit,align,r,sx,sy,ox,oy,kx,ky) _ShouldDraw = true
+      else
+        love.graphics.print(t,x+ofs.print[1],y+ofs.print[2],r,sx,sy,ox,oy,kx,ky) _ShouldDraw = true
       end
-      exe(GPU.popPalette())
+      
+      return true --It ran successfully.
+    else --Print to terminal pos
+      local pc = printCursor --Shortcut
+      
+      local function togrid(gx,gy) --Covert to grid cordinates
+        return math.floor((gx-1)*(_FontW+1))+1, math.floor((gy-1)*(_FontH+2))+1
+      end
+      
+      --A function to draw the background rectangle
+      local function drawbackground(gx,gy,gw)
+        if pc.bgc == 0 or gw < 1 then return end --No need to draw the background
+        gx,gy = togrid(gx,gy)
+        GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+2, false, pc.bgc)
+      end
+      
+      --Draw directly without formatting nor updating the cursor pos.
+      if y then
+        drawbackground(pc.x, pc.y, t:len()) --Draw the background.
+        local gx,gy = togrid(pc.x, pc.y)
+        love.graphics.print(t,gx+1+ofs.print_grid[1],gy+1+ofs.print_grid[2]) --Print the text.
+        pc.x = pc.x + t:len() --Update the x pos
+        return true --It ran successfully
+      end
+      
+      if type(x) == "nil" or x then t = t .. "\n\n" end --Auto newline after printing.
+      
+      local sw, sh = TERM_W*(_FontW+1), TERM_H*(_FontH+2) --Screen size
+      local pre_spaces = string.rep(" ", pc.x-1) --The pre space for text wrapping to calculate
+      local maxWidth, wrappedText = _Font:getWrap(pre_spaces..t, sw) --Get the text wrapped
+      local linesNum = #wrappedText --Number of lines
+      if linesNum > TERM_H-pc.y+1 then --It will go down of the screen, so shift the screen up.
+        GPU.pushPalette() GPU.palt() GPU.pal() --Backup the palette and reset the palette.
+        local extra = linesNum - (TERM_H-pc.y+1) --The extra lines that will draw out of the screen.
+        local sc = exe(GPU.screenshot()) --Take a screenshot
+        GPU.clear(1) --Clear the screen
+        sc:image():draw(1, extra*(_FontH+2)*-1+1) --Draw the screen shifted up
+        pc.y = pc.y-extra --Update the cursor pos.
+        GPU.popPalette() --Restore the palette.
+      end
+      
+      local drawY = pc.y
+      
+      --Iterate over the lines.
+      for k, line in ipairs(wrappedText) do
+        local printX = 1
+        if k == 1 then line = line:sub(pre_spaces:len()+1,-1); printX = pc.x end --Remove the pre_spaces
+        local linelen = line:len() --The line length
+        drawbackground(printX,pc.y,linelen) --Draw the line background
+        
+        --Update the cursor pos
+        pc.x = printX + line:len()
+        if wrappedText[k+1] then pc.y = pc.y + 1 end --If there's a next line
+      end
+      
+      love.graphics.printf(pre_spaces..t,1+1+ofs.print_grid[1],(drawY-1)*(_FontH+2)+1+1+ofs.print_grid[2],sw) _ShouldDraw = true --Print the text
+      
+      return true --It ran successfully.
     end
-    return true
   end
   
   function GPU.printBackspace(c,skpCr)
     local c = c or printCursor.bgc
     if type(c) ~= "number" then return false, "Color must be a number value, provided: "..type(c) end
-    local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,6) end
+    local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,_FontH+2) end
+    
+    local function togrid(gx,gy) --Covert to grid cordinates
+      return math.floor((gx-1)*(_FontW+1))+1, math.floor((gy-1)*(_FontH+2))+1
+    end
+    
+    --A function to draw the background rectangle
+    local function drawbackground(gx,gy,gw)
+      if printCursor.bgc == 0 or gw < 1 then return end --No need to draw the background
+      gx,gy = togrid(gx,gy)
+      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+2, false, printCursor.bgc)
+    end
+      
     if printCursor.x > 1 then
       printCursor.x = printCursor.x-1
-      exe(GPU.rect(math.floor((printCursor.x or 1)*(_FontW+1)-2)-1, math.floor((printCursor.y or 1)*(_FontH+3)-(_FontH+1))-1, _FontW+2, _FontH+2, false, c))
+      drawbackground(printCursor.x,printCursor.y,1)
     elseif not skpCr then
       if printCursor.y > 1 then
         printCursor.y = printCursor.y - 1
@@ -800,7 +857,7 @@ return function(config) --A function that creates a new GPU peripheral.
         printCursor.x = TERM_W
         cr()
       end
-      exe(GPU.rect(math.floor((printCursor.x or 1)*(_FontW+1)-2)-1, math.floor((printCursor.y or 1)*(_FontH+3)-(_FontH+1))-1, _FontW+2, _FontH+2, false, c))
+      drawbackground(printCursor.x,printCursor.y,1)
     end
     return true
   end
