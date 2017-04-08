@@ -101,6 +101,7 @@ function edit:loadCursors()
   cursor(self.editorsheet:extract(4),"hand",5,5)
   cursor(self.editorsheet:extract(5),"cross",4,4)
   cursor(self.editorsheet:extract(7),"point",2,2)
+  cursor(self.editorsheet:extract(8),"draw",4,4)
   popPalette()
 end
 
