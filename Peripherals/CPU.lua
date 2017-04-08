@@ -77,7 +77,7 @@ return function(config) --A function that creates a new CPU peripheral.
   end
   
   function CPU.isMobile()
-    if love.system.getOS() == "Android" or love.filesystem.getOS() == "iOS" then
+    if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
       return true, true
     else
       return true, false
