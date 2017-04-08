@@ -763,6 +763,8 @@ return function(config) --A function that creates a new GPU peripheral.
       if kx and type(kx) ~= "number" then return false, "X Shearing factor must be a number, provided: "..type(kx) end
       if ky and type(ky) ~= "number" then return false, "Y Shearing factor must be a number, provided: "..type(ky) end
       
+      x,y = math.floor(x), math.floor(y)
+      
       --Print to the screen
       if limit then --Wrapped
         love.graphics.printf(t,x+ofs.print[1],y+ofs.print[2],limit,align,r,sx,sy,ox,oy,kx,ky) _ShouldDraw = true
