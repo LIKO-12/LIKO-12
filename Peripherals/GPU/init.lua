@@ -1092,11 +1092,18 @@ return function(config) --A function that creates a new GPU peripheral.
       gifimg = love.graphics.newImage(gifimg)
       local hotx, hoty = hx*_LIKOScale, hy*_LIKOScale --Converted to host scale
       local cur = _Mobile and {} or love.mouse.newCursor(limg,hotx,hoty)
-      
-      _CursorsCache[name] = {cursor=cur,imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy}
+      local palt = {}
+      for i=1, 16 do
+        table.insert(palt,_ImageTransparent[i])
+      end
+      _CursorsCache[name] = {cursor=cur,imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy,palt=palt}
       return true --It ran successfully
     elseif type(imgdata) == "nil" then
-      return true, _Cursor, _CursorsCache[_Cursor].imgdata, _CursorsCache[_Cursor].hx+1, _CursorsCache[_Cursor].hy+1
+      if _Cursor == "none" then
+        return true, _Cursor
+      else
+        return true, _Cursor, _CursorsCache[_Cursor].imgdata, _CursorsCache[_Cursor].hx+1, _CursorsCache[_Cursor].hy+1
+      end
     else --Invalied
       return false, "The first argument must be a string, image or nil"
     end
@@ -1105,12 +1112,21 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:resize",function() --The new size will be calculated in the top, because events are called by the order they were registered with
     if _Mobile then return end
     for k, cursor in pairs(_CursorsCache) do
+       --Hack
+      GPU.pushPalette()
+      GPU.pushPalette()
+      for i=1, 16 do
+        PaletteStack[#PaletteStack].trans[i] = cursor.palt[i]
+      end
+      GPU.popPalette()
+      
       local enimg = cursor.imgdata:enlarge(_LIKOScale)
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
       limg:mapPixel(_ExportImage)
       local hotx, hoty = cursor.hx*_LIKOScale, cursor.hy*_LIKOScale --Converted to host scale
       local cur = love.mouse.newCursor(limg,hotx,hoty)
-      _Cursor = "none"; _CursorsCache[k].cursor = cur
+      _CursorsCache[k].cursor = cur
+      GPU.popPalette()
     end
     local cursor = _Cursor; _Cursor = "none" --Force the cursor to update.
     exe(GPU.cursor(cursor))
