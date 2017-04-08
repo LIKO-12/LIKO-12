@@ -1,6 +1,45 @@
 --Build DiskOS APIs--
 _DiskVer = 2 --It's a global
 
+function input()
+  local t = ""
+  
+  local fw, fh = fontSize()
+  local blink = false
+  local blinktimer = 0
+  local blinktime = 0.5
+  local function drawblink()
+    local cx,cy,c = printCursor() cy = cy-1
+    rect(cx*(fw+1)-3,blink and cy*(fh+2)+2 or cy*(fh+2)+1,fw+1,blink and fh or fh+2,false,blink and 5 or c) --The blink
+  end
+  
+  for event,a,b,c,d,e,f in pullEvent do
+    if event == "textinput" then
+      t = t .. a
+      print(a,false)
+    elseif event == "keypressed" then
+      if a == "backspace" then
+        blink = false; drawblink()
+        if t:len() > 0 then printBackspace() end
+        blink = true; drawblink()
+        t = t:sub(0,-2)
+      elseif a == "return" then
+        blink = false; drawblink()
+        return t --Return the text
+      elseif a == "escape" then
+        return false --User canceled text input.
+      end
+    elseif event == "update" then --Blink
+      blinktimer = blinktimer + a
+      if blinktimer > blinktime then
+        blinktimer = blinktimer - blinktime
+        blink = not blink
+        drawblink()
+      end
+    end
+  end
+end
+
 function SpriteSheet(img,w,h)
   local ss = {img=img,w=w,h=h} --SpriteSheet
   ss.cw, ss.ch, ss.quads = ss.img:width()/ss.w, ss.img:height()/ss.h, {}
