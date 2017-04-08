@@ -202,6 +202,7 @@ function edit:loop() --Starts the while loop
         
         local term = require("C://terminal")
         
+        pushMatrix() pushPalette() pushColor()
         if key == "ctrl-s" then
           local oldprint = print
           print = function() end
@@ -221,6 +222,7 @@ function edit:loop() --Starts the while loop
           printCursor(px,py,pc)
           sbk:image():draw(1,1)
         end
+        popMatrix() popPalette() popColor()
         
         if self.leditors[self.active].keymap and self.leditors[self.active].keymap[key] then self.leditors[self.active].keymap[key](self.leditors[self.active],c)
         elseif self.leditors[self.active].keymap and self.leditors[self.active].keymap[sc] then self.leditors[self.active].keymap[sc](self.leditors[self.active],c) end
