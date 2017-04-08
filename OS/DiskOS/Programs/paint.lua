@@ -163,16 +163,16 @@ for event, a,b,c,d,e,f in pullEvent do
       if painteditor[event] then painteditor[event](painteditor,a,b,c,d,e,f) end
     end
   elseif event == "mousepressed" and not eflag then
+    if painteditor[event] then painteditor[event](painteditor,a,b,c,d,e,f) end
     local cx, cy = whereInGrid(a,b,controlGrid)
     if cx then
       cursor("handpress")
       hflag = "d"
       sid = cx-1
       pushMatrix() cam() edit:drawTopBar() popMatrix()
-    else
-      if painteditor[event] then painteditor[event](painteditor,a,b,c,d,e,f) end
     end
   elseif event == "mousemoved" and not eflag then
+    if painteditor[event] then painteditor[event](painteditor,a,b,c,d,e,f) end
     local cx, cy = whereInGrid(a,b,controlGrid)
     if cx then
       if hflag and hflag == "d" then
@@ -187,9 +187,9 @@ for event, a,b,c,d,e,f in pullEvent do
         hflag = false
         cursor("normal")
       end
-      if painteditor[event] then painteditor[event](painteditor,a,b,c,d,e,f) end
     end
   elseif event == "mousereleased" and not eflag then
+    if painteditor[event] then painteditor[event](painteditor,a,b,c,d,e,f) end
     local cx, cy = whereInGrid(a,b,controlGrid)
     if cx then
       if hflag and hflag == "d" then
@@ -210,7 +210,6 @@ for event, a,b,c,d,e,f in pullEvent do
         cursor("normal")
         hflag = nil
       end
-      if painteditor[event] then painteditor[event](painteditor,a,b,c,d,e,f) end
     end
   elseif eflag then
     if event == "touchpressed" then textinput(true) end
