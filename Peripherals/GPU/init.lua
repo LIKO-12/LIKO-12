@@ -909,10 +909,13 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.image(data)
     local Image
     if type(data) == "string" then --Load liko12 specialized image format
-      local imageData = exe(GPU.imagedata(data))
+      local ok, imageData = GPU.imagedata(data)
+      if not ok then return ok, imageData end
       return true, imageData:image()
     elseif type(data) == "userdata" and data.typeOf and data:typeOf("ImageData") then
-      Image = love.graphics.newImage(data)
+      local ok, err = pcall(love.graphics.newImage,data)
+      if not ok then return false, "Invalid image data" end
+      Image = err
       Image:setWrap("repeat")
       --imageData = exe(GPU.imagedata(Image))
     end
@@ -958,7 +961,11 @@ return function(config) --A function that creates a new GPU peripheral.
           return tonumber(nextColor() or "0",16),0,0,255
         end)
       else
-        imageData = love.image.newImageData(love.filesystem.newFileData(w,"image.png"))
+        local ok, fdata = pcall(love.filesystem.newFileData,w,"image.png")
+        if not ok then return false, "Invalid image data" end
+        local ok, err = pcall(love.image.newImageData,fdata)
+        if not ok then return false, "Invalid image data" end
+        imageData = err
       end
     elseif type(w) == "userdata" and w.typeOf and w:typeOf("ImageData") then
       imageData = w
@@ -1105,7 +1112,8 @@ return function(config) --A function that creates a new GPU peripheral.
       local cur = love.mouse.newCursor(limg,hotx,hoty)
       _Cursor = "none"; _CursorsCache[k].cursor = cur
     end
-    exe(GPU.cursor(_Cursor))
+    local cursor = _Cursor; _Cursor = "none" --Force the cursor to update.
+    exe(GPU.cursor(cursor))
   end)
   
   exe(GPU.cursor(exe(GPU.imagedata(1,1)):setPixel(1,1,8),"default"))
