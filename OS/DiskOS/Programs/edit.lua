@@ -6,7 +6,7 @@ local tar = table.concat(args," ") --The path may include whitespaces
 local term = require("C://terminal")
 tar = term.parsePath(tar)
 
-if fs.isDirectory(tar) then color(9) print("Can't edit directories !") return end
+if fs.exists(tar) and fs.isDirectory(tar) then color(9) print("Can't edit directories !") return end
 local eapi = require("C://Editors")
 local edit = {}
 edit.editorsheet = eapi.editorsheet
@@ -84,20 +84,20 @@ for event, a,b,c,d,e,f in pullEvent do
         cursor("normal")
         sid = false
       end
-      edit:drawTopBar()
+      pushMatrix() cam() edit:drawTopBar() popMatrix()
     elseif eflag then
       if a == "left" then
         sid = sid - 1
         if sid < 0 then sid = 2 end
-        edit:drawTopBar()
+        pushMatrix() cam() edit:drawTopBar() popMatrix()
       elseif a == "right" then
         sid = sid + 1
         if sid > 2 then sid = 0 end
-        edit:drawTopBar()
+        pushMatrix() cam() edit:drawTopBar() popMatrix()
       elseif a == "return" then
         if controls[sid+1]() then break end
         sid, eflag = false, false
-        edit:drawTopBar()
+        pushMatrix() cam() edit:drawTopBar() popMatrix()
       end
     else
       local key, sc = a, b
@@ -124,7 +124,7 @@ for event, a,b,c,d,e,f in pullEvent do
       cursor("handpress")
       hflag = "d"
       sid = cx-1
-      edit:drawTopBar()
+      pushMatrix() cam() edit:drawTopBar() popMatrix()
     else
       if texteditor[event] then texteditor[event](texteditor,a,b,c,d,e,f) end
     end
@@ -133,7 +133,7 @@ for event, a,b,c,d,e,f in pullEvent do
     if cx then
       if hflag and hflag == "d" then
         sid = cx-1
-        edit:drawTopBar()
+        pushMatrix() cam() edit:drawTopBar() popMatrix()
       elseif not hflag then
         cursor("handrelease")
         hflag = "h"
@@ -152,7 +152,7 @@ for event, a,b,c,d,e,f in pullEvent do
         cursor("handrelease")
         if controls[sid+1]() then break end
         sid, hflag = false, false
-        edit:drawTopBar()
+        pushMatrix() cam() edit:drawTopBar() popMatrix()
       elseif not hflag then
         hflag = "h"
         cursor("handrelease")
@@ -161,7 +161,7 @@ for event, a,b,c,d,e,f in pullEvent do
       if hflag then
         if hflag == "d" then
           sid = false
-          edit:drawTopBar()
+          pushMatrix() cam() edit:drawTopBar() popMatrix()
         end
         cursor("normal")
         hflag = nil
