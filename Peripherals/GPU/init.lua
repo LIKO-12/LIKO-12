@@ -784,7 +784,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local function drawbackground(gx,gy,gw)
         if pc.bgc == 0 or gw < 1 then return end --No need to draw the background
         gx,gy = togrid(gx,gy)
-        GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+2, false, pc.bgc)
+        GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, pc.bgc)
       end
       
       --Draw directly without formatting nor updating the cursor pos.
@@ -845,7 +845,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local function drawbackground(gx,gy,gw)
       if printCursor.bgc == 0 or gw < 1 then return end --No need to draw the background
       gx,gy = togrid(gx,gy)
-      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+2, false, printCursor.bgc)
+      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, printCursor.bgc)
     end
       
     if printCursor.x > 1 then
