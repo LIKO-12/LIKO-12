@@ -33,7 +33,7 @@ For default 32bit installation, replace _likopath_ with the path to the cloned f
 
 ###### Linux
 
-4. Enter the cloned LIKO-12 repo directory (that contains main.lua) and type this command to run:
++ Enter the cloned LIKO-12 repo directory (that contains main.lua) and type this command to run:
 ```sh
 love .
 ```
