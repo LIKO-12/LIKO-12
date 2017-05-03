@@ -13,6 +13,33 @@ like the token limit.
 
 * So you can basically create spritesheets, and games using this console.
 
+
+### Running LIKO12
+
++ Clone the LIKO-12 repo, __Be sure to clone the WIP branch__.
++ Install love2d.
+
+###### Windows
+
++ Create a text file at your desktop, call it "run liko12"
++ Type in (Replace them with your pathes): 
+```batch
+"path to love" "path to clone directory"
+```
+For default 32bit installation, replace _likopath_ with the path to the cloned folder, it should contain main.lua.
+```batch
+"C://Program Files/LOVE/love" "likopath"
+```
++ Save the text file as "run liko12 __.bat__ "
++ Run the batch file.
+
+###### Linux
+
+4. Enter the cloned LIKO-12 repo directory (that contains main.lua) and type this command to run:
+```sh
+love .
+```
+
 ### LIKO-12 V0.6 W.I.P
 
 A lot of you may saw some gifs of the new work in progress LIKO-12 V0.6, so here's some info about it:
@@ -42,31 +69,6 @@ In other words, you can say: "How can I run the DEV version that you tweet about
 * Loads the GPU with pico-8 16 color palette at 192x168 resolution.
 * Creates 2 virtual harddrives, C & D, each with 50 megabyte space.
 * Creates a Keyboard and a mouse.
-
-#### Running LIKO12 V0.6 DEV version:
-You will have to clone the LIKO-12 repo, __Be sure to clone the WIP branch__.
-Install love2d.
-
-###### Windows
-
-+ Create a text file at your desktop, call it "run liko12"
-+ Type in (Replace them with your pathes): 
-```batch
-"path to love" "path to clone directory"
-```
-For default 32bit installation, replace _likopath_ with the path to the cloned folder, it should contain main.lua.
-```batch
-"C://Program Files/LOVE/love" "likopath"
-```
-+ Save the text file as "run liko12 __.bat__ "
-+ Run the batch file.
-
-###### Linux
-
-4. Enter the cloned LIKO-12 repo directory (that contains main.lua) and type this command to run:
-```sh
-love .
-```
 
 ### Questions ?
 Direct Message me at twitter (see link bellow), I will response as soon as possible.
