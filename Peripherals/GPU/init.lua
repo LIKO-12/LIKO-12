@@ -151,6 +151,7 @@ return function(config) --A function that creates a new GPU peripheral.
   ofs.point = {0,0} --The offset of GPU.point/s.
   ofs.print = {-1,-1} --The offset of GPU.print.
   ofs.print_grid = {-1,-1} --The offset of GPU.print with grid mode.
+  ofs.line_start = {0,0} --The offset of the first coord of GPU.line/s.
   ofs.line = {0,0} --The offset of GPU.line/s.
   ofs.circle = {0,0,0} --The offset of GPU.circle with l as false (x,y,r).
   ofs.circle_line = {0,0,0} --The offset of GPU.circle with l as true (x,y,r).
@@ -881,7 +882,7 @@ return function(config) --A function that creates a new GPU peripheral.
     exe(GPU.pushColor()) --Push the current color.
     if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
     for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
-    for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.point[2] else args[k] = v + ofs.point[1] end end --Apply the offset.
+    for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.point[1] else args[k] = v + ofs.point[2] end end --Apply the offset.
     love.graphics.points(unpack(args)) _ShouldDraw = true --Draw the points and tell that changes has been made.
     exe(GPU.popColor()) --Pop the last color in the stack.
     return true --It ran successfully.
@@ -895,7 +896,8 @@ return function(config) --A function that creates a new GPU peripheral.
     if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
     for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
     if #args < 4 then return false, "Need at least two vertices to draw a line." end --Error
-    for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.line[2] else args[k] = v + ofs.line[1] end end --Apply the offset.
+    args[1], args[2] = args[1] + ofs.line_start[1], args[2] + ofs.line_start[2]
+    for k=3, #args do if (k % 2 == 0) then args[k] = args[k] + ofs.line[1] else args[k] = args[k] + ofs.line[2] end end --Apply the offset.
     love.graphics.line(unpack(args)) _ShouldDraw = true --Draw the lines and tell that changes has been made.
     exe(GPU.popColor()) --Pop the last color in the stack.
     return true --It ran successfully.
