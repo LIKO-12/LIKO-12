@@ -1,5 +1,5 @@
 # LIKO-12
-LIKO-12 is a PICO-8 clone but with extra abilities, different API and bigger screen width.
+LIKO-12 is a fantasy computer inspired by PICO-8 but with extra abilities, different API and bigger screen width.
 
 We are working on this because PICO-8 is not available under a free license that allows
 improvements and sharing, and also to lift some of the more restrictive limitations on games
