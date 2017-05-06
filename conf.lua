@@ -1,5 +1,7 @@
-_ScreenScale = tonumber(os.getenv("LIKO_SCALE") or 3)
+--It's possible to make LIKO12 boot with a bigger scale by setting an environment variable in your os called "LIKO_SCALE". This functionality is contributed by technomancy.
+local _ScreenScale = tonumber(os.getenv("LIKO_SCALE") or 3)
 
+--Nothing should be changed with this config expect: window size, enabling a module.
 function love.conf(t)
     t.identity = "liko12"               -- The name of the save directory (string)
     t.version = "0.10.2"                -- The LÖVE version this game was made for (string)
