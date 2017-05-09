@@ -11,6 +11,7 @@ end
 
 local fw, fh = fontSize()
 
+clear(1)
 SpriteGroup(25,2,2,5,1,1,1,0,editor.editorsheet)
 printCursor(1,2,1)
 color(9) print("DEV",5*8+2,4) flip() sleep(0.5)
@@ -33,7 +34,7 @@ local function checkCursor()
   if cy > th+1 then cy = th+1 end
   if cy < 1 then cy = 1 end
   printCursor(cx,cy,1) cy = cy-1
-  rect(cx*(fw+1)-4,blink and cy*(fh+2)+2 or cy*(fh+2)+1,fw+1,blink and fh or fh+2,false,blink and 5 or 1) --The blink
+  rect(cx*(fw+1)-4,blink and cy*(fh+2)+2 or cy*(fh+2)+1,fw+1,blink and fh or fh+3,false,blink and 5 or 1) --The blink
 end
 
 local function split(str)
