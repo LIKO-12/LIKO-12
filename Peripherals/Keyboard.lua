@@ -3,10 +3,17 @@ local events = require("Engine.events")
 return function(config) --A function that creates a new Keyboard peripheral.
   
   if config._SpaceWalkthrough then
-    events.register("love:keypressed",function(key,sc,isrepeat)
+    events:register("love:keypressed",function(key,sc,isrepeat)
       if key == "space" then
         events:trigger("love:textinput"," ")
       end
+    end)
+  end
+  
+  if config._Android then
+    events:register("love:textinput",function(t)
+      events:trigger("love:keypressed",string.lower(t),string.lower(t))
+      events:trigger("love:keyreleased",string.lower(t),string.lower(t))
     end)
   end
   
