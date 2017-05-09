@@ -125,9 +125,6 @@ end
 function edit:switchEditor(neweditor)
   if neweditor ~= self.active and self.leditors[neweditor] then
     local oldeditor = self.active; self.active = neweditor
-    if self.leditors[oldeditor].leaved then
-      self.leditors[oldeditor]:leaved(self.leditors[neweditor])
-    end
     
     if self.leditors[neweditor].entered then
       if self.leditors[oldeditor].leaved then
@@ -224,6 +221,20 @@ function edit:loop() --Starts the while loop
           sbk:image():draw(1,1)
         end
         popMatrix() popPalette() popColor()
+        
+        if key == "alt-right" then
+          if self.active == #self.editors then
+            self:switchEditor(1)
+          else
+            self:switchEditor(self.active+1)
+          end
+        elseif key == "alt-left" then
+          if self.active == 1 then
+            self:switchEditor(#self.editors)
+          else
+            self:switchEditor(self.active-1)
+          end
+        end
         
         if self.leditors[self.active].keymap and self.leditors[self.active].keymap[key] then self.leditors[self.active].keymap[key](self.leditors[self.active],c)
         elseif self.leditors[self.active].keymap and self.leditors[self.active].keymap[sc] then self.leditors[self.active].keymap[sc](self.leditors[self.active],c) end
