@@ -171,7 +171,7 @@ return function(config) --A function that creates a new GPU peripheral.
     --GPU glitch fix for this driver, happens at my samsung j700h
     ofs.screen = {0,-1}
     ofs.print = {-1,0}
-    ofs.print_grid = {-2,0}
+    ofs.print_grid = {-1,0}
     ofs.rect = {-1,0}
     ofs.image = {-1,0}
     ofs.quad = {-1,0}
