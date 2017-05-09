@@ -322,7 +322,7 @@ function se:update(dt)
 end
 
 function se:mousepressed(x,y,b,it)
-  if isMobile() and isKDown("lshift","rshift") then b = 2 end
+  if isKDown("lshift","rshift") then b = 2 end
   --Pallete Color Selection
   local cx, cy = whereInGrid(x,y,palgrid)
   if cx then
@@ -406,8 +406,7 @@ function se:mousemoved(x,y,dx,dy,it)
   if (not it and mflag) or it then
     local cx, cy = whereInGrid(x,y,imggrid)
     if cx then
-      local b; if isMobile() and isKDown("lshift","rshift") then b = 2 end
-      tools[stool](self,cx,cy,b)
+      tools[stool](self,cx,cy,isKDown("lshift","rshift") and 2 or false)
       self:redrawSPR() self:redrawSPRS()
     end
   end
@@ -427,7 +426,7 @@ function se:mousemoved(x,y,dx,dy,it)
 end
 
 function se:mousereleased(x,y,b,it)
-  if isMobile() and isKDown("lshift","rshift") then b = 2 end
+  if isKDown("lshift","rshift") then b = 2 end
   --Image Drawing
   if (not it and mflag) or it then
     local cx, cy = whereInGrid(x,y,imggrid)
