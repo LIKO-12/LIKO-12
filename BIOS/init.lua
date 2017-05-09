@@ -70,12 +70,12 @@ end
 local bconfC, bconfErr, bconfDErr = love.filesystem.load("/bconf.lua")
 --if not bconfC then bconfC, bconfDErr = love.filesystem.load("/BIOS/bconf.lua") end --Load the default BConfig
 if not bconfC then error(bconfDErr) end
-setfenv(bconfC,{P = P,error=error,assert=passert}) --BConfig sandboxing
+setfenv(bconfC,{P = P,error=error,assert=passert,_OS=love.system.getOS()}) --BConfig sandboxing
 local success, bconfRErr = pcall(bconfC)
 if not success then error(bconfRErr)
   bconfC, err = love.filesystem.load("/BIOS/bconf.lua")
   if not bconfC then error(err) end
-  setfenv(bconfC,{P = P,error=error,assert=passert}) --BConfig sandboxing
+  setfenv(bconfC,{P = P,error=error,assert=passert,_OS=love.system.getOS()}) --BConfig sandboxing
   bconfC()
 end --Load the default BConfig
 
