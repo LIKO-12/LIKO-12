@@ -95,7 +95,7 @@ local tools = {
   function(self,cx,cy,b) --Pencil (Default)
     local data = self.SpriteMap:data()
     local qx,qy = self.SpriteMap:rect(sprsid)
-    local col = (b == 1 or isMDown(1)) and colsL or colsR
+    local col = (b == 2 or isMDown(2)) and colsR or colsL
     data:setPixel(qx+cx-1,qy+cy-1,col)
     self.SpriteMap.img = data:image()
   end,
@@ -103,7 +103,7 @@ local tools = {
   function(self,cx,cy,b) --Fill (Bucket)
     local data = self.SpriteMap:data()
     local qx,qy = self.SpriteMap:rect(sprsid)
-    local col = (b == 1 or isMDown(1)) and colsL or colsR
+    local col = (b == 2 or isMDown(2)) and colsR or colsL
     local tofill = data:getPixel(qx+cx-1,qy+cy-1)
     if tofill == col then return end
     local function spixel(x,y) if x >= qx and x <= qx+7 and y >= qy and y <= qy+7 then data:setPixel(x,y,col) end end
@@ -322,6 +322,7 @@ function se:update(dt)
 end
 
 function se:mousepressed(x,y,b,it)
+  if isMobile() and isKDown("lshift","rshift") then b = 2 end
   --Pallete Color Selection
   local cx, cy = whereInGrid(x,y,palgrid)
   if cx then
@@ -400,14 +401,13 @@ function se:mousepressed(x,y,b,it)
   end
 end
 
-function se:mousemoved(x,y,dx,dy,it,iw)
-  if iw then return end
-  
+function se:mousemoved(x,y,dx,dy,it)
   --Image Drawing
   if (not it and mflag) or it then
     local cx, cy = whereInGrid(x,y,imggrid)
     if cx then
-      tools[stool](self,cx,cy)
+      local b; if isMobile() and isKDown("lshift","rshift") then b = 2 end
+      tools[stool](self,cx,cy,b)
       self:redrawSPR() self:redrawSPRS()
     end
   end
@@ -427,6 +427,7 @@ function se:mousemoved(x,y,dx,dy,it,iw)
 end
 
 function se:mousereleased(x,y,b,it)
+  if isMobile() and isKDown("lshift","rshift") then b = 2 end
   --Image Drawing
   if (not it and mflag) or it then
     local cx, cy = whereInGrid(x,y,imggrid)
@@ -452,6 +453,40 @@ function se:mousereleased(x,y,b,it)
   sprsmflag = false
 end
 
+function se:keypressed(key)
+  if key == "[" or key == "]" or key == "{" or key == "}" then
+    if isKDown("lshift","rshift") then
+      if key == "]" or key == "}" then
+        colsR = colsR + 1
+        if colsR > 16 then colsR = 1 end
+      else
+        colsR = colsR - 1
+        if colsR < 1 then colsR = 16 end
+      end
+      local cx = (colsR-1) % 4
+      local cy = math.floor((colsR-1)/4)
+      
+      colsrectR[1] = paldraw[1] + cx*palpsize
+      colsrectR[2] = paldraw[2] + cy*palpsize
+    else
+      if key == "]" or key == "}" then
+        colsL = colsL + 1
+        if colsL > 16 then colsL = 1 end
+      else
+        colsL = colsL - 1
+        if colsL < 1 then colsL = 16 end
+      end
+      local cx = (colsL-1) % 4
+      local cy = math.floor((colsL-1)/4)
+      
+      colsrectL[1] = palrecto[1] + cx*palpsize
+      colsrectL[2] = palrecto[2] + cy*palpsize
+    end
+    
+    self:redrawCP()
+  end
+end
+
 local bank = function(bank)
   return function()
     local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
@@ -472,6 +507,8 @@ se.keymap = {
   ["z"] = function() stool=1 se:redrawTOOLS() end,
   ["x"] = function() stool=2 se:redrawTOOLS() end,
   ["delete"] = function() tools[5](se) se:redrawSPRS() se:redrawSPR() end,
+  ["shift-["] = function() se:keypressed("[") end,
+  ["shift-]"] = function() se:keypressed("]") end,
 }
 
 return se
