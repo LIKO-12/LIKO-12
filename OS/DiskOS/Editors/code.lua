@@ -118,7 +118,7 @@ end
 --Draw the code on the screen
 function ce:drawBuffer()
   local cbuffer = self.colorize and clua(lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)),cluacolors) or lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1))
-  rect(1,8,screenW,screenH-8*2,false,self.bgc)
+  rect(1,8,screenW,screenH-8*2+1,false,self.bgc)
   for k, l in ipairs(cbuffer) do
     printCursor(-(self.vx-2),k+1,0)
     self:colorPrint(l)
