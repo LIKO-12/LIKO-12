@@ -13,7 +13,7 @@ local GPU, GPUKit = assert(P("GPU","GPU",{
 }))
 
 --Create a new keyboard api mounted as "KB"
-assert(P("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "Android")}))
+assert(P("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "Android"),_EXKB = true}))
 
 --Create a new virtual hdd system mounted as "HDD"
 assert(P("HDD","HDD",{
