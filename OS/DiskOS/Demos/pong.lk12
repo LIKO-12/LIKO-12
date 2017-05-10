@@ -1,13 +1,15 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 --Ping Pong By RamiLego4Game
+--COntrols: P1: W,S; P2: Up, Down
+--Contorllable by touch on mobile devices.
 
 local fw, fh = fontSize()
 local sw, sh = screenSize()
 local bx, by, vx, vy
 local p1x, p1y, p2x, p2y, pw, ph
 local p1s, p2s
-local bss, bes = 12, 30 --Ball start and end speed
+local bss, bes = 12, 45 --Ball start and end speed
 
 local ps = sh/40
 local cm = 1.25 --Player collide multiplyer
@@ -24,13 +26,13 @@ function init()
  br = sw/40 + 1
  vx,vy = bss,bss
  pw, ph = sw/40, sh/5
- p1x, p1y = pw, (sh-ph)/2
+ p1x, p1y = pw/2, (sh-ph)/2
  p2x, p2y = sw-pw, p1y
  p1s, p2s = 0,0
 end
 
 function draw()
- clear(0)
+ clear(1)
  
  --Drawing the ball
  circle(bx,by,br,false,bcolor)
@@ -72,20 +74,20 @@ function update(dt)
  
  --Check players controls
  --Player 1
- if isKDown("up") then --UP
+ if isKDown("w") then --UP
   p1y = p1y - ps
  end
  
- if isKDown("down") then --DOWN
+ if isKDown("s") then --DOWN
   p1y = p1y + ps
  end
  
  --Player 2
- if isKDown("left") then --UP
+ if isKDown("up") then --UP
   p2y = p2y - ps
  end
  
- if isKDown("right") then --Down
+ if isKDown("down") then --Down
   p2y = p2y + ps
  end
  
@@ -96,6 +98,14 @@ function update(dt)
  if p2y > sh-ph then p2y = sh-ph end
   
  draw()
+end
+
+function touchmoved(id,x,y,dx,dy,p)
+ if x < sw/2 then --Player 1
+  p1y = y - ph/2
+ else --Player 2
+  p2y = y - ph/2
+ end
 end
 
 init()
