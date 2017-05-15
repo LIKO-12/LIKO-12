@@ -64,7 +64,7 @@ glob.coroutine.create = function(chunk)
 end
 
 --Add peripherals api
-local blocklist = { HDD = true }
+local blocklist = { HDD = true, Floppy = true }
 local perglob = {GPU = true, CPU = true, Keyboard = true} --The perihperals to make global not in a table.
 
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
