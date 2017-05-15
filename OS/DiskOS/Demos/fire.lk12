@@ -25,7 +25,6 @@ local cimg = imagedata(3,3) --Save Circle Image
 cimg:map(function() return #palette end)
 cimg:setPixel(1,1,1):setPixel(3,1,1)
 cimg:setPixel(1,3,1):setPixel(3,3,1)
-cimg = cimg:export()
 
 --Draw the fire circle at the imagedata.
 local function saveCircle()
@@ -79,6 +78,13 @@ function update(dt)
   if y > sh then y = y-sh end
  end
 end
+
+function mousepressed(mx,my,b,it)
+ x,y = mx,my
+end
+mousemoved = mousepressed
+mousereleased = mousepressed
+
 
 --Start the pullEvent() loop
 eventLoop()
