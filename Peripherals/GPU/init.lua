@@ -189,14 +189,14 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   local function _GetColor(c) return _ColorSet[c or 1] or _ColorSet[0] end --Get the (rgba) table of a color id.
-  local function _GetColorID(r,g,b,a) --Get the color id by the (rgba) table.
-    local a = type(a) == "nil" and 255 or a
-    for id, col in pairs(_ColorSet) do
-      if col[1] == r and col[2] == g and col[3] == b and col[4] == a then
-        return id
-      end
-    end
-    return 0
+  
+  local _ColorSetLookup = {}
+  for k,v in ipairs(_ColorSet) do _ColorSetLookup[table.concat(v)] = k end
+  _ColorSetLookup["0000"] = 0
+  local function _GetColorID(...) --Get the color id by the (rgba) table.
+    local col = {...}
+    if col[4] == 0 then return 0 end
+    return _ColorSetLookup[table.concat(col)] or 0
   end
   
   --Convert from LIKO12 palette to real colors.
@@ -204,6 +204,19 @@ return function(config) --A function that creates a new GPU peripheral.
     if a == 0 then return 0,0,0,0 end
     if _ImageTransparent[r+1] == 0 then return 0,0,0,0 end
     return unpack(_ColorSet[r+1])
+  end
+  
+  --Convert from LIKO-12 palette to real colors ignoring transparent colors.
+  local function _ExportImageOpaque(x,y, r,g,b,a)
+    if a == 0 then return 0,0,0,0 end
+    return unpack(_ColorSet[r+1])
+  end
+  
+  --Convert from real colors to LIKO-12 palette
+  local function _ImportImage(x,y, r,g,b,a)
+    local col = _GetColorID(r,g,b,a)
+    if col == 0 then return 0,0,0,0 end
+    return col-1,0,0,255
   end
   
   --Used for print function (in grid mode)
@@ -945,8 +958,13 @@ return function(config) --A function that creates a new GPU peripheral.
     function i:data() return exe(GPU.imagedata(Image:getData())) end
     function i:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
     
+    function i:type() return "GPU.image" end
+    function i:typeOf(t) if t == "GPU" or t == "image" or t == "GPU.image" then return true end end
+    
     return true, i
   end
+  
+  local _PasteImage --A walkthrough to avoide exporting the image to png and reloading it.
   
   function GPU.imagedata(w,h)
     local imageData
@@ -965,9 +983,11 @@ return function(config) --A function that creates a new GPU peripheral.
       else
         local ok, fdata = pcall(love.filesystem.newFileData,w,"image.png")
         if not ok then return false, "Invalid image data" end
-        local ok, err = pcall(love.image.newImageData,fdata)
+        local ok, img = pcall(love.image.newImageData,fdata)
         if not ok then return false, "Invalid image data" end
-        imageData = err
+        local ok, err = pcall(img.mapPixel,img,_ImportImage)
+        if not ok then return false, "Invalid image data" end
+        imageData = img
       end
     elseif type(w) == "userdata" and w.typeOf and w:typeOf("ImageData") then
       imageData = w
@@ -1010,10 +1030,31 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     function id:height() return imageData:getHeight() end
     function id:width() return imageData:getWidth() end
-    function id:paste(expdata,dx,dy,sx,sy,sw,sh) local sprData = love.image.newImageData(love.filesystem.newFileData(expdata,"image.png")) imageData:paste(sprData,(dx or 1)-1,(dy or 1)-1,(sx or 1)-1,(sy or 1)-1,sw or sprData:getWidth(), sh or sprData:getHeight()) return self end
+    function id:___pushimgdata() _PasteImage = imageData end --An internal function used when pasting images.
+    
+    function id:paste(imgData,dx,dy,sx,sy,sw,sh)
+      if type(imgData) ~= "table" then return error("ImageData must be a table, got '"..type(imageData).."'") end
+      if not (imgData.typeOf and imgData.typeOf("GPU.imageData")) then return error("Invalid ImageData Object") end
+      _PasteImage = false; imgData:___pushimgdata(); if not _PasteImage then return error("Fake ImageData Object") end
+      imageData:paste(_PasteImage,(dx or 1)-1,(dy or 1)-1,(sx or 1)-1,(sy or 1)-1,sw or _PasteImage:getWidth(), sh or _PasteImage:getHeight())
+      return self
+    end
+    
     function id:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
     function id:image() return exe(GPU.image(imageData)) end
-    function id:export() return imageData:encode("png"):getString() end
+    
+    function id:export()
+      local expData = love.image.newImageData(self:width(),self:height())
+      expData:mapPixel(function(x,y) return _ExportImage(x,y, imageData:getPixel(x,y)) end)
+      return expData:encode("png"):getString()
+    end
+    
+    function id:exportOpaque()
+      local expData = love.image.newImageData(self:width(),self:height())
+      expData:mapPixel(function(x,y) return _ExportImageOpaque(x,y, imageData:getPixel(x,y)) end)
+      return expData:encode("png"):getString()
+    end
+    
     function id:enlarge(scale)
       local scale = math.floor(scale or 1)
       if scale <= 0 then scale = 1 end --Protection
@@ -1026,11 +1067,15 @@ return function(config) --A function that creates a new GPU peripheral.
       end)
       return newData
     end
+    
     function id:encode() --Export to liko12 format
       local data = "LK12;GPUIMG;"..self:width().."x"..self.height()..";"
       self:map(function(x,y,c) if x == 1 then data = data.."\n" end data = data..string.format("%X",c-1) end)
       return data
     end
+    
+    function id.type() return "GPU.imageData" end
+    function id.typeOf(t) if t == "GPU" or t == "imageData" or t == "GPU.imageData" then return true end end
     
     return true, id
   end
@@ -1089,8 +1134,6 @@ return function(config) --A function that creates a new GPU peripheral.
       local enimg = imgdata:enlarge(_LIKOScale)
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
       local gifimg = love.image.newImageData(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
-      limg:mapPixel(_ExportImage) --Convert image to have real colors.
-      gifimg:mapPixel(_ExportImage)
       gifimg = love.graphics.newImage(gifimg)
       local hotx, hoty = hx*_LIKOScale, hy*_LIKOScale --Converted to host scale
       local cur = _Mobile and {} or love.mouse.newCursor(limg,hotx,hoty)
@@ -1124,7 +1167,6 @@ return function(config) --A function that creates a new GPU peripheral.
       
       local enimg = cursor.imgdata:enlarge(_LIKOScale)
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
-      limg:mapPixel(_ExportImage)
       local hotx, hoty = cursor.hx*_LIKOScale, cursor.hy*_LIKOScale --Converted to host scale
       local cur = love.mouse.newCursor(limg,hotx,hoty)
       _CursorsCache[k].cursor = cur
