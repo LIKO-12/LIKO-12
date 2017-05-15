@@ -5,6 +5,9 @@ local source = select(1,...)
 local destination = select(2,...)
 
 local term = require("C://terminal")
+local eapi = require("C://Editors")
+
+local sw, sh = screenSize()
 
 if source then source = term.parsePath(source) end
 if destination then destination = term.parsePath(destination) end
@@ -18,6 +21,12 @@ if destination then if fs.exists(destination) and fs.isDirectory(destination) th
 if destination then --Convert mode
   local imgd = imagedata(fs.read(source))
   fs.write(destination,imgd:encode())
+  color(12) print("Converted Successfully")
 else --Import to disk
-  color(9) print("Sorry, importing to the disk is not supported yet")
+  local imgd = imagedata(fs.read(source))
+  local image = imagedata(sw,sh)
+  image:paste(imgd)
+  image = image:encode()
+  eapi.leditors[3]:import(image..";\0;")
+  color(12) print("Imported Successfully")
 end
