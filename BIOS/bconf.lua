@@ -20,3 +20,5 @@ assert(P("HDD","HDD",{
   C = 1024*1024 * 25, --Measured in bytes, equals 50 megabytes
   D = 1024*1024 * 25 --Measured in bytes, equals 50 megabytes
 }))
+
+assert(P("Floppy"))
