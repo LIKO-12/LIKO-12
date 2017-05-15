@@ -52,7 +52,7 @@ function SpriteSheet(img,w,h)
   function ss:quad(id) return self.quads[id] end
   function ss:rect(id) local x,y,w,h = self.quads[id]:getViewport() return x+1,y+1,w,h end
   function ss:draw(id,x,y,r,sx,sy) self.img:draw(x,y,r,sx,sy,self.quads[id]) return self end
-  function ss:extract(id) return imagedata(self.cw,self.ch):paste(self:data():export(),1,1,self:rect(id)) end
+  function ss:extract(id) return imagedata(self.cw,self.ch):paste(self:data(),1,1,self:rect(id)) end
   
   return ss
 end

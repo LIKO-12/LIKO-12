@@ -23,7 +23,7 @@ cartData = loadstring(cartData)()
 disk = disk..string.format("%q",cartData.code)..",\n['spritesheet'] = "
 local oldimage = imagedata(math.b64dec(cartData.spritemap))
 local image = imagedata(192,128)
-image:paste(oldimage:export())
+image:paste(oldimage)
 image = image:encode()
 
 disk = disk..string.format("%q",image).."\n}"

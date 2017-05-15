@@ -148,7 +148,7 @@ local function transform(tfunc)
   end)
   local x,y = se.SpriteMap:rect(sprsid)
   local data = se.SpriteMap:data()
-  data:paste(new:export(),x,y)
+  data:paste(new,x,y)
   se.SpriteMap.img = data:image()
 end
 
@@ -217,13 +217,15 @@ function se:paste()
   local ok, err = pcall(function()
     local dx,dy,dw,dh = self.SpriteMap:rect(sprsid)
     local sheetdata = self.SpriteMap:data()
-    sheetdata:paste(math.b64dec(clipboard()),dx,dy)
+    local sprdata = imagedata(math.b64dec(clipboard()))
+    sheetdata:paste(sprdata,dx,dy)
     self.SpriteMap.img = sheetdata:image()
     self:_redraw()
   end)
   if not ok then
     infotimer = 5 --Display error msg for 5 seconds
     infotext = "PASTE ERR: "..(err or "nil")
+    cprint("PASTE ERR: "..(err or "nil"))
   else
     infotimer = 2 --Display info for 2 seconds
     infotext = "PASTED TO SPRITE "..sprsid
