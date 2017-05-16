@@ -9,6 +9,8 @@ local function splitFilePath(path) return path:match("(.-)([^\\/]-%.?([^%.\\/]*)
 
 local Peripherals = {} --The loaded peripherals.
 local MPer = {} --Mounted and initialized peripherals.
+local BPer = {} --Peripherals ready for use IN the BIOS only.
+local Devkits = {} --Peripherals Devkits.
 
 --A function to load the peripherals.
 local function indexPeripherals(path)
@@ -51,6 +53,7 @@ local function P(per,m,conf)
   local success, peripheral, devkit = pcall(Peripherals[per],conf)
   if success then
     MPer[m] = peripheral
+    Devkits[m] = devkit
     coreg:register(peripheral,m)
   else
     peripheral = "Init Err: "..tostring(peripheral)
@@ -67,18 +70,23 @@ local passert = function(ok, per, devkit) --Peripheral assert
   return per, devkit
 end
 
-local bconfC, bconfErr, bconfDErr = love.filesystem.load("/bconf.lua")
+local confSandbox = {P = P,error=error,assert=passert,_OS=love.system.getOS()}
+
+local ok, bchunk, err = pcall(love.filesystem.load,"/bconf.lua")
 --if not bconfC then bconfC, bconfDErr = love.filesystem.load("/BIOS/bconf.lua") end --Load the default BConfig
-if not bconfC then error(bconfDErr) end
-setfenv(bconfC,{P = P,error=error,assert=passert,_OS=love.system.getOS()}) --BConfig sandboxing
-local success, bconfRErr = pcall(bconfC)
-if not success then error(bconfRErr)
-  bconfC, err = love.filesystem.load("/BIOS/bconf.lua")
-  if not bconfC then error(err) end
-  setfenv(bconfC,{P = P,error=error,assert=passert,_OS=love.system.getOS()}) --BConfig sandboxing
-  bconfC()
+if not ok then error(bchunk) end
+if not bchunk then error(err) end
+setfenv(bchunk,confSandbox) --BConfig sandboxing
+local success, run_err = pcall(bchunk)
+if not success then error(run_err)
+  local ok, default_bchunk, err = pcall(love.filesystem.load,"/BIOS/bconf.lua")
+  if not ok then error(default_bchunk) end
+  if not default_bchunk then error(err) end
+  setfenv(default_bchunk,confSandbox) --BConfig sandboxing
+  default_bchunk()
 end --Load the default BConfig
 
+--BIOS Api for use in the OS
 coreg:register(function()
   local list = {}
   for per, funcs in pairs(MPer) do
@@ -90,7 +98,7 @@ coreg:register(function()
   return true, list
 end,"BIOS:listPeripherals")
 
-local function exe(...) --Excute a LIKO12 api function (to handle errors)
+local function exe(...) --Execute a LIKO12 api function (to handle errors)
   local args = {...}
   if args[1] then
     local nargs = {}
@@ -103,102 +111,123 @@ local function exe(...) --Excute a LIKO12 api function (to handle errors)
   end
 end
 
-local function flushOS(os,path)
-  local h = MPer.HDD
+--Setup Peripherals for use in the BIOS
+for name, per in pairs(MPer) do
+  if type(per) == "table" then
+    BPer[name] = {}
+    for fname, func in pairs(per) do
+      local f = func
+      BPer[name][fname] = function(...) return exe(f(...)) end
+    end
+  end
+end
+
+--Setup shortcuts for use.
+local fs = BPer.HDD
+local gpu = BPer.GPU
+local cpu = BPer.CPU
+local keyboard = BPer.Keyboard
+local floppy = BPer.Floppy
+
+if not fs then error("No HDD peripheral to boot from !") end
+
+--Installs a specific OS on the drive C
+local function installOS(os,path)
   local path = path or "/"
   local files = love.filesystem.getDirectoryItems("/OS/"..os..path)
   for k,v in pairs(files) do
     if love.filesystem.isDirectory("/OS/"..os..path..v) then
-      exe(h.newDirectory(path..v))
-      flushOS(os,path..v.."/")
+      fs.newDirectory(path..v)
+      installOS(os,path..v.."/")
     else
-      exe(h.drive("C")) --Opereating systems are installed on C drive
-      exe(h.write(path..v,love.filesystem.read("/OS/"..os..path..v)))
+      fs.drive("C") --Opereating systems are installed on C drive
+      fs.write(path..v,love.filesystem.read("/OS/"..os..path..v))
     end
   end
 end
 
---No OS Screen
+--Called when there is no opereating system to boot from on the C drive.
 local function noOS()
-  if MPer.GPU then
-    flushOS("DiskOS") --Should be replaced by a gui
-  else
-    flushOS("DiskOS")
+  if gpu then --Show a gui asking to install diskos.
+    installOS("DiskOS")
+  else --Install diskos directly ;)
+    installOS("DiskOS")
   end
 end
 
-local function startCoroutine()
-  if not MPer.HDD then return error("No HDD Periphrtal") end
-  local h = MPer.HDD
-  exe(h.drive("C"))
-  if (not exe(h.exists("/boot.lua"))) or true then noOS() end
-  local chunk, err = exe(h.load("/boot.lua"))
-  if not chunk then error(err or "") end
-  local coglob = coreg:sandbox(chunk)
-  local co = coroutine.create(chunk)
+--Boots into the install opreating system, creates the coroutine, sandboxes it and start !
+local function bootOS()
+  fs.drive("C") --Switch to the C drive.
+  
+  if not fs.exists("/boot.lua") or true then noOS() end
+  
+  local bootchunk, err = fs.load("/boot.lua")
+  if not bootchunk then error(err or "") end --Must be replaced with an error screen.
+  
+  local coglob = coreg:sandbox(bootchunk)
+  local co = coroutine.create(bootchunk)
   coreg:setCoroutine(co,coglob) --For peripherals to use.
-  if MPer.CPU then MPer.CPU.clearEStack() end
-  coreg:resumeCoroutine()
+  
+  if cpu then cpu.clearEStack() end --Remove any events made while booting.
+  
+  coreg:resumeCoroutine() --Boot the OS !
 end
 
---POST screen
-if MPer.GPU then --If there is an initialized gpu
-  local g = MPer.GPU
-  g.color(8)
-  local chars = {"@","%","*"}
-  --48x16 Terminal Size
-  local function drawAnim() g.clear()
-    for y=1,exe(g.termHeight())+1 do for x=1,exe(g.termWidth())+1 do
-      g.color(8 + (x+y) % 8)
-      g.print(chars[((y+x) % 2)+1],false,true)
-    end g.printCursor(1,y+1,false) end
-  end
+if gpu then
+  --Post Screen--
+  gpu.clear(1) --Fill with black.
+  gpu.color(8) --Set the color to white.
   
-  g.clear()
-  g.printCursor(_,_,0)
+  --Load the bios logos.
+  local lualogo = gpu.image(love.filesystem.read("/BIOS/lualogo.lk12"))
+  local likologo = gpu.image(love.filesystem.read("/BIOS/likologo.lk12"))
   
-  local time = 0.3
+  local sw, sh = gpu.screenSize()
+  
+  lualogo:draw(sw-lualogo:width()-5,6)
+  likologo:draw(3,8)
+  
+  gpu.print("LIKO-12 - Fantasy computer",16,8)
+  gpu.print("Copyright (C) Rami Sabbagh",16,14)
+  
+  gpu.printCursor(1,4,1)
+  gpu.print("NormBIOS Revision 060-001")
+  gpu.print("")
+  gpu.print("Main CPU: LuaJIT 5.1")
+  gpu.print("GPU: "..sw.."x"..sh.." 4-Bit (16 Color Palette)")
+  gpu.print("")
+  gpu.print("Harddisks: ")
+  
+  gpu.print("Press DEL to enter setup",4,sh-7)
+  
+  local stages = {0.3,0,3,0,0}
   local timer = 0
-  local stage = 0
+  local stage = 1
   
-  events:register("love:update",function(dt)
-    if stage == 3 then --Create the coroutine
-      g.color(8)
-      g.clear(1)
-      g.printCursor(1,1,1)
-      startCoroutine()
-      stage = 4 --So coroutine don't get duplicated
-    end
-    if stage == 0 then drawAnim() stage = 1 end
+  events:register("love:update", function(dt)
+    if stage > #stages then return end
     
-    if stage < 3 then
-      timer = timer + dt
-      if timer > time then timer = timer - time
-        stage = stage +1
-        if stage == 2 then g.clear() end
+    if stage == 2 then
+      Devkits["HDD"].calcUsage()
+      for letter,drive in pairs(Devkits["HDD"].drives) do
+        local size = math.floor((drive.size/1024) * 100)/100
+        local usage = math.floor((drive.usage/1024) * 100)/100
+        local percentage = math.floor(((usage*100)/size) * 100)/100
+        gpu.print("Drive "..letter..": "..usage.."/"..size.." KB ("..percentage.."%)")
       end
+    elseif stage == 4 then
+      gpu.clear(1)
+    elseif stage == 5 then
+      bootOS()
+    end
+    
+    timer = timer + dt
+    if timer > stages[stage] then
+      stage = stage + 1
+      timer = 0
     end
   end)
-else --Incase the gpu doesn't exists (Then can't enter the bios nor do the boot animation
-  startCoroutine()
+else
+  Devkits["HDD"].calcUsage()
+  bootOS() --Incase the gpu doesn't exists (Then can't enter the bios nor do the boot animation
 end
-
-
-
---[[local GPU = Peripherals.GPU({_ClearOnRender=true}) --Create a new GPU
-
---FPS display
-events:register("love:update",function(dt) love.window.setTitle("LIKO-12 FPS: "..love.timer.getFPS()) end)
-
---Debug Draw--
-GPU.points(1,1, 192,1, 192,128, 1,128, 8)
-GPU.points(0,1, 193,1, 193,128, 0,128, 3)
-GPU.points(1,0, 192,0, 192,129, 1,129, 3)
-GPU.rect(2,2, 190,126, true, 12)
-GPU.line(2,2,191,2,191,127,2,127,2,2,12)
-GPU.line(2,2, 191,127, 9)
-GPU.line(191, 2,2,127, 9)
-GPU.rect(10,42,10,10,false,9)
-GPU.rect(10,30,10,10,false,9)
-GPU.rect(10,30,10,10,true,8)
-GPU.points(10,10, 10,19, 19,19, 19,10, 8)]]
