@@ -184,23 +184,7 @@ if gpu then
   
   local sw, sh = gpu.screenSize()
   
-  lualogo:draw(sw-lualogo:width()-5,6)
-  likologo:draw(3,8)
-  
-  gpu.print("LIKO-12 - Fantasy computer",16,8)
-  gpu.print("Copyright (C) Rami Sabbagh",16,14)
-  
-  gpu.printCursor(1,4,1)
-  gpu.print("NormBIOS Revision 060-001")
-  gpu.print("")
-  gpu.print("Main CPU: LuaJIT 5.1")
-  gpu.print("GPU: "..sw.."x"..sh.." 4-Bit (16 Color Palette)")
-  gpu.print("")
-  gpu.print("Harddisks: ")
-  
-  gpu.print("Press DEL to enter setup",4,sh-7)
-  
-  local stages = {0.3,0,3,0,0}
+  local stages = {0.5,0,0.3,0,0.3,0,1.5,0.2,0}
   local timer = 0
   local stage = 1
   
@@ -208,6 +192,24 @@ if gpu then
     if stage > #stages then return end
     
     if stage == 2 then
+      lualogo:draw(sw-lualogo:width()-5,6)
+      likologo:draw(3,8)
+      
+      gpu.print("LIKO-12 - Fantasy computer",16,8)
+      gpu.print("Copyright (C) Rami Sabbagh",16,14)
+      
+      gpu.printCursor(1,4,1)
+      gpu.print("NormBIOS Revision 060-001")
+      gpu.print("")
+      
+      gpu.print("Press DEL to enter setup",4,sh-7)
+      
+    elseif stage == 4 then
+      gpu.print("Main CPU: LuaJIT 5.1")
+      gpu.print("GPU: "..sw.."x"..sh.." 4-Bit (16 Color Palette)")
+      gpu.print("")
+      gpu.print("Harddisks: ")
+    elseif stage == 6 then
       Devkits["HDD"].calcUsage()
       for letter,drive in pairs(Devkits["HDD"].drives) do
         local size = math.floor((drive.size/1024) * 100)/100
@@ -215,9 +217,9 @@ if gpu then
         local percentage = math.floor(((usage*100)/size) * 100)/100
         gpu.print("Drive "..letter..": "..usage.."/"..size.." KB ("..percentage.."%)")
       end
-    elseif stage == 4 then
+    elseif stage == 8 then
       gpu.clear(1)
-    elseif stage == 5 then
+    elseif stage == 9 then
       bootOS()
     end
     
