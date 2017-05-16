@@ -195,7 +195,7 @@ if gpu then
       lualogo:draw(sw-lualogo:width()-5,6)
       likologo:draw(3,8)
       
-      gpu.print("LIKO-12 - Fantasy computer",16,8)
+      gpu.print("LIKO-12 - Fantasy Computer",16,8)
       gpu.print("Copyright (C) Rami Sabbagh",16,14)
       
       gpu.printCursor(1,4,1)
