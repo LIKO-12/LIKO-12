@@ -16,19 +16,25 @@ local function calcSize(dir)
 end
 
 return function(config) --A function that creates a new HDD peripheral.
+  local devkit = {}
+  
   --Pre-init--
   if not love.filesystem.exists("/drives") then love.filesystem.createDirectory("/drives") end --Create the folder that holds virtual drives.
   local drives = {}
+  
+  function devkit.calcUsage()
+    for letter, drive in pairs(drives) do
+      drive.usage = calcSize("/drives/"..letter)
+    end
+  end
   
   --Load the virtual hdds configurations--
   if not config["C"] then config["C"] = 1024*1024 * 12 end --Defaults to 12 Megabyte
   for letter, size in pairs(config) do
     if not love.filesystem.exists("/drives/"..letter) then
       love.filesystem.createDirectory("/drives/"..letter) --Create the drive directory if doesn't exists
-      drives[letter] = {size = size, usage = 0} --It's a new empty drive !
-    else 
-      drives[letter] = {size = size, usage = calcSize("/drives/"..letter)} --Register the drive
     end
+    drives[letter] = {size = size, usage = 0}
   end
   
   --The api starts here--
@@ -255,5 +261,7 @@ return function(config) --A function that creates a new HDD peripheral.
     if not modtime then return false, err else return true, modtime end
   end
   
-  return HDD
+  devkit.drives = drives
+  
+  return HDD, devkit
 end
