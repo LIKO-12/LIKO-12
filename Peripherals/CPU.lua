@@ -22,7 +22,7 @@ return function(config) --A function that creates a new CPU peripheral.
   end
   
   events:register("love:update", function(...) --Update event
-	devkit.triggerEvent("update",...)
+	   devkit.triggerEvent("update",...)
   end)
   
   events:register("love:update",function(dt) --Sleep Timer
