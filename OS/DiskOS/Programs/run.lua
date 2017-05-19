@@ -138,7 +138,7 @@ while true do
   checkclock = false
   if not args[1] then
     local err = tostring(args[2])
-    local pos = string.find(err,":")
+    local pos = string.find(err,":") or 0
     err = err:sub(pos+1,-1); color(9) print("ERR: "..err ); break
   end
   if args[2] then
