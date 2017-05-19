@@ -17,7 +17,6 @@ local function indexPeripherals(path)
   local files = love.filesystem.getDirectoryItems(path)
   for k,filename in ipairs(files) do
     if love.filesystem.isDirectory(path..filename) then
-      --indexPeripherals(path..filename.."/")
       if love.filesystem.exists(path..filename.."/init.lua") then
         local chunk, err = love.filesystem.load(path..filename.."/init.lua")
         if not chunk then Peripherals[filename] = "Err: "..tostring(err) else
@@ -50,7 +49,10 @@ local function P(per,m,conf)
   local conf = conf or {}
   if type(conf) ~= "table" then return false, "Configuration table should be a table, provided "..type(conf) end
   
+  events:group(per..":"..m)
   local success, peripheral, devkit = pcall(Peripherals[per],conf)
+  events:group()
+  
   if success then
     MPer[m] = peripheral
     Devkits[m] = devkit
@@ -188,6 +190,7 @@ if gpu then
   local timer = 0
   local stage = 1
   
+  events:group("BIOS:POST")
   events:register("love:update", function(dt)
     if stage > #stages then return end
     
@@ -199,7 +202,7 @@ if gpu then
       gpu.print("Copyright (C) Rami Sabbagh",16,14)
       
       gpu.printCursor(1,4,1)
-      gpu.print("NormBIOS Revision 060-002")
+      gpu.print("NormBIOS Revision 060-003")
       gpu.print("")
       
       gpu.print("Press DEL to enter setup",4,sh-7)
@@ -220,6 +223,7 @@ if gpu then
     elseif stage == 8 then
       gpu.clear(1)
     elseif stage == 9 then
+      events:unregisterGroup("BIOS:POST")
       bootOS()
     end
     
