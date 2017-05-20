@@ -1,4 +1,3 @@
---This file is responsible for wiring love events to liko12s peripherals.
 --==Contribution Guide==--
 --[[
 Events System, used for wiring love events to liko12s peripherals.
