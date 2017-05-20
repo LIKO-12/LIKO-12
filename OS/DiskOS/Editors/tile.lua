@@ -32,7 +32,7 @@ local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in
 local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*(fw+1)+3),sprsbanksgrid[2], 1+maxSpriteIDCells*(fw+1),fh+2, false, 7, 14} --The rect of sprite id; The extra argument is the color of number print
 local revdraw = {sprsidrect[1]-(imgw+1),sprsrecto[2]-(imgh+1), imgw, imgh} --The small image at the right of the id with the actual sprite size
 
-local MapW, MapH = swidth, sheight
+local MapW, MapH = swidth*0.75, sheight
 local MapVH = sheetH - (1+2+bankH+1)
 local MapVW = sheetW
 
