@@ -1,6 +1,8 @@
 --The default configuation
 --per ,err = P(peripheral,mountedName,configTable)
 
+local RAM, RAMKit = assert(P("RAM"))
+
 --Create a new cpu mounted as "CPU"
 local CPU, CPUKit = assert(P("CPU"))
 
