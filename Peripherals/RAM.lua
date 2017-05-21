@@ -82,7 +82,7 @@ return function(config)
       ram = ram:sub(0,address) .. string.char(value) .. ram:sub(address+2,-1)
     elseif mode == "peek" then
       local address = args[1]
-      return ram:sub(address+1,address+1)
+      return string.byte(ram:sub(address+1,address+1))
     elseif mode == "memcpy" then
       local from, to, len = unpack(args)
       local str = ram:sub(from+1,from+len)
@@ -108,7 +108,7 @@ return function(config)
     
     local handler = devkit.defaultHandler
     for k,h in ipairs(handlers) do
-      if address >= h.startAddr and address <= h.endAddr then
+      if address <= h.endAddr then
         handler = h.handler
         break
       end
@@ -122,7 +122,7 @@ return function(config)
     
     local handler = devkit.defaultHandler
     for k,h in ipairs(handlers) do
-      if address >= h.startAddr and address <= h.endAddr then
+      if address <= h.endAddr then
         handler = h.handler
         break
       end
