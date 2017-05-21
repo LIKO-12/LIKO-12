@@ -97,11 +97,14 @@ return function(config)
     end
   end
   
+  devkit.addHandler(0,7,devkit.defaultHandler)
+  devkit.addHandler(8,ramsize-1,function(...) return devkit.defaultHandler(...) end)
+  
   local function tohex(val) return string.format("0x%X",val) end
   
   local api = {}
   
-  function api:poke(address,value)
+  function api.poke(address,value)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(value) ~= "number" then return false, "Value must be a number, provided: "..type(value) end
     address, value = math.floor(address), math.floor(value)
@@ -118,7 +121,7 @@ return function(config)
     return true, handler("poke",address,value)
   end
   
-  function api:peek(address)
+  function api.peek(address)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     address = math.floor(address)
     if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
@@ -133,7 +136,7 @@ return function(config)
     return true, handler("peek",address)
   end
   
-  function api:memget(address,length)
+  function api.memget(address,length)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(length) ~= "number" then return false, "Length must be a number, provided: "..type(length) end
     address, length = math.floor(address), math.floor(length)
@@ -157,7 +160,7 @@ return function(config)
     return true, str
   end
   
-  function api:memset(address,data)
+  function api.memset(address,data)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(data) ~= "string" then return false, "Data must be a string, provided: "..type(data) end
     address = math.floor(address)
@@ -182,7 +185,7 @@ return function(config)
     return true
   end
   
-  function api:memcpy(from_address,to_address,length)
+  function api.memcpy(from_address,to_address,length)
     if type(from_address) ~= "number" then return false, "Source Address must be a number, provided: "..type(from_address) end
     if type(to_address) ~= "number" then return false, "Destination Address must be a number, provided: "..type(to_address) end
     if type(length) ~= "number" then return false,"Length must be a number, provided: "..type(length) end
