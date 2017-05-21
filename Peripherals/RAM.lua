@@ -71,7 +71,7 @@ return function(config)
     table.insert(handlers,{startAddr = startAddress, endAddr = endAddress, handler = handler})
     table.sort(handlers, function(t1,t2)
       return (t1.startAddr < t2.startAddr)
-    end
+    end)
   end
   
   --Writes and reads from the RAM string.
