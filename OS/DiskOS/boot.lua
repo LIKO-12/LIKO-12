@@ -16,7 +16,7 @@ function _FreshGlobals()
   return copy(freshglob)
 end
 --Building the peripherals APIs--
-local perglob = {GPU = true, CPU = true, Keyboard = true} --The perihperals to make global not in a table.
+local perglob = {GPU = true, CPU = true, Keyboard = true, RAM = true} --The perihperals to make global not in a table.
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
 for peripheral,funcs in pairs(perlist) do
   local holder
