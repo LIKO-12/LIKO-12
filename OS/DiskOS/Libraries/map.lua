@@ -29,6 +29,7 @@ return function(w,h,sheet)
   end
 
   function Map:cell(x,y,newID)
+    if x > self.w or y > self.h then return false, "out of range" end
     if newID then
       self.m[x][y] = newID or 0
       return self
