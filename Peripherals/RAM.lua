@@ -86,19 +86,22 @@ return function(config)
     elseif mode == "memcpy" then
       local from, to, len = unpack(args)
       local str = ram:sub(from+1,from+len)
-      ram = ram:sub(0,to) .. str .. ram:sub(to+len,-1)
+      ram = ram:sub(0,to) .. str .. ram:sub(to+len+1,-1)
     elseif mode == "memset" then
       local address, value = unpack(args)
       local len = value:len()
-      ram = ram:sub(0,address) .. value .. ram:sub(address+len,-1)
+      ram = ram:sub(0,address) .. value .. ram:sub(address+len+1,-1)
     elseif mode == "memget" then
       local address, len = unpack(args)
       return ram:sub(address+1,address+len)
     end
   end
   
-  devkit.addHandler(0,7,devkit.defaultHandler)
-  devkit.addHandler(8,ramsize-1,function(...) return devkit.defaultHandler(...) end)
+  devkit.addHandler(0,0xF,devkit.defaultHandler)
+  devkit.addHandler(0x10,0x1F,function(...) return devkit.defaultHandler(...) end)
+  devkit.addHandler(0x20,0x2F,function(...) return devkit.defaultHandler(...) end)
+  devkit.addHandler(0x30,0x3F,function(...) return devkit.defaultHandler(...) end)
+  devkit.addHandler(0x40,ramsize-1,devkit.defaultHandler)
   
   local function tohex(val) return string.format("0x%X",val) end
   
