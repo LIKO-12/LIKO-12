@@ -203,24 +203,25 @@ return function(config)
     local to_end = to_address+length-1
     
     for k1,h1 in ipairs(handlers) do
-      if from_end > h1.startAddr and from_address < h1.endAddr then
+      if from_end >= h1.startAddr and from_address <= h1.endAddr then
         local sa1, ea1 = from_address, from_end
         if sa1 < h1.startAddr then sa1 = h1.startAddr end
         if ea1 > h1.endAddr then ea1 = h1.endAddr end
+        local to_address = to_address + (sa1 - from_address)
+        local to_end = to_end + (ea1 - from_end)
         for k2,h2 in ipairs(handlers) do
-          if to_end > h2.startAddr and to_address < h2.endAddr then
+          if to_end >= h2.startAddr and to_address <= h2.endAddr then
             local sa2, ea2 = to_address, to_end
             if sa2 < h2.startAddr then sa2 = h2.startAddr end
             if ea2 > h2.endAddr then ea2 = h2.endAddr end
+            
+            local sa1 = sa1 + (sa2 - to_address)
+            local ea1 = ea1 + (ea2 - to_address)
+            
             if h1.handler == h2.handler then --Direct Copy
-              h1.handler("memcpy",sa1,sa2,ea2-to_address+1)
+              h1.handler("memcpy",sa1,sa2,ea2-sa2+1)
             else --InDirect Copy
-              print("InDirect Copy")
-              print(tohex(sa1),tohex(ea1),tohex(sa2),tohex(ea2))
-              print(tohex(from_address),tohex(to_address))
-              print(length)
               local d = h1.handler("memget",sa1,ea2-sa2+1)
-              print(ea2-sa2+1,d:len())
               h2.handler("memset",sa2,d)
             end
           end
