@@ -97,11 +97,18 @@ return function(config)
     end
   end
   
-  devkit.addHandler(0,0xF,devkit.defaultHandler)
-  devkit.addHandler(0x10,0x1F,function(...) return devkit.defaultHandler(...) end)
-  devkit.addHandler(0x20,0x2F,function(...) return devkit.defaultHandler(...) end)
-  devkit.addHandler(0x30,0x3F,function(...) return devkit.defaultHandler(...) end)
-  devkit.addHandler(0x40,ramsize-1,devkit.defaultHandler)
+  local layout = config.layout or {{ramsize}}
+  
+  --Build the layout
+  local endAddress = -1
+  for id, h in ipairs(layout) do
+    if type(h[1]) ~= "number" then error("Invalid Layout Section ("..id..") !") end
+    if not h[2] then h[2] = devkit.defaultHandler end
+    if type(h[2]) ~= "function" then error("Invalid Layout Section Handler ("..id.."), provided: "..type(h[2])) end
+    local startAddress = endAddress + 1
+    endAddress = startAddress + h[1] -1
+    devkit.addHandler(startAddress,endAddress, h[2])
+  end
   
   local function tohex(val) return string.format("0x%X",val) end
   
@@ -238,6 +245,10 @@ return function(config)
       if k == "ram" then return ram end
     end
   })
+  devkit.tohex = tohex
+  devkit.layout = layout
+  devkit.handlers = handlers
+  devkit.api = api
   
   return api, devkit
 end
