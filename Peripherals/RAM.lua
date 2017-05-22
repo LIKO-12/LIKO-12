@@ -149,12 +149,12 @@ return function(config)
     
     local str = ""
     for k,h in ipairs(handlers) do
-      if endAddress > h.startAddr then
-        if address < h.endAddr then
+      if endAddress >= h.startAddr then
+        if address <= h.endAddr then
           local sa, ea = address, endAddress
           if sa < h.startAddr then sa = h.startAddr end
           if ea > h.endAddr then ea = h.endAddr end
-          local data = h.handler("memget",sa,ea-address+1)
+          local data = h.handler("memget",sa,ea-sa+1)
           str = str .. data
         end
       end
@@ -170,12 +170,12 @@ return function(config)
     if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
     local length = data:len()
     if length == 0 then return false, "Cannot set empty string" end
-    if address+length < 1 or address+length > ramsize then return false, "Data too long to fit in the memory ("..length.." character)" end
+    if address+length > ramsize then return false, "Data too long to fit in the memory ("..length.." character)" end
     local endAddress = address+length-1
     
     for k,h in ipairs(handlers) do
-      if endAddress > h.startAddr then
-        if address < h.endAddr then
+      if endAddress >= h.startAddr then
+        if address <= h.endAddr then
           local sa, ea, d = address, endAddress, data
           if sa < h.startAddr then sa = h.startAddr end
           if ea > h.endAddr then ea = h.endAddr end
@@ -215,7 +215,12 @@ return function(config)
             if h1.handler == h2.handler then --Direct Copy
               h1.handler("memcpy",sa1,sa2,ea2-to_address+1)
             else --InDirect Copy
-              local d = h1.handler("memget",sa1,ea2-to_address+1)
+              print("InDirect Copy")
+              print(tohex(sa1),tohex(ea1),tohex(sa2),tohex(ea2))
+              print(tohex(from_address),tohex(to_address))
+              print(length)
+              local d = h1.handler("memget",sa1,ea2-sa2+1)
+              print(ea2-sa2+1,d:len())
               h2.handler("memset",sa2,d)
             end
           end
