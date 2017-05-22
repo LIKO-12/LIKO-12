@@ -193,8 +193,8 @@ return function(config)
     if type(to_address) ~= "number" then return false, "Destination Address must be a number, provided: "..type(to_address) end
     if type(length) ~= "number" then return false,"Length must be a number, provided: "..type(length) end
     from_address, to_address, length = math.floor(from_address), math.floor(to_address), math.floor(length)
-    if from_address < 0 or from_address > ramsize-1 then return false, "Source Address out of range ("..tohex(from_address).."), must be in range [0x0,"..lastaddr.."]" end
-    if to_address < 0 or to_address > ramsize-1 then return false, "Destination Address out of range ("..tohex(to_address).."), must be in range [0x0,"..lastaddr.."]" end
+    if from_address < 0 or from_address > ramsize-1 then return false, "Source Address out of range ("..tohex(from_address).."), must be in range [0x0,"..tohex(ramsize-2).."]" end
+    if to_address < 0 or to_address > ramsize then return false, "Destination Address out of range ("..tohex(to_address).."), must be in range [0x0,"..lastaddr.."]" end
     if length == 0 then return false, "Length can't be 0" end
     if from_address+length < 1 or from_address+length > ramsize then return false, "Length out of range ("..length..")" end
     if to_address+length < 1 then length = 1-to_address end
