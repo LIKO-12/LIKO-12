@@ -128,6 +128,8 @@ end
 local fs = BPer.HDD
 local gpu = BPer.GPU
 local cpu = BPer.CPU
+local ram = BPer.RAM
+local ramkit = Devkits.RAM
 local keyboard = BPer.Keyboard
 local floppy = BPer.Floppy
 
@@ -202,13 +204,14 @@ if gpu then
       gpu.print("Copyright (C) Rami Sabbagh",16,14)
       
       gpu.printCursor(1,4,1)
-      gpu.print("NormBIOS Revision 060-003")
+      gpu.print("NormBIOS Revision 060-004")
       gpu.print("")
       
       gpu.print("Press DEL to enter setup",4,sh-7)
       
     elseif stage == 4 then
       gpu.print("Main CPU: LuaJIT 5.1")
+      if ram then gpu.print("RAM: "..(ramkit.ramsize/1024).." Kilo-Bytes ("..ramkit.ramsize.." Bytes)") end
       gpu.print("GPU: "..sw.."x"..sh.." 4-Bit (16 Color Palette)")
       gpu.print("")
       gpu.print("Harddisks: ")
