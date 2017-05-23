@@ -11,6 +11,7 @@ local GPU, GPUKit = assert(P("GPU","GPU",{
   _ClearOnRender = true,
   CPUKit = CPUKit
 }))
+local VRAMHandler = GPUKit.VRAMHandler
 
 --Create a new keyboard api mounted as "KB"
 assert(P("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "Android"),_EXKB = true}))
@@ -32,16 +33,17 @@ local RAMConfig = {
     {288},    --0x32E0 Flags Data (288 Bytes)
     {KB(18)}, --0x3400 MapData (18 KB)
     {KB(13)}, --0x7C00 Sound Tracks (13 KB)
-    {KB(20)}, --0x9C00 Compressed Lua Code (20 KB)
-    {KB(02)}, --0xCC00 Persistant Data (2 KB)
-    {128},    --0xD400 GPIO (128 Bytes)
-    {768},    --0xD480 Reserved (768 Bytes)
-    {64},     --0xD780 Draw State (64 Bytes)
-    {KB(01)}, --0xD7C0 Free Space (1 KB)
-    {KB(04)}, --0xDBC0 Reserved (4 KB)
-    {KB(12)}, --0xEC00 Label Image (12 KBytes)
-    {KB(12)}  --0x11C00 VRAM (12 KBytes)
+    {KB(20)}, --0xB000 Compressed Lua Code (20 KB)
+    {KB(02)}, --0x10000 Persistant Data (2 KB)
+    {128},    --0x10800 GPIO (128 Bytes)
+    {768},    --0x10880 Reserved (768 Bytes)
+    {64},     --0x10B80 Draw State (64 Bytes)
+    {64},     --0x10BC0 Reserved (64 Bytes)
+    {KB(01)}, --0x10C00 Free Space (1 KB)
+    {KB(04)}, --0x11000 Reserved (4 KB)
+    {KB(12)}, --0x12000 Label Image (12 KBytes)
+    {KB(12),VRAMHandler}  --0x15000 VRAM (12 KBytes)
   }
 }
 
-local RAM, RAMKit = assert(P("RAM"),RAMConfig)
+local RAM, RAMKit = assert(P("RAM","RAM",RAMConfig))
