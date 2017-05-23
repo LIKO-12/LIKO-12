@@ -346,6 +346,8 @@ return function(config) --A function that creates a new GPU peripheral.
     if cpukit then cpukit.triggerEvent("touchreleased",id,x,y,dx,dy,p) end
   end)
 
+  local GPU = {}
+
   local VRAMBound = false
   local VRAMImg
   local VRAMLine = _LIKO_W/2
@@ -361,6 +363,26 @@ return function(config) --A function that creates a new GPU peripheral.
     VRAMBound = true
   end
   
+  
+  local function UnbindVRAM(keepbind)
+    if not VRAMBound then return end
+    local Img = love.graphics.newImage(VRAMImg)
+    GPU.pushColor()
+    love.graphics.push()
+    love.graphics.origin()
+    love.graphics.setColor(255,255,255,255)
+    love.graphics.setShader()
+    love.graphics.clear(0,0,0,255)
+    love.graphics.draw(Img)
+    love.graphics.setShader(_DrawShader)
+    love.graphics.pop()
+    GPU.popColor()
+    if not keepbind then
+      VRAMBound = false
+      VRAMImg = nil
+    end
+  end
+  
   local function AddressPos(address)
     local x = address % VRAMLine
     local y = math.floor(address / VRAMLine)
@@ -369,6 +391,15 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local function VRAMHandler(mode,startAddress,...)
     args = {...}
+    local toprint = {}
+    for k,v in ipairs(args) do
+      if type(v) == "number" then
+        table.insert(toprint,string.format("0x%X",v))
+      else
+        table.insert(toprint,type(v))
+      end
+    end
+    print("VRAM HANDLER: "..mode,unpack(toprint))
     BindVRAM() --Make sure that the VRAM is bound.
     if mode == "poke" then
       local address, value = unpack(args)
@@ -377,8 +408,8 @@ return function(config) --A function that creates a new GPU peripheral.
       local evenPixel = band(value,0x0F)
       local oddPixel = band(value,0xF0)
       oddPixel = rshift(oddPixel,4)
-      VRAMImg:setPixel(x,y,evenPixel)
-      VRAMImg:setPixel(x+1,y,oddPixel)
+      VRAMImg:setPixel(x,y,evenPixel,0,0,255)
+      VRAMImg:setPixel(x+1,y,oddPixel,0,0,255)
     elseif mode == "peek" then
       local address = args[1]
       address = address - startAddress
@@ -388,7 +419,7 @@ return function(config) --A function that creates a new GPU peripheral.
       oddPixel = lshift(oddPixel,4)
       
       local pixel = bor(evenPixel,oddPixel)
-      return string.char(pixel)
+      return pixel
     elseif mode == "memcpy" then
       local from, to, len = unpack(args)
       local from_end = from + len -1
@@ -429,6 +460,7 @@ return function(config) --A function that creates a new GPU peripheral.
       address = address - startAddress
       local data = ""
       for a=address,address+len-1 do
+        print(string.format("MEMGET: 0x%X",a))
         local x,y = AddressPos(a)
         local evenPixel = VRAMImg:getPixel(x,y)
         local oddPixel = VRAMImg:getPixel(x+1,y)
@@ -451,8 +483,8 @@ return function(config) --A function that creates a new GPU peripheral.
         local evenPixel = band(char,0x0F)
         local oddPixel = band(char,0xF0)
         oddPixel = rshift(oddPixel,4)
-        VRAMImg:setPixel(x,y,evenPixel)
-        VRAMImg:setPixel(x+1,y,oddPixel)
+        VRAMImg:setPixel(x,y,evenPixel,0,0,255)
+        VRAMImg:setPixel(x+1,y,oddPixel,0,0,255)
         
         c=c+1
       end
@@ -460,7 +492,6 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --The api starts here--
-  local GPU = {}
   
   local flip = false --Is the code waiting for the screen to draw, used to resume the coroutine.
   local Clip = false --The current active clipping region.
@@ -642,7 +673,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Suspend the coroutine till the screen is updated
   function GPU.flip()
-    _ShouldDraw = true -- Incase if no changes are made so doesn't suspend forever
+    UnbindVRAM() _ShouldDraw = true -- Incase if no changes are made so doesn't suspend forever
     flip = true
     return 2 --Do not resume automatically
   end
@@ -699,7 +730,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Draw a rectangle filled, or lines only.
   --X pos, Y pos, W width, H height, L linerect, C colorid.
-  function GPU.rect(x,y,w,h,l,c)
+  function GPU.rect(x,y,w,h,l,c) UnbindVRAM()
     local x,y,w,h,l,c = x, y, w, h, l or false, c --In case if they are not provided.
     
     --It accepts all the args as a table.
@@ -741,7 +772,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Draws a circle filled, or lines only.
-  function GPU.circle(x,y,r,l,c)
+  function GPU.circle(x,y,r,l,c) UnbindVRAM()
     local x,y,r,l,c = x, y, r, l or false, c --In case if they are not provided.
     
     --It accepts all the args as a table.
@@ -780,7 +811,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Draws a triangle
-  function GPU.triangle(x1,y1,x2,y2,x3,y3,l,col)
+  function GPU.triangle(x1,y1,x2,y2,x3,y3,l,col) UnbindVRAM()
     local l = l or false
     
     if type(x1) ~= "number" then return false, "x1 must be a number, provided: "..type(x1) end
@@ -812,7 +843,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Draw a polygon
-  function GPU.polygon(...)
+  function GPU.polygon(...) UnbindVRAM()
     local args = {...} --The table of args
     exe(GPU.pushColor()) --Push the current color.
     if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
@@ -825,7 +856,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Draws a ellipse filled, or lines only.
-  function GPU.ellipse(x,y,rx,ry,l,c)
+  function GPU.ellipse(x,y,rx,ry,l,c) UnbindVRAM()
     local x,y,rx,ry,l,c = x or 1, y or 1, rx or 1, ry or 1, l or false, c --In case if they are not provided.
     
     --It accepts all the args as a table.
@@ -872,7 +903,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --Prints text to the screen,
   --Acts as a terminal print if x, y are not provided,
   --Or prints at the specific pos x, y
-  function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky)
+  function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
     local t = tostring(t) --Make sure it's a string
     if x and y then --Print at a specific position on the screen
       --Error handelling
@@ -962,7 +993,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end
   
-  function GPU.printBackspace(c,skpCr)
+  function GPU.printBackspace(c,skpCr) UnbindVRAM()
     local c = c or printCursor.bgc
     if type(c) ~= "number" then return false, "Color must be a number value, provided: "..type(c) end
     local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,_FontH+2) end
@@ -995,7 +1026,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Clears the whole screen with black or the given color id.
-  function GPU.clear(c)
+  function GPU.clear(c) UnbindVRAM()
     local c = math.floor(c or 1)
     if type(c) ~= "number" then return false, "The color id must be a number." end --Error
     if c > 16 or c < 0 then return false, "The color id is out of range." end --Error
@@ -1006,7 +1037,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Draws a point/s at specific location/s, accepts the colorid as the last args, x and y of points must be provided before the colorid.
-  function GPU.points(...)
+  function GPU.points(...) UnbindVRAM()
     local args = {...} --The table of args
     exe(GPU.pushColor()) --Push the current color.
     if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
@@ -1019,7 +1050,7 @@ return function(config) --A function that creates a new GPU peripheral.
   GPU.point = GPU.points --Just an alt name :P.
   
   --Draws a line/s at specific location/s, accepts the colorid as the last args, x1,y1,x2 and y2 of points must be provided before the colorid.
-  function GPU.lines(...)
+  function GPU.lines(...) UnbindVRAM()
     local args = {...} --The table of args
     exe(GPU.pushColor()) --Push the current color.
     if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
@@ -1053,7 +1084,7 @@ return function(config) --A function that creates a new GPU peripheral.
     
     local i = {}
     
-    function i:draw(x,y,r,sx,sy,quad)
+    function i:draw(x,y,r,sx,sy,quad) UnbindVRAM()
       local x, y, sx, sy = x or 1, y or 1, sx or 1, sy or 1
       GPU.pushColor()
       love.graphics.setShader(_ImageShader)
@@ -1309,6 +1340,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --Host to love.run when graphics is active--
   events:register("love:graphics",function()
     if _ShouldDraw then --When it's required to draw (when changes has been made to the canvas)
+      UnbindVRAM(true)
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
       love.graphics.push()
       love.graphics.setShader(_DisplayShader) --Activate the display shader
@@ -1416,6 +1448,10 @@ return function(config) --A function that creates a new GPU peripheral.
   devkit.TERM_W = TERM_W
   devkit.TERM_H = TERM_H
   devkit._CursorsCache = _CursorsCache
+  devkit.BindVRAM = BindVRAM
+  devkit.UnbindVRAM = UnbindVRAM
+  devkit.AddressPos = AddressPos
+  devkit.VRAMHandler = VRAMHandler
   
   return GPU, devkit --Return the table containing all of the api functions.
 end
