@@ -370,10 +370,11 @@ return function(config) --A function that creates a new GPU peripheral.
     GPU.pushColor()
     love.graphics.push()
     love.graphics.origin()
+    love.graphics.translate(unpack(ofs.screen))
     love.graphics.setColor(255,255,255,255)
     love.graphics.setShader()
     love.graphics.clear(0,0,0,255)
-    love.graphics.draw(Img)
+    love.graphics.draw(Img,ofs.image[1]+1,ofs.image[2]+1)
     love.graphics.setShader(_DrawShader)
     love.graphics.pop()
     GPU.popColor()
@@ -386,7 +387,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local function AddressPos(address)
     local x = address % VRAMLine
     local y = math.floor(address / VRAMLine)
-    return x*2, y*2
+    return x*2, y
   end
   
   local function VRAMHandler(mode,startAddress,...)
@@ -410,6 +411,7 @@ return function(config) --A function that creates a new GPU peripheral.
       oddPixel = rshift(oddPixel,4)
       VRAMImg:setPixel(x,y,evenPixel,0,0,255)
       VRAMImg:setPixel(x+1,y,oddPixel,0,0,255)
+      _ShouldDraw = true
     elseif mode == "peek" then
       local address = args[1]
       address = address - startAddress
@@ -454,7 +456,7 @@ return function(config) --A function that creates a new GPU peripheral.
           end
         end
       end
-      
+      _ShouldDraw = true
     elseif mode == "memget" then
       local address, len = unpack(args)
       address = address - startAddress
@@ -489,6 +491,7 @@ return function(config) --A function that creates a new GPU peripheral.
         c=c+1
       end
     end
+    _ShouldDraw = true
   end
   
   --The api starts here--
