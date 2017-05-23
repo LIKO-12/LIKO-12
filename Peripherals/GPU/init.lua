@@ -349,6 +349,11 @@ return function(config) --A function that creates a new GPU peripheral.
   local VRAMBound = false
   local VRAMImg
   local VRAMLine = _LIKO_W/2
+  local Scanlines = {} --A table that contains the addresses of screen lines endings.
+  
+  for y=1, _LIKO_H do
+    table.insert(Scanlines,y*_LIKO_W-1)
+  end
   
   local function BindVRAM()
     if VRAMBound then return end
@@ -367,7 +372,13 @@ return function(config) --A function that creates a new GPU peripheral.
     BindVRAM() --Make sure that the VRAM is bound.
     if mode == "poke" then
       local address, value = unpack(args)
-      
+      address = address - startAddress
+      local x,y = AddressPos(address)
+      local evenPixel = band(value,0x0F)
+      local oddPixel = band(value,0xF0)
+      oddPixel = rshift(oddPixel,4)
+      VRAMImg:setPixel(x,y,evenPixel)
+      VRAMImg:setPixel(x+1,y,oddPixel)
     elseif mode == "peek" then
       local address = args[1]
       address = address - startAddress
@@ -377,16 +388,74 @@ return function(config) --A function that creates a new GPU peripheral.
       oddPixel = lshift(oddPixel,4)
       
       local pixel = bor(evenPixel,oddPixel)
-      return pixel
+      return string.char(pixel)
     elseif mode == "memcpy" then
       local from, to, len = unpack(args)
+      local from_end = from + len -1
+      local to_end = to + len -1
+      local linelen = _LIKO_W-1
+      for k, line_end in ipairs(Scanlines) do
+        local line_start = linelen-line_end
+        if from <= line_end and from_end >= line_start then
+          local saddr, eaddr = from, from_end
+          if saddr < line_start then saddr = line_start end
+          if eaddr > line_end then eaddr = line_end end
+          
+          local to = to + (saddr - from)
+          local to_end = to + ( eaddr-saddr )
+          
+          for k, line_end in ipairs(Scanlines) do
+            local line_start = linelen-line_end
+            if to >= line_end and to_end < line_start then
+              local sa, ea = to, to_end
+              if sa < line_start then sa = line_start end
+              if ea > line_end then ea = line_end end
+              
+              local saddr = saddr + (sa-to)
+              local eaddr = eaddr + (se-to_end)
+              
+              local len = ea-sa+1
+              local dx,dy = AddressPos(sa)
+              local sx,sy = AddressPos(saddr)
+              
+              VRAMImg:paste( VRAMImg, dx,dy, sx,sy, len,1)
+            end
+          end
+        end
+      end
       
     elseif mode == "memget" then
       local address, len = unpack(args)
+      address = address - startAddress
+      local data = ""
+      for a=address,address+len-1 do
+        local x,y = AddressPos(a)
+        local evenPixel = VRAMImg:getPixel(x,y)
+        local oddPixel = VRAMImg:getPixel(x+1,y)
+        oddPixel = lshift(oddPixel,4)
+        local pixel = bor(evenPixel,oddPixel)
+        data = data..string.char(pixel)
+      end
       
+      return data
     elseif mode == "memset" then
       local address, value = unpack(args)
+      address = address-startAddress
+      local len = value:len()
       
+      local c=1
+      for a=address, address+len-1 do
+        local char = value:sub(c,c)
+        char = string.byte(char)
+        local x,y = AddressPos(a)
+        local evenPixel = band(char,0x0F)
+        local oddPixel = band(char,0xF0)
+        oddPixel = rshift(oddPixel,4)
+        VRAMImg:setPixel(x,y,evenPixel)
+        VRAMImg:setPixel(x+1,y,oddPixel)
+        
+        c=c+1
+      end
     end
   end
   
