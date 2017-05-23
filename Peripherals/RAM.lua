@@ -6,16 +6,17 @@ Layout (96 KB)
 0x32E0 Flags Data (288 Bytes)
 0x3400 MapData (18 KB)
 0x7C00 Sound Tracks (13 KB)
-0x9C00 Compressed Lua Code (20 KB)
-0xCC00 Persistant Data (2 KB)
-0xD400 GPIO (128 Bytes)
-0xD480 Reserved (768 Bytes)
-0xD780 Draw State (64 Bytes)
-0xD7C0 Free Space (1 KB)
-0xDBC0 Reserved (4 KB)
-0xEC00 Label Image (12 KBytes)
-0x11C00 VRAM (12 KBytes)
-0x14C00 End of memory
+0xB000 Compressed Lua Code (20 KB)
+0x10000 Persistant Data (2 KB)
+0x10800 GPIO (128 Bytes)
+0x10880 Reserved (768 Bytes)
+0x10B80 Draw State (64 Bytes)
+0x10BC0 Reserved (64 Bytes)
+0x10C00 Free Space (1 KB)
+0x11000 Reserved (4 KB)
+0x12000 Label Image (12 KBytes)
+0x15000 VRAM (12 KBytes)
+0x18000 End of memory (Out of range)
 
 Meta Data (1 KB)
 ----------------
@@ -50,7 +51,7 @@ Disk META:
 ]]
 
 return function(config)
-  local ramsize = config.size or 80*1024 --Defaults to 80 KBytes.
+  local ramsize = config.size or 96*1024 --Defaults to 96 KBytes.
   local lastaddr = string.format("0x%X",ramsize-1)
   local ram = string.rep("\0",ramsize)
   
@@ -58,15 +59,19 @@ return function(config)
   
   local devkit = {}
   
+  local function tohex(a)
+    return string.format("0x%X",a or 0)
+  end
+  
   function devkit.addHandler(startAddress, endAddress, handler)
     if type(startAddress) ~= "number" then return error("Start address must be a number, provided: "..type(startAddress)) end
     if type(endAddress) ~= "number" then return error("End address must be a number, provided: "..type(endAddress)) end
     if type(handler) ~= "function" then return error("Handler must be a function, provided: "..type(handler)) end
     
-    if startAddress < 0 then return error("Start Address out of range ("..startAddress..") Must be [0,"..(ramsize-1).."]") end
-    if startAddress > ramsize-1 then return error("Start Address out of range ("..startAddress..") Must be [0,"..(ramsize-1).."]") end
-    if endAddress < 0 then return error("End Address out of range ("..startAddress..") Must be [0,"..(ramsize-1).."]") end
-    if endAddress > ramsize-1 then return error("End Address out of range ("..startAddress..") Must be [0,"..(ramsize-1).."]") end
+    if startAddress < 0 then return error("Start Address out of range ("..tohex(startAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
+    if startAddress > ramsize-1 then return error("Start Address out of range ("..tohex(startAddress)..") Must be [0,"..(ramsize-1).."]") end
+    if endAddress < 0 then return error("End Address out of range ("..tohex(endAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
+    if endAddress > ramsize-1 then return error("End Address out of range ("..tohex(endAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
     
     table.insert(handlers,{startAddr = startAddress, endAddr = endAddress, handler = handler})
     table.sort(handlers, function(t1,t2)
@@ -108,6 +113,13 @@ return function(config)
     local startAddress = endAddress + 1
     endAddress = startAddress + h[1] -1
     devkit.addHandler(startAddress,endAddress, h[2])
+    local size
+    if h[1] < 1024 then
+      size = h[1].." Byte"
+    else
+      size = (h[1]/1024).." KB"
+    end
+    print("Layout "..id..": "..tohex(startAddress).." -> "..tohex(endAddress).." ("..size..")")
   end
   
   local function tohex(val) return string.format("0x%X",val) end
