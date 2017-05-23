@@ -75,7 +75,7 @@ return function(config)
   end
   
   --Writes and reads from the RAM string.
-  function devkit.defaultHandler(mode,...)
+  function devkit.defaultHandler(mode,startAddress,...)
     local args = {...}
     if mode == "poke" then
       local address, value = unpack(args)
@@ -121,14 +121,11 @@ return function(config)
     if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
     if value < 0 or value > 255 then return false, "Value out of range ("..value..") must be in range [0,255]" end
     
-    local handler = devkit.defaultHandler
     for k,h in ipairs(handlers) do
       if address <= h.endAddr then
-        handler = h.handler
-        break
+        return true, h.handler("poke",h.startAddr,address,value)
       end
     end
-    return true, handler("poke",address,value)
   end
   
   function api.peek(address)
@@ -136,14 +133,11 @@ return function(config)
     address = math.floor(address)
     if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
     
-    local handler = devkit.defaultHandler
     for k,h in ipairs(handlers) do
       if address <= h.endAddr then
-        handler = h.handler
-        break
+        return true, h.handler("peek",h.startAddr,address)
       end
     end
-    return true, handler("peek",address)
   end
   
   function api.memget(address,length)
@@ -161,7 +155,7 @@ return function(config)
           local sa, ea = address, endAddress
           if sa < h.startAddr then sa = h.startAddr end
           if ea > h.endAddr then ea = h.endAddr end
-          local data = h.handler("memget",sa,ea-sa+1)
+          local data = h.handler("memget",h.startAddr,sa,ea-sa+1)
           str = str .. data
         end
       end
@@ -187,7 +181,7 @@ return function(config)
           if sa < h.startAddr then sa = h.startAddr end
           if ea > h.endAddr then ea = h.endAddr end
           d = data:sub(sa-address+1,ea-address+1)
-          h.handler("memset",sa,data)
+          h.handler("memset",h.startAddr,sa,data)
         end
       end
     end
@@ -226,10 +220,10 @@ return function(config)
             local ea1 = ea1 + (ea2 - to_address)
             
             if h1.handler == h2.handler then --Direct Copy
-              h1.handler("memcpy",sa1,sa2,ea2-sa2+1)
+              h1.handler("memcpy",h1.startAddr,sa1,sa2,ea2-sa2+1)
             else --InDirect Copy
-              local d = h1.handler("memget",sa1,ea2-sa2+1)
-              h2.handler("memset",sa2,d)
+              local d = h1.handler("memget",h2.startAddr,sa1,ea2-sa2+1)
+              h2.handler("memset",h2.startAddr,sa2,d)
             end
           end
         end
