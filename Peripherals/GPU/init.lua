@@ -2,6 +2,9 @@ local perpath = select(1,...) --The path to the gpu folder
 local events = require("Engine.events")
 local coreg = require("Engine.coreg")
 
+local bit = require("bit")
+local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
+
 return function(config) --A function that creates a new GPU peripheral.
   
   --Load the config--
@@ -342,6 +345,50 @@ return function(config) --A function that creates a new GPU peripheral.
     events:trigger("GPU:touchreleased",id,x,y,dx,dy,p)
     if cpukit then cpukit.triggerEvent("touchreleased",id,x,y,dx,dy,p) end
   end)
+
+  local VRAMBound = false
+  local VRAMImg
+  local VRAMLine = _LIKO_W/2
+  
+  local function BindVRAM()
+    if VRAMBound then return end
+    VRAMImg = _ScreenCanvas:newImageData()
+    VRAMBound = true
+  end
+  
+  local function AddressPos(address)
+    local x = address % VRAMLine
+    local y = math.floor(address / VRAMLine)
+    return x*2, y*2
+  end
+  
+  local function VRAMHandler(mode,startAddress,...)
+    args = {...}
+    BindVRAM() --Make sure that the VRAM is bound.
+    if mode == "poke" then
+      local address, value = unpack(args)
+      
+    elseif mode == "peek" then
+      local address = args[1]
+      address = address - startAddress
+      local x,y = AddressPos(address)
+      local evenPixel = VRAMImg:getPixel(x,y)
+      local oddPixel = VRAMImg:getPixel(x+1,y)
+      oddPixel = lshift(oddPixel,4)
+      
+      local pixel = bor(evenPixel,oddPixel)
+      return pixel
+    elseif mode == "memcpy" then
+      local from, to, len = unpack(args)
+      
+    elseif mode == "memget" then
+      local address, len = unpack(args)
+      
+    elseif mode == "memset" then
+      local address, value = unpack(args)
+      
+    end
+  end
   
   --The api starts here--
   local GPU = {}
