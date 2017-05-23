@@ -217,7 +217,7 @@ return function(config)
             if ea2 > h2.endAddr then ea2 = h2.endAddr end
             
             local sa1 = sa1 + (sa2 - to_address)
-            local ea1 = ea1 + (ea2 - to_address)
+            local ea1 = sa1 + (ea2 - to_end)
             
             if h1.handler == h2.handler then --Direct Copy
               h1.handler("memcpy",h1.startAddr,sa1,sa2,ea2-sa2+1)
