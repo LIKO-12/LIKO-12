@@ -2,6 +2,7 @@ LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 clear(1)
 color(8)
+cursor("point")
 local char = string.char
 
 local function tohex(v)
@@ -46,7 +47,7 @@ poke(0x17,252)
 poke(0x1D,123)
 local d = memget(0x08,5)
 memset(0x18,d)
---memcpy(0x01,0x0E,5)
+memcpy(0x01,0x0E,5)
 
 p16(1,0)
 p16(10,16)
