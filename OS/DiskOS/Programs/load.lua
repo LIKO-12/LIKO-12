@@ -3,15 +3,15 @@ local source = select(1,...)
 local term = require("C://terminal")
 local eapi = require("C://Editors")
 
-if source then source = term.parsePath(source)..".lk12" else source = eapi.filePath end
+if source and source ~= "@clip" then source = term.parsePath(source)..".lk12" elseif source ~= "@clip" then source = eapi.filePath end
 
 print("") --NewLine
 
 if not source then color(9) print("Must provide path to the file to load") return end
-if not fs.exists(source) then color(9) print("File doesn't exists") return end
-if fs.isDirectory(source) then color(9) print("Couldn't load a directory !") return end
+if source ~= "@clip" and not fs.exists(source) then color(9) print("File doesn't exists") return end
+if source ~= "@clip" and fs.isDirectory(source) then color(9) print("Couldn't load a directory !") return end
 
-local saveData = fs.read(source)
+local saveData = source == "@clip" and clipboard() or fs.read(source)
 if not saveData:sub(0,5) == "LK12;" then color(9) print("This is not a valid LK12 file !!") return end
 
 --LK12;OSData;OSName;DataType;Version;Compression;CompressLevel; data"

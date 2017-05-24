@@ -6,24 +6,24 @@ local clvl = tonumber(select(4,...) or "-1")
 local term = require("C://terminal")
 local eapi = require("C://Editors")
 
-if destination then destination = term.parsePath(destination)..".lk12" else
+if destination and destination ~= "@clip" then destination = term.parsePath(destination)..".lk12" elseif destination ~= "@clip" then
   destination = eapi.filePath
 end
 
 if not destination then color(9) print("\nMust provide the destination file path") return end
 
-if fs.exists(destination) and fs.isDirectory(destination) then color(9) print("Destination must not be a directory") return end
+if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then color(9) print("Destination must not be a directory") return end
 
 local sw, sh = screenSize()
 
 if string.lower(flag) == "--sheet" then --Sheet export
   local data = eapi.leditors[3]:export(true)
-  fs.write(destination,data)
+  if destination == "@clip" then clipboard(data) else fs.write(destination,data) end
   color(12) print("\nExported Spritesheet successfully")
   return
 elseif string.lower(flag) == "--code" then
   local data = eapi.leditors[2]:export(true)
-  fs.write(destination:sub(0,-6),data)
+  if destination == "@clip" then clipboard(data) else fs.write(destination:sub(0,-6),data) end
   color(12) print("\nExported Lua code successfully")
   return
 end
@@ -40,6 +40,10 @@ else
   header = header.."none;CLvl:0;"
 end
 
-fs.write(destination,header.."\n"..data)
+if destination == "@clip" then
+  clipboard(header.."\n"..data)
+else
+  fs.write(destination,header.."\n"..data)
+end
 
-color(12) print("\nSaved successfully")
+color(12) print(destination == "@clip" and "\nSaved to clipboard successfully" or "\nSaved successfully")
