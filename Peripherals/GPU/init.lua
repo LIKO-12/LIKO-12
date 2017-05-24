@@ -392,15 +392,6 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local function VRAMHandler(mode,startAddress,...)
     args = {...}
-    local toprint = {}
-    for k,v in ipairs(args) do
-      if type(v) == "number" then
-        table.insert(toprint,string.format("0x%X",v))
-      else
-        table.insert(toprint,type(v))
-      end
-    end
-    print("VRAM HANDLER: "..mode,unpack(toprint))
     BindVRAM() --Make sure that the VRAM is bound.
     if mode == "poke" then
       local address, value = unpack(args)
@@ -462,7 +453,6 @@ return function(config) --A function that creates a new GPU peripheral.
       address = address - startAddress
       local data = ""
       for a=address,address+len-1 do
-        print(string.format("MEMGET: 0x%X",a))
         local x,y = AddressPos(a)
         local evenPixel = VRAMImg:getPixel(x,y)
         local oddPixel = VRAMImg:getPixel(x+1,y)
