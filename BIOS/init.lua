@@ -179,8 +179,8 @@ end
 
 if gpu then
   --Post Screen--
-  gpu.clear(1) --Fill with black.
-  gpu.color(8) --Set the color to white.
+  gpu.clear() --Fill with black.
+  gpu.color(7) --Set the color to white.
   
   --Load the bios logos.
   local lualogo = gpu.image(love.filesystem.read("/BIOS/lualogo.lk12"))
@@ -203,7 +203,7 @@ if gpu then
       gpu.print("LIKO-12 - Fantasy Computer",16,8)
       gpu.print("Copyright (C) Rami Sabbagh",16,14)
       
-      gpu.printCursor(1,4,1)
+      gpu.printCursor(1,4,0)
       gpu.print("NormBIOS Revision 060-004")
       gpu.print("")
       
@@ -224,7 +224,7 @@ if gpu then
         gpu.print("Drive "..letter..": "..usage.."/"..size.." KB ("..percentage.."%)")
       end
     elseif stage == 8 then
-      gpu.clear(1)
+      gpu.clear()
     elseif stage == 9 then
       events:unregisterGroup("BIOS:POST")
       bootOS()
