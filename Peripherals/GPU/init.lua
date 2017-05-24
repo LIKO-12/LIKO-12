@@ -87,14 +87,14 @@ return function(config) --A function that creates a new GPU peripheral.
   local ofs
   if love.filesystem.exists("GPUCalibration.json") then
     ofs = json:decode(love.filesystem.read("/GPUCalibration.json"))
-    if ofs.version < 1 then --Redo calibration
+    if ofs.version < 1.1 then --Redo calibration
       ofs = love.filesystem.load(perpath.."calibrate.lua")()
-      ofs.version = 1
+      ofs.version = 1.1
       love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
     end
   else
     ofs = love.filesystem.load(perpath.."calibrate.lua")()
-    ofs.version = 1
+    ofs.version = 1.1
     love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
   end
   
@@ -1071,7 +1071,7 @@ return function(config) --A function that creates a new GPU peripheral.
     for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
     if #args < 4 then return false, "Need at least two vertices to draw a line." end --Error
     args[1], args[2] = args[1] + ofs.line_start[1], args[2] + ofs.line_start[2]
-    for k=3, #args do if (k % 2 == 0) then args[k] = args[k] + ofs.line[1] else args[k] = args[k] + ofs.line[2] end end --Apply the offset.
+    for k=3, #args do if (k % 2 == 1) then args[k] = args[k] + ofs.line[1] else args[k] = args[k] + ofs.line[2] end end --Apply the offset.
     love.graphics.line(unpack(args)) _ShouldDraw = true --Draw the lines and tell that changes has been made.
     exe(GPU.popColor()) --Pop the last color in the stack.
     return true --It ran successfully.

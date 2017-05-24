@@ -71,7 +71,7 @@ imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
   return r,g,b,a
 end)
 ofs.line = {3-xpos,3-ypos}
-ofs.line_start = {0,0}
+ofs.line_start = {3-xpos,3-ypos}
 
 --Circle calibration
 canvas(30,30)
