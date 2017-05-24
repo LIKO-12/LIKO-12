@@ -523,7 +523,7 @@ return function(config) --A function that creates a new GPU peripheral.
       if type(id) ~= "number" then return false, "The color id must be a number." end --Error
       if id > 15 or id < 0 then return false, "The color id is out of range." end --Error
       id = math.floor(id) --Remove the float digits.
-      love.graphics.setColor(id-1,0,0,255) --Set the active color.
+      love.graphics.setColor(id,0,0,255) --Set the active color.
       return true --It ran successfuly.
     else
       local r,g,b,a = love.graphics.getColor()
