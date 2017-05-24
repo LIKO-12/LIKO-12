@@ -122,9 +122,9 @@ return function(config) --A function that creates a new GPU peripheral.
   if gpuVersion == "OpenGL ES 3.1 v1.r7p0-03rel0.b8759509ece0e6dda5325cb53763bcf0" then
     --GPU glitch fix for this driver, happens at my samsung j700h
     ofs.screen = {0,-1}
-    ofs.print = {-1,1}
-    ofs.print_grid = {-1,1}
-    --[[ofs.rect = {-1,1}
+    --[[ofs.print = {-1,-1}
+    ofs.print_grid = {-1,-1}
+    ofs.rect = {-1,1}
     ofs.image = {-1,1}
     ofs.quad = {-1,1}]]
   end
