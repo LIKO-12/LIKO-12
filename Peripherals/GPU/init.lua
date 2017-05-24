@@ -5,6 +5,8 @@ local coreg = require("Engine.coreg")
 local bit = require("bit")
 local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 
+local json = require("Engine.JSON")
+
 return function(config) --A function that creates a new GPU peripheral.
   
   --Load the config--
@@ -79,6 +81,54 @@ return function(config) --A function that creates a new GPU peripheral.
   local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale) --Create the gif canvas, used to apply the gif scale factor.
   local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
   
+  local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo() --Used to apply some device specific bugfixes.
+  if not love.filesystem.exists("/GPUInfo.txt") then love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
+  
+  local ofs
+  if love.filesystem.exists("GPUCalibration.json") then
+    ofs = json:decode(love.filesystem.read("/GPUCalibration.json"))
+    if ofs.version < 1 then --Redo calibration
+      ofs = love.filesystem.load(perpath.."calibrate.lua")()
+      ofs.version = 1
+      love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
+    end
+  else
+    ofs = love.filesystem.load(perpath.."calibrate.lua")()
+    ofs.version = 1
+    love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
+  end
+  
+  --[[local ofs = {} --Offsets table.
+  ofs.screen = {0,0} --The offset of all the drawing opereations.
+  ofs.point = {0,0} --The offset of GPU.point/s.
+  ofs.print = {-1,-1} --The offset of GPU.print.
+  ofs.print_grid = {-1,-1} --The offset of GPU.print with grid mode.
+  ofs.line_start = {0,0} --The offset of the first coord of GPU.line/s.
+  ofs.line = {0,0} --The offset of GPU.line/s.
+  ofs.circle = {0,0,0} --The offset of GPU.circle with l as false (x,y,r).
+  ofs.circle_line = {0,0,0} --The offset of GPU.circle with l as true (x,y,r).
+  ofs.ellipse = {0,0,0,0} --The offset of GPU.circle with l as false (x,y,rx,ry).
+  ofs.ellipse_line = {0,0,0,0} --The offset of GPU.circle with l as true (x,y,rx,ry).
+  ofs.rect = {-1,-1} --The offset of GPU.rect with l as false.
+  ofs.rectSize = {0,0} --The offset of w,h in GPU.rect with l as false.
+  ofs.rect_line = {0,0} --The offset of GPU.rect with l as true.
+  ofs.rectSize_line = {-1,-1} --The offset of w,h in GPU.rect with l as false.
+  ofs.triangle = {0,0} --The offset of each vertices in GPU.triangle with l as false.
+  ofs.triangle_line = {0,0} --The offset of each vertices in GPU.triangle with l as true.
+  ofs.polygon = {0,0} --The offset of each vertices in GPU.polygon.
+  ofs.image = {-1,-1}
+  ofs.quad = {-1,-1}]]
+  
+  if gpuVersion == "OpenGL ES 3.1 v1.r7p0-03rel0.b8759509ece0e6dda5325cb53763bcf0" then
+    --GPU glitch fix for this driver, happens at my samsung j700h
+    ofs.screen = {0,-1}
+    ofs.print = {-1,1}
+    ofs.print_grid = {-1,1}
+    --[[ofs.rect = {-1,1}
+    ofs.image = {-1,1}
+    ofs.quad = {-1,1}]]
+  end
+  
   love.graphics.clear(0,0,0,255) --Clear the host screen.
   
   love.graphics.setCanvas(_ScreenCanvas) --Activate LIKO12 canvas.
@@ -89,9 +139,6 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setFont(_Font) --Activate the default font.
   
   --Post initialization (Setup the in liko12 gpu settings)--
-  
-  local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo() --Used to apply some device specific bugfixes.
-  --love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice)
   
   local _DrawPalette = {} --The palette mapping for all drawing opereations expect image:draw (p = 1).
   local _ImagePalette = {} --The palette mapping for image:draw opereations (p = 2).
@@ -149,38 +196,6 @@ return function(config) --A function that creates a new GPU peripheral.
   }]])
   _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the colorset.
   
-  local ofs = {} --Offsets table.
-  ofs.screen = {0,0} --The offset of all the drawing opereations.
-  ofs.point = {0,0} --The offset of GPU.point/s.
-  ofs.print = {-1,-1} --The offset of GPU.print.
-  ofs.print_grid = {-1,-1} --The offset of GPU.print with grid mode.
-  ofs.line_start = {0,0} --The offset of the first coord of GPU.line/s.
-  ofs.line = {0,0} --The offset of GPU.line/s.
-  ofs.circle = {0,0,0} --The offset of GPU.circle with l as false (x,y,r).
-  ofs.circle_line = {0,0,0} --The offset of GPU.circle with l as true (x,y,r).
-  ofs.ellipse = {0,0,0,0} --The offset of GPU.circle with l as false (x,y,rx,ry).
-  ofs.ellipse_line = {0,0,0,0} --The offset of GPU.circle with l as true (x,y,rx,ry).
-  ofs.rect = {-1,-1} --The offset of GPU.rect with l as false.
-  ofs.rectSize = {0,0} --The offset of w,h in GPU.rect with l as false.
-  ofs.rect_line = {0,0} --The offset of GPU.rect with l as true.
-  ofs.rectSize_line = {-1,-1} --The offset of w,h in GPU.rect with l as false.
-  ofs.triangle = {0,0} --The offset of each vertices in GPU.triangle with l as false.
-  ofs.triangle_line = {0,0} --The offset of each vertices in GPU.triangle with l as true.
-  ofs.polygon = {0,0} --The offset of each vertices in GPU.polygon.
-  ofs.image = {-1,-1}
-  ofs.quad = {-1,-1}
-  
-  if gpuVersion == "OpenGL ES 3.1 v1.r7p0-03rel0.b8759509ece0e6dda5325cb53763bcf0" then
-    --GPU glitch fix for this driver, happens at my samsung j700h
-    ofs.screen = {0,-1}
-    ofs.print = {-1,0}
-    ofs.print_grid = {-1,0}
-    ofs.rect = {-1,0}
-    ofs.image = {-1,0}
-    ofs.quad = {-1,0}
-  end
-  
-  love.graphics.translate(unpack(ofs.screen)) --Offset all the drawing opereations.
   love.graphics.setShader(_DrawShader) --Activate the drawing shader.
   
   local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS" --Used to disable the cursors system (partly)
@@ -370,7 +385,6 @@ return function(config) --A function that creates a new GPU peripheral.
     GPU.pushColor()
     love.graphics.push()
     love.graphics.origin()
-    love.graphics.translate(unpack(ofs.screen))
     love.graphics.setColor(255,255,255,255)
     love.graphics.setShader()
     love.graphics.clear(0,0,0,255)
@@ -692,7 +706,6 @@ return function(config) --A function that creates a new GPU peripheral.
     else
       exe(GPU.pushColor())
       love.graphics.origin()
-      love.graphics.translate(unpack(ofs.screen))
       exe(GPU.popColor())
     end
     return true
@@ -856,6 +869,14 @@ return function(config) --A function that creates a new GPU peripheral.
     if x and type(x) == "table" then
       x,y,rx,ry,l,c = unpack(x)
     end
+    
+    --Args types verification
+    if type(x) ~= "number" then return false, "X pos must be a number." end --Error
+    if type(y) ~= "number" then return false, "Y pos must be a number." end --Error
+    if type(rx) ~= "number" then return false, "R x radius must be a number." end --Error
+    if type(ry) ~= "number" then return false, "R y radius must be a number." end --Error
+    if type(l) ~= "boolean" then return false, "L linecircle must be a number or nil." end --Error
+    if c and type(c) ~= "number" then return false, "The color id must be a number or nil." end --Error
     
     if c then --If the colorid is provided, pushColor then set the color.
       exe(GPU.pushColor())
@@ -1035,7 +1056,7 @@ return function(config) --A function that creates a new GPU peripheral.
     exe(GPU.pushColor()) --Push the current color.
     if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
     for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
-    for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.point[1] else args[k] = v + ofs.point[2] end end --Apply the offset.
+    for k,v in ipairs(args) do if (k % 2 == 1) then args[k] = v + ofs.point[1] else args[k] = v + ofs.point[2] end end --Apply the offset.
     love.graphics.points(unpack(args)) _ShouldDraw = true --Draw the points and tell that changes has been made.
     exe(GPU.popColor()) --Pop the last color in the stack.
     return true --It ran successfully.
@@ -1345,7 +1366,7 @@ return function(config) --A function that creates a new GPU peripheral.
       
       if _ClearOnRender then love.graphics.clear(0,0,0,255) end --Clear the screen (Some platforms are glitching without this).
       
-      love.graphics.draw(_ScreenCanvas, _LIKO_X, _LIKO_Y, 0, _LIKOScale, _LIKOScale) --Draw the canvas.
+      love.graphics.draw(_ScreenCanvas, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
       
       love.graphics.present() --Present the screen to the host & the user.
       love.graphics.setShader(_DrawShader) --Deactivate the display shader
@@ -1382,7 +1403,7 @@ return function(config) --A function that creates a new GPU peripheral.
       
       love.graphics.setShader(_DisplayShader)
       
-      love.graphics.draw(_ScreenCanvas, 0, 0, 0, _GIFScale, _GIFScale) --Draw the canvas.
+      love.graphics.draw(_ScreenCanvas, ofs.screen[1], ofs.screen[2], 0, _GIFScale, _GIFScale) --Draw the canvas.
       
       love.graphics.setShader()
       
