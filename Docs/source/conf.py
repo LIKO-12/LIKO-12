@@ -135,6 +135,9 @@ latex_documents = [
      u'Rami Sabbagh (@RamiLego4Game)', 'manual'),
 ]
 
+# Set default code highlight language to lua
+highlight_language = "Lua"
+
 
 # -- Options for manual page output ---------------------------------------
 
