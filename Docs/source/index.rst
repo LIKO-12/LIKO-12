@@ -10,4 +10,5 @@ Welcome to LIKO-12's documentation!
    :maxdepth: 2
    :caption: Contents:
    
+   self
    *

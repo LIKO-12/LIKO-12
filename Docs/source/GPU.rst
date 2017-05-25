@@ -16,8 +16,9 @@ Functions:
 
 GPU.clear
 ---------
-.. code-block::
-clear(cid)
+Usage::
+
+  clear(cid)
 
 Clears the screen and fills it with a specific color
 
