@@ -4,11 +4,11 @@
 local _ColorSet, _GIFScale, _LIKO_W, _LIKO_H = unpack({...})
 local palmap={}
 
-for i=1, 16 do
+for i=0, 15 do
 	local palette=_ColorSet[i]
 	local value=bit.lshift(palette[1], 16)+bit.lshift(palette[2], 8)+palette[3]
-	palmap[i-1]=value
-	palmap[value]=i-1
+	palmap[i]=value
+	palmap[value]=i
 end
 
 	

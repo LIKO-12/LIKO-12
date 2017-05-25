@@ -15,10 +15,10 @@ local sizeW, sizeH = sheetW*imgw, sheetH*imgh --The size of the spritessheet in 
 local SpriteMap
 
 --SpriteSheet Sprite Selection--
-local sprsrecto = {1,sheight-(8+bsizeH+1), swidth,bsizeH+2, false, 1} --SpriteSheet Outline Rect
+local sprsrecto = {1,sheight-(8+bsizeH+1), swidth,bsizeH+2, false, 0} --SpriteSheet Outline Rect
 local sprsdraw = {1,sheight-(8+bsizeH), 0, 1,1} --SpriteSheet Draw Location; IMG_DRAW
 local sprsgrid = {sprsdraw[1],sprsdraw[2], sizeW,bsizeH, sheetW,bankH} --The SpriteSheet selection grid
-local sprssrect = {sprsrecto[1]-1,sprsrecto[2], imgw+2,imgh+2, true, 8} --SpriteSheet Select Rect (that white box on the selected sprite)
+local sprssrect = {sprsrecto[1]-1,sprsrecto[2], imgw+2,imgh+2, true, 7} --SpriteSheet Select Rect (that white box on the selected sprite)
 local sprsbanksgrid = {swidth-(4*8+1),sprsrecto[2]-8, 8*4,8, 4,1} --The grid of banks selection buttons
 local sprsid = 1 --Selected Sprite ID
 local sprsmflag = false --Sprite selection mouse flag
@@ -29,7 +29,7 @@ for i = 1, 4 do --Create the banks quads
 end
 
 local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in the biggest sprite id.
-local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*(fw+1)+3),sprsbanksgrid[2], 1+maxSpriteIDCells*(fw+1),fh+2, false, 7, 14} --The rect of sprite id; The extra argument is the color of number print
+local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*(fw+1)+3),sprsbanksgrid[2], 1+maxSpriteIDCells*(fw+1),fh+2, false, 6, 13} --The rect of sprite id; The extra argument is the color of number print
 local revdraw = {sprsidrect[1]-(imgw+1),sprsrecto[2]-(imgh+1), imgw, imgh} --The small image at the right of the id with the actual sprite size
 
 local MapW, MapH = swidth*0.75, sheight
@@ -133,9 +133,9 @@ function t:_redraw()
 end
 
 function t:redrawMap()
-  palt(1,false)
+  palt(0,false)
   if mapdx > 0 or mapdy > 0 or mapdx < -(MapW-MapVW)*8 or mapdy < -(MapH-MapVH)*8 then
-    pal(2,3,2)
+    pal(1,2,2)
     bgsprite:draw(1,10,0,1,1,bgquad)
     pal()
     if mapdx < MapVW*8 and mapdy < MapVH*8 and mapdx > -MapW*8 and mapdy > -MapH*8 then
@@ -164,7 +164,7 @@ function t:redrawMap()
   clip(unpack(maprect))
   Map:draw(1-8+(mapdx%8),10-8+(mapdy%8),-math.floor(mapdx/8),-math.floor(mapdy/8),MapVW+2,MapVH+2,false,false,SpriteMap)
   clip()
-  palt(1,true)
+  palt(0,true)
 end
 
 function t:redrawSPRS() _ = nil
@@ -175,7 +175,7 @@ function t:redrawSPRS() _ = nil
   color(sprsidrect[7])
   local id = ""; for i=1, maxSpriteIDCells-(tostring(sprsid):len()) do id = id .. "0" end; id = id .. tostring(sprsid)
   print(id,sprsidrect[1]+1,sprsidrect[2]+1)
-  rect(revdraw[1],revdraw[2], revdraw[3],revdraw[4] ,false,1)
+  rect(revdraw[1],revdraw[2], revdraw[3],revdraw[4] ,false,0)
   SpriteMap:image():draw(revdraw[1],revdraw[2], 0, 1,1, SpriteMap:quad(sprsid))
   SpriteGroup(97,sprsbanksgrid[1],sprsbanksgrid[2],sprsbanksgrid[5],sprsbanksgrid[6],1,1,false,eapi.editorsheet)
   eapi.editorsheet:draw(sprsbank+72,sprsbanksgrid[1]+(sprsbank-1)*8,sprsbanksgrid[2])

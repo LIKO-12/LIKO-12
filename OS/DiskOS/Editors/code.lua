@@ -39,14 +39,14 @@ local screenW, screenH = screenSize()
 local lume = require("C://Libraries/lume")
 local clua = require("C://Libraries/colorize_lua")
 local cluacolors = {
-text = 8,
-keyword = 11,
-number = 13,
-comment = 14,
-str = 13
+text = 7,
+keyword = 10,
+number = 12,
+comment = 13,
+str = 12
 }
 
-ce.bgc = 6--Background Color
+ce.bgc = 5--Background Color
 ce.cx, ce.cy = 1, 1 --Cursor Position
 ce.fw, ce.fh = fontSize() --The font character size
 ce.tw, ce.th = termSize() --The terminal size
@@ -111,7 +111,7 @@ end
 function ce:drawBlink()
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   if self.bflag then
-    rect((self.cx-self.vx+1)*(self.fw+1)-3,(self.cy-self.vy+1)*(self.fh+2)+2, self.fw+1,self.fh, false, 5)
+    rect((self.cx-self.vx+1)*(self.fw+1)-3,(self.cy-self.vy+1)*(self.fh+2)+2, self.fw+1,self.fh, false, 4)
   end
 end
 
@@ -120,7 +120,7 @@ function ce:drawBuffer()
   local cbuffer = self.colorize and clua(lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)),cluacolors) or lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1))
   rect(1,8,screenW,screenH-8*2+1,false,self.bgc)
   for k, l in ipairs(cbuffer) do
-    printCursor(-(self.vx-2),k+1,0)
+    printCursor(-(self.vx-2),k+1,-1)
     self:colorPrint(l)
   end
   self:drawBlink()

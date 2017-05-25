@@ -48,7 +48,10 @@ return function(config) --A function that creates a new GPU peripheral.
     {252,204,171,255} --Human Skin 16
   } --The colorset of the gpu
   
-  _ColorSet[0] = {0,0,0,0} --Color index 0 must be always transparent.
+  for k,v in ipairs(_ColorSet) do
+    _ColorSet[k-1] = v
+  end
+  _ColorSet[16] = nil
   
   local _ClearOnRender = config._ClearOnRender --Should clear the screen when render, some platforms have glitches when this is disabled.
   if type(_ClearOnRender) == "nil" then _ClearOnRender = true end --Defaults to be enabled.
@@ -150,7 +153,7 @@ return function(config) --A function that creates a new GPU peripheral.
     _ImageTransparent[i] = (i==1 and 0 or 1) --Black is transparent by default.
     _DrawPalette[i] = i-1
     _ImagePalette[i] = i-1
-    _DisplayPalette[i] = _ColorSet[i]
+    _DisplayPalette[i] = _ColorSet[i-1]
   end
   _DisplayPalette[17] = {0,0,0,0} --A bug in unpack ???
   _DrawPalette[17] = 0
@@ -206,11 +209,10 @@ return function(config) --A function that creates a new GPU peripheral.
     return math.floor((x - _LIKO_X)/_LIKOScale )+1, math.floor((y - _LIKO_Y)/_LIKOScale)+1
   end
   
-  local function _GetColor(c) return _ColorSet[c or 1] or _ColorSet[0] end --Get the (rgba) table of a color id.
+  local function _GetColor(c) return _ColorSet[c or 0] or _ColorSet[0] end --Get the (rgba) table of a color id.
   
   local _ColorSetLookup = {}
   for k,v in ipairs(_ColorSet) do _ColorSetLookup[table.concat(v)] = k end
-  _ColorSetLookup["0000"] = 0
   local function _GetColorID(...) --Get the color id by the (rgba) table.
     local col = {...}
     if col[4] == 0 then return 0 end
@@ -219,22 +221,18 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Convert from LIKO12 palette to real colors.
   local function _ExportImage(x,y, r,g,b,a)
-    if a == 0 then return 0,0,0,0 end
     if _ImageTransparent[r+1] == 0 then return 0,0,0,0 end
-    return unpack(_ColorSet[r+1])
+    return unpack(_ColorSet[r])
   end
   
   --Convert from LIKO-12 palette to real colors ignoring transparent colors.
   local function _ExportImageOpaque(x,y, r,g,b,a)
-    if a == 0 then return 0,0,0,0 end
-    return unpack(_ColorSet[r+1])
+    return unpack(_ColorSet[r])
   end
   
   --Convert from real colors to LIKO-12 palette
   local function _ImportImage(x,y, r,g,b,a)
-    local col = _GetColorID(r,g,b,a)
-    if col == 0 then return 0,0,0,0 end
-    return col-1,0,0,255
+    return _GetColorID(r,g,b,a),0,0,255
   end
   
   --Used for print function (in grid mode)
@@ -504,7 +502,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local Clip = false --The current active clipping region.
   local ColorStack = {} --The colors stack (pushColor,popColor)
   local PaletteStack = {} --The palette stack (pushPalette,popPalette)
-  local printCursor = {x=1,y=1,bgc=1} --The print grid cursor pos.
+  local printCursor = {x=1,y=1,bgc=0} --The print grid cursor pos.
   local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2)) --The size of characters that the screen can fit.
   
   --Those explains themselves.
@@ -523,18 +521,13 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.color(id)
     if id then
       if type(id) ~= "number" then return false, "The color id must be a number." end --Error
-      if id > 16 or id < 0 then return false, "The color id is out of range." end --Error
+      if id > 15 or id < 0 then return false, "The color id is out of range." end --Error
       id = math.floor(id) --Remove the float digits.
-      if id == 0 then --Set the active color.
-        love.graphics.setColor(0,0,0,0)
-      else
-        love.graphics.setColor(id-1,0,0,255)
-      end
+      love.graphics.setColor(id,0,0,255) --Set the active color.
       return true --It ran successfuly.
     else
       local r,g,b,a = love.graphics.getColor()
-      if a == 0 then return true,0 end
-      return true, r+1 --Return the current color.
+      return true, r --Return the current color.
     end
   end
   
@@ -564,8 +557,8 @@ return function(config) --A function that creates a new GPU peripheral.
     if c0 then c0 = math.floor(c0) end
     if c1 then c1 = math.floor(c1) end
     if p then p = math.floor(p) end
-    if c0 and (c0 < 1 or c0 > 16) then return false, "C0 is out of range ("..c0..") expected [1,16]" end
-    if c1 and (c1 < 1 or c1 > 16) then return false, "C1 is out of range ("..c1..") expected [1,16]" end
+    if c0 and (c0 < 0 or c0 > 15) then return false, "C0 is out of range ("..c0..") expected [0,15]" end
+    if c1 and (c1 < 0 or c1 > 15) then return false, "C1 is out of range ("..c1..") expected [0,15]" end
     if p and (p < 1 or p > 2) then return false, "P is out of range ("..p..") expected [1,2]" end
     
     --Reset the palettes.
@@ -583,25 +576,25 @@ return function(config) --A function that creates a new GPU peripheral.
       end
     --Reset a specific color
     elseif not(c1) then
-      if ((not p) or p == 1) and _DrawPalette[c0] ~= c0-1 then
+      if ((not p) or p == 1) and _DrawPalette[c0] ~= c0 then
         drawchange = true
-        _DrawPalette[c0] = c0-1
+        _DrawPalette[c0+1] = c0
       end
       
-      if ((not p) or p > 1) and _ImagePalette[c0] ~= c0-1 then
+      if ((not p) or p > 1) and _ImagePalette[c0] ~= c0 then
         imagechange = true
-        _ImagePalette[c0] = c0-1
+        _ImagePalette[c0+1] = c0
       end
     --Modify the palette
     elseif c0 and c1 then
-      if ((not p) or p == 1) and _DrawPalette[c0] ~= c1-1 then
+      if ((not p) or p == 1) and _DrawPalette[c0] ~= c1 then
         drawchange = true
-        _DrawPalette[c0] = c1-1
+        _DrawPalette[c0+1] = c1
       end
       
-      if ((not p) or p > 1) and _ImagePalette[c0] ~= c1-1 then
+      if ((not p) or p > 1) and _ImagePalette[c0] ~= c1 then
         imagechange = true
-        _ImagePalette[c0] = c1-1
+        _ImagePalette[c0+1] = c1
       end
     end
     --If changes has been made then upload the data to the shaders.
@@ -615,10 +608,10 @@ return function(config) --A function that creates a new GPU peripheral.
     if c then
       if type(c) ~= "number" then return false, "Color must be a number, provided: "..type(c) end
       c = math.floor(c)
-      if (c < 1 or c > 16) then return false, "Color out of range ("..c..") expected [1,16]" end
+      if (c < 0 or c > 15) then return false, "Color out of range ("..c..") expected [0,15]" end
       
-      if _ImageTransparent[c] == (t and 1 or 0) then
-        _ImageTransparent[c] = (t and 0 or 1)
+      if _ImageTransparent[c+1] == (t and 1 or 0) then
+        _ImageTransparent[c+1] = (t and 0 or 1)
         changed = true
       end
     else
@@ -830,7 +823,7 @@ return function(config) --A function that creates a new GPU peripheral.
     
     x1,y1,x2,y2,x3,y3 = math.floor(x1),math.floor(y1),math.floor(x2),math.floor(y2),math.floor(x3),math.floor(y3)
     if col then col = math.floor(col) end
-    if col and (col < 0 or col > 16) then return false, "color is out of range ("..col..") expected [0,16]" end
+    if col and (col < 0 or col > 15) then return false, "color is out of range ("..col..") expected [0,15]" end
     
     if col then exe(GPU.pushColor()) exe(GPU.color(col)) end
     
@@ -957,7 +950,7 @@ return function(config) --A function that creates a new GPU peripheral.
       
       --A function to draw the background rectangle
       local function drawbackground(gx,gy,gw)
-        if pc.bgc == 0 or gw < 1 then return end --No need to draw the background
+        if pc.bgc == -1 or gw < 1 then return end --No need to draw the background
         gx,gy = togrid(gx,gy)
         GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, pc.bgc)
       end
@@ -981,7 +974,7 @@ return function(config) --A function that creates a new GPU peripheral.
         GPU.pushPalette() GPU.palt() GPU.pal() --Backup the palette and reset the palette.
         local extra = linesNum - (TERM_H-pc.y+1) --The extra lines that will draw out of the screen.
         local sc = exe(GPU.screenshot()) --Take a screenshot
-        GPU.clear(1) --Clear the screen
+        GPU.clear(0) --Clear the screen
         sc:image():draw(1, extra*(_FontH+2)*-1+1) --Draw the screen shifted up
         pc.y = pc.y-extra --Update the cursor pos.
         GPU.popPalette() --Restore the palette.
@@ -1018,7 +1011,7 @@ return function(config) --A function that creates a new GPU peripheral.
     
     --A function to draw the background rectangle
     local function drawbackground(gx,gy,gw)
-      if printCursor.bgc == 0 or gw < 1 then return end --No need to draw the background
+      if printCursor.bgc == -1 or gw < 1 then return end --No need to draw the background
       gx,gy = togrid(gx,gy)
       GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, printCursor.bgc)
     end
@@ -1041,12 +1034,10 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Clears the whole screen with black or the given color id.
   function GPU.clear(c) UnbindVRAM()
-    local c = math.floor(c or 1)
+    local c = math.floor(c or 0)
     if type(c) ~= "number" then return false, "The color id must be a number." end --Error
-    if c > 16 or c < 0 then return false, "The color id is out of range." end --Error
-    local a = c > 0 and 255 or 0
-    if c == 0 then c = 1 end
-    love.graphics.clear(c-1,0,0,a) _ShouldDraw = true
+    if c > 15 or c < 0 then return false, "The color id is out of range." end --Error
+    love.graphics.clear(c,0,0,255) _ShouldDraw = true
     return true --It ran successfully.
   end
   
@@ -1165,7 +1156,7 @@ return function(config) --A function that creates a new GPU peripheral.
         return 1
       end
       local r,g,b,a = imageData:getPixel(x-1,y-1)
-      return r+1
+      return r
     end
     function id:setPixel(x,y,c)
       if type(c) ~= "number" then return error("Color must be a number, provided "..type(c)) end
@@ -1175,17 +1166,17 @@ return function(config) --A function that creates a new GPU peripheral.
       if x < 1 or x > self:width() or y < 1 or y > self:height() then
         return self
       end
-      c = math.floor(c) if c < 1 or c > 16 then return error("Color out of range ("..c..") expected [1,16]") end
-      imageData:setPixel(x-1,y-1,c-1,0,0,255)
+      c = math.floor(c) if c < 0 or c > 15 then return error("Color out of range ("..c..") expected [0,15]") end
+      imageData:setPixel(x-1,y-1,c,0,0,255)
       return self
     end
     function id:map(mf)
       imageData:mapPixel(
       function(x,y,r,g,b,a)
-        local c = mf(x+1,y+1,r+1)
+        local c = mf(x+1,y+1,r)
         if c and type(c) ~= "number" then error("Color must be a number, provided "..type(c)) elseif c then c = math.floor(c) end
-        if c and (c < 1 or c > 16) then return error("Color out of range ("..c..") expected [1,16]") end
-        if c then return c-1,0,0,255 else return r,g,b,a end
+        if c and (c < 0 or c > 15) then error("Color out of range ("..c..") expected [0,15]") end
+        if c then return c,0,0,255 else return r,g,b,a end
       end)
       return self
     end
@@ -1231,7 +1222,7 @@ return function(config) --A function that creates a new GPU peripheral.
     
     function id:encode() --Export to liko12 format
       local data = "LK12;GPUIMG;"..self:width().."x"..self.height()..";"
-      self:map(function(x,y,c) if x == 1 then data = data.."\n" end data = data..string.format("%X",c-1) end)
+      self:map(function(x,y,c) if x == 1 then data = data.."\n" end data = data..string.format("%X",c) end)
       return data
     end
     
@@ -1346,7 +1337,7 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setLineJoin("miter") --Set the line join style.
   love.graphics.setPointSize(1) --Set the point size to 1px.
   love.graphics.setLineWidth(1) --Set the line width to 1px.
-  love.graphics.setColor(_GetColor(1)) --Set the active color to black.
+  love.graphics.setColor(_GetColor(0)) --Set the active color to black.
   love.mouse.setVisible(false)
   
   exe(GPU.clear()) --Clear the canvas for the first time.

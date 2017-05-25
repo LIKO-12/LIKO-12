@@ -41,7 +41,7 @@ if not diskchunk then
   local err = tostring(err)
   local pos = string.find(err,":")
   err = err:sub(pos+1,-1)
-  color(9) print("Compile ERR: "..err )
+  color(8) print("Compile ERR: "..err )
   return
 end
 
@@ -131,7 +131,7 @@ while true do
   end]]
   
   if os.clock() > eventclock + 3.5 then
-    color(9) print("Too Long Without Pulling Event / Flipping") break
+    color(8) print("Too Long Without Pulling Event / Flipping") break
   end
   
   local args = {coroutine.resume(co,unpack(lastArgs))}
@@ -139,7 +139,7 @@ while true do
   if not args[1] then
     local err = tostring(args[2])
     local pos = string.find(err,":") or 0
-    err = err:sub(pos+1,-1); color(9) print("ERR: "..err ); break
+    err = err:sub(pos+1,-1); color(8) print("ERR: "..err ); break
   end
   if args[2] then
     lastArgs = {coroutine.yield(args[2],unpack(extractArgs(args,2)))}

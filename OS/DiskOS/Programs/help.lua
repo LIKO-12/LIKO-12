@@ -28,7 +28,7 @@ end
 helpPath = require("C://Programs/help",true).getHelpPath() --A smart way to keep the helpPath
 
 print("") --New line
-palt(1,false) --Make black opaque
+palt(0,false) --Make black opaque
 
 local doc --The help document to print
 
@@ -44,7 +44,7 @@ for path in nextPath() do
   end
 end
 
-if not doc then color(9) print("Help file not found '"..topic.."' !") return end
+if not doc then color(8) print("Help file not found '"..topic.."' !") return end
 
 local function waitkey()
   while true do
@@ -79,12 +79,12 @@ local function sprint(text) --Smart print with the "press any key to continue" m
 	if cy + i < th+1 then
 	  print(text:sub( (i-1)*tw+1, (i)*tw ))
 	else
-	  pushColor() color(10)
+	  pushColor() color(9)
 	  print(msg,false) popColor()
       flip()
       local quit = waitkey()
       printCursor(1,th)
-      rect(1,sh-8,sw,8,false,1)
+      rect(1,sh-8,sw,8,false,0)
       if quit then return true end
       print(text:sub( (i-1)*tw+1, (i)*tw ))
 	end
