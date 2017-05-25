@@ -16,11 +16,12 @@ Functions:
 
 GPU.clear
 ---------
+
 **Usage**::
 
   clear(cid)
 
-  Clears the screen and fills it with a specific color.
+Clears the screen and fills it with a specific color.
 
 **Arguments**:
 
@@ -28,24 +29,26 @@ GPU.clear
 
 GPU.color
 ---------
-**Usage**::
+
+**Usage**:
+
 1. **Set Color**::
 
      color(cid)
 
-  Sets the current active drawing color.
+   Sets the current active drawing color.
 
-  **Arguments**:
+   **Arguments**:
   
-  :cid: **Number**: Color ID, The new active color id, must be in range [0,15].
+   :cid: **Number**: Color ID, The new active color id, must be in range [0,15].
   
 2. **Get Color**::
 
      local cid = color()
   
-  Gets the current active drawing color.
+   Gets the current active drawing color.
   
-  **Returns**:
+   **Returns**:
   
-  :cid: **Number (Int)**: Color ID, The current active color id in range [0,15].
+   :cid: **Number (Int)**: Color ID, The current active color id in range [0,15].
   
