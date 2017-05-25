@@ -23,4 +23,4 @@ Clears the screen and fills it with a specific color
 
 **Arguments**
 
-:cid: Color ID, The color to fill the screen with. Defaults to 0.
+:[cid] (0): **Number**: Color ID, The color to fill the screen with.
