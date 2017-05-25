@@ -204,7 +204,7 @@ if gpu then
       gpu.print("Copyright (C) Rami Sabbagh",16,14)
       
       gpu.printCursor(1,4,0)
-      gpu.print("NormBIOS Revision 060-004")
+      gpu.print("NormBIOS Revision 060-005")
       gpu.print("")
       
       gpu.print("Press DEL to enter setup",4,sh-7)
