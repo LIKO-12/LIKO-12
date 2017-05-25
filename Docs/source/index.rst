@@ -7,9 +7,7 @@ Welcome to LIKO-12's documentation!
 ===================================
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 2
    :caption: Contents:
    
-   *
-   User Manual/*
-   User Manual/Peripherals/*
+   "User Manual/Peripherals/GPU"
