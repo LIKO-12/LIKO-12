@@ -1,7 +1,7 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-clear(1)
-color(8)
+clear()
+color(7)
 cursor("point")
 local char = string.char
 
@@ -18,8 +18,8 @@ end
 local function p16(x,s)
  for i=s,s+15 do
   printCursor(x,i-s+1,0)
-  color(12); print(tohex(i)..": ",false)
-  color(8); print(tovalue(peek(i)))
+  color(11); print(tohex(i)..": ",false)
+  color(7); print(tovalue(peek(i)))
  end
 end
 
