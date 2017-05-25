@@ -11,5 +11,5 @@ Welcome to LIKO-12's documentation!
    :caption: Contents:
    
    *
-   UserManual/*
-   UserManual/Peripherals/*
+   User Manual/*
+   User Manual/Peripherals/*
