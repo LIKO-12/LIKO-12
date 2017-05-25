@@ -11,4 +11,6 @@ Welcome to LIKO-12's documentation!
    :caption: Contents:
    
    self
-   *
+   gettingstarted
+   GPU
+   
