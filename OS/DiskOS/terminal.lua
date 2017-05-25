@@ -11,15 +11,14 @@ end
 
 local fw, fh = fontSize()
 
-clear(1)
+clear()
 SpriteGroup(25,2,2,5,1,1,1,0,editor.editorsheet)
-printCursor(1,2,1)
-color(9) print("DEV",5*8+2,4) flip() sleep(0.125)
-cam("translate",0,3) color(13) print("D",false) color(7) print("isk",false) color(13) print("OS",false) color(7) cam("translate",0,-1) print("  0.6") editor.editorsheet:draw(60,(fw+1)*6+2,fh+3) flip() sleep(0.125) cam()
-color(7) print("\nhttp://github.com/ramilego4game/liko12")
---color(7) print("\nA PICO-8 INSPIRED OS WITH EXTRA ABILITIES")
+printCursor(1,2,0)
+color(8) print("DEV",5*8+2,4) flip() sleep(0.125)
+cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  0.6") editor.editorsheet:draw(60,(fw+1)*6+2,fh+3) flip() sleep(0.125) cam()
+color(6) print("\nhttp://github.com/ramilego4game/liko12")
 flip() sleep(0.0625)
-color(10) print("TYPE HELP FOR HELP")
+color(9) print("TYPE HELP FOR HELP")
 flip() sleep(0.0625)
 
 local history = {}
@@ -33,8 +32,8 @@ local function checkCursor()
   if cx < 1 then cx = 1 end
   if cy > th+1 then cy = th+1 end
   if cy < 1 then cy = 1 end
-  printCursor(cx,cy,1) cy = cy-1
-  rect(cx*(fw+1)-4,blink and cy*(fh+2)+2 or cy*(fh+2)+1,fw+1,blink and fh or fh+3,false,blink and 5 or 1) --The blink
+  printCursor(cx,cy,0) cy = cy-1
+  rect(cx*(fw+1)-4,blink and cy*(fh+2)+2 or cy*(fh+2)+1,fw+1,blink and fh or fh+3,false,blink and 4 or 0) --The blink
 end
 
 local function split(str)
@@ -117,9 +116,9 @@ function term.execute(command,...)
   if not command then print("") return false, "No command" end
   if fs.exists(curpath..command..".lua") then
     local chunk, err = fs.load(curpath..command..".lua")
-    if not chunk then color(9) print("\nL-ERR:"..tostring(err)) color(8) return false, tostring(err) end
+    if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
     local ok, err = pcall(chunk,...)
-    if not ok then color(9) print("ERR: "..tostring(err)) color(8) return false, tostring(err) end
+    if not ok then color(8) print("ERR: "..tostring(err)) color(7) return false, tostring(err) end
     if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
     color(8) pal() palt() cam() clip() return true
   end
@@ -129,22 +128,22 @@ function term.execute(command,...)
       for _,file in ipairs(files) do
         if file == command..".lua" then
           local chunk, err = fs.load(path..file)
-          if not chunk then color(9) print("\nL-ERR:"..tostring(err)) color(8) return false, tostring(err) end
+          if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
           local ok, err = pcall(chunk,...)
-          if not ok then color(9) print("\nERR: "..tostring(err)) color(8) return false, tostring(err) end
+          if not ok then color(8) print("\nERR: "..tostring(err)) color(7) return false, tostring(err) end
           if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
-          color(8) pal() palt() cam() clip() return true
+          color(7) pal() palt() cam() clip() return true
         end
       end
     end
   end
-  color(10) print("\nFile not found") color(8) return false, "File not found"
+  color(9) print("\nFile not found") color(7) return false, "File not found"
 end
 
 function term.loop() --Enter the while loop of the terminal
   cursor("none")
   clearEStack()
-  color(8) checkCursor() print(term.getpath().."> ",false)
+  color(7) checkCursor() print(term.getpath().."> ",false)
   local buffer = ""
   while true do
     checkCursor()
@@ -158,7 +157,7 @@ function term.loop() --Enter the while loop of the terminal
         table.insert(history, buffer)
         blink = false; checkCursor()
         term.execute(split(buffer)) buffer = ""
-        color(8) checkCursor() print(term.getpath().."> ",false) blink = true cursor("none")
+        color(7) checkCursor() print(term.getpath().."> ",false) blink = true cursor("none")
       elseif a == "backspace" then
         blink = false; checkCursor()
         if buffer:len() > 0 then
@@ -178,7 +177,7 @@ function term.loop() --Enter the while loop of the terminal
         local oldx, oldy, oldbk = printCursor()
         editor:loop() cursor("none")
         printCursor(oldx,oldy,oldbk)
-        palt(1,false) screenbk:image():draw(1,1) color(8) palt(1,true)
+        palt(0,false) screenbk:image():draw(1,1) color(7) palt(0,true)
       elseif a == "up" then
         if not hispos then
           table.insert(history,buffer)

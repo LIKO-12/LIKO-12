@@ -1,37 +1,37 @@
 --Paint Program--
 print("")
 local args = {...}
-if #args < 1 then color(9) print("Must provide the path to the file") return end
+if #args < 1 then color(8) print("Must provide the path to the file") return end
 local tar = table.concat(args," ")..".lk12" --The path may include whitespaces
 local term = require("C://terminal")
 tar = term.parsePath(tar)
 
-if fs.exists(tar) and fs.isDirectory(tar) then color(9) print("Can't edit directories !") return end
+if fs.exists(tar) and fs.isDirectory(tar) then color(8) print("Can't edit directories !") return end
 
 local img, imgdata
 
 if not fs.exists(tar) then --Create a new image
-  color(10) print("Input image size:")
+  color(9) print("Input image size:")
   
-  color(12) print("Width: ",false)
-  color(8) local width = input()
+  color(11) print("Width: ",false)
+  color(7) local width = input()
   if not width or width:len() == 0 then print("") return end
   local w = tonumber(width)
-  if not w then color(9) print("\nInvalid Width: "..width..", width must be a number !") return end
+  if not w then color(8) print("\nInvalid Width: "..width..", width must be a number !") return end
   
-  color(12) print(", Height: ",false)
-  color(8) local height = input()
+  color(11) print(", Height: ",false)
+  color(7) local height = input()
   if not height or height:len() == 0 then print("") return end
   local h = tonumber(height)
-  if not h then color(9) print("\nInvalid Height: "..height..", height must be a number !") return end
-  color(9) print("\nW:"..w.." H:"..h)
+  if not h then color(8) print("\nInvalid Height: "..height..", height must be a number !") return end
+  color(8) print("\nW:"..w.." H:"..h)
   
   imgdata = imagedata(w,h)
   img = imgdata:image()
 else --Load the image
   local data = fs.read(tar)
   local ok, err = pcall(image,data)
-  if not ok then color(9) print(err) return end
+  if not ok then color(8) print(err) return end
   img = err
   imgdata = img:data()
 end
@@ -59,18 +59,18 @@ local controlNum = 3 --The number of the control buttons at the top right corner
 local controlGrid = {swidth-8*controlNum+1,1, 8*controlNum,8, controlNum,1}
 
 function edit:drawTopBar()
-  palt(1,true)
+  palt(0,true)
   rect(1,1,swidth,8,false,self.flavor)
   SpriteGroup(55, 1,1, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
   SpriteGroup(controlID, controlGrid[1],controlGrid[2], controlGrid[5],controlGrid[6], 1,1, false, self.editorsheet)
   if sid then
     SpriteGroup(controlID+24+sid, controlGrid[1]+sid*8,controlGrid[2], 1,1, 1,1, false, self.editorsheet)
   end
-  palt(1,false)
+  palt(0,false)
 end
 
 function edit:drawBackground()
-  rect(1,9,swidth,sheight-8*2,false,1)
+  rect(1,9,swidth,sheight-8*2,false,0)
   bgsprite:draw(1,9,0,1,1,bgquad)
 end
 
@@ -96,7 +96,7 @@ local controls = {
     if fs.exists(tar) then
       local data = fs.read(tar)
       local ok, err = pcall(image,data)
-      if not ok then color(9) print(err) return end
+      if not ok then color(8) print(err) return end
       img = err
       imgdata = img:data()
       painteditor:import(img,imgdata)
@@ -218,6 +218,6 @@ for event, a,b,c,d,e,f in pullEvent do
   end
 end
 
-clear(1)
+clear(0)
 screen:image():draw(1,1)
 printCursor(px,py,pc)

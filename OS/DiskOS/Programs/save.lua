@@ -10,21 +10,21 @@ if destination and destination ~= "@clip" then destination = term.parsePath(dest
   destination = eapi.filePath
 end
 
-if not destination then color(9) print("\nMust provide the destination file path") return end
+if not destination then color(8) print("\nMust provide the destination file path") return end
 
-if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then color(9) print("Destination must not be a directory") return end
+if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end
 
 local sw, sh = screenSize()
 
 if string.lower(flag) == "--sheet" then --Sheet export
   local data = eapi.leditors[3]:export(true)
   if destination == "@clip" then clipboard(data) else fs.write(destination,data) end
-  color(12) print("\nExported Spritesheet successfully")
+  color(11) print("\nExported Spritesheet successfully")
   return
 elseif string.lower(flag) == "--code" then
   local data = eapi.leditors[2]:export(true)
   if destination == "@clip" then clipboard(data) else fs.write(destination:sub(0,-6),data) end
-  color(12) print("\nExported Lua code successfully")
+  color(11) print("\nExported Lua code successfully")
   return
 end
 
@@ -46,4 +46,4 @@ else
   fs.write(destination,header.."\n"..data)
 end
 
-color(12) print(destination == "@clip" and "\nSaved to clipboard successfully" or "\nSaved successfully")
+color(11) print(destination == "@clip" and "\nSaved to clipboard successfully" or "\nSaved successfully")

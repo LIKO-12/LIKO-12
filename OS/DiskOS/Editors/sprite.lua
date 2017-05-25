@@ -23,10 +23,10 @@ grid: gridX,gridY, gridW,gridH, cellW, cellH
 ]]
 
 --SpriteSheet Sprite Selection--
-local sprsrecto = {1,sheight-(8+bsizeH+1), swidth,bsizeH+2, false, 1} --SpriteSheet Outline Rect
+local sprsrecto = {1,sheight-(8+bsizeH+1), swidth,bsizeH+2, false, 0} --SpriteSheet Outline Rect
 local sprsdraw = {1,sheight-(8+bsizeH), 0, 1,1} --SpriteSheet Draw Location; IMG_DRAW
 local sprsgrid = {sprsdraw[1],sprsdraw[2], sizeW,bsizeH, sheetW,bankH} --The SpriteSheet selection grid
-local sprssrect = {sprsrecto[1]-1,sprsrecto[2], imgw+2,imgh+2, true, 8} --SpriteSheet Select Rect (that white box on the selected sprite)
+local sprssrect = {sprsrecto[1]-1,sprsrecto[2], imgw+2,imgh+2, true, 7} --SpriteSheet Select Rect (that white box on the selected sprite)
 local sprsbanksgrid = {swidth-(4*8+1),sprsrecto[2]-8, 8*4,8, 4,1} --The grid of banks selection buttons
 local sprsid = 1 --Selected Sprite ID
 local sprsmflag = false --Sprite selection mouse flag
@@ -37,7 +37,7 @@ for i = 1, 4 do --Create the banks quads
 end
 
 local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in the biggest sprite id.
-local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*(fw+1)+3),sprsbanksgrid[2], 1+maxSpriteIDCells*(fw+1),fh+2, false, 7, 14} --The rect of sprite id; The extra argument is the color of number print
+local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*(fw+1)+3),sprsbanksgrid[2], 1+maxSpriteIDCells*(fw+1),fh+2, false, 6, 13} --The rect of sprite id; The extra argument is the color of number print
 local revdraw = {sprsidrect[1]-(imgw+1),sprsrecto[2]-(imgh+1), imgw, imgh} --The small image at the right of the id with the actual sprite size
 
 --The current sprite flags--
@@ -69,21 +69,21 @@ temp.size = math.floor((temp.smallestDistance-(3+3))/(imgw > imgh and imgw or im
 
 local psize = temp.size--9 --Zoomed pixel size
 local imgdraw = {3+1,8+3+1, 0, psize,psize} --Image Location; IMG_DRAW
-local imgrecto = {imgdraw[1]-1,imgdraw[2]-1,psize*imgw+2,psize*imgh+2, false,1} --The image outline rect position
+local imgrecto = {imgdraw[1]-1,imgdraw[2]-1,psize*imgw+2,psize*imgh+2, false,0} --The image outline rect position
 local imggrid = {imgdraw[1],imgdraw[2], psize*imgw,psize*imgh, imgw,imgh} --The image drawing grid
 
 --The Color Selection Pallete--
-temp = {col=0,height=transdraw[3]-(8+3+3)} --Temporary Variable
+temp = {col=-1,height=transdraw[3]-(8+3+3)} --Temporary Variable
 local palpsize = math.floor(temp.height/4) --The size of each color box in the color selection pallete
 local palimg = imagedata(4,4):map(function() temp.col = temp.col + 1 return temp.col end ):image() --The image of the color selection pallete
-local palrecto = {swidth-(palpsize*4+3),8+3, palpsize*4+2,palpsize*4+2, false, 1} --The outline rectangle of the color selection pallete
+local palrecto = {swidth-(palpsize*4+3),8+3, palpsize*4+2,palpsize*4+2, false, 0} --The outline rectangle of the color selection pallete
 local paldraw = {palrecto[1]+1,palrecto[2]+1,0,palpsize,palpsize} --The color selection pallete draw arguments; IMG_DRAW
 local palgrid = {paldraw[1],paldraw[2],palpsize*4,palpsize*4,4,4} --The color selection pallete grid
 
-local colsrectL = {palrecto[1],palrecto[2],palpsize+2,palpsize+2, true, 8} --The color select box for the left mouse button (The black one)
-local colsrectR = {paldraw[1],paldraw[2],palpsize,palpsize, true, 1} --The color select box for the right mouse button (The white one)
-local colsL = 1 --Selected Color for the left mouse
-local colsR = 1 --Selected Color for the right mouse
+local colsrectL = {palrecto[1],palrecto[2],palpsize+2,palpsize+2, true, 7} --The color select box for the left mouse button (The black one)
+local colsrectR = {paldraw[1],paldraw[2],palpsize,palpsize, true, 0} --The color select box for the right mouse button (The white one)
+local colsL = 0 --Selected Color for the left mouse
+local colsR = 0 --Selected Color for the right mouse
 
 --Info system variables--
 local infotimer = 0 --The info timer, 0 if no info.
@@ -131,7 +131,7 @@ local tools = {
     local data = self.SpriteMap:data()
     local qx,qy = self.SpriteMap:rect(sprsid)
     for px = 0, 7 do for py = 0, 7 do
-      data:setPixel(qx+px,qy+py,1)
+      data:setPixel(qx+px,qy+py,0)
     end end
     self.SpriteMap.img = data:image()
     infotimer, infotext = 2,"DELETED SPRITE "..sprsid se:redrawINFO()
@@ -255,7 +255,7 @@ end
 function se:redrawSPR()
   rect(imgrecto)
   self.SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],self.SpriteMap:quad(sprsid))
-  rect(revdraw[1],revdraw[2], revdraw[3],revdraw[4] ,false,1)
+  rect(revdraw[1],revdraw[2], revdraw[3],revdraw[4] ,false,0)
   self.SpriteMap:image():draw(revdraw[1],revdraw[2], 0, 1,1, self.SpriteMap:quad(sprsid))
 end
 
@@ -281,9 +281,9 @@ function se:redrawFLAG()
 end
 
 function se:redrawINFO()
-  rect(1,sheight-7,swidth,8,false,10)
+  rect(1,sheight-7,swidth,8,false,9)
   if infotimer > 0 then
-    color(5)
+    color(4)
     print(infotext or "",2,sheight-5)
   end
 end
@@ -329,12 +329,12 @@ function se:mousepressed(x,y,b,it)
   local cx, cy = whereInGrid(x,y,palgrid)
   if cx then
     if b == 1 then
-      colsL = (cy-1)*4+cx
+      colsL = ((cy-1)*4+cx)-1
       local cx, cy = cx-1, cy-1
       colsrectL[1] = palrecto[1] + cx*palpsize
       colsrectL[2] = palrecto[2] + cy*palpsize
     elseif b == 2 then
-      colsR = (cy-1)*4+cx
+      colsR = ((cy-1)*4+cx)-1
       local cx, cy = cx-1, cy-1
       colsrectR[1] = paldraw[1] + cx*palpsize
       colsrectR[2] = paldraw[2] + cy*palpsize
@@ -459,26 +459,26 @@ function se:keypressed(key)
     if isKDown("lshift","rshift") then
       if key == "]" or key == "}" then
         colsR = colsR + 1
-        if colsR > 16 then colsR = 1 end
+        if colsR > 15 then colsR = 0 end
       else
         colsR = colsR - 1
-        if colsR < 1 then colsR = 16 end
+        if colsR < 0 then colsR = 15 end
       end
-      local cx = (colsR-1) % 4
-      local cy = math.floor((colsR-1)/4)
+      local cx = colsR % 4
+      local cy = math.floor(colsR/4)
       
       colsrectR[1] = paldraw[1] + cx*palpsize
       colsrectR[2] = paldraw[2] + cy*palpsize
     else
       if key == "]" or key == "}" then
         colsL = colsL + 1
-        if colsL > 16 then colsL = 1 end
+        if colsL > 15 then colsL = 0 end
       else
         colsL = colsL - 1
-        if colsL < 1 then colsL = 16 end
+        if colsL < 0 then colsL = 15 end
       end
-      local cx = (colsL-1) % 4
-      local cy = math.floor((colsL-1)/4)
+      local cx = colsL % 4
+      local cy = math.floor(colsL/4)
       
       colsrectL[1] = palrecto[1] + cx*palpsize
       colsrectL[2] = palrecto[2] + cy*palpsize

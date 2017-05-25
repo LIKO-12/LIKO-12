@@ -1,12 +1,12 @@
 --Text editor--
 print("")
 local args = {...} --Get the arguments passed to this program
-if #args < 1 then color(9) print("Must provide the path to the file") return end
+if #args < 1 then color(8) print("Must provide the path to the file") return end
 local tar = table.concat(args," ") --The path may include whitespaces
 local term = require("C://terminal")
 tar = term.parsePath(tar)
 
-if fs.exists(tar) and fs.isDirectory(tar) then color(9) print("Can't edit directories !") return end
+if fs.exists(tar) and fs.isDirectory(tar) then color(8) print("Can't edit directories !") return end
 local eapi = require("C://Editors")
 local edit = {}
 edit.editorsheet = eapi.editorsheet
@@ -175,6 +175,6 @@ for event, a,b,c,d,e,f in pullEvent do
   end
 end
 
-clear(1)
+clear(0)
 screen:image():draw(1,1)
 printCursor(px,py,pc)

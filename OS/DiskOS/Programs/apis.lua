@@ -2,7 +2,7 @@
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
 
 print("")
-palt(1,false) --Make black opaque
+palt(0,false) --Make black opaque
 
 local peri = select(1,...)
 
@@ -29,12 +29,12 @@ local function sprint(text)
   if cy < th-1 then print(text.." ",false) return end
   local tlen = text:len()+1
   if cx+tlen >= tw then
-    print("") pushColor() color(10)
+    print("") pushColor() color(9)
     print(msg,false) popColor()
     flip()
     local quit = waitkey()
     printCursor(1,th)
-    rect(1,sh-8,sw,8,false,1)
+    rect(1,sh-8,sw,8,false,0)
     if quit then return true end
     screenshot():image():draw(1,-7)
     printCursor(cx, th-2)
@@ -46,15 +46,15 @@ end
 
 if peri then
  if not perlist[peri] then
-   color(9) print("Peripheral '"..peri.."' doesn't exists") return
+   color(8) print("Peripheral '"..peri.."' doesn't exists") return
  end
- color(12) if sprint(peri..":") then return end color(8)
+ color(11) if sprint(peri..":") then return end color(7)
  for k, name in pairs(perlist[peri]) do
    if sprint(name) then return end
  end
 else
  for per, funcs in pairs(perlist) do
-   color(12) print("---"..per.."---") color(8)
+   color(11) print("---"..per.."---") color(7)
    for k, name in pairs(funcs) do
      if sprint(name) then return end
    end

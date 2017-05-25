@@ -1175,7 +1175,7 @@ return function(config) --A function that creates a new GPU peripheral.
       function(x,y,r,g,b,a)
         local c = mf(x+1,y+1,r)
         if c and type(c) ~= "number" then error("Color must be a number, provided "..type(c)) elseif c then c = math.floor(c) end
-        if c and (c < 0 or c > 15) then return error("Color out of range ("..c..") expected [0,15]") end
+        if c and (c < 0 or c > 15) then error("Color out of range ("..c..") expected [0,15]") end
         if c then return c,0,0,255 else return r,g,b,a end
       end)
       return self

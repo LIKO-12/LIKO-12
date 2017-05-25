@@ -10,7 +10,7 @@ function input()
   local blinktime = 0.5
   local function drawblink()
     local cx,cy,c = printCursor() cy = cy-1
-    rect(cx*(fw+1)-3,blink and cy*(fh+2)+2 or cy*(fh+2)+1,fw+1,blink and fh or fh+2,false,blink and 5 or c) --The blink
+    rect(cx*(fw+1)-3,blink and cy*(fh+2)+2 or cy*(fh+2)+1,fw+1,blink and fh or fh+3,false,blink and 4 or c) --The blink
   end
   
   for event,a,b,c,d,e,f in pullEvent do
@@ -90,9 +90,9 @@ function whereInGrid(x,y, grid) --Grid X, Grid Y, Grid Width, Grid Height, NumOf
     local hy = math.floor(y/clh)+1 hy = hy <= ch and hy or hy-1
     if debugGrids then
       for x=1,cw do for y=1,ch do
-        rect(gx+(x*clw-clw),gy+(y*clh-clh),clw,clh,true,9)
+        rect(gx+(x*clw-clw),gy+(y*clh-clh),clw,clh,true,8)
       end end
-      rect(gx+(hx*clw-clw),gy+(hy*clh-clh),clw,clh,true,8)
+      rect(gx+(hx*clw-clw),gy+(hy*clh-clh),clw,clh,true,7)
     end
     return hx,hy
   end

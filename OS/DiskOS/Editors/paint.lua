@@ -4,12 +4,12 @@ local sw, sh = screenSize()
 
 local paint = {}
 paint.pal = imagedata(16,1)
-paint.pal:map(function(x,y,c) return x end)
+paint.pal:map(function(x,y,c) return x-1 end)
 paint.pal = paint.pal:image()
 
 paint.drawCursor = eapi.editorsheet:extract(8):image()
 
-paint.fgcolor, paint.bgcolor = 8,1
+paint.fgcolor, paint.bgcolor = 7,0
 
 paint.palGrid = {sw-16*8+1,sh-7,16*8,8,16,1}
 
@@ -95,12 +95,12 @@ function paint:drawPalette()
 end
 
 function paint:drawColorCell()
-  palt(1,true)
-  pal(9,self.fgcolor)
-  pal(13,self.bgcolor)
+  palt(0,true)
+  pal(8,self.fgcolor)
+  pal(12,self.bgcolor)
   eapi.editorsheet:draw(77,sw-16*8-8+1,sh-7)
   pal()
-  palt(1,false)
+  palt(0,false)
 end
 
 function paint:drawImage()
@@ -131,14 +131,14 @@ function paint:drawSlider()
   end
   eapi.editorsheet:draw(zSliderDraw[1]+2,zSliderDraw[2]+(zSliderDraw[4]-1)*8,zSliderDraw[3])
   
-  palt(1,true)
+  palt(0,true)
   eapi.editorsheet:draw(zSliderHandle,zSliderDraw[2]+(zSlider-1)*8,zSliderDraw[3],0,zSliderDraw[6],zSliderDraw[7])
-  palt(1,false)
+  palt(0,false)
 end
 
 function paint:entered()
   eapi:drawUI()
-  palt(1,false)
+  palt(0,false)
   self:drawBottomBar()
   self:drawImage()
   local mx, my = getMPos()
@@ -146,7 +146,7 @@ function paint:entered()
 end
 
 function paint:leaved()
-  palt(1,true)
+  palt(0,true)
 end
 
 function paint:import(a,b)
@@ -173,9 +173,9 @@ function paint:mousepressed(x,y,b,it)
   local cx, cy = whereInGrid(x,y,self.palGrid)
   if cx then
     if b == 1 then
-      self.fgcolor = cx
+      self.fgcolor = cx-1
     elseif b == 2 then
-      self.bgcolor = cx
+      self.bgcolor = cx-1
     end
     self:drawColorCell()
   end
@@ -250,10 +250,10 @@ function paint:mousemoved(x,y,dx,dy,it)
     cursor("none")
     eapi:drawBackground(); self:drawImage()
     eapi:drawTopBar(); self:drawBottomBar()
-    palt(1,true)
+    palt(0,true)
     local zx,zy = self.imageDraw[4], self.imageDraw[5]
     self.drawCursor:draw(x-3*zx,y-3*zy,0,zx,zy)
-    palt(1,false)
+    palt(0,false)
   else
     if cursor() == "none" then eapi:drawBackground(); self:drawImage(); eapi:drawTopBar(); self:drawBottomBar() end
     if cursor() == "none" or cursor() == "draw" then cursor("normal") end
