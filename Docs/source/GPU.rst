@@ -16,7 +16,7 @@ Functions:
 
 GPU.clear
 ---------
-Usage::
+**Usage**::
 
   clear(cid)
 
