@@ -157,7 +157,8 @@ return function(config)
     if type(length) ~= "number" then return false, "Length must be a number, provided: "..type(length) end
     address, length = math.floor(address), math.floor(length)
     if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
-    if length == 0 or address+length < 0 or address+length > ramsize then return false, "Length out of range ("..length..")" end
+    if length <= 0 then return false, "Length must be bigger than 0" end
+    if address+length > ramsize then return false, "Length out of range ("..length..")" end
     local endAddress = address+length-1
     
     local str = ""
@@ -208,9 +209,8 @@ return function(config)
     from_address, to_address, length = math.floor(from_address), math.floor(to_address), math.floor(length)
     if from_address < 0 or from_address > ramsize-1 then return false, "Source Address out of range ("..tohex(from_address).."), must be in range [0x0,"..tohex(ramsize-2).."]" end
     if to_address < 0 or to_address > ramsize then return false, "Destination Address out of range ("..tohex(to_address).."), must be in range [0x0,"..lastaddr.."]" end
-    if length == 0 then return false, "Length can't be 0" end
-    if from_address+length < 1 or from_address+length > ramsize then return false, "Length out of range ("..length..")" end
-    if to_address+length < 1 then length = 1-to_address end
+    if length <= 0 then return false, "Length should be bigger than 0" end
+    if from_address+length > ramsize then return false, "Length out of range ("..length..")" end
     if to_address+length > ramsize then length = ramsize-to_address end
     local from_end = from_address+length-1
     local to_end = to_address+length-1
@@ -234,7 +234,7 @@ return function(config)
             if h1.handler == h2.handler then --Direct Copy
               h1.handler("memcpy",h1.startAddr,sa1,sa2,ea2-sa2+1)
             else --InDirect Copy
-              local d = h1.handler("memget",h2.startAddr,sa1,ea2-sa2+1)
+              local d = h1.handler("memget",h1.startAddr,sa1,ea2-sa2+1)
               h2.handler("memset",h2.startAddr,sa2,d)
             end
           end
