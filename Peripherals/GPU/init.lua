@@ -1108,7 +1108,7 @@ return function(config) --A function that creates a new GPU peripheral.
     function i:width() return Image:getWidth() end
     function i:height() return Image:getHeight() end
     function i:data() return exe(GPU.imagedata(Image:getData())) end
-    function i:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
+    function i:quad(x,y,w,h) return love.graphics.newQuad(x,y,w or self:width(),h or self:height(),self:width(),self:height()) end
     
     function i:type() return "GPU.image" end
     function i:typeOf(t) if t == "GPU" or t == "image" or t == "GPU.image" then return true end end
