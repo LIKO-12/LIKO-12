@@ -12,10 +12,10 @@ end
 local fw, fh = fontSize()
 
 clear()
-SpriteGroup(25,2,2,5,1,1,1,0,editor.editorsheet)
+SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
 printCursor(1,2,0)
 color(8) print("DEV",5*8+2,4) flip() sleep(0.125)
-cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  0.6") editor.editorsheet:draw(60,(fw+1)*6+2,fh+3) flip() sleep(0.125) cam()
+cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  0.6") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
 color(6) print("\nhttp://github.com/ramilego4game/liko12")
 flip() sleep(0.0625)
 color(9) print("TYPE HELP FOR HELP")
@@ -33,7 +33,7 @@ local function checkCursor()
   if cy > th+1 then cy = th+1 end
   if cy < 1 then cy = 1 end
   printCursor(cx,cy,0) cy = cy-1
-  rect(cx*(fw+1)-4,blink and cy*(fh+2)+2 or cy*(fh+2)+1,fw+1,blink and fh or fh+3,false,blink and 4 or 0) --The blink
+  rect(cx*(fw+1)-4,blink and cy*(fh+2)+1 or cy*(fh+2),fw+1,blink and fh or fh+3,false,blink and 4 or 0) --The blink
 end
 
 local function split(str)
@@ -177,7 +177,7 @@ function term.loop() --Enter the while loop of the terminal
         local oldx, oldy, oldbk = printCursor()
         editor:loop() cursor("none")
         printCursor(oldx,oldy,oldbk)
-        palt(0,false) screenbk:image():draw(1,1) color(7) palt(0,true)
+        palt(0,false) screenbk:image():draw(0,0) color(7) palt(0,true)
       elseif a == "up" then
         if not hispos then
           table.insert(history,buffer)
