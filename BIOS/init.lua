@@ -207,7 +207,7 @@ if gpu then
       gpu.print("NormBIOS Revision 060-006")
       gpu.print("")
       
-      gpu.print("Press DEL to enter setup",3,sh-7)
+      gpu.print("Press DEL to enter setup",2,sh-7)
       
     elseif stage == 4 then
       gpu.print("Main CPU: LuaJIT 5.1")
