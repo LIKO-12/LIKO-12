@@ -15,17 +15,17 @@ local sizeW, sizeH = sheetW*imgw, sheetH*imgh --The size of the spritessheet in 
 local SpriteMap
 
 --SpriteSheet Sprite Selection--
-local sprsrecto = {1,sheight-(8+bsizeH+1), swidth,bsizeH+2, false, 0} --SpriteSheet Outline Rect
-local sprsdraw = {1,sheight-(8+bsizeH), 0, 1,1} --SpriteSheet Draw Location; IMG_DRAW
+local sprsrecto = {0,sheight-(8+bsizeH+1+1), swidth,bsizeH+2, false, 0} --SpriteSheet Outline Rect
+local sprsdraw = {0,sheight-(8+bsizeH+1), 0, 1,1} --SpriteSheet Draw Location; IMG_DRAW
 local sprsgrid = {sprsdraw[1],sprsdraw[2], sizeW,bsizeH, sheetW,bankH} --The SpriteSheet selection grid
 local sprssrect = {sprsrecto[1]-1,sprsrecto[2], imgw+2,imgh+2, true, 7} --SpriteSheet Select Rect (that white box on the selected sprite)
-local sprsbanksgrid = {swidth-(4*8+1),sprsrecto[2]-8, 8*4,8, 4,1} --The grid of banks selection buttons
+local sprsbanksgrid = {swidth-(4*8+1+1),sprsrecto[2]-8, 8*4,8, 4,1} --The grid of banks selection buttons
 local sprsid = 1 --Selected Sprite ID
 local sprsmflag = false --Sprite selection mouse flag
 local sprsbquads = {} --SpriteSheets 4 BanksQuads
 local sprsbank = 1 --Current Selected Bank
 for i = 1, 4 do --Create the banks quads
-  sprsbquads[i] = eapi.editorsheet:image():quad(1,(i*bsizeH-bsizeH)+1,sizeW,bsizeH)
+  sprsbquads[i] = eapi.editorsheet:image():quad(0,(i*bsizeH-bsizeH),sizeW,bsizeH)
 end
 
 local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in the biggest sprite id.
@@ -39,17 +39,17 @@ local MapVW = sheetW
 local Map = MapObj(MapW,MapH)
 
 local mapdx, mapdy = 0,0
-local maprect = {1,10,swidth,MapVH*8}
-local mapgrid = {1,10,swidth+8,MapVH*8+8,MapVW+1,MapVH+1}
+local maprect = {0,9,swidth,MapVH*8}
+local mapgrid = {0,9,swidth+8,MapVH*8+8,MapVW+1,MapVH+1}
 local mapmflag = false
 
 local bgsprite = eapi.editorsheet:extract(59):image()
-local bgquad = bgsprite:quad(1,1,MapVW*8,MapVH*8)
+local bgquad = bgsprite:quad(0,0,MapVW*8,MapVH*8)
 
 local mflag = false
 
 --Tools Selection--
-local toolsdraw = {138, 3,revdraw[2]-1, 7,1, 1,1,false, eapi.editorsheet} --Tools draw arguments
+local toolsdraw = {138, 2,revdraw[2]-1, 7,1, 1,1,false, eapi.editorsheet} --Tools draw arguments
 local toolsgrid = {toolsdraw[2],toolsdraw[3], toolsdraw[4]*8,toolsdraw[5]*8, toolsdraw[4],toolsdraw[5]} --Tools Selection Grid
 local stool = 1 --Current selected tool id
 
@@ -136,7 +136,7 @@ function t:redrawMap()
   palt(0,false)
   if mapdx > 0 or mapdy > 0 or mapdx < -(MapW-MapVW)*8 or mapdy < -(MapH-MapVH)*8 then
     pal(1,2,2)
-    bgsprite:draw(1,10,0,1,1,bgquad)
+    bgsprite:draw(maprect[1],maprect[2],0,1,1,bgquad)
     pal()
     if mapdx < MapVW*8 and mapdy < MapVH*8 and mapdx > -MapW*8 and mapdy > -MapH*8 then
       local cx,cy,cw,ch = 0,0,MapVW*8,MapVH*8
@@ -154,15 +154,15 @@ function t:redrawMap()
       end
       
       clip(cx+1,cy+10,cw,ch)
-      bgsprite:draw(1,10,0,1,1,bgquad)
+      bgsprite:draw(maprect[1],maprect[2],0,1,1,bgquad)
       clip()
      end
   else
-    bgsprite:draw(1,10,0,1,1,bgquad)
+    bgsprite:draw(maprect[1],maprect[2],0,1,1,bgquad)
   end
   --rect(1,9,Map:width()*8,Map:height()*8+2,false,1)
   clip(unpack(maprect))
-  Map:draw(1-8+(mapdx%8),10-8+(mapdy%8),-math.floor(mapdx/8),-math.floor(mapdy/8),MapVW+2,MapVH+2,false,false,SpriteMap)
+  Map:draw(maprect[1]-8+(mapdx%8),maprect[2]-8+(mapdy%8),-math.floor(mapdx/8),-math.floor(mapdy/8),MapVW+2,MapVH+2,false,false,SpriteMap)
   clip()
   palt(0,true)
 end
