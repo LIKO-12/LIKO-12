@@ -10,7 +10,7 @@ function input()
   local blinktime = 0.5
   local function drawblink()
     local cx,cy,c = printCursor() cy = cy-1
-    rect(cx*(fw+1)-3,blink and cy*(fh+2)+2 or cy*(fh+2)+1,fw+1,blink and fh or fh+3,false,blink and 4 or c) --The blink
+    rect(cx*(fw+1)-3-1,blink and cy*(fh+2)+1 or cy*(fh+2),fw+1,blink and fh or fh+4,false,blink and 4 or c) --The blink
   end
   
   for event,a,b,c,d,e,f in pullEvent do
@@ -43,22 +43,22 @@ end
 function SpriteSheet(img,w,h)
   local ss = {img=img,w=w,h=h} --SpriteSheet
   ss.cw, ss.ch, ss.quads = ss.img:width()/ss.w, ss.img:height()/ss.h, {}
-  for y=1, ss.h do for x=1, ss.w do
-    table.insert(ss.quads,ss.img:quad(x*ss.cw-(ss.cw-1),y*ss.ch-(ss.ch-1),ss.cw,ss.ch))
+  for y=0, ss.h-1 do for x=0, ss.w-1 do
+    table.insert(ss.quads,ss.img:quad(x*ss.cw,y*ss.ch,ss.cw,ss.ch))
   end end
   
   function ss:image() return self.img end
   function ss:data() return self.img:data() end
   function ss:quad(id) return self.quads[id] end
-  function ss:rect(id) local x,y,w,h = self.quads[id]:getViewport() return x+1,y+1,w,h end
+  function ss:rect(id) return self.quads[id]:getViewport() end
   function ss:draw(id,x,y,r,sx,sy) self.img:draw(x,y,r,sx,sy,self.quads[id]) return self end
-  function ss:extract(id) return imagedata(self.cw,self.ch):paste(self:data(),1,1,self:rect(id)) end
+  function ss:extract(id) return imagedata(self.cw,self.ch):paste(self:data(),0,0,self:rect(id)) end
   
   return ss
 end
 
 function SpriteGroup(id,x,y,w,h,sx,sy,r,sheet)
-  local sx,sy = math.floor(sx or 1), math.floor(sy or 1)
+  local sx,sy = math.floor(sx or 0), math.floor(sy or 0)
   if r then
     if type(r) ~= "number" then return error("R must be a number, provided: "..type(r)) end
     pushMatrix()
@@ -90,9 +90,9 @@ function whereInGrid(x,y, grid) --Grid X, Grid Y, Grid Width, Grid Height, NumOf
     local hy = math.floor(y/clh)+1 hy = hy <= ch and hy or hy-1
     if debugGrids then
       for x=1,cw do for y=1,ch do
-        rect(gx+(x*clw-clw),gy+(y*clh-clh),clw,clh,true,8)
+        rect(gx+(x*clw-clw)-1,gy+(y*clh-clh)-1,clw,clh,true,8)
       end end
-      rect(gx+(hx*clw-clw),gy+(hy*clh-clh),clw,clh,true,7)
+      rect(gx+(hx*clw-clw)-1,gy+(hy*clh-clh)-1,clw,clh,true,7)
     end
     return hx,hy
   end

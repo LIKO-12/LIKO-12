@@ -78,7 +78,7 @@ function edit:initialize()
     table.insert(self.leditors,k,v(self))
   end
 
-  self.modeGrid = {swidth-(#self.editors*8)+1,1,#self.editors*8,8,#self.editors,1} --The editor selection grid
+  self.modeGrid = {swidth-(#self.editors*8),0,#self.editors*8,8,#self.editors,1} --The editor selection grid
   self.modeGridFlag = false
   self.modeGridHover = false
   self:loadCursors()
@@ -95,25 +95,25 @@ end
 function edit:loadCursors()
   pushPalette()
   palt()
-  cursor(self.editorsheet:extract(1),"normal",2,2)
-  cursor(self.editorsheet:extract(2),"handrelease",3,2)
-  cursor(self.editorsheet:extract(3),"handpress",3,2)
-  cursor(self.editorsheet:extract(4),"hand",5,5)
-  cursor(self.editorsheet:extract(5),"cross",4,4)
-  cursor(self.editorsheet:extract(7),"point",2,2)
-  cursor(self.editorsheet:extract(8),"draw",4,4)
+  cursor(self.editorsheet:extract(1),"normal",1,1)
+  cursor(self.editorsheet:extract(2),"handrelease",2,1)
+  cursor(self.editorsheet:extract(3),"handpress",2,1)
+  cursor(self.editorsheet:extract(4),"hand",4,4)
+  cursor(self.editorsheet:extract(5),"cross",3,3)
+  cursor(self.editorsheet:extract(7),"point",1,1)
+  cursor(self.editorsheet:extract(8),"draw",3,3)
   popPalette()
 end
 
 function edit:drawBottomBar()
-  rect(1,sheight-7,swidth,8,false,self.flavor)
+  rect(0,sheight-8,swidth,8,false,self.flavor)
 end
 
 function edit:drawTopBar()
-  rect(1,1,swidth,8,false,self.flavor)
-  SpriteGroup(55, 1,1, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
-  SpriteGroup(24-#self.editors+1, (swidth-#self.editors*8) +1,1, #self.editors,1, 1,1, false, self.editorsheet) --The programs selection
-  self.editorsheet:draw(48-(#self.editors-self.active),swidth-(#self.editors-self.active+1)*8+1,1) --The current selected program
+  rect(0,0,swidth,8,false,self.flavor)
+  SpriteGroup(55, 0,0, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
+  SpriteGroup(24-#self.editors+1, (swidth-#self.editors*8), 0, #self.editors,1, 1,1, false, self.editorsheet) --The programs selection
+  self.editorsheet:draw(48-(#self.editors-self.active),swidth-(#self.editors-self.active+1)*8,0) --The current selected program
 end
 
 function edit:drawUI()
@@ -218,7 +218,7 @@ function edit:loop() --Starts the while loop
           term.execute("run")
           cam()
           printCursor(px,py,pc)
-          sbk:image():draw(1,1)
+          sbk:image():draw(0,0)
         end
         popMatrix() popPalette() popColor()
         
