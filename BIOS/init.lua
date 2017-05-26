@@ -197,17 +197,17 @@ if gpu then
     if stage > #stages then return end
     
     if stage == 2 then
-      lualogo:draw(sw-lualogo:width()-5,6)
-      likologo:draw(3,8)
+      lualogo:draw(sw-lualogo:width()-6,5)
+      likologo:draw(2,7)
       
-      gpu.print("LIKO-12 - Fantasy Computer",16,8)
-      gpu.print("Copyright (C) Rami Sabbagh",16,14)
+      gpu.print("LIKO-12 - Fantasy Computer",15,7)
+      gpu.print("Copyright (C) Rami Sabbagh",15,14)
       
       gpu.printCursor(1,4,0)
-      gpu.print("NormBIOS Revision 060-005")
+      gpu.print("NormBIOS Revision 060-006")
       gpu.print("")
       
-      gpu.print("Press DEL to enter setup",4,sh-7)
+      gpu.print("Press DEL to enter setup",3,sh-7)
       
     elseif stage == 4 then
       gpu.print("Main CPU: LuaJIT 5.1")
