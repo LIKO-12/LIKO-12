@@ -90,14 +90,14 @@ return function(config) --A function that creates a new GPU peripheral.
   local ofs
   if love.filesystem.exists("GPUCalibration.json") then
     ofs = json:decode(love.filesystem.read("/GPUCalibration.json"))
-    if ofs.version < 1.1 then --Redo calibration
+    if ofs.version < 1.2 then --Redo calibration
       ofs = love.filesystem.load(perpath.."calibrate.lua")()
-      ofs.version = 1.1
+      ofs.version = 1.2
       love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
     end
   else
     ofs = love.filesystem.load(perpath.."calibrate.lua")()
-    ofs.version = 1.1
+    ofs.version = 1.2
     love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
   end
   
@@ -206,7 +206,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --Internal Functions--
   local function _HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
     --x, y = x-_ScreenX, y-_ScreenY
-    return math.floor((x - _LIKO_X)/_LIKOScale )+1, math.floor((y - _LIKO_Y)/_LIKOScale)+1
+    return math.floor((x - _LIKO_X)/_LIKOScale), math.floor((y - _LIKO_Y)/_LIKOScale)
   end
   
   local function _GetColor(c) return _ColorSet[c or 0] or _ColorSet[0] end --Get the (rgba) table of a color id.
@@ -386,7 +386,7 @@ return function(config) --A function that creates a new GPU peripheral.
     love.graphics.setColor(255,255,255,255)
     love.graphics.setShader()
     love.graphics.clear(0,0,0,255)
-    love.graphics.draw(Img,ofs.image[1]+1,ofs.image[2]+1)
+    love.graphics.draw(Img,ofs.image[1],ofs.image[2])
     love.graphics.setShader(_DrawShader)
     love.graphics.pop()
     GPU.popColor()
@@ -953,7 +953,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local function drawbackground(gx,gy,gw)
         if pc.bgc == -1 or gw < 1 then return end --No need to draw the background
         gx,gy = togrid(gx,gy)
-        GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, pc.bgc)
+        GPU.rect(gx-1,gy-1, gw*(_FontW+1)+1,_FontH+3, false, pc.bgc)
       end
       
       --Draw directly without formatting nor updating the cursor pos.
@@ -1014,7 +1014,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local function drawbackground(gx,gy,gw)
       if printCursor.bgc == -1 or gw < 1 then return end --No need to draw the background
       gx,gy = togrid(gx,gy)
-      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, printCursor.bgc)
+      GPU.rect(gx-1,gy-1, gw*(_FontW+1)+1,_FontH+3, false, printCursor.bgc)
     end
       
     if printCursor.x > 1 then
@@ -1085,7 +1085,6 @@ return function(config) --A function that creates a new GPU peripheral.
       if not ok then return false, "Invalid image data" end
       Image = err
       Image:setWrap("repeat")
-      --imageData = exe(GPU.imagedata(Image))
     end
     
     local i = {}
@@ -1153,10 +1152,10 @@ return function(config) --A function that creates a new GPU peripheral.
       if not x then return error("Must provide X") end
       if not y then return error("Must provide Y") end
       x,y = math.floor(x), math.floor(y)
-      if x < 1 or x > self:width() or y < 1 or y > self:height() then
+      if x < 0 or x > self:width()-1 or y < 0 or y > self:height()-1 then
         return 1
       end
-      local r,g,b,a = imageData:getPixel(x-1,y-1)
+      local r,g,b,a = imageData:getPixel(x,y)
       return r
     end
     function id:setPixel(x,y,c)
@@ -1164,17 +1163,17 @@ return function(config) --A function that creates a new GPU peripheral.
       if not x then return error("Must provide X") end
       if not y then return error("Must provide Y") end
       x,y = math.floor(x), math.floor(y)
-      if x < 1 or x > self:width() or y < 1 or y > self:height() then
+      if x < 0 or x > self:width()-1 or y < 0 or y > self:height()-1 then
         return self
       end
       c = math.floor(c) if c < 0 or c > 15 then return error("Color out of range ("..c..") expected [0,15]") end
-      imageData:setPixel(x-1,y-1,c,0,0,255)
+      imageData:setPixel(x,y,c,0,0,255)
       return self
     end
     function id:map(mf)
       imageData:mapPixel(
       function(x,y,r,g,b,a)
-        local c = mf(x+1,y+1,r)
+        local c = mf(x,y,r)
         if c and type(c) ~= "number" then error("Color must be a number, provided "..type(c)) elseif c then c = math.floor(c) end
         if c and (c < 0 or c > 15) then error("Color out of range ("..c..") expected [0,15]") end
         if c then return c,0,0,255 else return r,g,b,a end
@@ -1189,11 +1188,11 @@ return function(config) --A function that creates a new GPU peripheral.
       if type(imgData) ~= "table" then return error("ImageData must be a table, got '"..type(imageData).."'") end
       if not (imgData.typeOf and imgData.typeOf("GPU.imageData")) then return error("Invalid ImageData Object") end
       _PasteImage = false; imgData:___pushimgdata(); if not _PasteImage then return error("Fake ImageData Object") end
-      imageData:paste(_PasteImage,(dx or 1)-1,(dy or 1)-1,(sx or 1)-1,(sy or 1)-1,sw or _PasteImage:getWidth(), sh or _PasteImage:getHeight())
+      imageData:paste(_PasteImage,dx or 0,dy or 0,sx or 0,sy or 0,sw or _PasteImage:getWidth(), sh or _PasteImage:getHeight())
       return self
     end
     
-    function id:quad(x,y,w,h) return love.graphics.newQuad(x-1,y-1,w or self:width(),h or self:height(),self:width(),self:height()) end
+    function id:quad(x,y,w,h) return love.graphics.newQuad(x,y,w or self:width(),h or self:height(),self:width(),self:height()) end
     function id:image() return exe(GPU.image(imageData)) end
     
     function id:export()
@@ -1214,8 +1213,8 @@ return function(config) --A function that creates a new GPU peripheral.
       if scale == 1 then return self end
       local newData = exe(GPU.imagedata(self:width()*scale,self:height()*scale))
       self:map(function(x,y,c)
-        for iy=1, scale do for ix=1, scale do
-          newData:setPixel((x-1)*scale + ix,(y-1)*scale + iy,c)
+        for iy=0, scale-1 do for ix=0, scale-1 do
+          newData:setPixel(x*scale + ix,y*scale + iy,c)
         end end
       end)
       return newData
@@ -1223,7 +1222,7 @@ return function(config) --A function that creates a new GPU peripheral.
     
     function id:encode() --Export to liko12 format
       local data = "LK12;GPUIMG;"..self:width().."x"..self.height()..";"
-      self:map(function(x,y,c) if x == 1 then data = data.."\n" end data = data..string.format("%X",c) end)
+      self:map(function(x,y,c) if x == 0 then data = data.."\n" end data = data..string.format("%X",c) end)
       return data
     end
     
@@ -1234,12 +1233,12 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   function GPU.screenshot(x,y,w,h)
-    local x, y, w, h = x or 1, y or 1, w or _LIKO_W, h or _LIKO_H
+    local x, y, w, h = x or 0, y or 0, w or _LIKO_W, h or _LIKO_H
     if x and type(x) ~= "number" then return false, "X must be a number, provided: "..type(x) end
     if y and type(y) ~= "number" then return false, "Y must be a number, provided: "..type(y) end
     if w and type(w) ~= "number" then return false, "W must be a number, provided: "..type(w) end
     if h and type(h) ~= "number" then return false, "H must be a number, provided: "..type(h) end
-    return true, exe(GPU.imagedata(_ScreenCanvas:newImageData(x-1,y-1,w,h)))
+    return true, exe(GPU.imagedata(_ScreenCanvas:newImageData(x,y,w,h)))
   end
   
   --Mouse API--
@@ -1279,10 +1278,10 @@ return function(config) --A function that creates a new GPU peripheral.
       local name = name or "default"
       if type(name) ~= "string" then return false, "Name must be a string, provided: "..type(name) end
       
-      local hx, hy = hx or 1, hy or 1
+      local hx, hy = hx or 0, hy or 0
       if type(hx) ~= "number" then return false, "Hot X must be a number or a nil, provided: "..type(hx) end
       if type(hy) ~= "number" then return false, "Hot Y must be a number or a nil, provided: "..type(hy) end
-      hx, hy = math.floor(hx)-1, math.floor(hy)-1
+      hx, hy = math.floor(hx), math.floor(hy)
       
       local enimg = imgdata:enlarge(_LIKOScale)
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
@@ -1329,7 +1328,7 @@ return function(config) --A function that creates a new GPU peripheral.
     exe(GPU.cursor(cursor))
   end)
   
-  exe(GPU.cursor(exe(GPU.imagedata(1,1)):setPixel(1,1,8),"default"))
+  exe(GPU.cursor(exe(GPU.imagedata(1,1)):setPixel(0,0,7),"default"))
   exe(GPU.cursor(_Cursor))
   
   --End of API--

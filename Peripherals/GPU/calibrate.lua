@@ -50,7 +50,7 @@ canvas(8,8)
 love.graphics.points(4,4)
 imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
   if r == 255 and g == 255 and b == 255 and a == 255 then
-    ofs.point = {3-x, 3-y}
+    ofs.point = {4-x, 4-y}
   end
   return r,g,b,a
 end)
@@ -70,8 +70,8 @@ imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
   end
   return r,g,b,a
 end)
-ofs.line = {3-xpos,3-ypos}
-ofs.line_start = {3-xpos,3-ypos}
+ofs.line = {4-xpos,4-ypos}
+ofs.line_start = {4-xpos,4-ypos}
 
 --Circle calibration
 canvas(30,30)
@@ -89,7 +89,7 @@ imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
 end)
 local cx = (rightx + leftx +1)/2
 local cy = (topy + bottomy +1)/2
-ofs.circle = {14-cx,14-cy,0}
+ofs.circle = {15-cx,15-cy,0}
 
 --Circle line calibration
 canvas(30,30)
@@ -107,7 +107,7 @@ imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
 end)
 local cx = (rightx + leftx +1)/2
 local cy = (topy + bottomy +1)/2
-ofs.circle_line = {14-cx,14-cy,0}
+ofs.circle_line = {15-cx,15-cy,0}
 
 --Ellipse calibration
 canvas(30,30)
@@ -125,7 +125,7 @@ imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
 end)
 local cx = (rightx + leftx +1)/2
 local cy = (topy + bottomy +1)/2
-ofs.ellipse = {14-cx,14-cy,0,0}
+ofs.ellipse = {15-cx,15-cy,0,0}
 
 --Ellipse line calibration
 canvas(30,30)
@@ -143,7 +143,7 @@ imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
 end)
 local cx = (rightx + leftx +1)/2
 local cy = (topy + bottomy +1)/2
-ofs.ellipse_line = {14-cx,14-cy,0,0}
+ofs.ellipse_line = {15-cx,15-cy,0,0}
 
 --Rectangle calibration
 canvas(10,10)
@@ -159,7 +159,7 @@ imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
   end
   return r,g,b,a
 end)
-ofs.rect = {1-leftx,1-topy}
+ofs.rect = {2-leftx,2-topy}
 ofs.rectSize = {6-(rightx-leftx+1),6-(bottomy-topy+1)}
 
 --Rectangle line calibration
@@ -176,7 +176,7 @@ imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
   end
   return r,g,b,a
 end)
-ofs.rect_line = {1-leftx,1-topy}
+ofs.rect_line = {2-leftx,2-topy}
 ofs.rectSize_line = {6-(rightx-leftx+1),6-(bottomy-topy+1)}
 
 --Triangle
@@ -200,7 +200,7 @@ imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
   end
   return r,g,b,a
 end)
-ofs.image = {3-leftx,3-topy}
+ofs.image = {4-leftx,4-topy}
 
 --Quad
 ofs.quad = ofs.image
