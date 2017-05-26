@@ -366,8 +366,8 @@ return function(config) --A function that creates a new GPU peripheral.
   local VRAMLine = _LIKO_W/2
   local Scanlines = {} --A table that contains the addresses of screen lines endings.
   
-  for y=1, _LIKO_H do
-    table.insert(Scanlines,y*_LIKO_W-1)
+  for y=0, _LIKO_H-1 do
+    table.insert(Scanlines,{VRAMLine * y, VRAMLine * (y+1) - 1})
   end
   
   local function BindVRAM()
@@ -427,34 +427,35 @@ return function(config) --A function that creates a new GPU peripheral.
       return pixel
     elseif mode == "memcpy" then
       local from, to, len = unpack(args)
+      from = from - startAddress
+      to = to - startAddress
       local from_end = from + len -1
       local to_end = to + len -1
-      local linelen = _LIKO_W-1
-      for k, line_end in ipairs(Scanlines) do
-        local line_start = linelen-line_end
-        if from <= line_end and from_end >= line_start then
+      for k1, line1 in ipairs(Scanlines) do
+        local line1_start, line1_end = unpack(line1)
+        if from <= line1_end and from_end >= line1_start then
           local saddr, eaddr = from, from_end
-          if saddr < line_start then saddr = line_start end
-          if eaddr > line_end then eaddr = line_end end
+          if saddr < line1_start then saddr = line1_start end
+          if eaddr > line1_end then eaddr = line1_end end
           
-          local to = to + (saddr - from)
-          local to_end = to + ( eaddr-saddr )
+          local to = to + ( saddr - from )
+          local to_end = to_end + ( eaddr - from_end )
           
-          for k, line_end in ipairs(Scanlines) do
-            local line_start = linelen-line_end
-            if to >= line_end and to_end < line_start then
+          for k2, line2 in ipairs(Scanlines) do
+            local line2_start, line2_end = unpack(line2)
+            if to <= line2_end and to_end >= line2_start then
               local sa, ea = to, to_end
-              if sa < line_start then sa = line_start end
-              if ea > line_end then ea = line_end end
+              if sa < line2_start then sa = line2_start end
+              if ea > line2_end then ea = line2_end end
               
               local saddr = saddr + (sa-to)
-              local eaddr = eaddr + (se-to_end)
+              local eaddr = eaddr + (ea-to_end) 
               
               local len = ea-sa+1
               local dx,dy = AddressPos(sa)
               local sx,sy = AddressPos(saddr)
               
-              VRAMImg:paste( VRAMImg, dx,dy, sx,sy, len,1)
+              VRAMImg:paste( VRAMImg, dx,dy, sx,sy, len*2,1)
             end
           end
         end
