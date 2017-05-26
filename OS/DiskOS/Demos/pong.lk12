@@ -2,7 +2,7 @@ LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 
 --Ping Pong By RamiLego4Game
---COntrols: P1: W,S; P2: Up, Down
+--Controls: P1: W,S; P2: Up, Down
 --Contorllable by touch on mobile devices.
 
 local fw, fh = fontSize()
@@ -36,15 +36,15 @@ function draw()
  clear()
  
  --Drawing the ball
- circle(bx,by,br,false,bcolor)
+ circle(bx-1,by-1,br,false,bcolor)
  
  --Drawing Players Bars
- rect(p1x,p1y,pw,ph,false,11)
- rect(p2x,p2y,pw,ph,false,8)
+ rect(p1x-1,p1y-1,pw,ph,false,11)
+ rect(p2x-1,p2y-1,pw,ph,false,8)
  
  --Players Scores
- color(11) print(p1s,pw+fw,fh+1)
- color(8) print(p2s,sw-strwidth(p2s)-pw,fh+1)
+ color(11) print(p1s,pw+fw-1,fh)
+ color(8) print(p2s,sw-strwidth(p2s)-pw-1,fh)
 end
 
 function update(dt)

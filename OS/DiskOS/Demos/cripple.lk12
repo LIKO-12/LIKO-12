@@ -1,4 +1,4 @@
-LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
+sLK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 
 local r=96
@@ -18,12 +18,12 @@ while true do
  img = imagedata(192,128)
  for y=-r,r,3 do for x=-r,r,3 do
   local z = cos(sqrt(x*x+y*y*2)/40-t)*6
-  local dx, dy = r+x, r+y-z-24
-  if dx > 0 and dy > 0 and dx < 193 and dy < 129 then
+  local dx, dy = r+x-1, r+y-z-1-24
+  if dx > -1 and dy > -1 and dx < 192 and dy < 128 then
    img:setPixel(dx,dy,7+ y%8)
   end
  end end
- img:image():draw(1,1)
+ img:image():draw(0,0)
  flip()
  t =t+ 2/r
 end

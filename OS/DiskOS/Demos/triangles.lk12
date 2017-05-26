@@ -10,9 +10,9 @@ local v = {}
 local function rand()
  for i=1,6 do
   if i % 2 == 0 then --It's a Y cordinate
-   v[i] = math.random(1,128)
+   v[i] = math.random(0,127)
   else --It's a X cordinate
-   v[i] = math.random(1,192)
+   v[i] = math.random(0,191)
   end
  end
  v[7] = false --Lined ?
@@ -26,10 +26,6 @@ function update(dt)
 end
 
 eventLoop()
-
-
-
-
 
 ___spritesheet___
 LK12;GPUIMG;192x128;

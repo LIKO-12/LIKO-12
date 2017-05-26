@@ -46,22 +46,22 @@ edit.background = 0
 local swidth, sheight = screenSize()
 
 local bgsprite = eapi.editorsheet:extract(59):image()
-local bgquad = bgsprite:quad(1,1,swidth,sheight-8*2)
+local bgquad = bgsprite:quad(0,0,swidth,sheight-8*2)
 
 local sid --Selected option id
 
 function edit:drawBottomBar()
-  rect(1,sheight-7,swidth,8,false,self.flavor)
+  rect(0,sheight-8,swidth,8,false,self.flavor)
 end
 
 local controlID = 11
 local controlNum = 3 --The number of the control buttons at the top right corner of the editor.
-local controlGrid = {swidth-8*controlNum+1,1, 8*controlNum,8, controlNum,1}
+local controlGrid = {swidth-8*controlNum,0, 8*controlNum,8, controlNum,1}
 
 function edit:drawTopBar()
   palt(0,true)
-  rect(1,1,swidth,8,false,self.flavor)
-  SpriteGroup(55, 1,1, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
+  rect(0,0,swidth,8,false,self.flavor)
+  SpriteGroup(55, 0,0, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
   SpriteGroup(controlID, controlGrid[1],controlGrid[2], controlGrid[5],controlGrid[6], 1,1, false, self.editorsheet)
   if sid then
     SpriteGroup(controlID+24+sid, controlGrid[1]+sid*8,controlGrid[2], 1,1, 1,1, false, self.editorsheet)
@@ -70,8 +70,8 @@ function edit:drawTopBar()
 end
 
 function edit:drawBackground()
-  rect(1,9,swidth,sheight-8*2,false,0)
-  bgsprite:draw(1,9,0,1,1,bgquad)
+  rect(0,8,swidth,sheight-8*2,false,0)
+  bgsprite:draw(0,8,0,1,1,bgquad)
 end
 
 function edit:drawUI()
@@ -218,6 +218,6 @@ for event, a,b,c,d,e,f in pullEvent do
   end
 end
 
-clear(0)
-screen:image():draw(1,1)
+clear()
+screen:image():draw(0,0)
 printCursor(px,py,pc)

@@ -23,13 +23,13 @@ function draw()
  clear(7)
  
  color(6)
- print("Press X to bump",60,11)
+ print("Press X to bump",59,10)
  
- rect(1,floor_y+1,192,128,false,8)
- circle(ballx+1,bally+1,size,false,14)
+ rect(0,floor_y+0,192,128,false,8)
+ circle(ballx,bally,size,false,14)
  
- Sprite(1,ballx-4-velx+1,
-          bally-4-vely+1)
+ Sprite(1,ballx-4-velx,
+          bally-4-vely)
 end
 
 function update()

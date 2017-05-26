@@ -4,50 +4,50 @@ clear()
 
 --Draw a grid
 local sw, sh = screenSize()
-for x=2,sw,2 do
- line(x,0,x,sh,1)
+for x=1,sw-1,2 do
+ line(x,-1,x,sh-1,1)
 end
-for y=2,sh,2 do
- line(0,y,sw,y,1)
+for y=1,sh-1,2 do
+ line(-1,y,sw-1,y,1)
 end
 
 --Draw corner dots
-points(1,1, sw,1, sw,sh, 1,sh, 7)
+points(0,0, sw-1,0, sw-1,sh-1, 0,sh-1, 7)
 --Draw red corner dots
-points(1,0, sw,0, sw,sh+1, 1,sh+1, 8)
-points(0,1, sw+1,0, sw+1,sh, 0,sh, 8)
+points(0,-1, sw-1,-1, sw-1,sh, 0,sh, 8)
+points(-1,0, sw,-1, sw,sh-1, -1,sh-1, 8)
 
 --Draw Border
-lines(2,2, sw-1,2, sw-1,sh-1, 2,sh-1, 2,2, 12)
+lines(1,1, sw-2,1, sw-2,sh-2, 1,sh-2, 1,1, 12)
 
 --Rects
-rect(4,4,5,5, false, 9)
-rect(10,4,5,5, true, 8)
+rect(3,3,5,5, false, 9)
+rect(9,3,5,5, true, 8)
 
 --Image
-Sprite(1,4,10)
+Sprite(1,3,9)
 
 --Print
-rect(6,34,5*5+1,8,false,0)
-color(7) print("HELLO",7,35)
+rect(5,33,5*5+1,8,false,0)
+color(7) print("HELLO",6,34)
 color(9) printCursor(2,7,0)
 print("HELLO")
 
 --Circles
-rect(16,4,12,12,true,3)
-circle(22,10,6,false,11)
-point(22,10, 8)
-rect(29,4,12,12,true,3)
-circle(35,10,6,true,11)
-point(35,10, 8)
+rect(15,3,12,12,true,3)
+circle(21,9,6,false,11)
+point(21,9, 8)
+rect(28,3,12,12,true,3)
+circle(34,9,6,true,11)
+point(34,9, 8)
 
 --Ellipse
-rect(16,17,12,12,true,3)
-ellipse(22,23,6,6,false,11)
-point(22,23, 8)
-rect(29,17,12,12,true,3)
-ellipse(35,23,6,6,true,11)
-point(35,23,8)
+rect(15,16,12,12,true,3)
+ellipse(21,22,6,6,false,11)
+point(21,22, 8)
+rect(28,16,12,12,true,3)
+ellipse(34,22,6,6,true,11)
+point(34,22,8)
 
 local sc = screenshot()
 local img = sc:encode()
@@ -57,11 +57,11 @@ sc = sc:image()
 
 function update()
  clear()
- sc:draw(1,1)
+ sc:draw(0,0)
  local mx,my = getMPos()
  point(mx,my, 10)
  color(7)
- print(mx..","..my,5,sh-8)
+ print(mx..","..my,4,sh-9)
 end
 
 eventLoop()

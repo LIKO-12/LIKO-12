@@ -24,14 +24,14 @@ end
 
 function update()
  clear(12)
- rect(1,101,192,28,false,3)
+ rect(0,100,192,28,false,3)
  printCursor(1,1,-1)
  color(7)
  print("Press Up to randomize")
  print("Press Down to sort")
  
  for i=1, #G do
-  draw_giraffe(i*16+1,101,G[i])
+  draw_giraffe(i*16,100,G[i])
  end
 end
 

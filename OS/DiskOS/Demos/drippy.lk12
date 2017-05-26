@@ -13,7 +13,7 @@ imdata:map(function() return 1 end)
 
 function draw()
  imdata:setPixel(x,y,c)
- imdata:image():draw(1,1)
+ imdata:image():draw(0,0)
 end
 
 --Controls Map
@@ -28,17 +28,17 @@ function update()
  if btn(2) then y=y-1 end
  if btn(3) then y=y+1 end
  
- if x > 192 then x = 1 end
- if x < 1 then x = 192 end
- if y > 128 then y = 1 end
- if y < 1 then y = 128 end
+ if x > 191 then x = 0 end
+ if x < 0 then x = 191 end
+ if y > 127 then y = 0 end
+ if y < 0 then y = 127 end
  
  c=c+0.1
  if c > 15 then c = 8 end
  
  for i=1,3200 do
-  x2 = math.random(192)
-  y2 = math.random(128)
+  x2 = math.random(192)-1
+  y2 = math.random(128)-1
   col = imdata:getPixel(x2,y2)
   if col ~= 1 then
    imdata:setPixel(x2,y2+1,col)

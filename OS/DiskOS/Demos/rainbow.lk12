@@ -12,8 +12,8 @@ end
 
 function drawLines(s)
  local col = nextColor(s)
- for x=8,214,8 do
-  polygon(x-15,1,x,1,x-14,128,x-22,128,col())
+ for x=7,213,8 do
+  polygon(x-15,0,x,0,x-14,127,x-22,127,col())
  end
 end
 

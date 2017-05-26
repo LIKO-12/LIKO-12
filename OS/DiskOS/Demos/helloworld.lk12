@@ -5,18 +5,18 @@ ___luacode___
 function init() --The startup function
  local x = 192/2 - 8*3 + 2
  local y = 128/4
- SpriteGroup(1,x,y,6,2) --id, x,y,w,h
+ SpriteGroup(1,x-1,y-1,6,2) --id, x,y,w,h
  local str = "This is LIKO-12"
  x = 192/2 - (str:len()/2)*5
  y = y + 128/4
- color(11) print(str,x,y) --text, x, y
+ color(11) print(str,x-1,y-1) --text, x, y
  str = "Nice to meet YOU"
  x = 192/2 - (str:len()/2)*5
  y = y + 10
- color(12) print(str,x,y) --text, x, y
+ color(12) print(str,x-1,y-1) --text, x, y
  x = 192/2 - 4*3
  y = y +10
- Sprite(7,x,y,0,3,3)
+ Sprite(7,x-1,y-1,0,3,3)
 end
 local mflag = false
 function mousepressed(x,y)

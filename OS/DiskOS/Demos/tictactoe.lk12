@@ -12,8 +12,8 @@ end
 
 local function drawTurn()
  local x,y,sprid
- x = 192/2 - 3*8
- y = (128-8*2)-4
+ x = 192/2 - 3*8 -1
+ y = (128-8*2)-4 -1
  sprid = xturn and 59 or 35
  if win then sprid = win == 3 and 6 or 11 end
  SpriteGroup(sprid,x,y,3,1,2,2)
@@ -22,8 +22,8 @@ end
 local function drawWin()
  if not win or win == 3 then return end
  local x,y,sprid
- x = 192/2 - 7*8
- y = (128-8*2)-4
+ x = 192/2 - 7*8 -1
+ y = (128-8*2)-4 -1
  sprid = win==1 and 52 or 28
  SpriteGroup(sprid,x,y,7,1,2,2)
 end
@@ -63,8 +63,8 @@ function init()
  clear(6) win = false buildxo()
  xturn = not xturn
  local x,y
- x = 192/2-(3*8*4)/2
- y = 128/2-(3*8*4)/2-10
+ x = 192/2-(3*8*4)/2 -1
+ y = 128/2-(3*8*4)/2-10 -1
  grid = {x,y,3*8*4,3*8*4,3,3}
  SpriteGroup(1,x,y,3,3,4,4)
  drawTurn()

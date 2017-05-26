@@ -10,7 +10,8 @@ clear(1)
 cam("shear",0.2,-0.1)
 cam("scale",0.6,0.6)
 cam("translate",40,60)
-G = {3,5,7,2,9,1,2,7,4,6,3}
+
+G = {3,5,7,2,9,1,2,8,4,6,3}
 
 function draw_giraffe(x,y,l)
  
@@ -27,15 +28,15 @@ function draw_giraffe(x,y,l)
 end
 
 function update()
- rect(1,1,192,128,false,12)
- rect(1,101,192,28,false,3)
+ clear(12)
+ rect(0,100,192,28,false,3)
  printCursor(1,1,-1)
  color(7)
  print("Press Up to randomize")
  print("Press Down to sort")
  
  for i=1, #G do
-  draw_giraffe(i*16+1,101,G[i])
+  draw_giraffe(i*16,100,G[i])
  end
 end
 

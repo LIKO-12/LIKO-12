@@ -5,8 +5,8 @@ ___luacode___
 --By Filipo @HomineLudens
 local function pir(x,y,w,h,cx,cy)
 --6 7 12 2
- ccx=w/2+cx
- ccy=h/2+cy
+ ccx=w/2+cx-1
+ ccy=h/2+cy-1
  triangle(x,y,ccx,ccy,x+w,y,false,1)
  triangle(x+w,y,ccx,ccy,x+w,y+h,false,6)
  triangle(x,y,ccx,ccy,x,y+h,false,7)
@@ -19,7 +19,7 @@ function update(dt)
   for y=0,128,28 do
    cx=12*math.sin(t*(x+y+1))
    cy=12*math.cos(t*(x+y+1))
-   pir(x,y,25,25,x+cx,y+cy)
+   pir(x-1,y-1,25,25,x+cx,y+cy)
   end
  end
  t=t+0.001

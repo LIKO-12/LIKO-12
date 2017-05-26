@@ -4,28 +4,28 @@ local sw, sh = screenSize()
 
 local paint = {}
 paint.pal = imagedata(16,1)
-paint.pal:map(function(x,y,c) return x-1 end)
+paint.pal:map(function(x,y,c) return x end)
 paint.pal = paint.pal:image()
 
 paint.drawCursor = eapi.editorsheet:extract(8):image()
 
 paint.fgcolor, paint.bgcolor = 7,0
 
-paint.palGrid = {sw-16*8+1,sh-7,16*8,8,16,1}
+paint.palGrid = {sw-16*8,sh-8,16*8,8,16,1}
 
-paint.imageDraw = {1,1 ,0, 1,1}
+paint.imageDraw = {0,0 ,0, 1,1}
 
-local imagerect = {1,9,sw,sh-2*8}
+local imagerect = {0,8,sw,sh-2*8}
 
 --Zoom Slider--
-local zSliderDraw = {94, 1+8*3,sh-7, 4,1}
+local zSliderDraw = {94, 8*3,sh-8, 4,1}
 local zSliderGrid = {zSliderDraw[2],zSliderDraw[3], zSliderDraw[4]*8,zSliderDraw[5]*8, zSliderDraw[4],zSliderDraw[5]} --Tools Selection Grid
 local zSliderHandle = 93
 local zSlider = 1 --Current slider value
 local zsflag = false --Zoom slider flag
 
 --Tools Selection--
-local toolsdraw = {190, 1,sh-7, 3,1, 1,1,false, eapi.editorsheet} --Tools draw arguments
+local toolsdraw = {190, 0,sh-8, 3,1, 1,1,false, eapi.editorsheet} --Tools draw arguments
 local toolsgrid = {toolsdraw[2],toolsdraw[3], toolsdraw[4]*8,toolsdraw[5]*8, toolsdraw[4],toolsdraw[5]} --Tools Selection Grid
 local stool = 1 --Current selected tool id
 
@@ -43,7 +43,7 @@ local tools = {
     if state == "outmove" or state == "outrelease" then return end
     local data = imgdata
     local col = (b == 1 or isMDown(1)) and self.fgcolor or self.bgcolor
-    data:setPixel(x,y,col)
+    data:setPixel(x-1,y-1,col)
     img = data:image()
   end,
 
@@ -51,7 +51,7 @@ local tools = {
     if state == "outmove" or state == "outrelease" then return end
     local data = imgdata
     local col = (b == 1 or isMDown(1)) and self.fgcolor or self.bgcolor
-    local tofill = data:getPixel(cx-1,cy-1)
+    local tofill = data:getPixel(cx-2,cy-2)
     if tofill == col then return end
     local function spixel(x,y) data:setPixel(x,y,col) end
     local function gpixel(x,y) if x >= 1 and x <= imgdata:width() and y >= y and y <= imgdata:height() then return data:getPixel(x,y) else return false end end
@@ -62,7 +62,7 @@ local tools = {
       if gpixel(x,y+1) and gpixel(x,y+1) == tofill then mapPixel(x,y+1) end
       if gpixel(x,y-1) and gpixel(x,y-1) == tofill then mapPixel(x,y-1) end
     end
-    pcall(mapPixel,cx-1,cy-1)
+    pcall(mapPixel,cx-2,cy-2)
     img = data:image()
   end,
 
@@ -86,25 +86,25 @@ local tools = {
 }
 
 local bgsprite = eapi.editorsheet:extract(59):image()
-local bgquad = bgsprite:quad(1,1,imagerect[3],imagerect[4])
+local bgquad = bgsprite:quad(0,0,imagerect[3],imagerect[4])
 
 local mflag = false
 
 function paint:drawPalette()
-  self.pal:draw(sw-16*8+1,sh-7,0,8,8)
+  self.pal:draw(sw-16*8,sh-8,0,8,8)
 end
 
 function paint:drawColorCell()
   palt(0,true)
   pal(8,self.fgcolor)
   pal(12,self.bgcolor)
-  eapi.editorsheet:draw(77,sw-16*8-8+1,sh-7)
+  eapi.editorsheet:draw(77,sw-16*8-8,sh-8)
   pal()
   palt(0,false)
 end
 
 function paint:drawImage()
-  clip(1,9,sw,sh-8*2)
+  clip(0,8,sw,sh-8*2)
   bgsprite:draw(imagerect[1],imagerect[2],0,1,1,bgquad)
   img:draw(self.imageDraw[1],8+self.imageDraw[2], self.imageDraw[3], self.imageDraw[4], self.imageDraw[5])
   clip()

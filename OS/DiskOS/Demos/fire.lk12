@@ -24,12 +24,12 @@ end
 
 local cimg = imagedata(3,3) --Save Circle Image
 cimg:map(function() return #palette-1 end)
-cimg:setPixel(1,1,0):setPixel(3,1,0)
-cimg:setPixel(1,3,0):setPixel(3,3,0)
+cimg:setPixel(0,0,0):setPixel(2,0,0)
+cimg:setPixel(0,2,0):setPixel(2,2,0)
 
 --Draw the fire circle at the imagedata.
 local function saveCircle()
- img:paste(cimg,x-1,y-1) --Paste the premade circle
+ img:paste(cimg,x-2,y-2) --Paste the premade circle
 end
 
 saveCircle() --Draw the first circle
@@ -39,14 +39,14 @@ function update(dt)
  for i=1, fadeSpeed do --How much attemps to fade the fire
   a = math.random(sw) --Random X
   b = math.random(sh) --Random Y
-  p = img:getPixel(a,b)
+  p = img:getPixel(a-1,b-1)
   ex = math.random(2) --Extra random X
   ey = math.random(3) --Extra random Y
   
-  img:setPixel(a-1+ex,b-2-ey,p) --Draw it on the imagedata
+  img:setPixel(a-1+ex-1,b-2-ey-1,p) --Draw it on the imagedata
   
   if p > 1 then --Fade it down
-   img:setPixel(a,b,p-1) --The the pixel on the imagedata
+   img:setPixel(a-1,b-1,p-1) --The the pixel on the imagedata
   end
  end
  
@@ -56,7 +56,8 @@ function update(dt)
  saveCircle()
  
  --Remove the borders
- rect(1,1,sw,sh,true,1)
+ rect(0,0,sw,sh,true,0)
+ rect(1,1,sw-1,sh-1,true,0)
  
  --Fire moving controls
  if isKDown("left") then
@@ -81,7 +82,9 @@ function update(dt)
 end
 
 function mousepressed(mx,my,b,it)
- x,y = mx,my
+ if isMobile() then
+  x,y = mx,my
+ end
 end
 mousemoved = mousepressed
 mousereleased = mousepressed
