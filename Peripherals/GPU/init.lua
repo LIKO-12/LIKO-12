@@ -719,7 +719,7 @@ return function(config) --A function that creates a new GPU peripheral.
       if type(y) ~= "number" then return false, "Y must be a number, provided: "..type(y) end
       if type(w) ~= "number" then return false, "W must be a number, provided: "..type(w) end
       if type(h) ~= "number" then return false, "H must be a number, provided: "..type(h) end
-      Clip = {x-1,y-1,w,h}
+      Clip = {x,y,w,h}
       love.graphics.setScissor(unpack(Clip))
     else
       Clip = false
@@ -857,7 +857,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Draws a ellipse filled, or lines only.
   function GPU.ellipse(x,y,rx,ry,l,c) UnbindVRAM()
-    local x,y,rx,ry,l,c = x or 1, y or 1, rx or 1, ry or 1, l or false, c --In case if they are not provided.
+    local x,y,rx,ry,l,c = x or 0, y or 0, rx or 1, ry or 1, l or false, c --In case if they are not provided.
     
     --It accepts all the args as a table.
     if x and type(x) == "table" then
@@ -1090,7 +1090,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local i = {}
     
     function i:draw(x,y,r,sx,sy,quad) UnbindVRAM()
-      local x, y, sx, sy = x or 1, y or 1, sx or 1, sy or 1
+      local x, y, sx, sy = x or 0, y or 0, sx or 1, sy or 1
       GPU.pushColor()
       love.graphics.setShader(_ImageShader)
       love.graphics.setColor(255,255,255,255)
@@ -1153,7 +1153,7 @@ return function(config) --A function that creates a new GPU peripheral.
       if not y then return error("Must provide Y") end
       x,y = math.floor(x), math.floor(y)
       if x < 0 or x > self:width()-1 or y < 0 or y > self:height()-1 then
-        return 1
+        return 0
       end
       local r,g,b,a = imageData:getPixel(x,y)
       return r
@@ -1174,8 +1174,8 @@ return function(config) --A function that creates a new GPU peripheral.
       imageData:mapPixel(
       function(x,y,r,g,b,a)
         local c = mf(x,y,r)
-        if c and type(c) ~= "number" then error("Color must be a number, provided "..type(c)) elseif c then c = math.floor(c) end
-        if c and (c < 0 or c > 15) then error("Color out of range ("..c..") expected [0,15]") end
+        if c and type(c) ~= "number" then return error("Color must be a number, provided "..type(c)) elseif c then c = math.floor(c) end
+        if c and (c < 0 or c > 15) then return error("Color out of range ("..c..") expected [0,15]") end
         if c then return c,0,0,255 else return r,g,b,a end
       end)
       return self
