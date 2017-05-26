@@ -56,7 +56,7 @@ imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
 end)
 
 --Print calibration
-ofs.print = {-1,-1} --The offset of GPU.print.
+ofs.print = {0,0} --The offset of GPU.print.
 ofs.print_grid = {-1,-1} --The offset of GPU.print with grid mode.
 
 --Lines calibration
