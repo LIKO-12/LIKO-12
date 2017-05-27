@@ -976,7 +976,7 @@ return function(config) --A function that creates a new GPU peripheral.
         local extra = linesNum - (TERM_H-pc.y+1) --The extra lines that will draw out of the screen.
         local sc = exe(GPU.screenshot()) --Take a screenshot
         GPU.clear(0) --Clear the screen
-        sc:image():draw(1, extra*(_FontH+2)*-1+1) --Draw the screen shifted up
+        sc:image():draw(0, extra*(_FontH+2)*-1) --Draw the screen shifted up
         pc.y = pc.y-extra --Update the cursor pos.
         GPU.popPalette() --Restore the palette.
       end
