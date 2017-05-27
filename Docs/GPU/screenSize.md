@@ -1,9 +1,11 @@
-Returns size of the screen.
+Returns dimensions of the screen.
 
-### Syntax
-    x, y = screenSize()
+### Syntax:
+```Lua
+w, h = screenSize()
+```
 
-### Output
+### Output:
 
-* x - x size of the screen (By default - 192)
-* y - y size of the screen (By default - 128)
+* **w (Number)**: The width of the screen (By default - 192)
+* **h (Number)**: The height of the screen (By default - 128)

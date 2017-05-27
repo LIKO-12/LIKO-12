@@ -1,8 +1,10 @@
 Returns width of the screen.
 
-### Syntax
-    x = screenWidth()
+### Syntax:
+```Lua
+w = screenWidth()
+```
 
-### Output
+### Output:
 
-* x - x size of the screen (By default - 192)
+* **w (Number)**: The width of the screen (By default - 192)
