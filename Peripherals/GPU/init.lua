@@ -560,7 +560,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if p then p = math.floor(p) end
     if c0 and (c0 < 0 or c0 > 15) then return false, "C0 is out of range ("..c0..") expected [0,15]" end
     if c1 and (c1 < 0 or c1 > 15) then return false, "C1 is out of range ("..c1..") expected [0,15]" end
-    if p and (p < 1 or p > 2) then return false, "P is out of range ("..p..") expected [1,2]" end
+    if p and (p < 0 or p > 1) then return false, "P is out of range ("..p..") expected [0,1]" end
     
     --Reset the palettes.
     if (not c0) and (not c1) then
@@ -577,25 +577,25 @@ return function(config) --A function that creates a new GPU peripheral.
       end
     --Reset a specific color
     elseif not(c1) then
-      if ((not p) or p == 1) and _DrawPalette[c0] ~= c0 then
+      if ((not p) or p == 0) and _DrawPalette[c0] ~= c0 then
         drawchange = true
         _DrawPalette[c0+1] = c0
       end
       
-      if ((not p) or p > 1) and _ImagePalette[c0] ~= c0 then
+      if ((not p) or p > 0) and _ImagePalette[c0] ~= c0 then
         imagechange = true
         _ImagePalette[c0+1] = c0
       end
     --Modify the palette
     elseif c0 and c1 then
-      if ((not p) or p == 1) and _DrawPalette[c0] ~= c1 then
+      if ((not p) or p == 0) and _DrawPalette[c0] ~= c1 then
         drawchange = true
-        _DrawPalette[c0+1] = c1
+        _DrawPalette[c0+0] = c1
       end
       
-      if ((not p) or p > 1) and _ImagePalette[c0] ~= c1 then
+      if ((not p) or p > 0) and _ImagePalette[c0] ~= c1 then
         imagechange = true
-        _ImagePalette[c0+1] = c1
+        _ImagePalette[c0+0] = c1
       end
     end
     --If changes has been made then upload the data to the shaders.
