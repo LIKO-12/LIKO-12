@@ -135,7 +135,7 @@ end
 function t:redrawMap()
   palt(0,false)
   if mapdx > 0 or mapdy > 0 or mapdx < -(MapW-MapVW)*8 or mapdy < -(MapH-MapVH)*8 then
-    pal(1,2,2)
+    pal(1,2,1)
     bgsprite:draw(maprect[1],maprect[2],0,1,1,bgquad)
     pal()
     if mapdx < MapVW*8 and mapdy < MapVH*8 and mapdx > -MapW*8 and mapdy > -MapH*8 then
