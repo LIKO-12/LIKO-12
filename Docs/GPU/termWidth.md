@@ -1,12 +1,13 @@
 Returns width of the terminal in characters.
 
-### Syntax
-    x = termWidth()
+### Syntax:
+```Lua
+x = termWidth()
+```
+### Returns:
 
-### Output
+* **x**: x size of the terminal
 
-* x - x size of the terminal
-
-### NOTE
+### NOTE:
 
 Custom fonts can change the output values, don't assume anything.

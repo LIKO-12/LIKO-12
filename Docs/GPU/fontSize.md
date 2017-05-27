@@ -1,9 +1,10 @@
 Returns size of the font in pixels.
 
-### Syntax
-    x, y = fontSize()
+### Syntax:
+```Lua
+x, y = fontSize()
+```
+### Returns:
 
-### Output
-
-* x - x size of the font.
-* y - y size of the font.
+* **x**: x size of the font.
+* **y**: y size of the font.

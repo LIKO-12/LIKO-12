@@ -5,7 +5,7 @@ Returns dimensions of the screen.
 w, h = screenSize()
 ```
 
-### Output:
+### Returns:
 
 * **w (Number)**: The width of the screen (By default - 192)
 * **h (Number)**: The height of the screen (By default - 128)

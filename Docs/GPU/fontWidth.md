@@ -1,8 +1,10 @@
 Returns width of the font in pixels.
 
-### Syntax
-    x = fontWidth()
+### Syntax:
+```Lua
+x = fontWidth()
+```
 
-### Output
+### Returns:
 
-* x - x size of the font.
+* **x**: x size of the font.

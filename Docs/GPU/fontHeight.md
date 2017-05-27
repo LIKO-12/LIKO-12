@@ -1,8 +1,9 @@
 Returns height of the font in pixels.
 
-### Syntax
-    y = fontHeight()
+### Syntax:
+```Lua
+y = fontHeight()
+```
+### Returns:
 
-### Output
-
-* y - y size of the font.
+* **y**: y size of the font.

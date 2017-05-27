@@ -5,6 +5,6 @@ Returns width of the screen.
 w = screenWidth()
 ```
 
-### Output:
+### Returns:
 
 * **w (Number)**: The width of the screen (By default - 192)
