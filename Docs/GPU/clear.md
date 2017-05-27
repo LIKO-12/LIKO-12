@@ -5,4 +5,4 @@ Clear function set color of whole screen, useful for clearing graphics for new f
 
 ### Parameters:
 
-* id: ID of color which will fill the screen, can be 0-15
+* **[id] (0)**: ID of color which will fill the screen, can be 0-15
