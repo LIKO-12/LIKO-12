@@ -1,9 +1,8 @@
-Copies draw buffer to the screen and waits for next frame, useful if you want to implement your own loop.
+Waits till the screen is applied and shown to the user, helpful when doing some loading operations.
 
-### Syntax:
+---
+
+#### Syntax:
 ```lua
 flip()
 ```
-### NOTE:
-
-Don't use this if you already use [update()](/Events/update.md)

@@ -1,11 +1,16 @@
-Update is called every frame, it should be used for game logic.
+Update function is called every frame, it should be used for game logic.
+
+---
 
 #### Syntax:
 ```lua
 function update(dt)
-
+  --Do something here
 end
 ```
+
+---
+
 #### Arguments:
 
-* **dt**: deltatime, time between frames (in seconds).
+* **dt (Number)**: deltatime, the time between frames (in seconds).
