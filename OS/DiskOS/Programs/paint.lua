@@ -24,7 +24,6 @@ if not fs.exists(tar) then --Create a new image
   if not height or height:len() == 0 then print("") return end
   local h = tonumber(height)
   if not h then color(8) print("\nInvalid Height: "..height..", height must be a number !") return end
-  color(8) print("\nW:"..w.." H:"..h)
   
   imgdata = imagedata(w,h)
   img = imgdata:image()

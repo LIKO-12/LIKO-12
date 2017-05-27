@@ -7,7 +7,7 @@ paint.pal = imagedata(16,1)
 paint.pal:map(function(x,y,c) return x end)
 paint.pal = paint.pal:image()
 
-paint.drawCursor = eapi.editorsheet:extract(8):image()
+--paint.drawCursor = eapi.editorsheet:extract(149):image()
 
 paint.fgcolor, paint.bgcolor = 7,0
 
@@ -247,16 +247,23 @@ function paint:mousemoved(x,y,dx,dy,it)
   
   --Cursor Drawing
   if isInRect(x,y,{1,9,sw,sh-8*2}) then
-    cursor("none")
-    eapi:drawBackground(); self:drawImage()
+    --[[eapi:drawBackground(); self:drawImage()
     eapi:drawTopBar(); self:drawBottomBar()
     palt(0,true)
     local zx,zy = self.imageDraw[4], self.imageDraw[5]
     self.drawCursor:draw(x-3*zx,y-3*zy,0,zx,zy)
-    palt(0,false)
+    palt(0,false)]]
+    if stool == 1 then --Pen
+      cursor("pencil",true)
+    elseif stool == 2 then --Bucket
+      cursor("bucket",true)
+    elseif stool == 3 then --Pan
+      cursor("hand",true)
+    end
   else
-    if cursor() == "none" then eapi:drawBackground(); self:drawImage(); eapi:drawTopBar(); self:drawBottomBar() end
-    if cursor() == "none" or cursor() == "draw" then cursor("normal") end
+    --[[if cursor() == "none" then eapi:drawBackground(); self:drawImage(); eapi:drawTopBar(); self:drawBottomBar() end
+    if cursor() == "none" or cursor() == "draw" then cursor("normal") end]]
+    cursor("normal")
   end
 end
 
