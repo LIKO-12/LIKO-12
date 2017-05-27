@@ -4,7 +4,7 @@ Checks if a mouse button is down.
 
 ### Syntax:
 ```lua
-bool = isMDown(<b>)
+bool = isMDown(b)
 ```
 
 ---
