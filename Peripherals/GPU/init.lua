@@ -812,7 +812,11 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Draws a triangle
   function GPU.triangle(x1,y1,x2,y2,x3,y3,l,col) UnbindVRAM()
-    local l = l or false
+    local x1,y1,x2,y2,x3,y3,l,col = x1,y1,x2,y2,x3,y3,l or false,col --Localize them
+    
+    if type(x1) == "table" then
+      x1,y1,x2,y2,x3,y3,l,col = unpack(x1)
+    end
     
     if type(x1) ~= "number" then return false, "x1 must be a number, provided: "..type(x1) end
     if type(y1) ~= "number" then return false, "y1 must be a number, provided: "..type(y1) end
@@ -823,6 +827,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if col and type(col) ~= "number" then return false, "color must be a number, provided: "..type(col) end
     
     x1,y1,x2,y2,x3,y3 = math.floor(x1),math.floor(y1),math.floor(x2),math.floor(y2),math.floor(x3),math.floor(y3)
+    
     if col then col = math.floor(col) end
     if col and (col < 0 or col > 15) then return false, "color is out of range ("..col..") expected [0,15]" end
     
