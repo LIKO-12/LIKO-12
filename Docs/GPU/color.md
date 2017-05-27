@@ -2,6 +2,10 @@ Set's the current active color.
 
 ---
 
+![Palette](Palette.png)
+
+---
+
 ## Usage:
 
 ---
