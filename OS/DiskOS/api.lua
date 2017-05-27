@@ -9,8 +9,8 @@ function input()
   local blinktimer = 0
   local blinktime = 0.5
   local function drawblink()
-    local cx,cy,c = printCursor() cy = cy-1
-    rect(cx*(fw+1)-3-1,blink and cy*(fh+2)+1 or cy*(fh+2),fw+1,blink and fh or fh+4,false,blink and 4 or c) --The blink
+    local cx,cy,c = printCursor()
+    rect(cx*(fw+1)+1,blink and cy*(fh+2)+1 or cy*(fh+2),fw+1,blink and fh or fh+4,false,blink and 4 or c) --The blink
   end
   
   for event,a,b,c,d,e,f in pullEvent do

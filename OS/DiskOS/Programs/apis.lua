@@ -26,18 +26,18 @@ local msglen = msg:len()
 
 local function sprint(text)
   local cx, cy = printCursor()
-  if cy < th-1 then print(text.." ",false) return end
+  if cy < th-2 then print(text.." ",false) return end
   local tlen = text:len()+1
-  if cx+tlen >= tw then
+  if cx+tlen+1 >= tw then
     print("") pushColor() color(9)
     print(msg,false) popColor()
     flip()
     local quit = waitkey()
     printCursor(1,th)
-    rect(1,sh-8,sw,8,false,0)
+    rect(0,sh-9,sw,8,false,0)
     if quit then return true end
-    screenshot():image():draw(1,-7)
-    printCursor(cx, th-2)
+    screenshot():image():draw(0,-8)
+    printCursor(cx, th-3)
     print(text.." ",false) return
   else
     print(text.." ",false) return

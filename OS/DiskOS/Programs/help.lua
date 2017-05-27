@@ -59,7 +59,7 @@ local function waitkey()
   end
 end
 
-printCursor(1) --Set the x pos to 1 (the start of the screen)
+printCursor(0) --Set the x pos to 0 (the start of the screen)
 
 local tw, th = termSize()
 local sw, sh = screenSize()
@@ -73,20 +73,20 @@ local function sprint(text) --Smart print with the "press any key to continue" m
   local txth = math.ceil(txtlen/tw)
   local txtw = text:sub((txth-1)*tw, -1)
   
-  if cy + txth < th+1 then print(text) return end
+  if cy + txth < th then print(text) return end
   for i=1, txth do
-	printCursor(1)
-	if cy + i < th+1 then
+	printCursor(0)
+	if cy + i < th then
 	  print(text:sub( (i-1)*tw+1, (i)*tw ))
 	else
 	  pushColor() color(9)
 	  print(msg,false) popColor()
-      flip()
-      local quit = waitkey()
-      printCursor(1,th)
-      rect(1,sh-8,sw,8,false,0)
-      if quit then return true end
-      print(text:sub( (i-1)*tw+1, (i)*tw ))
+    flip()
+    local quit = waitkey()
+    printCursor(0,th-1)
+    rect(0,sh-9,sw,8,false,0)
+    if quit then return true end
+    print(text:sub( (i-1)*tw+1, (i)*tw ))
 	end
   end
 end

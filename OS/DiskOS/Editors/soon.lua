@@ -14,7 +14,7 @@ function soon:entered()
   eapi:drawUI()
   rect(0,8,sw,sh-16,false,0)
   color(7)
-  printCursor(tx,ty,-1)
+  printCursor(tx-1,ty-1,-1)
   print(str)
 end
 

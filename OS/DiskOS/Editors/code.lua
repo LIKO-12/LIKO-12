@@ -120,7 +120,7 @@ function ce:drawBuffer()
   local cbuffer = self.colorize and clua(lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)),cluacolors) or lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1))
   rect(0,7,screenW,screenH-8*2+1,false,self.bgc)
   for k, l in ipairs(cbuffer) do
-    printCursor(-(self.vx-2),k+1,-1)
+    printCursor(-(self.vx-2)-1,k,-1)
     self:colorPrint(l)
   end
   self:drawBlink()
@@ -130,7 +130,7 @@ function ce:drawLine()
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   local cline = self.colorize and clua({buffer[self.cy]},cluacolors) or {buffer[self.cy]}
   rect(0,(self.cy-self.vy+2)*(self.fh+2)-(self.fh+2), screenW,self.fh+2, false,self.bgc)
-  printCursor(-(self.vx-2),(self.cy-self.vy+1)+1,self.bgc)
+  printCursor(-(self.vx-2)-1,(self.cy-self.vy+1),self.bgc)
   self:colorPrint(cline[1])
   self:drawBlink()
 end

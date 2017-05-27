@@ -13,7 +13,7 @@ local fw, fh = fontSize()
 
 clear()
 SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
-printCursor(1,2,0)
+printCursor(0,1,0)
 color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
 cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  0.6") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
 color(6) print("\nhttp://github.com/ramilego4game/liko12")
@@ -28,12 +28,12 @@ local btimer, btime, blink = 0, 0.5, true
 local function checkCursor()
   local cx, cy = printCursor()
   local tw, th = termSize()
-  if cx > tw+1 then cx = tw+1 end
-  if cx < 1 then cx = 1 end
-  if cy > th+1 then cy = th+1 end
-  if cy < 1 then cy = 1 end
-  printCursor(cx,cy,0) cy = cy-1
-  rect(cx*(fw+1)-4,blink and cy*(fh+2)+1 or cy*(fh+2),fw+1,blink and fh or fh+3,false,blink and 4 or 0) --The blink
+  if cx > tw then cx = tw end
+  if cx < 0 then cx = 0 end
+  if cy > th then cy = th end
+  if cy < 0 then cy = 0 end
+  printCursor(cx,cy,0)
+  rect(cx*(fw+1)+1,blink and cy*(fh+2)+1 or cy*(fh+2),fw+1,blink and fh or fh+3,false,blink and 4 or 0) --The blink
 end
 
 local function split(str)
