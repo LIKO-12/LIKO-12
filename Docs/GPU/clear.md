@@ -3,7 +3,7 @@ Clears the screen and fills it with a specific color, useful when clearing the s
 ---
 
 ### Syntax:
-```Lua
+```lua
 clear(id)
 ```
 

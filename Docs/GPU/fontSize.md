@@ -2,14 +2,14 @@ Returns size of the font character in pixels.
 
 ---
 
-### Syntax:
-```Lua
+#### Syntax:
+```lua
 w, h = fontSize()
 ```
 
 ---
 
-### Returns:
+#### Returns:
 
 * **w (Number)**: The width of the font character.
 * **h (Number)**: The height of the font character.

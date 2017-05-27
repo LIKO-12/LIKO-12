@@ -1,13 +1,13 @@
 Function called when mouse button is pressed.
 
-### Syntax:
+#### Syntax:
 ```lua
 function mousepressed(x,y,button)
 
 end
 ```
 
-### Parameters:
+#### Arguments:
 
 * **x**: x position of cursor
 * **y**: y position of cursor

@@ -2,14 +2,14 @@ Returns width of the terminal in characters.
 
 ---
 
-### Syntax:
-```Lua
+#### Syntax:
+```lua
 w = termWidth()
 ```
 
 ---
 
-### Returns:
+#### Returns:
 
 * **w (Number)**: The width of the terminal
 

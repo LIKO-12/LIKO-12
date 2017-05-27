@@ -2,13 +2,13 @@ Returns width of the font character in pixels.
 
 ---
 
-### Syntax:
-```Lua
+#### Syntax:
+```lua
 w = fontWidth()
 ```
 
 ---
 
-### Returns:
+#### Returns:
 
 * **w (Number)**: The width of the font character.

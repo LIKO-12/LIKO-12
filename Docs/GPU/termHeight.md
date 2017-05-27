@@ -2,14 +2,14 @@ Returns height of the terminal in characters.
 
 ---
 
-### Syntax:
+#### Syntax:
 ```lua
 h = termHeight()
 ```
 
 ---
 
-### Returns:
+#### Returns:
 
 * **h (Number)**: The height of the terminal
 

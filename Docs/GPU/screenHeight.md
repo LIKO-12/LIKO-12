@@ -2,13 +2,13 @@ Returns height of the screen.
 
 ---
 
-### Syntax:
-```Lua
+#### Syntax:
+```lua
 h = screenWidth()
 ```
 
 ---
 
-### Returns:
+#### Returns:
 
 * **h (Number)**: The height of the screen (By default - 128)

@@ -1,13 +1,27 @@
 Draws a circle on the screen.
 
-### Syntax:
-```Lua
-circle(x,y,r,l,c)
-```
-### Parameters:
+---
 
-* **x**: top-left x position of circle
-* **y**: top-left y position of circle
-* **r**: radius of circle
-* **l**: default: false - circle will be filled, if true - circle will have just lines
-* **c**: color of circle (0-15)
+#### Syntax:
+```lua
+circle(x,y, r, l, c)
+```
+
+---
+
+#### Arguments:
+
+* **<x\> (Number)**: The top-left x position of circle.
+* **<y\> (Number)**: The top-left y position of circle.
+* **<r\> (Number)**: The radius of circle.
+* **[l] (Boolean)**: (false/nil) The circle will be filled, (true) The circle will have only lines (outline).
+* **[c] (Number)**: The color of the circle (0-15), defaults to the active color.
+
+---
+
+### Note:
+
+The arguments can be passed in a table:
+```lua
+circle( {x,y, r, l, c} )
+```

@@ -2,14 +2,14 @@ Returns dimensions of the screen.
 
 ---
 
-### Syntax:
+#### Syntax:
 ```lua
 w, h = screenSize()
 ```
 
 ---
 
-### Returns:
+#### Returns:
 
 * **w (Number)**: The width of the screen (By default - 192)
 * **h (Number)**: The height of the screen (By default - 128)

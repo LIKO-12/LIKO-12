@@ -2,13 +2,13 @@ Returns height of the font character in pixels.
 
 ---
 
-### Syntax:
-```Lua
+#### Syntax:
+```lua
 h = fontHeight()
 ```
 
 ---
 
-### Returns:
+#### Returns:
 
 * **h (Number)**: The height of the font character.
