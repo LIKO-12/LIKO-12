@@ -1,6 +1,11 @@
-Welcome to the official LIKO-12 V0.6 Documentation !
+# Welcome to the official LIKO-12 Documentation !
 
-Please note that the documentation is not complete and it's still being written !
+![The Terminal](Terminal.gif)
+
+**Please note that the documentation is not finished and it's still being written !**
+
+---
+### The Planned RAM Layout
 
 ```
 Layout (96 KB)
