@@ -1279,9 +1279,9 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.cursor(imgdata,name,hx,hy)
     if type(imgdata) == "string" then --Set the current cursor
       if _GrappedCursor then if not name then _AlwaysDraw = false; _ShouldDraw = true end elseif name then _AlwaysDraw = true end
+      if _Cursor == imgdata and not ((_GrappedCursor and not name) or (name and not _GrappedCursor)) then return true end
       _GrappedCursor = name
       if _GrappedCursor then love.mouse.setVisible(false) end
-      if _Cursor == imgdata then return true end
       if (not _CursorsCache[imgdata]) and (imgdata ~= "none") then return false, "Cursor doesn't exists: "..imgdata end
       if _Cursor == "none" then love.mouse.setVisible(true) end
       _Cursor = imgdata
@@ -1303,6 +1303,7 @@ return function(config) --A function that creates a new GPU peripheral.
       hx, hy = math.floor(hx), math.floor(hy)
       
       local enimg = imgdata:enlarge(_LIKOScale)
+      local img = love.graphics.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
       local gifimg = love.image.newImageData(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
       gifimg = love.graphics.newImage(gifimg)
@@ -1312,7 +1313,7 @@ return function(config) --A function that creates a new GPU peripheral.
       for i=1, 16 do
         table.insert(palt,_ImageTransparent[i])
       end
-      _CursorsCache[name] = {cursor=cur,img=love.graphics.newImage(limg),imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy,palt=palt}
+      _CursorsCache[name] = {cursor=cur,img=img,imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy,palt=palt}
       return true --It ran successfully
     elseif type(imgdata) == "nil" then
       if _Cursor == "none" then
@@ -1341,11 +1342,10 @@ return function(config) --A function that creates a new GPU peripheral.
       local hotx, hoty = cursor.hx*_LIKOScale, cursor.hy*_LIKOScale --Converted to host scale
       local cur = love.mouse.newCursor(limg,hotx,hoty)
       _CursorsCache[k].cursor = cur
-      _CursorsCache[k].img = love.graphics.newImage(limg)
       GPU.popPalette()
     end
     local cursor = _Cursor; _Cursor = "none" --Force the cursor to update.
-    exe(GPU.cursor(cursor))
+    exe(GPU.cursor(cursor,_GrappedCursor))
   end)
   
   exe(GPU.cursor(exe(GPU.imagedata(1,1)):setPixel(0,0,7),"default"))
@@ -1385,7 +1385,7 @@ return function(config) --A function that creates a new GPU peripheral.
         local mx, my = _HostToLiko(love.mouse.getPosition())
         mx,my = _LikoToHost(mx,my)
         local hotx, hoty = _CursorsCache[_Cursor].hx*_LIKOScale, _CursorsCache[_Cursor].hy*_LIKOScale --Converted to host scale
-        love.graphics.draw(_CursorsCache[_Cursor].img, _LIKO_X+ofs.image[1]+mx-hotx, _LIKO_Y+ofs.image[2]+my-hoty)
+        love.graphics.draw(_CursorsCache[_Cursor].img, _LIKO_X+ofs.image[1]+mx-hotx, _LIKO_Y+ofs.image[2]+my-hoty,0,_LIKOScale,_LIKOScale)
       end
       
       love.graphics.present() --Present the screen to the host & the user.
