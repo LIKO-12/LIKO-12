@@ -203,7 +203,7 @@ if gpu then
       gpu.print("LIKO-12 - Fantasy Computer",15,6)
       gpu.print("Copyright (C) Rami Sabbagh",15,13)
       
-      gpu.printCursor(1,4,0)
+      gpu.printCursor(0,3,0)
       gpu.print("NormBIOS Revision 060-006")
       gpu.print("")
       
@@ -225,6 +225,7 @@ if gpu then
       end
     elseif stage == 8 then
       gpu.clear()
+      gpu.printCursor(0,0,0)
     elseif stage == 9 then
       events:unregisterGroup("BIOS:POST")
       bootOS()
