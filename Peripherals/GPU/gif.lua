@@ -181,7 +181,7 @@ function giflib.new(filename)
 		return nil, err
 	end
 	file:write("GIF89a"..num2str(_LIKO_W*_GIFScale)..num2str(_LIKO_H*_GIFScale).."\243\0\0")
-	for i=1, 16 do
+	for i=0, 15 do
 		local palette=_ColorSet[i]
 		file:write(string.char(palette[1], palette[2], palette[3]))
 	end
