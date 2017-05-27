@@ -1,14 +1,28 @@
 Draws a rectangle on the screen.
 
+---
+
 ### Syntax:
 ```Lua
 rect(x,y,w,h,l,c)
 ```
-### Parameters:
 
-* **x**: top-left x position of rectangle
-* **y**: top-left y position of rectangle
-* **w**: width of rectangle
-* **h**: height of rectangle
-* **l**: default: false - rectangle will be filled, if true - rectangle will have just lines
-* **c**: color of rectangle (0-15)
+---
+
+### Arguments:
+
+* **<x\> (Number)**: The top-left x position of the rectangle.
+* **<y\> (Number)**: The top-left y position of the rectangle.
+* **<w\> (Number)**: The width of rectangle.
+* **<h\> (Number)**: The height of rectangle.
+* **[l] (Boolean)**: (false/nil) The rectangle will be filled, (true) The rectangle will have only lines (border).
+* **[c] (Number)**: The color of the rectangle (0-15), defaults to the active color
+
+---
+
+### Note:
+
+The arguments can be passed in a table:
+```Lua
+rect( {x,y,w,h,l,c} )
+```

@@ -4,11 +4,11 @@ Clears the screen and fills it with a specific color, useful when clearing the s
 
 ### Syntax:
 ```Lua
-clear([id])
+clear(id)
 ```
 
 ---
 
-### Parameters:
+### Arguments:
 
 * **[id] (0) (Number)**: The ID of the color to fill the screen with, can be 0-15

@@ -19,12 +19,12 @@ Maps a color in the palette to another color.
 
 #### Syntax:
 ```Lua
-pal(false,false,[P])
+pal(false,false,P)
 ```
 
 ---
 
-#### Parameters:
+#### Arguments:
 
 * **[P] (Number)**: (0) will reset the Drawing palette, (1) will reset the Images palette, (nil/false) will reset the both palettes.
 
@@ -36,12 +36,12 @@ pal(false,false,[P])
 
 #### Syntax:
 ```Lua
-pal([C],false,[P])
+pal(C,false,P)
 ```
 
 ---
 
-#### Parameters:
+#### Arguments:
 
 * **[C] (Number)**: The color to reset to it's default.
 * **[P] (Number)**: (0) will reset the color in the Drawing palette only, (1) will reset the color in the Images palette only, (nil/false) will reset the color in both palettes.
@@ -54,12 +54,12 @@ pal([C],false,[P])
 
 #### Syntax:
 ```Lua
-pal([A],[B],[P])
+pal(A,B,P)
 ```
 
 ---
 
-#### Parameters:
+#### Arguments:
 * **[A]**: The color to replace.
 * **[B]**: The color which will replace A.
 * **[P]**: (0) will affect the Drawing palette, (1) will affect the Images palette, (nil/false) will affect the both palettes.

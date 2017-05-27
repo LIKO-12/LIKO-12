@@ -9,7 +9,7 @@ bool = isMDown(<b>)
 
 ---
 
-### Parameters:
+### Arguments:
 
 * **<b\> (Number)**: The button to check, 1 for left mouse button, 2 for right mouse button, 3 for middle mouse button.
 
