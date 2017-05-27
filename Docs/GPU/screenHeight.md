@@ -5,6 +5,6 @@ Returns height of the screen.
 h = screenWidth()
 ```
 
-### Output:
+### Returns:
 
 * **h (Number)**: The height of the screen (By default - 128)

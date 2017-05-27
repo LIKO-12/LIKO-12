@@ -1,9 +1,10 @@
 Gets position of mouse cursor.
 
-### Syntax
+### Syntax:
+```Lua
     mx, my = getMPos()
+```
+### Returns:
 
-### Output
-
-* mx: x position of mouse cursor
-* my: y position of mouse cursor
+* **mx**: x position of mouse cursor
+* **my**: y position of mouse cursor
