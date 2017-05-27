@@ -90,14 +90,14 @@ return function(config) --A function that creates a new GPU peripheral.
   local ofs
   if love.filesystem.exists("GPUCalibration.json") then
     ofs = json:decode(love.filesystem.read("/GPUCalibration.json"))
-    if ofs.version < 1.2 then --Redo calibration
+    if ofs.version < 1.3 then --Redo calibration
       ofs = love.filesystem.load(perpath.."calibrate.lua")()
-      ofs.version = 1.2
+      ofs.version = 1.3
       love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
     end
   else
     ofs = love.filesystem.load(perpath.."calibrate.lua")()
-    ofs.version = 1.2
+    ofs.version = 1.3
     love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
   end
   
@@ -946,14 +946,14 @@ return function(config) --A function that creates a new GPU peripheral.
       local pc = printCursor --Shortcut
       
       local function togrid(gx,gy) --Covert to grid cordinates
-        return math.floor((gx-1)*(_FontW+1))+1, math.floor((gy-1)*(_FontH+2))+1
+        return math.floor((gx-1)*(_FontW+1)), math.floor((gy-1)*(_FontH+2))
       end
       
       --A function to draw the background rectangle
       local function drawbackground(gx,gy,gw)
         if pc.bgc == -1 or gw < 1 then return end --No need to draw the background
         gx,gy = togrid(gx,gy)
-        GPU.rect(gx-1,gy-1, gw*(_FontW+1)+1,_FontH+3, false, pc.bgc)
+        GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, pc.bgc)
       end
       
       --Draw directly without formatting nor updating the cursor pos.
@@ -995,7 +995,7 @@ return function(config) --A function that creates a new GPU peripheral.
         if wrappedText[k+1] then pc.y = pc.y + 1 end --If there's a next line
       end
       
-      love.graphics.printf(pre_spaces..t,1+1+ofs.print_grid[1],(drawY-1)*(_FontH+2)+1+1+ofs.print_grid[2],sw) _ShouldDraw = true --Print the text
+      love.graphics.printf(pre_spaces..t,1+ofs.print_grid[1],(drawY-1)*(_FontH+2)+1+ofs.print_grid[2],sw) _ShouldDraw = true --Print the text
       
       return true --It ran successfully.
     end
@@ -1007,14 +1007,14 @@ return function(config) --A function that creates a new GPU peripheral.
     local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,_FontH+2) end
     
     local function togrid(gx,gy) --Covert to grid cordinates
-      return math.floor((gx-1)*(_FontW+1))+1, math.floor((gy-1)*(_FontH+2))+1
+      return math.floor((gx-1)*(_FontW+1)), math.floor((gy-1)*(_FontH+2))
     end
     
     --A function to draw the background rectangle
     local function drawbackground(gx,gy,gw)
       if printCursor.bgc == -1 or gw < 1 then return end --No need to draw the background
       gx,gy = togrid(gx,gy)
-      GPU.rect(gx-1,gy-1, gw*(_FontW+1)+1,_FontH+3, false, printCursor.bgc)
+      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, printCursor.bgc)
     end
       
     if printCursor.x > 1 then
