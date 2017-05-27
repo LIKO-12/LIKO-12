@@ -59,6 +59,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --End of config loading--
   
   local _ShouldDraw = false --This flag means that the gpu has to update the screen for the user.
+  local _AlwaysDraw = false --This flag means that the gpu has to always update the screen for the user.
   
   --Hook the resize function--
   events:register("love:resize",function(w,h) --Do some calculations
@@ -207,6 +208,10 @@ return function(config) --A function that creates a new GPU peripheral.
   local function _HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
     --x, y = x-_ScreenX, y-_ScreenY
     return math.floor((x - _LIKO_X)/_LIKOScale), math.floor((y - _LIKO_Y)/_LIKOScale)
+  end
+  
+  local function _LikoToHost(x,y) --Convert a position from LIKO12 screen to HOST
+    return x*_LIKOScale + _LIKO_X, y*_LIKOScale + _LIKO_Y
   end
   
   local function _GetColor(c) return _ColorSet[c or 0] or _ColorSet[0] end --Get the (rgba) table of a color id.
@@ -1267,16 +1272,20 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Cursor API--
+  local _GrappedCursor = {} --If the cursor must be drawed by the GPU (not using a system cursor)
   local _Cursor = "none"
   local _CursorsCache = {}
   
   function GPU.cursor(imgdata,name,hx,hy)
     if type(imgdata) == "string" then --Set the current cursor
+      if _GrappedCursor then if not name then _AlwaysDraw = false; _ShouldDraw = true end elseif name then _AlwaysDraw = true end
+      _GrappedCursor = name
+      if _GrappedCursor then love.mouse.setVisible(false) end
       if _Cursor == imgdata then return true end
       if (not _CursorsCache[imgdata]) and (imgdata ~= "none") then return false, "Cursor doesn't exists: "..imgdata end
       if _Cursor == "none" then love.mouse.setVisible(true) end
       _Cursor = imgdata
-      if _Cursor == "none" then
+      if _Cursor == "none" or _GrappedCursor then
         love.mouse.setVisible(false)
       elseif not _Mobile then
         love.mouse.setCursor(_CursorsCache[_Cursor].cursor)
@@ -1303,7 +1312,7 @@ return function(config) --A function that creates a new GPU peripheral.
       for i=1, 16 do
         table.insert(palt,_ImageTransparent[i])
       end
-      _CursorsCache[name] = {cursor=cur,imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy,palt=palt}
+      _CursorsCache[name] = {cursor=cur,img=love.graphics.newImage(limg),imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy,palt=palt}
       return true --It ran successfully
     elseif type(imgdata) == "nil" then
       if _Cursor == "none" then
@@ -1332,6 +1341,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local hotx, hoty = cursor.hx*_LIKOScale, cursor.hy*_LIKOScale --Converted to host scale
       local cur = love.mouse.newCursor(limg,hotx,hoty)
       _CursorsCache[k].cursor = cur
+      _CursorsCache[k].img = love.graphics.newImage(limg)
       GPU.popPalette()
     end
     local cursor = _Cursor; _Cursor = "none" --Force the cursor to update.
@@ -1354,7 +1364,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Host to love.run when graphics is active--
   events:register("love:graphics",function()
-    if _ShouldDraw then --When it's required to draw (when changes has been made to the canvas)
+    if _ShouldDraw or _AlwaysDraw then --When it's required to draw (when changes has been made to the canvas)
       UnbindVRAM(true)
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
       love.graphics.push()
@@ -1369,8 +1379,17 @@ return function(config) --A function that creates a new GPU peripheral.
       
       love.graphics.draw(_ScreenCanvas, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
       
+      love.graphics.setShader() --Deactivate the display shader.
+      
+      if _GrappedCursor and _Cursor ~= "none" then --Must draw the cursor using the gpu
+        local mx, my = _HostToLiko(love.mouse.getPosition())
+        mx,my = _LikoToHost(mx,my)
+        local hotx, hoty = _CursorsCache[_Cursor].hx*_LIKOScale, _CursorsCache[_Cursor].hy*_LIKOScale --Converted to host scale
+        love.graphics.draw(_CursorsCache[_Cursor].img, _LIKO_X+ofs.image[1]+mx-hotx, _LIKO_Y+ofs.image[2]+my-hoty)
+      end
+      
       love.graphics.present() --Present the screen to the host & the user.
-      love.graphics.setShader(_DrawShader) --Deactivate the display shader
+      love.graphics.setShader(_DrawShader) --Reactivate the draw shader.
       love.graphics.pop()
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
       if Clip then love.graphics.setScissor(unpack(Clip)) end
