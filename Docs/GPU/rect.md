@@ -3,8 +3,8 @@ Draws a rectangle on the screen.
 ---
 
 ### Syntax:
-```Lua
-rect(x,y,w,h,l,c)
+```lua
+rect(x, y, w, h, l, c)
 ```
 
 ---
@@ -23,6 +23,6 @@ rect(x,y,w,h,l,c)
 ### Note:
 
 The arguments can be passed in a table:
-```Lua
-rect( {x,y,w,h,l,c} )
+```lua
+rect( {x, y, w, h, l, c} )
 ```

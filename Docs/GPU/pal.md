@@ -18,8 +18,8 @@ Maps a color in the palette to another color.
 ---
 
 #### Syntax:
-```Lua
-pal(false,false,P)
+```lua
+pal(false, false, P)
 ```
 
 ---
@@ -35,8 +35,8 @@ pal(false,false,P)
 ---
 
 #### Syntax:
-```Lua
-pal(C,false,P)
+```lua
+pal(C, false, P)
 ```
 
 ---
@@ -53,8 +53,8 @@ pal(C,false,P)
 ---
 
 #### Syntax:
-```Lua
-pal(A,B,P)
+```lua
+pal(A, B, P)
 ```
 
 ---

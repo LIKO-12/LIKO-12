@@ -3,7 +3,7 @@ Returns height of the terminal in characters.
 ---
 
 ### Syntax:
-```Lua
+```lua
 h = termHeight()
 ```
 

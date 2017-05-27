@@ -3,7 +3,7 @@ Returns size of the terminal in characters.
 ---
 
 ### Syntax:
-```Lua
+```lua
 w, h = termSize()
 ```
 

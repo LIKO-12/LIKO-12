@@ -1,7 +1,7 @@
 Update is called every frame, it should be used for game logic.
 
 ### Syntax:
-```Lua
+```lua
 function update(dt)
 
 end

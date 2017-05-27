@@ -1,7 +1,7 @@
 Function called when mouse button is pressed.
 
 ### Syntax:
-```Lua
+```lua
 function mousepressed(x,y,button)
 
 end

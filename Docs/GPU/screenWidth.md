@@ -3,7 +3,7 @@ Returns width of the screen.
 ---
 
 ### Syntax:
-```Lua
+```lua
 w = screenWidth()
 ```
 

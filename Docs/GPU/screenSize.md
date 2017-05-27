@@ -3,7 +3,7 @@ Returns dimensions of the screen.
 ---
 
 ### Syntax:
-```Lua
+```lua
 w, h = screenSize()
 ```
 

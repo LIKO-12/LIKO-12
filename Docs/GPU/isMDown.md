@@ -3,7 +3,7 @@ Checks if a mouse button is down.
 ---
 
 ### Syntax:
-```Lua
+```lua
 bool = isMDown(<b>)
 ```
 
