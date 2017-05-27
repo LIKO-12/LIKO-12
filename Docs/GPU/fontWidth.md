@@ -1,10 +1,14 @@
-Returns width of the font in pixels.
+Returns width of the font character in pixels.
+
+---
 
 ### Syntax:
 ```Lua
-x = fontWidth()
+w = fontWidth()
 ```
+
+---
 
 ### Returns:
 
-* **x**: x size of the font.
+* **w (Number)**: The width of the font character.

@@ -1,13 +1,20 @@
 Returns size of the terminal in characters.
 
+---
+
 ### Syntax:
 ```Lua
-x, y = termSize()
+w, h = termSize()
 ```
+
+---
+
 ### Returns:
 
-* **x**: x size of the terminal
-* **y**: y size of the terminal
+* **w (Number)**: The width of the terminal
+* **y (Number)**: The height of the terminal
+
+---
 
 ### NOTE:
 

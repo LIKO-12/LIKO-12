@@ -1,9 +1,13 @@
 Returns width of the screen.
 
+---
+
 ### Syntax:
 ```Lua
 w = screenWidth()
 ```
+
+---
 
 ### Returns:
 

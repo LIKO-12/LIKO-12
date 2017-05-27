@@ -1,12 +1,19 @@
 Returns height of the terminal in characters.
 
+---
+
 ### Syntax:
 ```Lua
-y = termWidth()
+h = termHeight()
 ```
+
+---
+
 ### Returns:
 
-* **y**: y size of the terminal
+* **h (Number)**: The height of the terminal
+
+---
 
 ### NOTE:
 

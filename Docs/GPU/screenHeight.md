@@ -1,9 +1,13 @@
 Returns height of the screen.
 
+---
+
 ### Syntax:
 ```Lua
 h = screenWidth()
 ```
+
+---
 
 ### Returns:
 

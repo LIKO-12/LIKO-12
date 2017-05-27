@@ -1,9 +1,14 @@
-Clear function set color of whole screen, useful for clearing graphics for new frame.
+Clears the screen and fills it with a specific color, useful when clearing the screen for a new frame.
+
+---
 
 ### Syntax:
 ```Lua
 clear([id])
 ```
+
+---
+
 ### Parameters:
 
-* **[id] (0)**: ID of color which will fill the screen, can be 0-15
+* **[id] (0) (Number)**: The ID of the color to fill the screen with, can be 0-15

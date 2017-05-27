@@ -1,12 +1,65 @@
-Swaps color in palette with another color used by draw functions.
+Maps a color in the palette to another color.
 
-### Syntax:
+---
+
+**There is 2 palettes in LIKO-12**:
+
+* **The Images palette**: Which affects images __ONLY__.
+* **The Drawing palette**: Which affects all other GPU functions.
+
+---
+
+## Usage:
+
+---
+
+### 1. Reset the whole palette:
+
+---
+
+#### Syntax:
 ```Lua
-pal([a],[b],[mode])
+pal(false,false,[P])
 ```
-### Parameters:
 
-* **If left empty**: Resets palette to default.
-* **[a]**: Color to replace. (If only a is provided then it will be reset to default)
-* **[b]**: Color which will replace a, can be false to reset to default.
-* **mode**: 0 affects all GPU functions except images, 1 only affects images, if left empty - affects both.
+---
+
+#### Parameters:
+
+* **[P] (Number)**: (0) will reset the Drawing palette, (1) will reset the Images palette, (nil/false) will reset the both palettes.
+
+---
+
+### 2. Reset a specific color to it's default:
+
+---
+
+#### Syntax:
+```Lua
+pal([C],false,[P])
+```
+
+---
+
+#### Parameters:
+
+* **[C] (Number)**: The color to reset to it's default.
+* **[P] (Number)**: (0) will reset the color in the Drawing palette only, (1) will reset the color in the Images palette only, (nil/false) will reset the color in both palettes.
+
+---
+
+### 3. Map a specific color:
+
+---
+
+#### Syntax:
+```Lua
+pal([A],[B],[P])
+```
+
+---
+
+#### Parameters:
+* **[A]**: The color to replace.
+* **[B]**: The color which will replace A.
+* **[P]**: (0) will affect the Drawing palette, (1) will affect the Images palette, (nil/false) will affect the both palettes.

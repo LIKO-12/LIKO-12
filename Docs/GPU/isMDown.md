@@ -1,13 +1,20 @@
-Checks if mouse button is down.
+Checks if a mouse button is down.
+
+---
 
 ### Syntax:
 ```Lua
-bool = isMDown(b)
+bool = isMDown(<b>)
 ```
+
+---
+
 ### Parameters:
 
-* **b**: Checked button, 1 for left mouse button, 2 for right mouse button, 3 for middle mouse button.
+* **<b\> (Number)**: The button to check, 1 for left mouse button, 2 for right mouse button, 3 for middle mouse button.
+
+---
 
 ### Returns:
 
-* **bool**: True if mouse button is down, false if not.
+* **bool (Boolean)**: True if mouse button is down, false if not.

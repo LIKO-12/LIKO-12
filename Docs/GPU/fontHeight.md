@@ -1,9 +1,14 @@
-Returns height of the font in pixels.
+Returns height of the font character in pixels.
+
+---
 
 ### Syntax:
 ```Lua
-y = fontHeight()
+h = fontHeight()
 ```
+
+---
+
 ### Returns:
 
-* **y**: y size of the font.
+* **h (Number)**: The height of the font character.

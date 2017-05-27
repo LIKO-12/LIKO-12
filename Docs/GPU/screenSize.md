@@ -1,9 +1,13 @@
 Returns dimensions of the screen.
 
+---
+
 ### Syntax:
 ```Lua
 w, h = screenSize()
 ```
+
+---
 
 ### Returns:
 
