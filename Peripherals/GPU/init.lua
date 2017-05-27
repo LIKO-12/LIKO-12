@@ -2,10 +2,10 @@ local perpath = select(1,...) --The path to the gpu folder
 local events = require("Engine.events")
 local coreg = require("Engine.coreg")
 
-local bit = require("bit")
+local bit = require("bit") --Require the bit operations library for use in VRAM
 local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 
-local json = require("Engine.JSON")
+local json = require("Engine.JSON") --Used to save the calibrarion values.
 
 return function(config) --A function that creates a new GPU peripheral.
   
