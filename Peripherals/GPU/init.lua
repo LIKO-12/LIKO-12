@@ -503,7 +503,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local Clip = false --The current active clipping region.
   local ColorStack = {} --The colors stack (pushColor,popColor)
   local PaletteStack = {} --The palette stack (pushPalette,popPalette)
-  local printCursor = {x=1,y=1,bgc=0} --The print grid cursor pos.
+  local printCursor = {x=0,y=0,bgc=0} --The print grid cursor pos.
   local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2)) --The size of characters that the screen can fit.
   
   --Those explains themselves.
@@ -946,7 +946,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local pc = printCursor --Shortcut
       
       local function togrid(gx,gy) --Covert to grid cordinates
-        return math.floor((gx-1)*(_FontW+1)), math.floor((gy-1)*(_FontH+2))
+        return math.floor(gx*(_FontW+1)), math.floor(gy*(_FontH+2))
       end
       
       --A function to draw the background rectangle
@@ -968,15 +968,15 @@ return function(config) --A function that creates a new GPU peripheral.
       if type(x) == "nil" or x then t = t .. "\n\n" end --Auto newline after printing.
       
       local sw, sh = TERM_W*(_FontW+1), TERM_H*(_FontH+2) --Screen size
-      local pre_spaces = string.rep(" ", pc.x-1) --The pre space for text wrapping to calculate
+      local pre_spaces = string.rep(" ", pc.x) --The pre space for text wrapping to calculate
       local maxWidth, wrappedText = _Font:getWrap(pre_spaces..t, sw) --Get the text wrapped
       local linesNum = #wrappedText --Number of lines
-      if linesNum > TERM_H-pc.y+1 then --It will go down of the screen, so shift the screen up.
+      if linesNum > TERM_H-pc.y then --It will go down of the screen, so shift the screen up.
         GPU.pushPalette() GPU.palt() GPU.pal() --Backup the palette and reset the palette.
-        local extra = linesNum - (TERM_H-pc.y+1) --The extra lines that will draw out of the screen.
+        local extra = linesNum - (TERM_H-pc.y) --The extra lines that will draw out of the screen.
         local sc = exe(GPU.screenshot()) --Take a screenshot
         GPU.clear(0) --Clear the screen
-        sc:image():draw(0, extra*(_FontH+2)*-1) --Draw the screen shifted up
+        sc:image():draw(0, -extra*(_FontH+2)) --Draw the screen shifted up
         pc.y = pc.y-extra --Update the cursor pos.
         GPU.popPalette() --Restore the palette.
       end
@@ -985,7 +985,7 @@ return function(config) --A function that creates a new GPU peripheral.
       
       --Iterate over the lines.
       for k, line in ipairs(wrappedText) do
-        local printX = 1
+        local printX = 0
         if k == 1 then line = line:sub(pre_spaces:len()+1,-1); printX = pc.x end --Remove the pre_spaces
         local linelen = line:len() --The line length
         drawbackground(printX,pc.y,linelen) --Draw the line background
@@ -995,7 +995,7 @@ return function(config) --A function that creates a new GPU peripheral.
         if wrappedText[k+1] then pc.y = pc.y + 1 end --If there's a next line
       end
       
-      love.graphics.printf(pre_spaces..t,1+ofs.print_grid[1],(drawY-1)*(_FontH+2)+1+ofs.print_grid[2],sw) _ShouldDraw = true --Print the text
+      love.graphics.printf(pre_spaces..t,1+ofs.print_grid[1],drawY*(_FontH+2)+1+ofs.print_grid[2],sw) _ShouldDraw = true --Print the text
       
       return true --It ran successfully.
     end
