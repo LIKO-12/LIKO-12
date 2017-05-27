@@ -281,10 +281,10 @@ function se:redrawFLAG()
 end
 
 function se:redrawINFO()
-  rect(1,sheight-7-1,swidth-1,8,false,9)
+  rect(0,sheight-8,swidth,8,false,9)
   if infotimer > 0 then
     color(4)
-    print(infotext or "",2,sheight-5)
+    print(infotext or "",1,sheight-6)
   end
 end
 
