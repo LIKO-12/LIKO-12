@@ -714,7 +714,12 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   function GPU.clip(x,y,w,h)
+    local x,y,w,h = x,y,w,h
     if x then
+      if type(x) == "table" then
+        x,y,w,h = unpack(x)
+      end
+      
       if type(x) ~= "number" then return false, "X must be a number, provided: "..type(x) end
       if type(y) ~= "number" then return false, "Y must be a number, provided: "..type(y) end
       if type(w) ~= "number" then return false, "W must be a number, provided: "..type(w) end
