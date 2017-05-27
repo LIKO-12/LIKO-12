@@ -1007,7 +1007,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,_FontH+2) end
     
     local function togrid(gx,gy) --Covert to grid cordinates
-      return math.floor((gx-1)*(_FontW+1)), math.floor((gy-1)*(_FontH+2))
+      return math.floor(gx*(_FontW+1)), math.floor(gy*(_FontH+2))
     end
     
     --A function to draw the background rectangle
@@ -1017,15 +1017,15 @@ return function(config) --A function that creates a new GPU peripheral.
       GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, printCursor.bgc)
     end
       
-    if printCursor.x > 1 then
+    if printCursor.x > 0 then
       printCursor.x = printCursor.x-1
       drawbackground(printCursor.x,printCursor.y,1)
     elseif not skpCr then
-      if printCursor.y > 1 then
+      if printCursor.y > 0 then
         printCursor.y = printCursor.y - 1
-        printCursor.x = TERM_W
+        printCursor.x = TERM_W-1
       else
-        printCursor.x = TERM_W
+        printCursor.x = TERM_W-1
         cr()
       end
       drawbackground(printCursor.x,printCursor.y,1)
