@@ -57,7 +57,7 @@ end)
 
 --Print calibration
 ofs.print = {0,0} --The offset of GPU.print.
-ofs.print_grid = {-1,-1} --The offset of GPU.print with grid mode.
+ofs.print_grid = {0,0} --The offset of GPU.print with grid mode.
 
 --Lines calibration
 canvas(10,10)
