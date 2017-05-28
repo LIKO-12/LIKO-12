@@ -29,7 +29,34 @@ imgdata = imagedata(data)
 
 ---
 
-### 2. Create from an [GPUImage](image.md) object:
+### 2. Create from png binary string:
+
+---
+
+#### Syntax:
+```lua
+imgdata = imagedata(data)
+```
+
+---
+
+#### Arguments:
+
+* **<data\> (String)**: The image data, png binary string.
+
+---
+
+**Note**: All transparent pixels and all colors that arn't from the palette will be loaded as black !
+
+---
+
+#### Returns:
+
+* **imgdata (GPUImageData)**: The created imagedata object.
+
+---
+
+### 3. Create from an [GPUImage](image.md) object:
 
 ---
 
@@ -44,7 +71,7 @@ imgdata = img:data()
 
 ---
 
-### 3. Create a new blank imagedata:
+### 4. Create a new blank imagedata:
 
 ---
 
