@@ -1242,7 +1242,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     
     function id.type() return "GPU.imageData" end
-    function id.typeOf(t) if t == "GPU" or t == "imageData" or t == "GPU.imageData" then return true end end
+    function id.typeOf(t) if t == "GPU" or t == "imageData" or t == "GPU.imageData" or t == "LK12" then return true end end
     
     return true, id
   end
