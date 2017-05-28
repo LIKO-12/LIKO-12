@@ -1168,7 +1168,7 @@ return function(config) --A function that creates a new GPU peripheral.
       if not y then return error("Must provide Y") end
       x,y = math.floor(x), math.floor(y)
       if x < 0 or x > self:width()-1 or y < 0 or y > self:height()-1 then
-        return 0
+        return false, "Pixel position out from the image region"
       end
       local r,g,b,a = imageData:getPixel(x,y)
       return r
@@ -1179,7 +1179,7 @@ return function(config) --A function that creates a new GPU peripheral.
       if not y then return error("Must provide Y") end
       x,y = math.floor(x), math.floor(y)
       if x < 0 or x > self:width()-1 or y < 0 or y > self:height()-1 then
-        return self
+        return false, "Pixel position out from the image region"
       end
       c = math.floor(c) if c < 0 or c > 15 then return error("Color out of range ("..c..") expected [0,15]") end
       imageData:setPixel(x,y,c,0,0,255)
