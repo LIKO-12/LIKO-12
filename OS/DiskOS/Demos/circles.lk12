@@ -3,8 +3,8 @@ ___luacode___
 --Circles Demo By Rami Sabbagh
 --@RamiLego4Game
 
-local ww = 20 --Wave width
-local speed = 8 --Speed
+local ww = 6 --Wave width
+local speed = 4 --Speed
 
 local ww2 = ww*2
 
