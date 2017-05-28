@@ -1105,7 +1105,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local i = {}
     
     function i:draw(x,y,r,sx,sy,quad) UnbindVRAM()
-      local x, y, sx, sy = x or 0, y or 0, sx or 1, sy or 1
+      local x, y, r, sx, sy = x or 0, y or 0, r or 0, sx or 1, sy or 1
       GPU.pushColor()
       love.graphics.setShader(_ImageShader)
       love.graphics.setColor(255,255,255,255)
@@ -1126,7 +1126,7 @@ return function(config) --A function that creates a new GPU peripheral.
     function i:quad(x,y,w,h) return love.graphics.newQuad(x,y,w or self:width(),h or self:height(),self:width(),self:height()) end
     
     function i:type() return "GPU.image" end
-    function i:typeOf(t) if t == "GPU" or t == "image" or t == "GPU.image" then return true end end
+    function i:typeOf(t) if t == "GPU" or t == "image" or t == "GPU.image" or t == "LK12" then return true end end
     
     return true, i
   end
