@@ -28,6 +28,12 @@ q = quad(x,y, w,h, sw,sh)
 
 ---
 
+#### Returns:
+
+* **q (GPUQuad)**: The created quad.
+
+---
+
 ## The quad object functions:
 
 ---
