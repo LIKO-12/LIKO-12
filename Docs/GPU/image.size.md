@@ -1,4 +1,4 @@
-Returns the image dimenstions.
+Returns the image dimensions.
 
 ---
 
