@@ -3,10 +3,16 @@ ___luacode___
 --Circles Demo By Rami Sabbagh
 --@RamiLego4Game
 
+local ww = 20 --Wave width
+local speed = 8 --Speed
+
+local ww2 = ww*2
+
 local function circ(x,y,r)
- local r = r%40 +1
- if r > 16 then return end
- if r > 8 then r = 17-r end
+ if r%ww2 > ww then return end
+ local r = r%ww
+ 
+ r = math.sin((r/ww)*math.pi)*8
  
  circle(x*16+8,y*16+8,r)
 end
@@ -14,11 +20,11 @@ end
 local sw, sh = screenSize()
 local cw, ch = sw/16, sh/16
 
-local t = 8
+local t = ww-1
 
 function update(dt)
- t = t + dt*8
- if t > 40 then t = t -40 end
+ t = t + dt*speed
+ if t > ww2 then t = t -ww2 end
  clear()
  for y=0,ch do
   for x=0,cw do
