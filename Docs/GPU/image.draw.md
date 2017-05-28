@@ -17,3 +17,9 @@ img:draw(x,y,r,sx,sy,q) --Dont's forget the ':'
 * **[sw] (1) (Number)**: The image width scale.
 * **[sh] (1) (Number)**: The image height scale.
 * **[q] (GPUQuad)**: Optional, A quad to draw the image with, check [GPU.quad](quad.md) for more info.
+
+---
+
+#### Note:
+
+The function returns the image object itself, so it can be used for chain calls.
