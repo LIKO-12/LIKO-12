@@ -26,8 +26,8 @@ function update(dt)
  t = t + dt*speed
  if t > ww2 then t = t -ww2 end
  clear()
- for y=0,ch do
-  for x=0,cw do
+ for y=0,ch-1 do
+  for x=0,cw-1 do
    color(7+(x+y)%8)
    circ(x,y,t+x+y)
   end
