@@ -169,13 +169,30 @@ function se:leaved()
   
 end
 
+function se:getImage()
+ return self.SpriteMap
+end
+
+function se:getFlags()
+ return flagsData
+end
+
+function se:exportImage()
+ return self.SpriteMap:data():encode()
+end
+
+function se:exportFlags()
+ local fdata = ""
+ for char in string.gmatch(flagsData,".") do
+  fdata = fdata..string.format("%X",string.byte(char))
+ end
+ return fdata
+end
+
 function se:export(imageonly)
-  local data = self.SpriteMap:data():encode()
+  local data = self:exportImage()
   if imageonly then return data else
-    local fdata = ""
-    for char in string.gmatch(flagsData,".") do
-      fdata = fdata..";"..string.format("%X",string.byte(char))
-    end
+    local fdata = self:exportFlags()
     return data.."\n"..fdata
   end
 end
