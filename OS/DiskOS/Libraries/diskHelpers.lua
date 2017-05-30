@@ -1,4 +1,3 @@
-
 function Sprite(id,x,y,r,sx,sy,sheet) (sheet or SpriteMap):draw(id,x,y,r,sx,sy) end
 function SpriteGroup(id,x,y,w,h,sx,sy,r,sheet)
   local sx,sy = math.floor(sx or 1), math.floor(sy or 1)
@@ -73,6 +72,12 @@ function fset(id,n,v)
     flag = string.char(n)
     SheetFlagsData = flags:sub(0,id-1)..flag..flags:sub(id+1,-1)
   end
+end
+
+function map(...)
+ if not TileMap then return error("TileMap Global is lost") end
+ local ok, err = pcall(TileMap.draw,TileMap,...)
+ if not ok then return error(err) end
 end
 
 --Enter the while true loop and pull events, including the call of calbacks in _G
