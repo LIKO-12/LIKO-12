@@ -4,35 +4,26 @@
 --We will run the current code in the editor
 print("")
 local eapi = require("C://Editors")
+local mapobj = require("C://Libraries/map")
 
 local sprid = 3 --"spritesheet"
 local codeid = 2 --"luacode"
 local tileid = 4 --"tilemap"
 
---[[local diskdata = eapi:export()
-diskdata = loadstring(diskdata)()]]
+local swidth, sheight = screenSize()
 
 --Load the spritesheet
 local SpriteMap, FlagsData
-local sheetData = eapi.leditors[sprid]:export()
-sheetData = sheetData:gsub("\n","")
-local w,h,imgdata,fdata = string.match(sheetData,"LK12;GPUIMG;(%d+)x(%d+);(.-);(.+)")
-local sheetW, sheetH = w/8, h/8
-FlagsData, fdata = "", ";"..fdata:gsub(";",";;")..";"
-for flag in fdata:gmatch(";(%x+);") do
-  if flag ~= "0" then print(flag) end
-  FlagsData = FlagsData..string.char(tonumber(flag,16))
-end
-if FlagsData:len() < sheetW*sheetH then
-  local missing = sheetW*sheetH - FlagsData:len()
-  local zerochar = string.char(0)
-  for i=1,missing do
-    FlagsData = FlagsData..zerochar
-  end
-end
-imgdata = imgdata:sub(0,w*h)
-imgdata = "LK12;GPUIMG;"..w.."x"..h..";"..imgdata
-SpriteMap = SpriteSheet(imagedata(imgdata):image(),sheetW,sheetH)
+local sheetImage = image(eapi.leditors[sprid]:exportImage())
+local FlagsData = eapi.leditors[sprid]:getFlags()
+local sheetW, sheetH = sheetImage:width()/8, sheetImage:height()/8
+SpriteMap = SpriteSheet(sheetImage,sheetW,sheetH)
+
+--Load the tilemap
+local mapData = eapi.leditors[tileid]:export()
+local mapW, mapH = swidth*0.75, sheight
+local TileMap = mapobj(mapW,mapH,SpriteMap)
+TileMap:import(mapData)
 
 --Load the code
 local luacode = eapi.leditors[codeid]:export()
@@ -50,17 +41,17 @@ local glob = _FreshGlobals()
 glob._G = glob --Magic ;)
 
 glob.loadstring = function(...)
-  local chunk, err = loadstring(...)
-  if not chunk then return nil, err end
-  setfenv(chunk,glob)
-  return chunk
+ local chunk, err = loadstring(...)
+ if not chunk then return nil, err end
+ setfenv(chunk,glob)
+ return chunk
 end
 
 glob.coroutine.create = function(chunk)
-  --if type(chunk) == "function" then setfenv(chunk,glob) end
-  local ok,co = pcall(coroutine.create,chunk)
-  if not ok then return error(co) end
-  return co 
+ --if type(chunk) == "function" then setfenv(chunk,glob) end
+ local ok,co = pcall(coroutine.create,chunk)
+ if not ok then return error(co) end
+ return co 
 end
 
 --Add peripherals api
@@ -70,19 +61,19 @@ local perglob = {GPU = true, CPU = true, Keyboard = true, RAM = true} --The peri
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
 for k, v in pairs(blocklist) do perlist[k] = nil end
 for peripheral,funcs in pairs(perlist) do
-  local holder = glob; if not perglob[peripheral] then glob[peripheral] = {}; holder = glob[peripheral] end
-  for _,func in ipairs(funcs) do
-    local command = peripheral..":"..func
-    holder[func] = function(...)
-      local args = {coroutine.yield(command,...)}
-      if not args[1] then return error(args[2]) end
-      local nargs = {}
-      for k,v in ipairs(args) do
-        if k >1 then table.insert(nargs,k-1,v) end
-      end
-      return unpack(nargs)
-    end
+ local holder = glob; if not perglob[peripheral] then glob[peripheral] = {}; holder = glob[peripheral] end
+ for _,func in ipairs(funcs) do
+  local command = peripheral..":"..func
+  holder[func] = function(...)
+   local args = {coroutine.yield(command,...)}
+   if not args[1] then return error(args[2]) end
+   local nargs = {}
+   for k,v in ipairs(args) do
+    if k >1 then table.insert(nargs,k-1,v) end
+   end
+   return unpack(nargs)
   end
+ end
 end
 
 local apiloader = loadstring(fs.read("C://api.lua"))
@@ -91,6 +82,8 @@ setfenv(apiloader,glob) apiloader()
 --Add special disk api
 glob.SpriteMap = SpriteMap
 glob.SheetFlagsData = FlagsData
+glob.TileMap = TileMap
+glob.MapObj = mapobj
 
 local helpersloader, err = loadstring(fs.read("C://Libraries/diskHelpers.lua"))
 if not helpersloader then error(err) end
@@ -158,7 +151,6 @@ while true do
     end
     lastclock = os.clock()
     checkclock = true
-    --lastclock = os.clock()
   end
 end
 
