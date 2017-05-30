@@ -21,7 +21,6 @@ return function(w,h,sheet)
       for x=1, self.w do
         for y=1, self.h do
           self.m[x][y] = func(x,y,self.m[x][y]) or self.m[x][y]
-          --func(x,y,self.m[x][y])
         end
       end
     end
@@ -29,23 +28,23 @@ return function(w,h,sheet)
   end
 
   function Map:cell(x,y,newID)
-    if x > self.w or y > self.h then return false, "out of range" end
+    if x >= self.w or y >= self.h or x < 0 or y < 0 then return false, "out of range" end
     if newID then
-      self.m[x][y] = newID or 0
+      self.m[x+1][y+1] = newID or 0
       return self
     else
-      return self.m[x][y]
+      return self.m[x+1][y+1]
     end
   end
   
   function Map:cut(x,y,w,h)
-    local x,y,w,h = x or 1, y or 1, w or self.w, h or self.h
+    local x,y,w,h = x or 0, y or 0, w or self.w-1, h or self.h-1
     local nMap = require(path)(w,h)
     local m = nMap:map()
     for my=1,h do
       for mx=1,w do
-        if self.m[mx+x-1] and self.m[mx+x-1][my+y-1] then
-          m[mx][my] = self.m[mx+x-1][my+y-1]
+        if self.m[mx+x] and self.m[mx+x][my+y] then
+          m[mx][my] = self.m[mx+x][my+y]
         end
       end
     end
@@ -57,7 +56,7 @@ return function(w,h,sheet)
   function Map:height() return self.h end
   
   function Map:draw(dx,dy,x,y,w,h,sx,sy,sheet)
-    local dx,dy,x,y,w,h,sx,sy = dx or 0, dy or 0, x or 1, y or 1, w or self.w, h or self.h, sx or 1, sy or 1
+    local dx,dy,x,y,w,h,sx,sy = dx or 0, dy or 0, x or 0, y or 0, w or self.w, h or self.h, sx or 1, sy or 1
     local cm = self:cut(x,y,w,h)
     cm:map(function(spx,spy,sprid)
       if sprid < 1 then return end
@@ -82,8 +81,8 @@ return function(w,h,sheet)
       return 0
     end)
     
-    for x=1,w do
-      for y=1,h do
+    for x=0,w-1 do
+      for y=0,h-1 do
         self:cell(x,y,tonumber(nextid()))
       end
     end
