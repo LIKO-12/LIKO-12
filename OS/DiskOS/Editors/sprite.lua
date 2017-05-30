@@ -193,7 +193,7 @@ function se:export(imageonly)
   local data = self:exportImage()
   if imageonly then return data else
     local fdata = self:exportFlags()
-    return data.."\n"..fdata
+    return data.."\n;"..fdata
   end
 end
 
