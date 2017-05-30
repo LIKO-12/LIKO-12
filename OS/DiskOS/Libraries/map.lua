@@ -57,7 +57,7 @@ return function(w,h,sheet)
   function Map:height() return self.h end
   
   function Map:draw(dx,dy,x,y,w,h,sx,sy,sheet)
-    local dx,dy,x,y,w,h,sx,sy = dx or 1, dy or 1, x or 1, y or 1, w or self.w, h or self.h, sx or 1, sy or 1
+    local dx,dy,x,y,w,h,sx,sy = dx or 0, dy or 0, x or 1, y or 1, w or self.w, h or self.h, sx or 1, sy or 1
     local cm = self:cut(x,y,w,h)
     cm:map(function(spx,spy,sprid)
       if sprid < 1 then return end
