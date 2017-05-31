@@ -13,8 +13,6 @@ return function(config) --A function that creates a new GPU peripheral.
   local _LIKO_W, _LIKO_H = config._LIKO_W or 192, config._LIKO_H or 128 --LIKO screen width.
   local _LIKO_X, _LIKO_Y = 0,0 --LIKO12 Screen padding in the HOST screen.
   
-  local _HOST_W, _HOST_H = love.graphics.getDimensions() --The host window size.
-  
   local _GIFScale = math.floor(config._GIFScale or 2) --The gif scale factor (must be int).
   local _GIFStartKey = config._GIFStartKey or "f8"
   local _GIFEndKey = config._GIFEndKey or "f9"
@@ -56,6 +54,19 @@ return function(config) --A function that creates a new GPU peripheral.
   local _ClearOnRender = config._ClearOnRender --Should clear the screen when render, some platforms have glitches when this is disabled.
   if type(_ClearOnRender) == "nil" then _ClearOnRender = true end --Defaults to be enabled.
   local cpukit if config.CPUKit then cpukit = config.CPUKit end --Get the cpukit (api) for triggering mouse events.
+  
+  --HOST Window Initialization--
+  local _HOST_W, _HOST_H = _LIKO_W*_LIKOScale, _LIKO_H*_LIKOScale --The host window size.
+  
+  love.window.setMode(_HOST_W,_HOST_H,{
+    resizable = true,
+    minwidth = _LIKO_W,
+    minheight = _LIKO_H
+  })
+  
+  love.window.setTitle("LIKO-12")
+  love.window.setIcon(love.image.newImageData("icon.png"))
+  
   --End of config loading--
   
   local _ShouldDraw = false --This flag means that the gpu has to update the screen for the user.
@@ -102,35 +113,9 @@ return function(config) --A function that creates a new GPU peripheral.
     love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
   end
   
-  --[[local ofs = {} --Offsets table.
-  ofs.screen = {0,0} --The offset of all the drawing opereations.
-  ofs.point = {0,0} --The offset of GPU.point/s.
-  ofs.print = {-1,-1} --The offset of GPU.print.
-  ofs.print_grid = {-1,-1} --The offset of GPU.print with grid mode.
-  ofs.line_start = {0,0} --The offset of the first coord of GPU.line/s.
-  ofs.line = {0,0} --The offset of GPU.line/s.
-  ofs.circle = {0,0,0} --The offset of GPU.circle with l as false (x,y,r).
-  ofs.circle_line = {0,0,0} --The offset of GPU.circle with l as true (x,y,r).
-  ofs.ellipse = {0,0,0,0} --The offset of GPU.circle with l as false (x,y,rx,ry).
-  ofs.ellipse_line = {0,0,0,0} --The offset of GPU.circle with l as true (x,y,rx,ry).
-  ofs.rect = {-1,-1} --The offset of GPU.rect with l as false.
-  ofs.rectSize = {0,0} --The offset of w,h in GPU.rect with l as false.
-  ofs.rect_line = {0,0} --The offset of GPU.rect with l as true.
-  ofs.rectSize_line = {-1,-1} --The offset of w,h in GPU.rect with l as false.
-  ofs.triangle = {0,0} --The offset of each vertices in GPU.triangle with l as false.
-  ofs.triangle_line = {0,0} --The offset of each vertices in GPU.triangle with l as true.
-  ofs.polygon = {0,0} --The offset of each vertices in GPU.polygon.
-  ofs.image = {-1,-1}
-  ofs.quad = {-1,-1}]]
-  
   if gpuVersion == "OpenGL ES 3.1 v1.r7p0-03rel0.b8759509ece0e6dda5325cb53763bcf0" then
     --GPU glitch fix for this driver, happens at my samsung j700h
     ofs.screen = {0,-1}
-    --[[ofs.print = {-1,-1}
-    ofs.print_grid = {-1,-1}
-    ofs.rect = {-1,1}
-    ofs.image = {-1,1}
-    ofs.quad = {-1,1}]]
   end
   
   love.graphics.clear(0,0,0,255) --Clear the host screen.
