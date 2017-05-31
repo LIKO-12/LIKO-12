@@ -153,11 +153,11 @@ local function transform(tfunc)
 end
 
 local transformations = {
-  function(x,y,c,w,h) return h+1-y,x end, --Rotate right
-  function(x,y,c,w,h) return y, w+1-x end, --Rotate left
-  function(x,y,c,w,h) return w+1-x,y end, --Flip horizental
-  function(x,y,c,w,h) return x,h+1-y end, --Flip vertical
-  function(x,y,c,w,h) return w+1-x,h+1-y end --Flip horizentaly + verticaly
+  function(x,y,c,w,h) return h-y-1,x end, --Rotate right
+  function(x,y,c,w,h) return y, w-x-1 end, --Rotate left
+  function(x,y,c,w,h) return w-x-1,y end, --Flip horizental
+  function(x,y,c,w,h) return x,h-y-1 end, --Flip vertical
+  function(x,y,c,w,h) return w-x-1,h-y-1 end --Flip horizentaly + verticaly
 }
 
 function se:entered()
