@@ -1263,7 +1263,6 @@ return function(config) --A function that creates a new GPU peripheral.
   
   function GPU.cursor(imgdata,name,hx,hy)
     if type(imgdata) == "string" then --Set the current cursor
-      name = true
       if _GrappedCursor then if not name then _AlwaysDraw = false; _ShouldDraw = true end elseif name then _AlwaysDraw = true end
       if _Cursor == imgdata and not ((_GrappedCursor and not name) or (name and not _GrappedCursor)) then return true end
       _GrappedCursor = name
