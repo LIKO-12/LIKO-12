@@ -582,25 +582,25 @@ return function(config) --A function that creates a new GPU peripheral.
       end
     --Reset a specific color
     elseif not(c1) then
-      if ((not p) or p == 0) and _DrawPalette[c0] ~= c0 then
+      if ((not p) or p == 0) and _DrawPalette[c0+1] ~= c0 then
         drawchange = true
         _DrawPalette[c0+1] = c0
       end
       
-      if ((not p) or p > 0) and _ImagePalette[c0] ~= c0 then
+      if ((not p) or p > 0) and _ImagePalette[c0+1] ~= c0 then
         imagechange = true
         _ImagePalette[c0+1] = c0
       end
     --Modify the palette
     elseif c0 and c1 then
-      if ((not p) or p == 0) and _DrawPalette[c0] ~= c1 then
+      if ((not p) or p == 0) and _DrawPalette[c0+1] ~= c1 then
         drawchange = true
-        _DrawPalette[c0+0] = c1
+        _DrawPalette[c0+1] = c1
       end
       
-      if ((not p) or p > 0) and _ImagePalette[c0] ~= c1 then
+      if ((not p) or p > 0) and _ImagePalette[c0+1] ~= c1 then
         imagechange = true
-        _ImagePalette[c0+0] = c1
+        _ImagePalette[c0+1] = c1
       end
     end
     --If changes has been made then upload the data to the shaders.
