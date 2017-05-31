@@ -24,29 +24,29 @@ local sprsid = 1 --Selected Sprite ID
 local sprsmflag = false --Sprite selection mouse flag
 local sprsbquads = {} --SpriteSheets 4 BanksQuads
 local sprsbank = 1 --Current Selected Bank
-for i = 1, 4 do --Create the banks quads
-  sprsbquads[i] = eapi.editorsheet:image():quad(0,(i*bsizeH-bsizeH),sizeW,bsizeH)
+for i = 0, 3 do --Create the banks quads
+  sprsbquads[i+1] = eapi.editorsheet:image():quad(0,i*bsizeH,sizeW,bsizeH)
 end
 
 local maxSpriteIDCells = tostring(sheetW*sheetH):len() --The number of digits in the biggest sprite id.
 local sprsidrect = {sprsbanksgrid[1]-(1+maxSpriteIDCells*(fw+1)+3),sprsbanksgrid[2], 1+maxSpriteIDCells*(fw+1),fh+2, false, 6, 13} --The rect of sprite id; The extra argument is the color of number print
 local revdraw = {sprsidrect[1]-(imgw+1),sprsrecto[2]-(imgh+1), imgw, imgh} --The small image at the right of the id with the actual sprite size
 
-local MapW, MapH = swidth*0.75, sheight
-local MapVH = sheetH - (1+2+bankH+1)
-local MapVW = sheetW
+local MapW, MapH = swidth*0.75, sheight --The map size in pixels.
+local MapVH = sheetH - (1+2+bankH+1) --The hight of the visible map area in cells.
+local MapVW = sheetW --The width of the visible map area in cells.
 
-local Map = MapObj(MapW,MapH)
+local Map = MapObj(MapW,MapH) --Create the map
 
-local mapdx, mapdy = 0,0
-local maprect = {0,9,swidth,MapVH*8}
-local mapgrid = {0,9,swidth+8,MapVH*8+8,MapVW+1,MapVH+1}
-local mapmflag = false
+local mapdx, mapdy = 0,0 --Map drawing positions
+local maprect = {0,9,swidth,MapVH*8} --The rectangle area that contains the map.
+local mapgrid = {0,9,swidth+8,MapVH*8+8,MapVW+1,MapVH+1} --The map cells editing grid.
+local mapmflag = false --The map mouse flag.
 
-local bgsprite = eapi.editorsheet:extract(59):image()
-local bgquad = bgsprite:quad(0,0,MapVW*8,MapVH*8)
+local bgsprite = eapi.editorsheet:extract(59):image() --The background image sprite.
+local bgquad = bgsprite:quad(0,0,MapVW*8,MapVH*8) --The quad of the background image.
 
-local mflag = false
+local mflag = false --Mouse flag.
 
 --Tools Selection--
 local toolsdraw = {138, 2,revdraw[2]-1, 7,1, 1,1,false, eapi.editorsheet} --Tools draw arguments
@@ -57,7 +57,7 @@ local tbtimer = 0 --Tool selection blink timer
 local tbtime = 0.1125 --The blink time
 local tbflag = false --Is the blink timer activated ?
 
-local panoldx, panoldy
+local panoldx, panoldy --Pan tool variables.
 
 --The tools code--
 local toolshold = {true,true,true,false,false,true,true} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
@@ -133,9 +133,9 @@ function t:_redraw()
 end
 
 function t:redrawMap()
-  palt(0,false)
-  if mapdx > 0 or mapdy > 0 or mapdx < -(MapW-MapVW)*8 or mapdy < -(MapH-MapVH)*8 then
-    pal(1,2,1)
+  palt(0,false) --Make black opaque
+  if mapdx > 0 or mapdy > 0 or mapdx < -(MapW-MapVW)*8 or mapdy < -(MapH-MapVH)*8 then --Check if it's necessary to draw the red background (That marks the region outside the map).
+    pal(1,2) --Map the blue color to be red.
     bgsprite:draw(maprect[1],maprect[2],0,1,1,bgquad)
     pal()
     if mapdx < MapVW*8 and mapdy < MapVH*8 and mapdx > -MapW*8 and mapdy > -MapH*8 then
@@ -153,7 +153,7 @@ function t:redrawMap()
         ch = MapVH*8 - (-(MapH-MapVH)*8 -mapdy)
       end
       
-      clip(cx+1,cy+10,cw,ch)
+      clip(cx,cy+9,cw,ch)
       bgsprite:draw(maprect[1],maprect[2],0,1,1,bgquad)
       clip()
      end
