@@ -24,6 +24,8 @@ I don't thing anyone would want to edit anything in this file.
 - Rami Sabbagh (RamiLego4Game)
 ]]
 
+love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
+
 --Internal Callbacks--
 function love.load(args)
   love.filesystem.load("BIOS/init.lua")() --Initialize the BIOS.
