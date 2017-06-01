@@ -204,7 +204,7 @@ function t:mousepressed(x,y,b,it)
   if cx then
     sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
     local cx, cy = cx-1, cy-1
-    sprssrect[1] = cx*8
+    sprssrect[1] = cx*8-1
     sprssrect[2] = sprsrecto[2]+cy*8
     
     self:redrawSPRS() sprsmflag = true
@@ -258,7 +258,7 @@ function t:mousemoved(x,y,dx,dy,it)
     if cx then
       sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
       local cx, cy = cx-1, cy-1
-      sprssrect[1] = cx*8
+      sprssrect[1] = cx*8-1
       sprssrect[2] = sprsrecto[2]+cy*8
       
       self:redrawSPRS()
@@ -293,7 +293,7 @@ function t:mousereleased(x,y,b,it)
     if cx then
       sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
       local cx, cy = cx-1, cy-1
-      sprssrect[1] = cx*8
+      sprssrect[1] = cx*8-1
       sprssrect[2] = sprsrecto[2]+cy*8
       
       self:redrawSPRS()
