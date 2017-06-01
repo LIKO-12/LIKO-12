@@ -55,14 +55,19 @@ return function(config) --A function that creates a new GPU peripheral.
   if type(_ClearOnRender) == "nil" then _ClearOnRender = true end --Defaults to be enabled.
   local cpukit if config.CPUKit then cpukit = config.CPUKit end --Get the cpukit (api) for triggering mouse events.
   
+  local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS" --Used to disable the cursors system (partly)
+  
   --HOST Window Initialization--
   local _HOST_W, _HOST_H = _LIKO_W*_LIKOScale, _LIKO_H*_LIKOScale --The host window size.
+  if _Mobile then _HOST_W, _HOST_H = 0,0 end
   
   love.window.setMode(_HOST_W,_HOST_H,{
     resizable = true,
     minwidth = _LIKO_W,
     minheight = _LIKO_H
   })
+  
+  _HOST_W, _HOST_H = love.graphics.getDimensions()
   
   love.window.setTitle("LIKO-12")
   love.window.setIcon(love.image.newImageData("icon.png"))
@@ -186,8 +191,6 @@ return function(config) --A function that creates a new GPU peripheral.
   _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the colorset.
   
   love.graphics.setShader(_DrawShader) --Activate the drawing shader.
-  
-  local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS" --Used to disable the cursors system (partly)
   
   --Internal Functions--
   local function _HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
