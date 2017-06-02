@@ -228,12 +228,6 @@ return function(config) --A function that creates a new GPU peripheral.
     return _GetColorID(r,g,b,a),0,0,255
   end
   
-  --Used for print function (in grid mode)
-  local function magiclines(s)
-    if s:sub(-1)~="\n" then s=s.."\n" end
-    return s:gmatch("(.-)\n")
-  end
-  
   --Excute a LIKO12 api function (to handle errors)
   local function exe(...)
     local args = {...}
