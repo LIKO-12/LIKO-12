@@ -84,8 +84,11 @@ end
 function eventLoop()
   while true do
     local name, a, b, c, d, e, f = pullEvent()
-    if _G[name] and type(_G[name]) == "function" then
-      _G[name](a,b,c,d,e,f)
+    if _G["_"..name] and type(_G["_"..name]) == "function" then
+      _G["_"..name](a,b,c,d,e,f)
+      if name == "update" and _G["_draw"] and type(_G["_draw"]) == "function" then
+        _G["_draw"](a,b,c,d,e,f)
+      end
     end
   end
 end
