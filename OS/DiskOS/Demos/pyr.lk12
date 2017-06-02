@@ -1,6 +1,5 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-
 --Pyramids Demo
 --By Filipo @HomineLudens
 local function pir(x,y,w,h,cx,cy)
@@ -13,8 +12,12 @@ local function pir(x,y,w,h,cx,cy)
  triangle(x,y+h,ccx,ccy,x+w,y+h,false,12)
 end
 
+function _init()
+ clear()
+end
+
 local t=1
-function update(dt)
+function _update(dt)
  for x=0,192,28 do
   for y=0,128,28 do
    cx=12*math.sin(t*(x+y+1))
@@ -25,11 +28,6 @@ function update(dt)
  t=t+0.001
  flip() --Wait for the screen to draw.
 end
-
-clear(1)
-eventLoop()
-
-
 ___spritesheet___
 LK12;GPUIMG;192x128;
 001110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

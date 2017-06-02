@@ -1,13 +1,12 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-
 --NOISE DEMO BY: RAMILEGO4GAME--
 for y=0,127 do for x=0,191 do
  math.randomseed(os.time()*x*y)
  point(x,y,math.random(0,15))
 end pullEvent() end
 
-eventLoop()
+_eventLoop = true --Because _draw() and _update() are not defined.
 ___spritesheet___
 LK12;GPUIMG;192x128;
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

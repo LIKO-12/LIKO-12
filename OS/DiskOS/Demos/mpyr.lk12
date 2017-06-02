@@ -1,6 +1,5 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-
 --Mouse Pyrameds Demo
 --By Filippo @HomineLudens
 local xm=0 --Mouse x
@@ -20,11 +19,15 @@ local function pyr(x,y,w,h,cx,cy)
  triangle(x,y+h,ccx,ccy,x+w,y+h,false,15)
 end
 
-function mousemoved(x,y)
+function _init()
+ clear()
+end
+
+function _mousemoved(x,y)
  xm=x ym=y
 end
 
-function update(dt)
+function _update(dt)
  for x=0,192,w do
   for y=0,128,h do
    dx=xm-x-w/2
@@ -40,9 +43,6 @@ function update(dt)
  end
  flip() --Wait for the screen to draw.
 end
-
-clear()
-eventLoop()
 ___spritesheet___
 LK12;GPUIMG;192x128;
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

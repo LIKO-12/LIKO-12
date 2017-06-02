@@ -1,8 +1,9 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-
 --HELLO WORLD DEMO BY: RAMILEGO4GAME--
-function init() --The startup function
+function _init() --The startup function
+ cursor("point")
+ clear()
  local x = 192/2 - 8*3 + 2
  local y = 128/4
  SpriteGroup(1,x-1,y-1,6,2) --id, x,y,w,h
@@ -19,25 +20,22 @@ function init() --The startup function
  Sprite(7,x-1,y-1,0,3,3)
 end
 local mflag = false
-function mousepressed(x,y)
+function _mousepressed(x,y)
  math.randomseed(os.time()*(x+y)) --Set the seed
  point(x,y,math.random(8,15)) --X,Y,COLOR
  mflag = true
 end
 
-function mousemoved(x,y)
+function _mousemoved(x,y)
  if not mflag then return end mousepressed(x,y)
 end
 
-function mousereleased(x,y)
+function _mousereleased(x,y)
  if not mflag then return end mousepressed(x,y)
  mflag = false
 end
 
-cursor("point")
-clear()
-init()
-eventLoop()
+_eventLoop = true --Because _update() or _draw() are not defined.
 ___spritesheet___
 LK12;GPUIMG;192x128;
 707000000000000000000000000000000000000077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

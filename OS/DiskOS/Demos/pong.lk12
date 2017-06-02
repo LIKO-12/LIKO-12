@@ -1,6 +1,5 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-
 --Ping Pong By RamiLego4Game
 --Controls: P1: W,S; P2: Up, Down
 --Contorllable by touch on mobile devices.
@@ -22,7 +21,7 @@ function strwidth(str)
  return str:len() * (fw+1)
 end
 
-function init() 
+function _init() 
  bx,by = sw/2, sh/2
  br = sw/40 + 1
  vx,vy = bss,bss
@@ -32,7 +31,7 @@ function init()
  p1s, p2s = 0,0
 end
 
-function draw()
+function _draw()
  clear()
  
  --Drawing the ball
@@ -47,7 +46,7 @@ function draw()
  color(8) print(p2s,sw-strwidth(p2s)-pw-1,fh)
 end
 
-function update(dt)
+function _update(dt)
  --Update the ball pos
  bx = bx + vx*dt*5
  by = by + vy*dt*5
@@ -97,20 +96,15 @@ function update(dt)
  if p2y < 1 then p2y = 1 end
  if p1y > sh-ph then p1y = sh-ph end
  if p2y > sh-ph then p2y = sh-ph end
-  
- draw()
 end
 
-function touchmoved(id,x,y,dx,dy,p)
+function _touchmoved(id,x,y,dx,dy,p)
  if x < sw/2 then --Player 1
   p1y = y - ph/2
  else --Player 2
   p2y = y - ph/2
  end
 end
-
-init()
-eventLoop()
 ___spritesheet___
 LK12;GPUIMG;192x128;
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

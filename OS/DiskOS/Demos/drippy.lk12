@@ -1,6 +1,5 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-
 --Drippy Demo
 --By ZEP
 --Originally for PICO-8
@@ -11,7 +10,7 @@ x=192/2 y=128/2 c=8
 local imdata = imagedata(192,128)
 imdata:map(function() return 1 end)
 
-function draw()
+function _draw()
  imdata:setPixel(x,y,c)
  imdata:image():draw(0,0)
 end
@@ -22,7 +21,7 @@ function btn(n)
  return isKDown(bmap[n+1])
 end
 
-function update()
+function _update()
  if btn(0) then x=x-1 end
  if btn(1) then x=x+1 end
  if btn(2) then y=y-1 end
@@ -44,11 +43,7 @@ function update()
    imdata:setPixel(x2,y2+1,col)
   end
  end
- 
- draw()
 end
-
-eventLoop()
 ___spritesheet___
 LK12;GPUIMG;192x128;
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

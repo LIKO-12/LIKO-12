@@ -21,7 +21,7 @@ local ucol = nextColor()
 local timer = 0
 local time = 0.01
 local ccol = ucol()
-function update(dt)
+function _update(dt)
  clear()
  drawLines(ccol)
  flip()
@@ -31,9 +31,6 @@ function update(dt)
   ccol = ucol()
  end
 end
-
-eventLoop()
-
 ___spritesheet___
 LK12;GPUIMG;192x128;
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

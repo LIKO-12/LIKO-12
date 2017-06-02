@@ -1,17 +1,18 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-
 -- Sorting Demo
 -- By ZEP
 -- Originally for PICO-8
 -- Ported to LIKO-12 by RamiLego4Game
 
-clear(1)
-cam("shear",0.2,-0.1)
-cam("scale",0.6,0.6)
-cam("translate",40,60)
-
-G = {3,5,7,2,9,1,2,8,4,6,3}
+function _init()
+  clear()
+  cam("shear",0.2,-0.1)
+  cam("scale",0.6,0.6)
+  cam("translate",40,60)
+  
+  G = {3,5,7,2,9,1,2,8,4,6,3}
+end
 
 function draw_giraffe(x,y,l)
  
@@ -27,7 +28,7 @@ function draw_giraffe(x,y,l)
  Sprite(2,x,y-16-l*8)
 end
 
-function update()
+function _update()
  clear(12)
  rect(0,100,192,28,false,3)
  printCursor(1,1,-1)
@@ -40,7 +41,7 @@ function update()
  end
 end
 
-function keypressed(key,isrepeat)
+function _keypressed(key,isrepeat)
  
  -- Down to sort
  if key == "down" then
@@ -71,12 +72,9 @@ function keypressed(key,isrepeat)
 end
 
 --Show the onscreen keyboard for android users.
-function touchpressed()
+function _touchpressed()
  textinput(true)
 end
-
-clear(1)
-eventLoop()
 ___spritesheet___
 LK12;GPUIMG;192x128;
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

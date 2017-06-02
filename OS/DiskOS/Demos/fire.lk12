@@ -1,6 +1,5 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-
 --Fire Demo by: RamiLego4Game
 --Originally by COSME12
 
@@ -35,7 +34,7 @@ end
 saveCircle() --Draw the first circle
 
 local a,b,c,ex,ey --Variables for update calculations
-function update(dt)
+function _update(dt)
  for i=1, fadeSpeed do --How much attemps to fade the fire
   a = math.random(sw) --Random X
   b = math.random(sh) --Random Y
@@ -88,10 +87,6 @@ function mousepressed(mx,my,b,it)
 end
 mousemoved = mousepressed
 mousereleased = mousepressed
-
-
---Start the pullEvent() loop
-eventLoop()
 ___spritesheet___
 LK12;GPUIMG;192x128;
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

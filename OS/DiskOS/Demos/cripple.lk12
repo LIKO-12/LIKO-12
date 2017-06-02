@@ -1,6 +1,5 @@
 sLK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-
 local r=96
 local t=0
 local sc = {}
@@ -13,7 +12,7 @@ local cos=function(n)
  return math.cos(math.rad(n*360))
 end
 local img
-while true do
+function _draw()
  clear()
  img = imagedata(192,128)
  for y=-r,r,3 do for x=-r,r,3 do
@@ -27,8 +26,6 @@ while true do
  flip()
  t =t+ 2/r
 end
-
-
 ___spritesheet___
 LK12;GPUIMG;192x128;
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

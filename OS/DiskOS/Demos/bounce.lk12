@@ -1,6 +1,5 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
-
 --Bouncy Ball Demo
 --By ZEP
 --Originally for PICO-8
@@ -19,7 +18,7 @@ floor_y = 100
 velx = math.random(1,6)-3
 vely = math.random(1,6)-3
 
-function draw()
+function _draw()
  clear(7)
  
  color(6)
@@ -32,7 +31,7 @@ function draw()
           bally-4-vely)
 end
 
-function update()
+function _update()
  
  --Move ball left/right
  
@@ -70,11 +69,9 @@ function update()
  
  --Gravity!
  vely = vely + 0.2
- 
- draw()
 end
 
-function keypressed(key)
+function _keypressed(key)
  --Press a button to randomly
  --choose a new velocity
  if key == bmap[5+1] then
@@ -84,8 +81,6 @@ function keypressed(key)
  end
  
 end
-
-eventLoop()
 ___spritesheet___
 LK12;GPUIMG;192x128;
 00DDD700000F00F000FFFF00002227000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
