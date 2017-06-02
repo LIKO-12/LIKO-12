@@ -4,7 +4,7 @@ This function is called everytime a mouse button is pressed.
 
 #### Syntax:
 ```lua
-function mousepressed(x,y,button)
+function _mousepressed(x,y,button)
   --Do something here
 end
 ```
