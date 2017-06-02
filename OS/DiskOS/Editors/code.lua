@@ -309,8 +309,9 @@ end
 function ce:import(data)
   buffer = {}
   for line in magiclines(data) do
-    table.insert(buffer,line)
+    table.insert(buffer,line:sub(0,-2))
   end
+  fs.write("lualine.txt",buffer[1])
   if not buffer[1] then buffer[1] = "" end
   self:checkPos()
 end

@@ -22,7 +22,7 @@ local nextargiter = saveData:gmatch("(.-);")
 local function nextarg()
   local n = nextargiter()
   if n then
-    datasum = datasum + n:len()
+    datasum = datasum + n:len() + 1
     return n
   else return n end
 end
@@ -74,7 +74,7 @@ if not clevel then color(8) print("Invalid Data !") return end
 clevel = string.match(clevel,"CLvl:(.+)")
 if not clevel then color(8) print("Invalid Data !") return end clevel = tonumber(clevel)
 
-local data = saveData:sub(datasum+2,-1)
+local data = saveData:sub(datasum+3,-1)
 
 if compress ~= "none" then --Decompress
   data = math.decompress(data,compress,clevel)
