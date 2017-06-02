@@ -74,7 +74,7 @@ if not clevel then color(8) print("Invalid Data !") return end
 clevel = string.match(clevel,"CLvl:(.+)")
 if not clevel then color(8) print("Invalid Data !") return end clevel = tonumber(clevel)
 
-local data = saveData:sub(datasum+3,-1)
+local data = saveData:sub(datasum+2,-1)
 
 if compress ~= "none" then --Decompress
   data = math.decompress(data,compress,clevel)

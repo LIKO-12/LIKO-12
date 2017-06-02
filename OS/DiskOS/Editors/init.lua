@@ -160,7 +160,7 @@ function edit:import(data) --Import editors data
         else
           dend = -2 --The end of the file ignoring the last new line
         end
-        local save = string.sub(data,dstart+1,dend-1)
+        local save = string.sub(data,dstart,dend)
         self.leditors[k]:import(save)
       end
     end

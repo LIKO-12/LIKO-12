@@ -309,7 +309,7 @@ end
 function ce:import(data)
   buffer = {}
   for line in magiclines(data) do
-    table.insert(buffer,line:sub(0,-2))
+    table.insert(buffer,line)
   end
   if not buffer[1] then buffer[1] = "" end
   self:checkPos()
