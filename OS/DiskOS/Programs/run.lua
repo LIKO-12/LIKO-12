@@ -27,6 +27,7 @@ TileMap:import(mapData)
 
 --Load the code
 local luacode = eapi.leditors[codeid]:export()
+luacode = luacode .. "\n__".."_autoEventLoop()" --Because trible _ are not allowed in LIKO-12
 local diskchunk, err = loadstring(luacode)
 if not diskchunk then
   local err = tostring(err)
@@ -79,11 +80,23 @@ end
 local apiloader = loadstring(fs.read("C://api.lua"))
 setfenv(apiloader,glob) apiloader()
 
+local function autoEventLoop()
+  if glob._init and type(glob._init) == "function" then
+    glob._init()
+  end
+  if glob._update or glob._draw or glob._eventLoop then
+    eventLoop()
+  end
+end
+
+setfenv(autoEventLoop,glob)
+
 --Add special disk api
 glob.SpriteMap = SpriteMap
 glob.SheetFlagsData = FlagsData
 glob.TileMap = TileMap
 glob.MapObj = mapobj
+glob["__".."_".."autoEventLoop"] = autoEventLoop --Because trible _ are not allowed in LIKO-12
 
 local helpersloader, err = loadstring(fs.read("C://Libraries/diskHelpers.lua"))
 if not helpersloader then error(err) end
