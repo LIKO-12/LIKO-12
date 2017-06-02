@@ -84,6 +84,7 @@ local function autoEventLoop()
   if glob._init and type(glob._init) == "function" then
     glob._init()
   end
+  if type(glob._eventLoop) == "boolean" and not glob._eventLoop then return end --Skip the auto eventLoop.
   if glob._update or glob._draw or glob._eventLoop then
     eventLoop()
   end
