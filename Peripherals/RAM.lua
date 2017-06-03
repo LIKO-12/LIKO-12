@@ -36,7 +36,11 @@ Meta Data (1 KB)
 0x0068 Compressed Lua Code Address (4 Bytes)
 0x006C Author Name (16 Bytes)
 0x007C Game Name (16 Bytes)
-0x008C Reserved (600 Bytes)
+0x008C SpriteSheet Width (2 Bytes)
+0x008E SpriteSheet Height (2 Bytes)
+0x0090 Map Width (1 Byte)
+0x0091 Map height (1 Byte)
+0x0093 Reserved (594 Bytes)
 
 Disk META:
 --------------
