@@ -1,5 +1,6 @@
 # So it doesn't cause problems when cloning on windows.
-text eol=lf
+* text=auto eol=lf
 
 # Inorder to show difference.
-*.lk12	 diff=astextplain
+*.lk12 diff=astextplain eol=lf
+*.lua eol=lf
