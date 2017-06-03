@@ -11,6 +11,8 @@ local Peripherals = {} --The loaded peripherals.
 local MPer = {} --Mounted and initialized peripherals.
 local BPer = {} --Peripherals ready for use IN the BIOS only.
 local Devkits = {} --Peripherals Devkits.
+local InDirect = {} --Peripherals indirect list.
+local DirectAPI = false --An important feature to speed up Peripherals functions calling, calls them directly instead of yeilding the coroutine.
 
 --A function to load the peripherals.
 local function indexPeripherals(path)
@@ -50,17 +52,21 @@ local function P(per,m,conf)
   if type(conf) ~= "table" then return false, "Configuration table should be a table, provided "..type(conf) end
   
   events:group(per..":"..m)
-  local success, peripheral, devkit = pcall(Peripherals[per],conf)
+  local success, peripheral, devkit, indirect = pcall(Peripherals[per],conf)
   events:group()
   
   if success then
     MPer[m] = peripheral
     Devkits[m] = devkit
+    InDirect[m] = {}
+    for k,v in ipairs(indirect or {}) do
+      InDirect[m][v] = true
+    end
     coreg:register(peripheral,m)
   else
     peripheral = "Init Err: "..tostring(peripheral)
   end
-  return success, peripheral, devkit
+  return success, peripheral, devkit, nocache
 end
 
 if not love.filesystem.exists("/bconf.lua") or true then
@@ -88,6 +94,31 @@ if not success then error(run_err)
   default_bchunk()
 end --Load the default BConfig
 
+DirectAPI = confSandbox._DirectAPI
+
+if DirectAPI then --Build the cache
+  DirectAPI = {} --Convert it to a table.
+  for per, funcs in pairs(MPer) do
+    DirectAPI[per] = {}
+    for fname, func in pairs(funcs) do
+      if not InDirect[per][fname] then --Cache it
+        DirectAPI[per][fname] = function(...)
+          local result = {func(...)}
+          if result[1] then --It ran successfully
+            local nres = {}
+            for k,v in ipairs(result) do
+              nres[k-1] = v
+            end
+            return unpack(nres)
+          else --Error
+            return error(result[2] or "Unknown")
+          end
+        end
+      end
+    end
+  end
+end
+
 --BIOS Api for use in the OS
 coreg:register(function()
   local list = {}
@@ -99,6 +130,10 @@ coreg:register(function()
   end
   return true, list
 end,"BIOS:listPeripherals")
+
+coreg:register(function()
+  return true, DirectAPI
+end,"BIOS:DirectAPI")
 
 local function exe(...) --Execute a LIKO12 api function (to handle errors)
   local args = {...}
@@ -204,7 +239,7 @@ if gpu then
       gpu.print("Copyright (C) Rami Sabbagh",15,13)
       
       gpu.printCursor(0,3,0)
-      gpu.print("NormBIOS Revision 060-007")
+      gpu.print("NormBIOS Revision 060-008")
       gpu.print("")
       
       gpu.print("Press DEL to enter setup",2,sh-7)
