@@ -38,6 +38,10 @@ return function(config) --A function that creates a new CPU peripheral.
   --The api starts here--
   local CPU = {}
   
+  local indirect = { --The functions that must be called via coroutine.yield
+    "pullEvent", "rawPullEvent", "shutdown", "reboot", "sleep"
+  }
+  
   function CPU.pullEvent()
     if #EventStack == 0 then
       Instant = true
@@ -132,5 +136,7 @@ return function(config) --A function that creates a new CPU peripheral.
     return true --It ran successfully
   end
   
-  return CPU, devkit
+  devkit.indirect = indirect
+  
+  return CPU, devkit, indirect
 end

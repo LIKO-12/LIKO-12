@@ -59,20 +59,25 @@ end
 local blocklist = { HDD = true, Floppy = true }
 local perglob = {GPU = true, CPU = true, Keyboard = true, RAM = true} --The perihperals to make global not in a table.
 
+local _,directapi = coroutine.yield("BIOS:DirectAPI"); directapi = directapi or {}
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
 for k, v in pairs(blocklist) do perlist[k] = nil end
 for peripheral,funcs in pairs(perlist) do
  local holder = glob; if not perglob[peripheral] then glob[peripheral] = {}; holder = glob[peripheral] end
  for _,func in ipairs(funcs) do
-  local command = peripheral..":"..func
-  holder[func] = function(...)
-   local args = {coroutine.yield(command,...)}
-   if not args[1] then return error(args[2]) end
-   local nargs = {}
-   for k,v in ipairs(args) do
-    if k >1 then table.insert(nargs,k-1,v) end
+  if directapi[peripheral] and directapi[peripheral][func] then
+   holder[func] = directapi[peripheral][func]
+  else
+   local command = peripheral..":"..func
+   holder[func] = function(...)
+    local args = {coroutine.yield(command,...)}
+    if not args[1] then return error(args[2]) end
+    local nargs = {}
+    for k,v in ipairs(args) do
+     if k >1 then table.insert(nargs,k-1,v) end
+    end
+    return unpack(nargs)
    end
-   return unpack(nargs)
   end
  end
 end

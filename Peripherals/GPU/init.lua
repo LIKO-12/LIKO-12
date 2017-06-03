@@ -347,6 +347,10 @@ return function(config) --A function that creates a new GPU peripheral.
   end)
 
   local GPU = {}
+  
+  local indirect = { --The functions that must be called via coroutine.yield
+    "flip"
+  }
 
   local VRAMBound = false
   local VRAMImg
@@ -1468,6 +1472,7 @@ return function(config) --A function that creates a new GPU peripheral.
   devkit.UnbindVRAM = UnbindVRAM
   devkit.AddressPos = AddressPos
   devkit.VRAMHandler = VRAMHandler
+  devkit.indirect = indirect
   
-  return GPU, devkit --Return the table containing all of the api functions.
+  return GPU, devkit, indirect --Return the table containing all of the api functions.
 end
