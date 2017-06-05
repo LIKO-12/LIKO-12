@@ -13,6 +13,8 @@ return function(config) --A function that creates a new GPU peripheral.
   local _LIKO_W, _LIKO_H = config._LIKO_W or 192, config._LIKO_H or 128 --LIKO screen width.
   local _LIKO_X, _LIKO_Y = 0,0 --LIKO12 Screen padding in the HOST screen.
   
+  local _PixelPerfect = config._PixelPerfect --If the LIKO-12 screen must be drawn pixel perfect.
+  
   local _GIFScale = math.floor(config._GIFScale or 2) --The gif scale factor (must be int).
   local _GIFStartKey = config._GIFStartKey or "f8"
   local _GIFEndKey = config._GIFEndKey or "f9"
@@ -83,11 +85,11 @@ return function(config) --A function that creates a new GPU peripheral.
     local TSX, TSY = w/_LIKO_W, h/_LIKO_H --TestScaleX, TestScaleY
     if TSX < TSY then
       _LIKOScale = TSX
-      _LIKO_X, _LIKO_Y = 0, (_HOST_H-_LIKO_H*_LIKOScale)/2
     else
       _LIKOScale = TSY
-      _LIKO_X, _LIKO_Y = (_HOST_W-_LIKO_W*_LIKOScale)/2, 0
     end
+    if _PixelPerfect then _LIKOScale = math.floor(_LIKOScale) end
+    _LIKO_X, _LIKO_Y = (_HOST_W-_LIKO_W*_LIKOScale)/2, (_HOST_H-_LIKO_H*_LIKOScale)/2
     _ShouldDraw = true
   end)
   
