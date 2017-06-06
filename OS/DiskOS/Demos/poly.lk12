@@ -2,6 +2,26 @@ LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 -- by HomineLudens
 
+--Shapes parameters Tables, 
+--feel free to add more:
+
+--1=External circumference range
+--2=External angle step
+--3=Internal angle step
+--4=Internal multiplier for rotation
+--5=Internal divider for rotation
+--6=Lines color
+--7=Polygons Colors
+
+par={
+ {90,120,25,0,1,12,1},
+ {90,25,90,0.01,2,2,14},
+ {60,120,120,-1,2,3,11},
+ {60,60,60,0,1,12,1},
+ {60,120,30,1,3,8,14},
+ {-50,30,180,0.5,1,6,7}
+}
+
 sw, sh = screenSize()
 w2=sw/2
 h2=sh/2
@@ -14,17 +34,8 @@ function sin(a)
  return math.sin(math.rad(a))
 end 
 
-par={
- {90,120,25,0,1,12,1},
- {90,25,90,0.01,2,2,14},
- {60,120,120,-1,2,3,11},
- {60,60,60,0,1,12,1},
- {60,120,30,1,3,8,14},
- {-50,30,180,0.5,1,6,7}
-}
 ipar=1
 oa=999
-ir=30
  
 function _update(dt)
  clear()
@@ -36,12 +47,14 @@ function _update(dt)
   a2=par[ipar][3]
   m1=par[ipar][4]
   d1=par[ipar][5]
-  colv=par[ipar][7]
   coll=par[ipar][6]
+  colv=par[ipar][7]  
   ipar=(ipar+1)
+  --loop parameters sets
   ipar=ipar<#par+1 and ipar or 1
  end
 
+ --offset angle
  oa=oa+dt*90
  ir=30+c1*sin(oa) 
  
