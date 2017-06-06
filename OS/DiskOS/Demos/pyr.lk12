@@ -1,7 +1,7 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 --Pyramids Demo
---By Filipo @HomineLudens
+--By @HomineLudens
 local function pir(x,y,w,h,cx,cy)
 --6 7 12 2
  ccx=w/2+cx-1
@@ -25,7 +25,7 @@ function _update(dt)
    pir(x-1,y-1,25,25,x+cx,y+cy)
   end
  end
- t=t+0.001
+ t=t+dt/20
  flip() --Wait for the screen to draw.
 end
 ___spritesheet___
