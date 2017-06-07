@@ -60,7 +60,6 @@ return function(config)
   local ram = string.rep("\0",ramsize)
   
   local handlers = {}
-  local hooks = {}
   
   local devkit = {}
   
@@ -129,37 +128,18 @@ return function(config)
   
   local function tohex(val) return string.format("0x%X",val) end
   
-  local function chook(id,...) --Trigger a hook
-    if not hooks[id] then return end
-    for k,v in ipairs(hooks[id]) do
-      local ok, err = pcall(v,...)
-      if not ok then print("RAM HOOK ERR ("..id..") : "..tostring(err)) end
-    end
-  end
-  
   local api = {}
   
-  --Changes the position of a ram seperator
+  --Changes the position of a ram separator
   --TODO: Complete the error handleing...
-  function api._RAMSeperator(id, newAddress)
-    if type(id) ~= "number" then return false, "Seperator ID must be a number, provided: "..type(id) end
-    if type(newAddress) ~= "number" then return false, "The new seperator address must be a number, provided: "..type(newAddress) end
+  function api._RAMSeparator(id, newAddress)
+    if type(id) ~= "number" then return false, "Separator ID must be a number, provided: "..type(id) end
+    if type(newAddress) ~= "number" then return false, "The new separator address must be a number, provided: "..type(newAddress) end
     id, newAddress = math.floor(id), math.floor(newAddress)
-    if id < 0 or id > (#handlers - 3) then return false, "Seperator id out of range ("..id.."), must be [0,"..(#handlers-3).."]" end
+    if id < 0 or id > (#handlers - 3) then return false, "Separator id out of range ("..id.."), must be [0,"..(#handlers-3).."]" end
     handlers[id+2].endAddr = newAddress-1
     handlers[id+3].startAddr = newAddress
     return true --It ran successfilly
-  end
-  
-  --A function to be called whenever a section is alerted.
-  --TODO: Error handelling.
-  function api._HookSection(id,hook)
-    if type(id) ~= "number" then return false, "Section ID must be a number, provided: "..type(id) end
-    if type(hook) ~= "function" then return false, "The Hook must be a function, provided: "..type(hook) end
-    id = math.floor(id)
-    if not hooks[id] then hooks[id] = {} end
-    table.insert(hooks[id],hook)
-    return true --It ran successfully.
   end
   
   function api.poke(address,value)
@@ -172,7 +152,6 @@ return function(config)
     for k,h in ipairs(handlers) do
       if address <= h.endAddr then
         h.handler("poke",h.startAddr,address,value)
-        chook(k,"poke",h.startAddr,address,value)
         return true --It ran successfully.
       end
     end
@@ -186,7 +165,6 @@ return function(config)
     for k,h in ipairs(handlers) do
       if address <= h.endAddr then
         local v = h.handler("peek",h.startAddr,address)
-        chook(k,"peek",h.startAddr,address,v)
         return true, v --It ran successfully
       end
     end
@@ -209,7 +187,6 @@ return function(config)
           if sa < h.startAddr then sa = h.startAddr end
           if ea > h.endAddr then ea = h.endAddr end
           local data = h.handler("memget",h.startAddr,sa,ea-sa+1)
-          chook(k,"memget",h.startAddr,sa,ea-sa+1,data)
           str = str .. data
         end
       end
@@ -236,7 +213,6 @@ return function(config)
           if ea > h.endAddr then ea = h.endAddr end
           d = data:sub(sa-address+1,ea-address+1)
           h.handler("memset",h.startAddr,sa,data)
-          chook(k,"memset",h.startAddr,sa,data)
         end
       end
     end
@@ -275,13 +251,9 @@ return function(config)
             
             if h1.handler == h2.handler then --Direct Copy
               h1.handler("memcpy",h1.startAddr,sa1,sa2,ea2-sa2+1)
-              chook(k1,"memcpy",h1.startAddr,sa1,sa2,ea2-sa2+1)
-              chook(k2,"memcpy",h2.startAddr,sa1,sa2,ea2-sa2+1)
             else --InDirect Copy
               local d = h1.handler("memget",h1.startAddr,sa1,ea2-sa2+1)
-              chook(k1,"memget",h1.startAddr,sa1,ea2-sa2+1,d)
               h2.handler("memset",h2.startAddr,sa2,d)
-              chook(k2,"memset",h2.startAddr,sa2,d)
             end
           end
         end
