@@ -688,7 +688,7 @@ return function(config) --A function that creates a new GPU peripheral.
       elseif mode == "shear" then
         love.graphics.shear(a or 0, b or 0)
       else
-        return false, "Unknown mode: "..model
+        return false, "Unknown mode: "..mode
       end
     else
       exe(GPU.pushColor())
