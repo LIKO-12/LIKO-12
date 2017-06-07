@@ -49,6 +49,15 @@ rect(28,16,12,12,true,3)
 ellipse(34,22,6,6,true,11)
 point(34,22,8)
 
+--Polygon
+rect(41,3,12,12,true,3)
+polygon(42,4, 52,4, 52,14, 42,14, 11)
+
+--Triangles
+rect(41,16,12,12,true,2)
+triangle(42,17, 52,17, 52,27, false, 8)
+triangle(42,17, 42,27, 52,27, false, 14)
+
 flip()
 
 local sc = screenshot()
