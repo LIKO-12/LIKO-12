@@ -19,4 +19,4 @@ elseif mode == "write" then
   fs.write(dest,fimg)
 end
 
-print("\n Done")
+print(" Done")

@@ -1,5 +1,4 @@
 --Text editor--
-print("")
 local args = {...} --Get the arguments passed to this program
 if #args < 1 then color(8) print("Must provide the path to the file") return end
 local tar = table.concat(args," ") --The path may include whitespaces

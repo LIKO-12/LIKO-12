@@ -11,8 +11,6 @@ local source = select(1,...)
 
 if source then source = term.parsePath(source)..".lk12" end
 
-print("") --NewLine
-
 if not source then color(8) print("Must provide path to the file to port") return end
 if not fs.exists(source) then color(8) print("File doesn't exists") return end
 if fs.isDirectory(source) then color(8) print("Couldn't port a directory !") return end

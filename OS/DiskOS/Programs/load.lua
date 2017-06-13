@@ -5,8 +5,6 @@ local eapi = require("C://Editors")
 
 if source and source ~= "@clip" then source = term.parsePath(source)..".lk12" elseif source ~= "@clip" then source = eapi.filePath end
 
-print("") --NewLine
-
 if not source then color(8) print("Must provide path to the file to load") return end
 if source ~= "@clip" and not fs.exists(source) then color(8) print("File doesn't exists") return end
 if source ~= "@clip" and fs.isDirectory(source) then color(8) print("Couldn't load a directory !") return end

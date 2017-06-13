@@ -5,8 +5,6 @@ local eapi = require("C://Editors")
 
 if source then source = term.parsePath(source)..".lk12" else source = eapi.filePath end
 
-print("") --NewLine
-
 if not source then color(8) print("Must provide path to the file to update") return end
 if not fs.exists(source) then color(8) print("File doesn't exists") return end
 if fs.isDirectory(source) then color(8) print("Couldn't load a directory !") return end
