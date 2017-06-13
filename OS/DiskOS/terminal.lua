@@ -113,7 +113,7 @@ function term.parsePath(path)
 end
 
 function term.execute(command,...)
-  if not command then print("") return false, "No command" end
+  if not command then return false, "No command" end
   if fs.exists(curpath..command..".lua") then
     local chunk, err = fs.load(curpath..command..".lua")
     if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
@@ -137,7 +137,7 @@ function term.execute(command,...)
       end
     end
   end
-  color(9) print("\nFile not found") color(7) return false, "File not found"
+  color(9) print("File not found") color(7) return false, "File not found"
 end
 
 function term.loop() --Enter the while loop of the terminal
@@ -156,6 +156,7 @@ function term.loop() --Enter the while loop of the terminal
         if hispos then table.remove(history,#history) hispos = false end
         table.insert(history, buffer)
         blink = false; checkCursor()
+        print("") -- insert newline after Enter
         term.execute(split(buffer)) buffer = ""
         color(7) checkCursor() print(term.getpath().."> ",false) blink = true cursor("none")
       elseif a == "backspace" then

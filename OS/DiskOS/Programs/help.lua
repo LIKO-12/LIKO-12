@@ -27,7 +27,6 @@ end
 
 helpPath = require("C://Programs/help",true).getHelpPath() --A smart way to keep the helpPath
 
-print("") --New line
 palt(0,false) --Make black opaque
 
 local doc --The help document to print

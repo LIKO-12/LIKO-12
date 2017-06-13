@@ -1,7 +1,6 @@
 --Print the list of functions for a peripheral, or all peripherals
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
 
-print("")
 palt(0,false) --Make black opaque
 
 local peri = select(1,...)

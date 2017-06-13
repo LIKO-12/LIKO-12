@@ -1,5 +1,4 @@
 --Paint Program--
-print("")
 local args = {...}
 if #args < 1 then color(8) print("Must provide the path to the file") return end
 local tar = table.concat(args," ")..".lk12" --The path may include whitespaces
@@ -24,6 +23,7 @@ if not fs.exists(tar) then --Create a new image
   if not height or height:len() == 0 then print("") return end
   local h = tonumber(height)
   if not h then color(8) print("\nInvalid Height: "..height..", height must be a number !") return end
+  print("")
   
   imgdata = imagedata(w,h)
   img = imgdata:image()

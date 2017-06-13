@@ -1,4 +1,3 @@
-print("")
 local data = clipboard()
 data = math.b64dec(data)
 data = math.decompress(data,"lz4")

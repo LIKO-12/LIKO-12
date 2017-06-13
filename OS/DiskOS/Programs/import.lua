@@ -12,8 +12,6 @@ local sw, sh = screenSize()
 if source then source = term.parsePath(source) end
 if destination then destination = term.parsePath(destination) end
 
-print("") --New line
-
 if not source then color(8) print("Must provide path to the source file") return end
 if not fs.exists(source) then color(8) print("Source doesn't exists") return end
 if fs.isDirectory(source) then color(8) print("Source can't be a directory") return end

@@ -2,7 +2,6 @@
 
 --First we will start by obtaining the disk data
 --We will run the current code in the editor
-print("")
 local eapi = require("C://Editors")
 local mapobj = require("C://Libraries/map")
 
