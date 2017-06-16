@@ -161,21 +161,34 @@ function ce:gotoEndLine()
   self:drawLineNum()
 end
 
-function ce:insertNewLine()
-  local newLine = buffer[self.cy]:sub(self.cx,-1)
-  buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)
-  local snum = string.find(buffer[self.cy].."a","%S") --Number of spaces
-  snum = snum and snum-1 or 0
-  newLine = string.rep(" ",snum)..newLine
-  self.cx, self.cy = snum+1, self.cy+1
-  if self.cy > #buffer then
+-- Will indent the given line based on the previous line
+-- returns the amount of leading whitespaces after indentation
+function ce:indent(y)
+  local wspace = ""
+  if y > 1 then -- check the indentation of the previous line
+    wspace = buffer[y-1]:match("^ *")
+  end
+  -- increase indentation if opening a new level in code
+  if buffer[y-1]:find('then *$')
+    or buffer[y-1]:find('do *$')
+    or buffer[y-1]:find("function.*%) *$")
+    or buffer[y-1]:find("[[{%(]$")
+    then wspace = wspace.."  "
+  end
+  buffer[y] = buffer[y]:gsub("^ *",wspace)
+  return wspace:len()
+end
+
+-- Inserts a newline in the given position, splitting the line in two if needed
+-- you should execute self:drawBuffer() and self:drawLineNum() after this
+function ce:insertNewLineAt(x,y)
+  local newLine = buffer[y]:sub(x,-1)
+  buffer[y] = buffer[y]:sub(0,x-1)
+  if y+1 > #buffer then
     table.insert(buffer,newLine)
   else
-    buffer = lume.concat(lume.slice(buffer,0,self.cy-1),{newLine},lume.slice(buffer,self.cy,-1)) --Insert between 2 different lines
+    buffer = lume.concat(lume.slice(buffer,0,y),{newLine},lume.slice(buffer,y+1,-1)) --Insert between 2 different lines
   end
-  self:checkPos()
-  self:drawBuffer()
-  self:drawLineNum()
 end
 
 -- Delete the char from the given coordinates.
@@ -209,13 +222,15 @@ function ce:pasteText()
   local firstLine = true
   for line in string.gmatch(text.."\n", "([^\r\n]*)\r?\n") do
     if not firstLine then
-      self:insertNewLine() self.cx=1
+      self:insertNewLineAt(self.cx,self.cy)
+      self.cx, self.cy = 1, self.cy+1
     else
       firstLine = false
     end
     self:textinput(line)
   end
-  if self:checkPos() then self:drawBuffer() else self:drawLine() end
+  self:checkPos()
+  self:drawBuffer()
   self:drawLineNum()
 end
 
@@ -223,7 +238,14 @@ end
 ce.lastKey = ""
 
 ce.keymap = {
-  ["return"] = ce.insertNewLine,
+  ["return"] = function(self)
+    self:insertNewLineAt(self.cx,self.cy)
+    local indent = self:indent(self.cy+1)
+    self.cx, self.cy = indent+1, self.cy+1
+    self:checkPos()
+    self:drawBuffer()
+    self:drawLineNum()
+  end,
 
   ["left"] = function(self)
     local flag = false
@@ -300,7 +322,19 @@ ce.keymap = {
   end,
 
   ["tab"] = function(self)
-    self:textinput(" ")
+    -- indent if pressing tab only once, with cursor placed before the first word
+    if self.lastKey ~= "tab" and buffer[self.cy]:sub(0,self.cx):find("^ *$") then
+        local indent = self:indent(self.cy)
+        if indent > 0 then
+          self.cx = indent+1
+          if self:checkPos() then self:drawBuffer() else self:drawLine() end
+          self:drawLineNum()
+        else -- insert space anyway if there's no indentation at all
+          self:textinput(" ")
+        end
+    else
+      self:textinput(" ")
+    end
   end,
 
   ["ctrl-a"] = ce.gotoStartLine,
