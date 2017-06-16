@@ -2,7 +2,7 @@ local eapi = select(1,...) --The editor library is provided as an argument
 
 --=Contributing Guide=--
 --[[
-Try your best to keep your work light, documented and teady, sine this will be the base of other places where text editors exists.
+Try your best to keep your work light, documented and tidy, since this will be the base of other places where text editors exist.
 
 self.cx, self.cy are the position of the brown blinking cursor
 * the top-left corner pos is 1, 1
@@ -29,6 +29,7 @@ Be sure to read the contributing guide in Editors/init.lua
 (Add your name when contributing to this file)
 
 - Rami Sabbagh (RamiLego4Game)
+- Fernando Carmona Varo (Ferk)
 ]]
 
 local ce = {} --Code editor
@@ -83,27 +84,27 @@ end
 --Check the position of the cursor so the view includes it
 function ce:checkPos()
   local flag = false --Flag if the whole buffer requires redrawing
-  
+
   --Y position checking--
   if self.cy > #buffer then self.cy = #buffer end --Passed the end of the file
-  
+
   if self.cy > self.th + self.vy-1 then --Passed the screen to the bottom
     self.vy = self.cy - (self.th-1); flag = true
   elseif self.cy < self.vy then --Passed the screen to the top
     if self.cy < 1 then self.cy = 1 end
     self.vy = self.cy; flag = true
   end
-  
+
   --X position checking--
   if buffer[self.cy]:len() < self.cx-1 then self.cx = buffer[self.cy]:len()+1 end --Passed the end of the line !
-  
+
   if self.cx > self.tw + (self.vx-1) then --Passed the screen to the right
     self.vx = self.cx - (self.tw-1); flag = true
   elseif self.cx < self.vx then --Passed the screen to the left
     if self.cx < 1 then self.cx = 1 end
     self.vx = self.cx; flag = true
   end
-  
+
   return flag
 end
 
@@ -148,24 +149,82 @@ function ce:textinput(t)
   self:drawLineNum()
 end
 
-ce.keymap = {
-  ["return"] = function(self)
-    local newLine = buffer[self.cy]:sub(self.cx,-1)
-    buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)
-    local snum = string.find(buffer[self.cy].."a","%S") --Number of spaces
-    snum = snum and snum-1 or 0
-    newLine = string.rep(" ",snum)..newLine
-    self.cx, self.cy = snum+1, self.cy+1
-    if self.cy > #buffer then
-      table.insert(buffer,newLine)
+function ce:gotoStartLine()
+  self.cx = 1
+  if self:checkPos() then self:drawBuffer() else self:drawLine() end
+  self:drawLineNum()
+end
+
+function ce:gotoEndLine()
+  self.cx = buffer[self.cy]:len()+1
+  if self:checkPos() then self:drawBuffer() else self:drawLine() end
+  self:drawLineNum()
+end
+
+function ce:insertNewLine()
+  local newLine = buffer[self.cy]:sub(self.cx,-1)
+  buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)
+  local snum = string.find(buffer[self.cy].."a","%S") --Number of spaces
+  snum = snum and snum-1 or 0
+  newLine = string.rep(" ",snum)..newLine
+  self.cx, self.cy = snum+1, self.cy+1
+  if self.cy > #buffer then
+    table.insert(buffer,newLine)
+  else
+    buffer = lume.concat(lume.slice(buffer,0,self.cy-1),{newLine},lume.slice(buffer,self.cy,-1)) --Insert between 2 different lines
+  end
+  self:checkPos()
+  self:drawBuffer()
+  self:drawLineNum()
+end
+
+-- Delete the char from the given coordinates.
+-- If out of bounds, it'll merge the line with the previous or next as it suits
+-- Returns the coordinates of the deleted character, adjusted if lines were changed
+-- and a boolean "true" if other lines changed and redrawing the Buffer is needed
+function ce:deleteCharAt(x,y)
+  local lineChange = false
+  -- adjust "y" if out of bounds, just as failsafe
+  if y < 1 then y = 1 elseif y > #buffer then y = #buffer end
+  -- newline before the start of line == newline at end of previous line
+  if y > 1 and x < 1 then
+    y = y-1
+    x = buffer[y]:len()+1
+  end
+  -- join with next line (delete newline) when deleting past the boundaries of the line
+  if x > buffer[y]:len() and y < #buffer then
+    buffer[y] = buffer[y]..buffer[y+1]
+    buffer = lume.concat(lume.slice(buffer,0,y),lume.slice(buffer,y+2,-1))
+    lineChange = true
+  else
+    buffer[y] = buffer[y]:sub(0,x-1) .. buffer[y]:sub(x+1, -1)
+  end
+  return x,y,lineChange
+end
+
+-- Paste the text from the clipboard
+function ce:pasteText()
+  local text = clipboard()
+  text = text:gsub("\t"," ") -- tabs mess up the layout, replace them with spaces
+  local firstLine = true
+  for line in string.gmatch(text.."\n", "([^\r\n]*)\r?\n") do
+    if not firstLine then
+      self:insertNewLine() self.cx=1
     else
-      buffer = lume.concat(lume.slice(buffer,0,self.cy-1),{newLine},lume.slice(buffer,self.cy,-1)) --Insert between 2 different lines
+      firstLine = false
     end
-    self:checkPos()
-    self:drawBuffer()
-    self:drawLineNum()
-  end,
-  
+    self:textinput(line)
+  end
+  if self:checkPos() then self:drawBuffer() else self:drawLine() end
+  self:drawLineNum()
+end
+
+-- Last used key, this should be set to the last keymap used from the ce.keymap table
+ce.lastKey = ""
+
+ce.keymap = {
+  ["return"] = ce.insertNewLine,
+
   ["left"] = function(self)
     local flag = false
     self.cx = self.cx -1
@@ -179,7 +238,7 @@ ce.keymap = {
     if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
-  
+
   ["right"] = function(self)
     local flag = false
     self.cx = self.cx +1
@@ -193,72 +252,87 @@ ce.keymap = {
     if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
-  
+
   ["up"] = function(self)
     self.cy = self.cy -1
     self:checkPos()
     self:drawBuffer()
     self:drawLineNum()
   end,
-  
+
   ["down"] = function(self)
     self.cy = self.cy +1
     self:checkPos()
     self:drawBuffer()
     self:drawLineNum()
   end,
-  
+
   ["backspace"] = function(self)
-    if self.cx == 1 then
-      if self.cy > 1 then
-        self.cx = buffer[self.cy-1]:len()+1
-        buffer[self.cy-1] = buffer[self.cy-1] .. buffer[self.cy]
-        buffer = lume.concat(lume.slice(buffer,0,self.cy-1),lume.slice(buffer,self.cy+1,-1))
-        self.cy = self.cy-1
-        self:checkPos()
-        self:drawBuffer()
-        self:drawLineNum()
-      end
-    else
-      buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-2) .. buffer[self.cy]:sub(self.cx, -1)
-      self.cx = self.cx-1
-      if self:checkPos() then self:drawBuffer() else self:drawLine() end
-      self:drawLineNum()
-    end
-  end,
-  
-  ["home"] = function(self)
-    self.cx = 1
-    self:checkPos()
-    self:drawBuffer()
+    local lineChange
+    self.cx, self.cy, lineChange = self:deleteCharAt(self.cx-1,self.cy)
+    if self:checkPos() or lineChange then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
-  
-  ["end"] = function(self)
-    self.cx = buffer[self.cy]:len()+1
-    self:checkPos()
-    self:drawBuffer()
+
+  ["delete"] = function(self)
+    local lineChange
+    self.cx, self.cy, lineChange = self:deleteCharAt(self.cx,self.cy)
+    if self:checkPos() or lineChange then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
-  
+
+  ["home"] = ce.gotoStartLine,
+
+  ["end"] = ce.gotoEndLine,
+
   ["pageup"] = function(self)
     self.vy = self.vy-self.th
     if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
     self:drawBuffer()
   end,
-  
+
   ["pagedown"] = function(self)
     self.vy = self.vy+self.th
     if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
     self:drawBuffer()
   end,
-  
+
   ["tab"] = function(self)
     self:textinput(" ")
-  end
+  end,
+
+  ["ctrl-a"] = ce.gotoStartLine,
+
+  ["ctrl-e"] = ce.gotoEndLine,
+
+  ["ctrl-k"] = function(self)
+    local clipbuffer = ""
+    if self.cx <= buffer[self.cy]:len() then
+      -- cut from cursor position to end of line
+      clipbuffer = buffer[self.cy]:sub(self.cx, buffer[self.cy]:len())
+      buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)
+    elseif self.cy < #buffer then
+      -- if at the end of the line, cut the newline
+      clipbuffer = "\n"
+      self:deleteCharAt(self.cx,self.cy)
+    end
+    -- consecutive presses will append the content to the clipboard
+    if self.lastKey == "ctrl-k" then
+      clipbuffer = clipboard()..clipbuffer
+    end
+    clipboard(clipbuffer)
+    self:checkPos()
+    self:drawBuffer()
+    self:drawLineNum()
+  end,
+
+  ["ctrl-y"] = ce.pasteText,
+
+  ["ctrl-v"] = ce.pasteText,
 }
+
 
 function ce:entered()
   eapi:drawUI()

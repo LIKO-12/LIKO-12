@@ -58,16 +58,16 @@ local controls = {
     if fs.exists(tar) then texteditor:import(fs.read(tar)) end
     texteditor:entered()
   end,
-  
+
   function() --Save
     local data = texteditor:export()
     fs.write(tar,data)
   end,
-  
+
   function() --Exit
     texteditor:leaved()
     return true
-  end 
+  end
 }
 
 for event, a,b,c,d,e,f in pullEvent do
@@ -112,9 +112,17 @@ for event, a,b,c,d,e,f in pullEvent do
         key = "shift-" .. key
         sc = "shift-" .. sc
       end
-      
-      if texteditor.keymap and texteditor.keymap[key] then texteditor.keymap[key](texteditor,c)
-      elseif texteditor.keymap and texteditor.keymap[sc] then texteditor.keymap[sc](texteditor,c) end
+
+      if texteditor.keymap then
+        local usedKey
+        if texteditor.keymap[key] then usedKey = key
+        elseif texteditor.keymap[sc] then usedKey = sc
+        end
+        if usedKey then
+          texteditor.keymap[usedKey](texteditor,c)
+          texteditor.lastKey = usedKey
+        end
+      end
       if texteditor[event] then texteditor[event](texteditor,a,b,c,d,e,f) end
     end
   elseif event == "mousepressed" and not eflag then
