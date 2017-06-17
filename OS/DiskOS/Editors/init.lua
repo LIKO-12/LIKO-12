@@ -243,8 +243,16 @@ function edit:loop() --Starts the while loop
           end
         end
         
-        if self.leditors[self.active].keymap and self.leditors[self.active].keymap[key] then self.leditors[self.active].keymap[key](self.leditors[self.active],c)
-        elseif self.leditors[self.active].keymap and self.leditors[self.active].keymap[sc] then self.leditors[self.active].keymap[sc](self.leditors[self.active],c) end
+        if self.leditors[self.active].keymap then
+          local usedKey
+          if self.leditors[self.active].keymap[key] then usedKey = key
+          elseif self.leditors[self.active].keymap[sc] then usedKey = sc
+          end
+          if usedKey then
+            self.leditors[self.active].keymap[usedKey](self.leditors[self.active], c)
+            self.leditors[self.active].lastKey = usedKey
+          end
+        end
         if self.leditors[self.active][event] then self.leditors[self.active][event](self.leditors[self.active],a,b,c,d,e,f) end
       end
     elseif event == "mousepressed" then
