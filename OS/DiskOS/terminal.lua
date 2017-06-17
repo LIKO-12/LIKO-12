@@ -143,7 +143,7 @@ end
 function term.loop() --Enter the while loop of the terminal
   cursor("none")
   clearEStack()
-  color(7) checkCursor() print(term.getpath().."> ",false)
+  color(13) checkCursor() print(term.getpath().."> ",false) color(7)
   local buffer = ""
   while true do
     checkCursor()
@@ -158,7 +158,7 @@ function term.loop() --Enter the while loop of the terminal
         blink = false; checkCursor()
         print("") -- insert newline after Enter
         term.execute(split(buffer)) buffer = ""
-        color(7) checkCursor() print(term.getpath().."> ",false) blink = true cursor("none")
+        color(13) checkCursor() print(term.getpath().."> ",false) blink = true cursor("none") color(7)
       elseif a == "backspace" then
         blink = false; checkCursor()
         if buffer:len() > 0 then
@@ -184,7 +184,7 @@ function term.loop() --Enter the while loop of the terminal
           table.insert(history,buffer)
           hispos = #history
         end
-        
+
         if hispos > 1 then
           hispos = hispos-1
           blink = false; checkCursor()
