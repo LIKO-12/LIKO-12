@@ -41,4 +41,8 @@ luac.out
 *.db
 
 # Releases
-/builds/
+/builds
+
+# User Configuration files
+/OS/DiskOS/autoexec.lua
+

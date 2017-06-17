@@ -11,16 +11,6 @@ end
 
 local fw, fh = fontSize()
 
-clear()
-SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
-printCursor(0,1,0)
-color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
-cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  0.6") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
-color(6) print("\nhttp://github.com/ramilego4game/liko12")
-flip() sleep(0.0625)
-color(9) print("TYPE HELP FOR HELP")
-flip() sleep(0.0625)
-
 local history = {}
 local hispos
 local btimer, btime, blink = 0, 0.5, true
@@ -45,6 +35,22 @@ local function split(str)
 end
 
 local term = {}
+
+function term.init()
+  if fs.exists("autoexec.lua") then
+    term.executeFile("autoexec.lua")
+  else
+    clear()
+    SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
+    printCursor(0,1,0)
+    color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
+    cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  0.6") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
+    color(6) print("\nhttp://github.com/ramilego4game/liko12")
+    flip() sleep(0.0625)
+    color(9) print("TYPE HELP FOR HELP")
+    flip() sleep(0.0625)
+  end
+end
 
 function term.setdrive(d)
   if type(d) ~= "string" then return error("DriveLetter must be a string, provided: "..type(d)) end
@@ -84,6 +90,10 @@ function term.getdirectory() return curdir end
 function term.setPATH(p) PATH = p end
 function term.getPATH() return PATH end
 
+function term.prompt()
+  color(7) print(term.getpath().."> ",false)
+end
+
 function term.parsePath(path)
   if path:sub(1,3) == "../" then
     local fld = {} --A list of folders in the path
@@ -112,14 +122,18 @@ function term.parsePath(path)
   return curpath..path, fs.exists(curpath..path)
 end
 
+function term.executeFile(file,...)
+  local chunk, err = fs.load(file)
+  if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
+  local ok, err = pcall(chunk,...)
+  if not ok then color(8) print("\nERR: "..tostring(err)) color(7) return false, tostring(err) end
+  if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
+end
+
 function term.execute(command,...)
   if not command then return false, "No command" end
   if fs.exists(curpath..command..".lua") then
-    local chunk, err = fs.load(curpath..command..".lua")
-    if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
-    local ok, err = pcall(chunk,...)
-    if not ok then color(8) print("ERR: "..tostring(err)) color(7) return false, tostring(err) end
-    if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
+    term.executeFile(curpath..command..".lua",...)
     color(8) pal() palt() cam() clip() return true
   end
   for path in nextPath(PATH) do
@@ -127,23 +141,20 @@ function term.execute(command,...)
       local files = fs.directoryItems(path)
       for _,file in ipairs(files) do
         if file == command..".lua" then
-          local chunk, err = fs.load(path..file)
-          if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
-          local ok, err = pcall(chunk,...)
-          if not ok then color(8) print("\nERR: "..tostring(err)) color(7) return false, tostring(err) end
-          if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
+          term.executeFile(path..file,...)
           color(7) pal() palt() cam() clip() return true
         end
       end
     end
   end
-  color(9) print("File not found") color(7) return false, "File not found"
+  color(9) print("Command not found: " .. command) color(7) return false, "Command not found"
 end
 
 function term.loop() --Enter the while loop of the terminal
+  term.init()
   cursor("none")
   clearEStack()
-  color(7) checkCursor() print(term.getpath().."> ",false)
+  checkCursor() term.prompt()
   local buffer = ""
   while true do
     checkCursor()
@@ -158,7 +169,7 @@ function term.loop() --Enter the while loop of the terminal
         blink = false; checkCursor()
         print("") -- insert newline after Enter
         term.execute(split(buffer)) buffer = ""
-        color(7) checkCursor() print(term.getpath().."> ",false) blink = true cursor("none")
+        checkCursor() term.prompt() blink = true cursor("none")
       elseif a == "backspace" then
         blink = false; checkCursor()
         if buffer:len() > 0 then
@@ -184,7 +195,7 @@ function term.loop() --Enter the while loop of the terminal
           table.insert(history,buffer)
           hispos = #history
         end
-        
+
         if hispos > 1 then
           hispos = hispos-1
           blink = false; checkCursor()
