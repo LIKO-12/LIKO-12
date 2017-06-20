@@ -89,5 +89,39 @@ textinput(true) --Show the keyboard on mobile devices
 
 require("C://api") --Load DiskOS APIs
 
+local SWidth, SHeight = screenSize()
+
+--Setup the RAM
+memset(0x0006, "LIKO12;") --The header
+local curAddr = 0x000D --Color Palette
+for i=0, 15 do
+  local r,g,b,a = colorPalette(i)
+  poke(curAddr,r)
+  poke(curAddr+1,g)
+  poke(curAddr+2,b)
+  poke(curAddr+3,a)
+  curAddr = curAddr+4
+end
+poke(0x004D,_DiskVer) --Disk Version
+poke(0x004E,tonumber(10010001,2)) --Disk Meta
+memset(0x004F, numToBin(SWidth,2)) --Screen Width
+memset(0x0051, numToBin(SHeight,2)) --Screen Height
+memset(0x0054, numToBin(0x02E0 ,4)) --SpriteMap Address
+
+memset(0x0058, numToBin(0x3400 ,4)) --MapData Address
+memset(0x005C, numToBin(0x7C00 ,4)) --Instruments Data Address
+memset(0x0060, numToBin(0x7C00 ,4)) --Tracks Data Address
+memset(0x0064, numToBin(0x7C00 ,4)) --Tracks Orders Address
+memset(0x0068, numToBin(0xB000 ,4)) --Compressed Lua Code Address
+
+memset(0x006C, "Unknown         ") --Author Name
+memset(0x007C, "DiskOS Game     ") --Game Name
+
+memset(0x008C, numToBin(SWidth,2)) --Spritesheet Width
+memset(0x008E, numToBin(SHeight,2)) --Spritesheet Height
+
+memset(0x0090, numToBin(SWidth*0.75,1)) --Map Width
+memset(0x0093, numToBin(SHeight,1)) --Map Height
+
 local terminal = require("C://terminal")
 terminal.loop()
