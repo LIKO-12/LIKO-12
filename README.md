@@ -18,7 +18,8 @@ like the token limit.
 + Install love2d.
 
 ###### Windows
-
+* You may install "Github Desktop" to clone the repo.
+* Get Love2D installer from http://love2d.org/
 + Create a text file at your desktop, call it "run liko12"
 + Type in (Replace them with your pathes): 
 ```batch
