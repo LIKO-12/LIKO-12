@@ -94,7 +94,7 @@ function term.prompt()
   color(7) print(term.getpath().."> ",false)
 end
 
-function term.parsePath(path)
+function term.resolve(path)
   if path:sub(1,3) == "../" then
     local fld = {} --A list of folders in the path
     for p in string.gmatch(curdir,"(.-)/") do

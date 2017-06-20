@@ -3,7 +3,7 @@ local source = select(1,...)
 local term = require("C://terminal")
 local eapi = require("C://Editors")
 
-if source then source = term.parsePath(source)..".lk12" else source = eapi.filePath end
+if source then source = term.resolve(source)..".lk12" else source = eapi.filePath end
 
 if not source then color(8) print("Must provide path to the file to update") return end
 if not fs.exists(source) then color(8) print("File doesn't exists") return end

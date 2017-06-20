@@ -4,7 +4,7 @@ if #args < 1 then color(8) print("Must provide the directory name") return end
 local tar = table.concat(args," ") --The path may include whitespaces
 local term = require("C://terminal")
 
-tar = term.parsePath(tar)
+tar = term.resolve(tar)
 
 local ok, err = pcall(fs.newDirectory,tar)
 if ok then

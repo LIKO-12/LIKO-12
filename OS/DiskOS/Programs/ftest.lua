@@ -6,7 +6,7 @@ local source = select(4,...)
 
 local term = require("C://terminal")
 
-fimg, dest, source = term.parsePath(fimg), term.parsePath(dest),  source and term.parsePath(source) or ""
+fimg, dest, source = term.resolve(fimg), term.resolve(dest),  source and term.resolve(source) or ""
 
 local fimg = fs.read(fimg)
 if mode == "read" then

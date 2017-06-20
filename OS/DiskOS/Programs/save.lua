@@ -6,7 +6,7 @@ local clvl = tonumber(select(4,...) or "-1")
 local term = require("C://terminal")
 local eapi = require("C://Editors")
 
-if destination and destination ~= "@clip" then destination = term.parsePath(destination)..".lk12" elseif destination ~= "@clip" then
+if destination and destination ~= "@clip" then destination = term.resolve(destination)..".lk12" elseif destination ~= "@clip" then
   destination = eapi.filePath
 end
 

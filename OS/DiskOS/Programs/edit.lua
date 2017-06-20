@@ -3,7 +3,7 @@ local args = {...} --Get the arguments passed to this program
 if #args < 1 then color(8) print("Must provide the path to the file") return end
 local tar = table.concat(args," ") --The path may include whitespaces
 local term = require("C://terminal")
-tar = term.parsePath(tar)
+tar = term.resolve(tar)
 
 if fs.exists(tar) and fs.isDirectory(tar) then color(8) print("Can't edit directories !") return end
 local eapi = require("C://Editors")

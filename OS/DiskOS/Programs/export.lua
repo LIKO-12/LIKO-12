@@ -5,7 +5,7 @@ local eapi = require("C://Editors")
 
 if not destination then color(8) print("Must provide the destination file path") return end
 
-destination = term.parsePath(destination)
+destination = term.resolve(destination)
 
 if fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end
 

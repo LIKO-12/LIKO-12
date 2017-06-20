@@ -9,8 +9,8 @@ local eapi = require("C://Editors")
 
 local sw, sh = screenSize()
 
-if source then source = term.parsePath(source) end
-if destination then destination = term.parsePath(destination) end
+if source then source = term.resolve(source) end
+if destination then destination = term.resolve(destination) end
 
 if not source then color(8) print("Must provide path to the source file") return end
 if not fs.exists(source) then color(8) print("Source doesn't exists") return end
