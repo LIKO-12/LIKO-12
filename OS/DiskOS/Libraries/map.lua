@@ -18,8 +18,8 @@ return function(w,h,sheet)
   --If called with no args, it will return the map table.
   function Map:map(func)
     if func then
-      for x=1, self.w do
-        for y=1, self.h do
+      for y=1, self.h do
+        for x=1, self.w do
           self.m[x][y] = func(x,y,self.m[x][y]) or self.m[x][y]
         end
       end
@@ -81,8 +81,8 @@ return function(w,h,sheet)
       return 0
     end)
     
-    for x=0,w-1 do
-      for y=0,h-1 do
+    for y=0,h-1 do
+      for x=0,w-1 do
         self:cell(x,y,tonumber(nextid()))
       end
     end
