@@ -98,3 +98,61 @@ function whereInGrid(x,y, grid) --Grid X, Grid Y, Grid Width, Grid Height, NumOf
   end
   return false, false
 end
+
+--Binary functions--
+function imgToBin(image)
+  if image:typeOf("GPU.image") then image = image:data() end --Convert the image to imagedata.
+  local bin = ""
+  local width, height = image:size()
+  for y=0, height-1 do
+    for x=0, width-1,2 do
+      local left = image:getPixel(x,y)
+      local right = x+1 < width and image:getPixel(x+1,y) or 0
+      right = bit.lshift(right,4)
+      local pixel = bit.bor(left,right)
+      local char = string.char(pixel)
+      bin = bin..char
+    end
+  end
+  return bin
+end
+
+function mapToBin(map)
+  local bin = ""
+  map:map(function(x,y,cid)
+    if cid > 255 then cid = 0 end
+    local cell = string.char(cid)
+    bin = bin..cell
+    return cid
+  end)
+  return bin
+end
+
+function codeToBin(code)
+  return math.compress(code,"lz4",9)
+end
+
+function numToBin(num,len)
+  local bin = ""
+  while true do
+    local byte = bit.band(num,255)
+    local char = string.char(byte)
+    bin = bin..char
+    num = bit.band(num, bit.bnot(255))
+    num = bit.rshift(num,8)
+    if num == 0 then break end
+  end
+  if len and bin:len() < len then bin = bin..string.rep(string.char(0), len-bin:len()) end
+  return bin
+end
+
+function binToNum(bin)
+  local num = 0
+  for i=bin:len(), 1, -1 do
+    local char = bin:sub(i,i)
+    local byte = string.byte(char)
+    num = bit.lshift(num,8)
+    num = bit.bor(num,byte)
+  end
+  return num
+end
