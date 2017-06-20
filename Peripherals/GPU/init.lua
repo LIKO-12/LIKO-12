@@ -510,6 +510,14 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.fontWidth() return true, _FontW end
   function GPU.fontHeight() return true, _FontH end
   
+  function GPU.colorPalette(id)
+    if type(id) ~= "number" then return false, "Color ID must be a number, provided: "..type(id) end
+    id = math.floor(id)
+    if not _ColorSet[id] then return false, "Color ID out of range ("..id..") Must be [0,15]" end
+    local r,g,b,a = unpack(_ColorSet[id])
+    return true, r,g,b,a
+  end
+  
   --Call with color id to set the active color.
   --Call with no args to get the current acive color id.
   function GPU.color(id)
