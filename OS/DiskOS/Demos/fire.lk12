@@ -80,13 +80,13 @@ function _update(dt)
  end
 end
 
-function mousepressed(mx,my,b,it)
+function _mousepressed(mx,my,b,it)
  if isMobile() then
   x,y = mx,my
  end
 end
-mousemoved = mousepressed
-mousereleased = mousepressed
+_mousemoved = _mousepressed
+_mousereleased = _mousepressed
 ___spritesheet___
 LK12;GPUIMG;192x128;
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
