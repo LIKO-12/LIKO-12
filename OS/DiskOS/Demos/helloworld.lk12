@@ -27,11 +27,11 @@ function _mousepressed(x,y)
 end
 
 function _mousemoved(x,y)
- if not mflag then return end mousepressed(x,y)
+ if not mflag then return end _mousepressed(x,y)
 end
 
 function _mousereleased(x,y)
- if not mflag then return end mousepressed(x,y)
+ if not mflag then return end _mousepressed(x,y)
  mflag = false
 end
 
