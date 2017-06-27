@@ -5,7 +5,7 @@ local tar = table.concat(args," ") --The path may include whitespaces
 local term = require("C://terminal")
 
 local function index(path,notfirst)
-  color(7)
+  color(9)
   if fs.isFile(path) then print("Deleted "..path) fs.remove(path) return end
   local items = fs.directoryItems(path)
   for k, item in ipairs(items) do
