@@ -27,7 +27,7 @@ function _init()
  vx,vy = bss,bss
  pw, ph = sw/40, sh/5
  p1x, p1y = pw/2, (sh-ph)/2
- p2x, p2y = sw-pw, p1y
+ p2x, p2y = sw-pw+1, p1y
  p1s, p2s = 0,0
 end
 

@@ -19,7 +19,7 @@ function _draw()
   local z = cos(sqrt(x*x+y*y*2)/40-t)*6
   local dx, dy = r+x, r+y-z-24
   if dx > 0 and dy > 0 and dx < 193 and dy < 129 then
-   img:setPixel(dx-1,dy-1,6)
+   img:setPixel(dx-2,dy-1,6)
   end
  end end
  img:image():draw(0,0)

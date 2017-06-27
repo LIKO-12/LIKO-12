@@ -85,7 +85,7 @@ function _update(dt)
  end
  
  color(colv) 
- polygon(unpack(v))
+ cam("translate",1,1) polygon(unpack(v)) cam()
  
  color(coll)
  for ll=1,#l-4,4 do

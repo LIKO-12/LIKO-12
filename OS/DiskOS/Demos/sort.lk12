@@ -27,7 +27,7 @@ end
 function _update()
  clear(12)
  rect(0,100,192,28,false,3)
- printCursor(1,1,-1)
+ printCursor(0,0,-1)
  color(7)
  print("Press Up to randomize")
  print("Press Down to sort")

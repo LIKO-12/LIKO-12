@@ -11,8 +11,8 @@ local h=28 --Pyramed Height
 local function pyr(x,y,w,h,cx,cy)
  ccx=w/2+cx
  ccy=h/2+cy
- ccx=math.max(x,math.min(x+w,ccx))-1
- ccy=math.max(y,math.min(y+h,ccy))-1
+ ccx=math.max(x,math.min(x+w,ccx))
+ ccy=math.max(y,math.min(y+h,ccy))
  triangle(x,y,ccx,ccy,x+w,y,false,8)
  triangle(x+w,y,ccx,ccy,x+w,y+h,false,2)
  triangle(x,y,ccx,ccy,x,y+h,false,14)

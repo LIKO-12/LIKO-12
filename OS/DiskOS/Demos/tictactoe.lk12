@@ -72,7 +72,7 @@ end
 
 function _mousepressed(x,y)
  if win then
-  init()
+  _init()
   return
  end
  local cx,cy = whereInGrid(x,y,grid)
@@ -89,6 +89,8 @@ function _mousepressed(x,y)
   xturn = not xturn drawTurn() drawWin()
  end
 end
+
+_eventLoop = true --Because neither _update() is defined, nor _draw()
 ___spritesheet___
 LK12;GPUIMG;192x128;
 055555555555555555555550000000000000000066666666666666666666666600000000000000006666666666666666666666660000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

@@ -1,5 +1,7 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
+--This is the same of the sort demo, but with shearing applied
+
 -- Sorting Demo
 -- By ZEP
 -- Originally for PICO-8
@@ -31,7 +33,7 @@ end
 function _update()
  clear(12)
  rect(0,100,192,28,false,3)
- printCursor(1,1,-1)
+ printCursor(0,0,-1)
  color(7)
  print("Press Up to randomize")
  print("Press Down to sort")
