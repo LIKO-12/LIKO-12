@@ -129,6 +129,7 @@ function ce:moveCursor(x, y)
   self.cy = y
   self:checkPos()
   self:resetCursorBlink()
+  self:drawStatusBar()
 end
 
 -- Make the cursor visible and reset the blink timer
@@ -165,9 +166,9 @@ function ce:drawLine()
   self:drawBlink()
 end
 
-function ce:drawLineNum()
+function ce:drawStatusBar()
   eapi:drawBottomBar()
-  local linestr = "LINE "..tostring(self.cy).."/"..tostring(#buffer).."  CHAR "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len())
+  local linestr = "LINE "..tostring(self.cy).."/"..tostring(#buffer).."  COL "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len())
   color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-2)
 end
 
@@ -175,19 +176,16 @@ function ce:textinput(t)
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
   self:moveCursorX(self.cx + t:len())
   if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
-  self:drawLineNum()
 end
 
 function ce:gotoLineStart()
   self:moveCursorX(1)
   if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
-  self:drawLineNum()
 end
 
 function ce:gotoLineEnd()
   self:moveCursorX(buffer[self.cy]:len()+1)
   if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
-  self:drawLineNum()
 end
 
 -- Will indent the given line based on the previous line
@@ -209,7 +207,7 @@ function ce:indent(y)
 end
 
 -- Inserts a newline in the given position, splitting the line in two if needed
--- you should execute self:drawBuffer() and self:drawLineNum() after this
+-- you should execute self:drawBuffer() and self:drawStatusBar() after this
 function ce:insertNewLineAt(x,y)
   local newLine = buffer[y]:sub(x,-1)
   buffer[y] = buffer[y]:sub(0,x-1)
@@ -260,7 +258,7 @@ function ce:pasteText()
   end
   self:checkPos()
   self:drawBuffer()
-  self:drawLineNum()
+  self:drawStatusBar()
 end
 
 -- Last used key, this should be set to the last keymap used from the ce.keymap table
@@ -272,7 +270,6 @@ ce.keymap = {
     local indent = self:indent(self.cy+1)
     self:moveCursor(indent+1, self.cy+1)
     self:drawBuffer()
-    self:drawLineNum()
   end,
 
   ["left"] = function(self)
@@ -284,7 +281,6 @@ ce.keymap = {
       end
     end
     if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
-    self:drawLineNum()
   end,
 
   ["right"] = function(self)
@@ -296,19 +292,16 @@ ce.keymap = {
       end
     end
     if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
-    self:drawLineNum()
   end,
 
   ["up"] = function(self)
     self:moveCursorY(self.cy-1)
     self:drawBuffer()
-    self:drawLineNum()
   end,
 
   ["down"] = function(self)
     self:moveCursorY(self.cy+1)
     self:drawBuffer()
-    self:drawLineNum()
   end,
 
   ["backspace"] = function(self)
@@ -318,7 +311,6 @@ ce.keymap = {
     cx, cy, lineChange = self:deleteCharAt(self.cx-1,self.cy)
     self:moveCursor(cx, cy)
     if bufferNeedsRedraw or lineChange then self:drawBuffer() else self:drawLine() end
-    self:drawLineNum()
   end,
 
   ["delete"] = function(self)
@@ -328,7 +320,6 @@ ce.keymap = {
     cx, cy, lineChange = self:deleteCharAt(self.cx,self.cy)
     self:moveCursor(cx, cy)
     if bufferNeedsRedraw or lineChange then self:drawBuffer() else self:drawLine() end
-    self:drawLineNum()
   end,
 
   ["home"] = ce.gotoLineStart,
@@ -356,7 +347,7 @@ ce.keymap = {
         if indent > 0 then
           self:moveCursorX(indent+1)
           if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
-          self:drawLineNum()
+          self:drawStatusBar()
         else -- insert space anyway if there's no indentation at all
           self:textinput(" ")
         end
@@ -388,7 +379,7 @@ ce.keymap = {
     self:resetCursorBlink()
     self:checkPos()
     self:drawBuffer()
-    self:drawLineNum()
+    self:drawStatusBar()
   end,
 
   ["ctrl-y"] = ce.pasteText,
@@ -400,7 +391,7 @@ function ce:entered()
   eapi:drawUI()
   cam("translate",0,1)
   self:drawBuffer()
-  self:drawLineNum()
+  self:drawStatusBar()
 end
 
 function ce:leaved()
@@ -412,7 +403,6 @@ function ce:mousepressed(x, y, button, istouch)
   if cx then
     self:moveCursor(self.vx + (cx-1), self.vy + (cy-1))
     self:drawBuffer()
-    self:drawLineNum()
   end
 end
 
