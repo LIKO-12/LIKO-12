@@ -46,7 +46,7 @@ if tar:sub(-4,-1) ~= ".lua" then texteditor.colorize = false end
 local screen = screenshot()
 local px,py,pc = printCursor()
 cursor("normal")
-if fs.exists(tar) then texteditor:import(fs.read(tar)) end
+if fs.exists(tar) then texteditor:import(fs.read(tar):gsub("\r\n","\n")) end
 texteditor:entered()
 
 local eflag = false

@@ -148,6 +148,7 @@ function edit:switchEditor(neweditor)
 end
 
 function edit:import(data) --Import editors data
+  data = data:gsub("\r\n","\n")
   local savePos = {}
   for k,v in ipairs(self.saveid) do
     if v ~= -1 and self.leditors[k].import then
