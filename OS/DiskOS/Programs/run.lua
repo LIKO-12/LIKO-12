@@ -161,11 +161,6 @@ local lastArgs = {}
 while true do
   if coroutine.status(co) == "dead" then break end
   
-  --[[local name, key = rawPullEvent()
-  if name == "keypressed" and key == "escape" then
-    break
-  end]]
-  
   if os.clock() > eventclock + 3.5 then
     color(8) print("Too Long Without Pulling Event / Flipping") break
   end
