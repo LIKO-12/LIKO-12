@@ -1,7 +1,8 @@
---This file loads a lk12 disk and execute it
+--This file loads a lk12 disk and executes it
 
 --First we will start by obtaining the disk data
 --We will run the current code in the editor
+local term = require("C://terminal")
 local eapi = require("C://Editors")
 local mapobj = require("C://Libraries/map")
 
@@ -114,6 +115,17 @@ glob.SpriteMap = SpriteMap
 glob.SheetFlagsData = FlagsData
 glob.TileMap = TileMap
 glob.MapObj = mapobj
+
+local UsedDoFile = false --So it can be only used for once
+glob.dofile = function(path)
+  if UsedDoFile then return error("dofile() can be only used for once !") end
+  UsedDoFile = true
+  local chunk, err = fs.load(path)
+  if not chunk then return error(err) end
+  setfenv(chunk,glob)
+  local ok, err = pcall(chunk)
+  if not ok then return error(err) end
+end
 glob["__".."_".."autoEventLoop"] = autoEventLoop --Because trible _ are not allowed in LIKO-12
 
 local helpersloader, err = loadstring(fs.read("C://Libraries/diskHelpers.lua"))
