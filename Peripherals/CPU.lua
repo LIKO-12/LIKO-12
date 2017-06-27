@@ -136,6 +136,10 @@ return function(config) --A function that creates a new CPU peripheral.
     return true --It ran successfully
   end
   
+  function VPU.getFPS()
+    return love.timer.getFPS()
+  end
+  
   devkit.indirect = indirect
   
   return CPU, devkit, indirect
