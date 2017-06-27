@@ -128,6 +128,13 @@ function ce:moveCursor(x, y)
   self.cx = x
   self.cy = y
   self:checkPos()
+  self:resetCursorBlink()
+end
+
+-- Make the cursor visible and reset the blink timer
+function ce:resetCursorBlink()
+  ce.btimer = 0
+  ce.bflag = true
 end
 
 --Draw the cursor blink
@@ -378,6 +385,7 @@ ce.keymap = {
       clipbuffer = clipboard()..clipbuffer
     end
     clipboard(clipbuffer)
+    self:resetCursorBlink()
     self:checkPos()
     self:drawBuffer()
     self:drawLineNum()
