@@ -10,10 +10,10 @@ local function index(path,notfirst)
   local items = fs.directoryItems(path)
   for k, item in ipairs(items) do
     if fs.isDirectory(path..item) then
-      print("Entering directory "..path..item.."/")
+      print("Entering directory "..path..item.."/") pullEvent()
       index(path..item.."/",true)
     else
-      print("Deleted "..path..item)
+      print("Deleted "..path..item) pullEvent()
       fs.remove(path..item)
     end
   end
