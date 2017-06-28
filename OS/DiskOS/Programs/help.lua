@@ -1,6 +1,6 @@
 --Liko12 Help System !
 
-local helpPATH = "C://Help/;"
+local helpPATH = "C://Help/;C://Help/GPU/"
 local function nextPath()
   if helpPATH:sub(-1)~=";" then helpPATH=helpPATH..";" end
   return helpPATH:gmatch("(.-);")
@@ -32,14 +32,10 @@ palt(0,false) --Make black opaque
 local doc --The help document to print
 
 for path in nextPath() do
-  if fs.exists(path) then
-	local files = fs.directoryItems(path)
-    for _,file in ipairs(files) do
-      if file == topic then
-        doc = path..topic break
-      end
-    end
-    if doc then break end
+  if fs.exists(path..topic) then
+    doc = path..topic break
+  elseif fs.exists(path..topic..".md") then
+    doc = path..topic..".md" break
   end
 end
 
@@ -102,7 +98,28 @@ local function sprint(text)
   end
 end
 
-for line in fs.lines(doc) do
+local md = (doc:sub(-3,-1) == ".md")
+local doc = fs.read(doc)
+doc = doc:gsub("\r\n","\n")
+if doc:sub(-1,-1) ~= "\n" then doc = doc .. "\n" end
+
+--Clear markdown
+if md then
+  doc = doc:gsub("%-%-%-","")
+  doc = doc:gsub("```lua","")
+  doc = doc:gsub("```","")
+  doc = doc:gsub("# ","")
+  doc = doc:gsub("#","")
+  doc = doc:gsub("%*%*","")
+  doc = doc:gsub("__","")
+  doc = doc:gsub("\\>",">")
+  
+  while doc:find("\n\n\n") do
+    doc = doc:gsub("\n\n\n","\n\n")
+  end
+end
+
+for line in string.gmatch(doc,"(.-)\n") do
   if sprint(line) then break end
 end
 
