@@ -1012,6 +1012,10 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end
   
+  function GPU.wrapText(text,sw)
+    return pcall(_Font.getWrap,_Font,text, sw)
+  end
+  
   function GPU.printBackspace(c,skpCr) UnbindVRAM()
     local c = c or printCursor.bgc
     if type(c) ~= "number" then return false, "Color must be a number value, provided: "..type(c) end
