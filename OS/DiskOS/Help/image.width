@@ -1,5 +1,0 @@
-W = image:width()
- 
-W (number): The image width.
- 
-Returns the image width in pixels.

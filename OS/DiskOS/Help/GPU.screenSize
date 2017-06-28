@@ -1,6 +1,0 @@
-width, height = GPU.screenSize()
- 
-(width) Number: The width of the screen in Pixels
-(height) Number: The height of the screen in Pixels
- 
-Returns the resolution of the screen.

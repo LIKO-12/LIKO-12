@@ -1,5 +1,0 @@
-width = GPU.screenWidth()
- 
-(width) Number: The width of the screen in Pixels
- 
-Returns the width of the screen.

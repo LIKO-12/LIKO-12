@@ -1,5 +1,0 @@
-height = GPU.screenHeight()
- 
-(height) Number: The height of the screen in Pixels
- 
-Returns the height of the screen.

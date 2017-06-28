@@ -1,7 +1,0 @@
-imgData = image:data()
- 
-imgData (LK12 ImageData): The created image data.
- 
-Creates an imagedata object of this image.
- 
-Type "help imagedata" for more info about liko12 imagedata object.
