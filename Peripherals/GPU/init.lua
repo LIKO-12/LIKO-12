@@ -522,7 +522,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --Call with no args to get the current acive color id.
   function GPU.color(id)
     if id then
-      if type(id) ~= "number" then return false, "The color id must be a number." end --Error
+      if type(id) ~= "number" then return false, "The color id must be a number, provided: "..type(id) end --Error
       if id > 15 or id < 0 then return false, "The color id is out of range." end --Error
       id = math.floor(id) --Remove the float digits.
       love.graphics.setColor(id,0,0,255) --Set the active color.
