@@ -26,6 +26,11 @@ I don't think anyone would want to edit anything in this file.
 
 love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
 
+--DLL Path
+local OS = love.system.getOS()
+package.cpath = package.cpath .. ";.\\DLL\\?.dll"
+if OS == "Windows" then package.cpath = package.cpath .. ";.\\DLL\\Windows\\?.dll" end
+
 --Internal Callbacks--
 function love.load(args)
   love.filesystem.load("BIOS/init.lua")() --Initialize the BIOS.
@@ -85,7 +90,7 @@ function love.run(arg)
       
       if reboot then
         for k,v in pairs(package.loaded) do
-          if k ~= "bit" then package.loaded[k] = nil end
+          if k ~= "bit" and k ~= "ffi" then package.loaded[k] = nil end
         end--Reset the required packages
         
         love.graphics.reset() --Reset the GPU
