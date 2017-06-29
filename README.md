@@ -15,11 +15,11 @@ like the token limit.
 ### Running LIKO12
 
 + Clone the LIKO-12 repo, __Be sure to clone the WIP branch__.
-+ Install love2d.
++ Install LÖVE.
 
 ###### Windows
 * You may install "Github Desktop" to clone the repo.
-* Get Love2D installer from http://love2d.org/
+* Get LÖVE installer from http://love2d.org/
 + Create a text file at your desktop, call it "run liko12"
 + Type in (Replace them with your pathes): 
 ```batch
@@ -65,4 +65,4 @@ Direct Message me at twitter (see link bellow), I will response as soon as possi
 ### Links
 
 - Twitter [@RamiLego4Game](https://twitter.com/ramilego4game) (I post daily/weekly gifs of the upcomming features of LIKO-12)
-- Love2D Forums Topic: https://love2d.org/forums/viewtopic.php?f=5&t=82913
+- LÖVE Forums Topic: https://love2d.org/forums/viewtopic.php?f=5&t=82913
