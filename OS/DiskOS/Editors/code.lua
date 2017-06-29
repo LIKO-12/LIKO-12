@@ -6,12 +6,13 @@ Try your best to keep your work light, documented and tidy, since this will be t
 
 self.cx, self.cy are the position of the brown blinking cursor
 * the top-left corner pos is 1, 1
-You don't have to take care when the cursor is out of range
-You only have to call self:checkPos() whenever you change self.cx or self.cy
-Note that when you call checkPos it will return you a boolean value
+Do not manipulate then directly. Instead, use self:moveCursor(x,y), self:moveCursorX(x) or self:moveCursor(Y).
+You don't have to take care if the cursor is out of range when using the methods above.
+After changing the cursor position you need to redraw the line, maybe all of them (redraw the buffer).
+To find out, check the bufferNeedsRedraw local variable.
 if this is true: You have to call self:drawBuffer()
 if this is false: It's enough to call self:drawLine()
-Lua code: if self:checkPos() then self:drawBuffer() else self:drawLine() end
+Lua code: if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
 Note: when you change the self.cy you have to drawBuffer, because it may left the brown cursor rect.
 
 self:drawBuffer() draws all visible lines
@@ -30,6 +31,7 @@ Be sure to read the contributing guide in Editors/init.lua
 
 - Rami Sabbagh (RamiLego4Game)
 - Fernando Carmona Varo (Ferk)
+- Lucas Henrique (lhsazevedo)
 ]]
 
 local ce = {} --Code editor
@@ -60,6 +62,7 @@ ce.bflag = true --The cursor is blinking atm ?
 
 ce.sw, ce.sh = screenSize()
 local charGrid = {0,8, ce.sw,ce.sh-16, ce.tw, ce.th}
+local bufferNeedsRedraw = false --Flag if the whole buffer requires redrawing
 
 ce.colorize = true --Color lua syntax
 
@@ -83,29 +86,56 @@ end
 
 --Check the position of the cursor so the view includes it
 function ce:checkPos()
-  local flag = false --Flag if the whole buffer requires redrawing
-
   --Y position checking--
   if self.cy > #buffer then self.cy = #buffer end --Passed the end of the file
 
   if self.cy > self.th + self.vy-1 then --Passed the screen to the bottom
-    self.vy = self.cy - (self.th-1); flag = true
+    self.vy = self.cy - (self.th-1)
+    bufferNeedsRedraw = true
   elseif self.cy < self.vy then --Passed the screen to the top
     if self.cy < 1 then self.cy = 1 end
-    self.vy = self.cy; flag = true
+    self.vy = self.cy
+    bufferNeedsRedraw = true
   end
 
   --X position checking--
   if buffer[self.cy]:len() < self.cx-1 then self.cx = buffer[self.cy]:len()+1 end --Passed the end of the line !
 
   if self.cx > self.tw + (self.vx-1) then --Passed the screen to the right
-    self.vx = self.cx - (self.tw-1); flag = true
+    self.vx = self.cx - (self.tw-1)
+    bufferNeedsRedraw = true
   elseif self.cx < self.vx then --Passed the screen to the left
     if self.cx < 1 then self.cx = 1 end
-    self.vx = self.cx; flag = true
+    self.vx = self.cx;
+    bufferNeedsRedraw = true
   end
 
-  return flag
+  return bufferNeedsRedraw
+end
+
+--- Change cursor X position
+function ce:moveCursorX(x)
+  self:moveCursor(x, self.cy)
+end
+
+--- Change cursor Y position
+function ce:moveCursorY(y)
+  self:moveCursor(self.cx, y)
+end
+
+--- Change cursor X and Y positions
+function ce:moveCursor(x, y)
+  self.cx = x
+  self.cy = y
+  self:checkPos()
+  self:resetCursorBlink()
+  self:drawStatusBar()
+end
+
+-- Make the cursor visible and reset the blink timer
+function ce:resetCursorBlink()
+  ce.btimer = 0
+  ce.bflag = true
 end
 
 --Draw the cursor blink
@@ -136,29 +166,26 @@ function ce:drawLine()
   self:drawBlink()
 end
 
-function ce:drawLineNum()
+function ce:drawStatusBar()
   eapi:drawBottomBar()
-  local linestr = "LINE "..tostring(self.cy).."/"..tostring(#buffer).."  CHAR "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len())
+  local linestr = "LINE "..tostring(self.cy).."/"..tostring(#buffer).."  COL "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len())
   color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-2)
 end
 
 function ce:textinput(t)
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
-  self.cx = self.cx + t:len()
-  if self:checkPos() then self:drawBuffer() else self:drawLine() end
-  self:drawLineNum()
+  self:moveCursorX(self.cx + t:len())
+  if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
 end
 
-function ce:gotoStartLine()
-  self.cx = 1
-  if self:checkPos() then self:drawBuffer() else self:drawLine() end
-  self:drawLineNum()
+function ce:gotoLineStart()
+  self:moveCursorX(1)
+  if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
 end
 
-function ce:gotoEndLine()
-  self.cx = buffer[self.cy]:len()+1
-  if self:checkPos() then self:drawBuffer() else self:drawLine() end
-  self:drawLineNum()
+function ce:gotoLineEnd()
+  self:moveCursorX(buffer[self.cy]:len()+1)
+  if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
 end
 
 -- Will indent the given line based on the previous line
@@ -180,7 +207,7 @@ function ce:indent(y)
 end
 
 -- Inserts a newline in the given position, splitting the line in two if needed
--- you should execute self:drawBuffer() and self:drawLineNum() after this
+-- you should execute self:drawBuffer() and self:drawStatusBar() after this
 function ce:insertNewLineAt(x,y)
   local newLine = buffer[y]:sub(x,-1)
   buffer[y] = buffer[y]:sub(0,x-1)
@@ -223,7 +250,7 @@ function ce:pasteText()
   for line in string.gmatch(text.."\n", "([^\r\n]*)\r?\n") do
     if not firstLine then
       self:insertNewLineAt(self.cx,self.cy)
-      self.cx, self.cy = 1, self.cy+1
+      self:moveCursor(1, self.cy+1)
     else
       firstLine = false
     end
@@ -231,7 +258,7 @@ function ce:pasteText()
   end
   self:checkPos()
   self:drawBuffer()
-  self:drawLineNum()
+  self:drawStatusBar()
 end
 
 -- Last used key, this should be set to the last keymap used from the ce.keymap table
@@ -241,71 +268,63 @@ ce.keymap = {
   ["return"] = function(self)
     self:insertNewLineAt(self.cx,self.cy)
     local indent = self:indent(self.cy+1)
-    self.cx, self.cy = indent+1, self.cy+1
-    self:checkPos()
+    self:moveCursor(indent+1, self.cy+1)
     self:drawBuffer()
-    self:drawLineNum()
   end,
 
   ["left"] = function(self)
-    local flag = false
-    self.cx = self.cx -1
+    self:moveCursorX(self.cx-1)
     if self.cx < 1 then
       if self.cy > 1 then
-        self.cy = self.cy -1
-        self.cx = buffer[self.cy]:len()+1
-        flag = true
+        self:moveCursor(buffer[self.cy]:len()+1, self.cy-1)
+        bufferNeedsRedraw = true
       end
     end
-    if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
-    self:drawLineNum()
+    if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
   end,
 
   ["right"] = function(self)
-    local flag = false
-    self.cx = self.cx +1
+    self:moveCursorX(self.cx+1)
     if self.cx > buffer[self.cy]:len()+1 then
       if buffer[self.cy+1] then
-        self.cy = self.cy +1
-        self.cx = 1
-        flag = true
+        self:moveCursor(1, self.cy+1)
+        bufferNeedsRedraw = true
       end
     end
-    if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
-    self:drawLineNum()
+    if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
   end,
 
   ["up"] = function(self)
-    self.cy = self.cy -1
-    self:checkPos()
+    self:moveCursorY(self.cy-1)
     self:drawBuffer()
-    self:drawLineNum()
   end,
 
   ["down"] = function(self)
-    self.cy = self.cy +1
-    self:checkPos()
+    self:moveCursorY(self.cy+1)
     self:drawBuffer()
-    self:drawLineNum()
   end,
 
   ["backspace"] = function(self)
     local lineChange
-    self.cx, self.cy, lineChange = self:deleteCharAt(self.cx-1,self.cy)
-    if self:checkPos() or lineChange then self:drawBuffer() else self:drawLine() end
-    self:drawLineNum()
+    local cx
+    local cy
+    cx, cy, lineChange = self:deleteCharAt(self.cx-1,self.cy)
+    self:moveCursor(cx, cy)
+    if bufferNeedsRedraw or lineChange then self:drawBuffer() else self:drawLine() end
   end,
 
   ["delete"] = function(self)
     local lineChange
-    self.cx, self.cy, lineChange = self:deleteCharAt(self.cx,self.cy)
-    if self:checkPos() or lineChange then self:drawBuffer() else self:drawLine() end
-    self:drawLineNum()
+    local cx
+    local cy
+    cx, cy, lineChange = self:deleteCharAt(self.cx,self.cy)
+    self:moveCursor(cx, cy)
+    if bufferNeedsRedraw or lineChange then self:drawBuffer() else self:drawLine() end
   end,
 
-  ["home"] = ce.gotoStartLine,
+  ["home"] = ce.gotoLineStart,
 
-  ["end"] = ce.gotoEndLine,
+  ["end"] = ce.gotoLineEnd,
 
   ["pageup"] = function(self)
     self.vy = self.vy-self.th
@@ -326,9 +345,9 @@ ce.keymap = {
     if self.lastKey ~= "tab" and buffer[self.cy]:sub(0,self.cx):find("^ *$") then
         local indent = self:indent(self.cy)
         if indent > 0 then
-          self.cx = indent+1
-          if self:checkPos() then self:drawBuffer() else self:drawLine() end
-          self:drawLineNum()
+          self:moveCursorX(indent+1)
+          if bufferNeedsRedraw then self:drawBuffer() else self:drawLine() end
+          self:drawStatusBar()
         else -- insert space anyway if there's no indentation at all
           self:textinput(" ")
         end
@@ -357,9 +376,10 @@ ce.keymap = {
       clipbuffer = clipboard()..clipbuffer
     end
     clipboard(clipbuffer)
+    self:resetCursorBlink()
     self:checkPos()
     self:drawBuffer()
-    self:drawLineNum()
+    self:drawStatusBar()
   end,
 
   ["ctrl-y"] = ce.pasteText,
@@ -367,12 +387,11 @@ ce.keymap = {
   ["ctrl-v"] = ce.pasteText,
 }
 
-
 function ce:entered()
   eapi:drawUI()
   cam("translate",0,1)
   self:drawBuffer()
-  self:drawLineNum()
+  self:drawStatusBar()
 end
 
 function ce:leaved()
@@ -382,11 +401,8 @@ end
 function ce:mousepressed(x, y, button, istouch)
   local cx, cy = whereInGrid(x,y, charGrid)
   if cx then
-    self.cx = self.vx + (cx-1)
-    self.cy = self.vy + (cy-1)
-    self:checkPos()
+    self:moveCursor(self.vx + (cx-1), self.vy + (cy-1))
     self:drawBuffer()
-    self:drawLineNum()
   end
 end
 
