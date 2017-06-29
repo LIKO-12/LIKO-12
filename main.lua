@@ -30,6 +30,7 @@ love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
 local OS = love.system.getOS()
 package.cpath = package.cpath .. ";.\\DLL\\?.dll"
 if OS == "Windows" then package.cpath = package.cpath .. ";.\\DLL\\Windows\\?.dll" end
+if OS == "Android" then package.cpath = package.cpath .. ";.\\DLL\\Android\\?.dll" end
 
 --Internal Callbacks--
 function love.load(args)
