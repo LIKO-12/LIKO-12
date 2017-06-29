@@ -16,7 +16,7 @@ About the soft restart:
 * In case you changed something in main.lua or conf.lua then you can do a hard restart by calling love.event.quit("restart")
 * In DiskOS you can run 'reboot' command to do a soft reboot, or 'reboot hard' to do a hard one (by restarting love).
 
-I don't thing anyone would want to edit anything in this file.
+I don't think anyone would want to edit anything in this file.
 
 ==Contributers to this file==
 (Add your name when contributing to this file)
