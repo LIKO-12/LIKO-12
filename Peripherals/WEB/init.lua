@@ -55,6 +55,7 @@ return function(config) --A function that creates a new WEB peripheral.
   function WEB.urlEncode(str)
     if type(str) ~= "string" then return false, "STR must be a string, provided: "..type(str) end
     str = string.gsub(str, "\n", "\r\n")
+    str = string.gsub(str, "\r\r\n", "\r\n")
     tr = string.gsub(str, "([^A-Za-z0-9 %-%_%.])", function(c)
       local n = string.byte(c)
       if n < 128 then
@@ -67,6 +68,7 @@ return function(config) --A function that creates a new WEB peripheral.
       end
     end)
     
+    str = string.gsub(str, "%+", "%%2b")
     str = string.gsub(str, " ", "+")
     
     return true,str
