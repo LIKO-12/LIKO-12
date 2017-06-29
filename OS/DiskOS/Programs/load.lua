@@ -12,6 +12,8 @@ if source ~= "@clip" and fs.isDirectory(source) then color(8) print("Couldn't lo
 local saveData = source == "@clip" and clipboard() or fs.read(source)
 if not saveData:sub(0,5) == "LK12;" then color(8) print("This is not a valid LK12 file !!") return end
 
+saveData = saveData:gsub("\r\n","\n")
+
 --LK12;OSData;OSName;DataType;Version;Compression;CompressLevel; data"
 --local header = "LK12;OSData;DiskOS;DiskGame;V"..saveVer..";"..sw.."x"..sh..";C:"
 
@@ -75,7 +77,9 @@ if not clevel then color(8) print("Invalid Data !") return end clevel = tonumber
 local data = saveData:sub(datasum+2,-1)
 
 if compress ~= "none" then --Decompress
-  data = math.decompress(math.b64dec(data),compress,clevel)
+  local b64data, char = math.b64dec(data)
+  if not b64data then cprint(char) cprint(string.byte(char)) error(tostring(char)) end
+  data = math.decompress(b64data,compress,clevel)
 end
 
 eapi.filePath = source
