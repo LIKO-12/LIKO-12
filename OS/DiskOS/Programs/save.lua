@@ -34,7 +34,7 @@ local data = eapi:export()
 local header = "LK12;OSData;DiskOS;DiskGame;V".._DiskVer..";"..sw.."x"..sh..";C:"
 
 if string.lower(flag) == "-c" then
-  data = math.compress(data, ctype, clvl)
+  data = math.b64enc(math.compress(data, ctype, clvl))
   header = header..ctype..";CLvl:"..tostring(clvl)..";"
 else
   header = header.."none;CLvl:0;"

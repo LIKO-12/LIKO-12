@@ -75,7 +75,7 @@ if not clevel then color(8) print("Invalid Data !") return end clevel = tonumber
 local data = saveData:sub(datasum+2,-1)
 
 if compress ~= "none" then --Decompress
-  data = math.decompress(data,compress,clevel)
+  data = math.decompress(math.b64dec(data),compress,clevel)
 end
 
 eapi.filePath = source
