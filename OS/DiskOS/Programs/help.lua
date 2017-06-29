@@ -68,54 +68,24 @@ local msglen = msg:len()
 -- Returns true if "q" was pressed, which should abort the process
 local function sprint(text)
   local cx, cy = printCursor()
-  
-  local cleantext = text:gsub("%^%x",""):gsub("%^%^","%^")
-  local txtlen = cleantext:len()
+
+  local txtlen = text:len()
   local txth = math.ceil(txtlen/tw)
-  local txtw = cleantext:sub((txth-1)*tw, -1)
-  
-  text = "^7"..text
+  local txtw = text:sub((txth-1)*tw, -1)
 
   -- print text directly if it won't scroll the content past the screen
   if top - txth > 0 then
-    for col, txt in string.gmatch(text,"%^%x(.-)") do
-      cprint(tostring(col).."  "..tostring(txt))
-      color(col) print(txt,false)
-    end
-    print("")
+    print(text)
     top = top - txth
     sleep(0.02) -- a short delay helps following the output
     return
   end
-  
-  local plines = {}
-  local iter = string.gmatch(text,".")
-  local curline = { {"",7} }
-  for char in iter do
-    local flag = true
-    if char == "^" then
-      local n = iter()
-      if n ~= "^" then
-        flag = false
-        local col = string.match(n,"%x")
-        table.insert(curline, {"",col} )
-      end
-    end
-    
-    if flag then
-      curline[#curline][1] = curline[#curline][1]..char
-      if curline[#curline][1]:len() == tw then
-        table.insert(plines,curline)
-        curline = { {"",7} }
-      end
-    end
-  end
-  
-  local nextline = ipairs(plines)
-  
+
   for i=1, txth do
     printCursor(0)
-    if cy + i >= th then
+    if cy + i < th then
+      print(text:sub( (i-1)*tw+1, (i)*tw ))
+    else
       pushColor() color(9)
       print(msg,false) popColor()
       flip()
@@ -123,14 +93,8 @@ local function sprint(text)
       printCursor(0,th-1)
       rect(0,sh-9,sw,8,false,0)
       if quit then return true end
+      print(text:sub( (i-1)*tw+1, (i)*tw ))
     end
-    
-    local lk, nline = nextline()
-    for k,v in ipairs(nline) do
-      color(v[2]) print(v[1],false)
-    end
-    print("")
-    --print(cleantext:sub( (i-1)*tw+1, (i)*tw ))
   end
 end
 
