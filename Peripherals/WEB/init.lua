@@ -51,12 +51,11 @@ return function(config) --A function that creates a new WEB peripheral.
     return true, to_counter --Return the request ID
   end
   
-  --Taken from: https://github.com/dan200/ComputerCraft/blob/master/src/main/resources/assets/computercraft/lua/rom/apis/textutils.lua
   function WEB.urlEncode(str)
     if type(str) ~= "string" then return false, "STR must be a string, provided: "..type(str) end
-    str = string.gsub(str, "\n", "\r\n")
-    str = string.gsub(str, "\r\r\n", "\r\n")
-    tr = string.gsub(str, "([^A-Za-z0-9 %-%_%.])", function(c)
+    str = str:gsub("\n", "\r\n")
+    str = str:gsub("\r\r\n", "\r\n")
+    tr = str:gsub("([^A-Za-z0-9 %-%_%.])", function(c)
       local n = string.byte(c)
       if n < 128 then
         -- ASCII
@@ -68,8 +67,8 @@ return function(config) --A function that creates a new WEB peripheral.
       end
     end)
     
-    str = string.gsub(str, "%+", "%%2b")
-    str = string.gsub(str, " ", "+")
+    str = str:gsub("%+", "%%2b")
+    str = str:gsub(" ", "+")
     
     return true,str
   end

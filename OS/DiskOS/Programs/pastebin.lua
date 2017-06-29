@@ -1,5 +1,3 @@
---This program is based on ComputerCraft one: https://github.com/dan200/ComputerCraft/blob/master/src/main/resources/assets/computercraft/lua/rom/programs/http/pastebin.lua
-
 local term = require("C://terminal")
 
 local function printUsage()
@@ -8,7 +6,7 @@ local function printUsage()
   print("pastebin get <code> <filename>")
 end
 
-local function printError(str)
+local function printErr(str)
   color(8) print(str) color(7)
 end
 
@@ -40,19 +38,19 @@ local function request(url, args)
   end
 end
 
-local tArgs = { ... }
-if #tArgs < 2 then
+local args = { ... }
+if #args < 2 then
   printUsage()
   return
 end
 
 if not WEB then
-  printError( "Pastebin requires WEB peripheral" )
-  printError( "Edit /bios/bconf.lua and make sure that the WEB peripheral exists" )
+  printErr( "Pastebin requires WEB peripheral" )
+  printErr( "Edit /bios/bconf.lua and make sure that the WEB peripheral exists" )
   return
 end
 
-local function get(paste)
+local function getPaste(paste)
   color(9) print("Connecting to pastebin.com...") flip() color(7)
   local response, err = request("https://pastebin.com/raw/"..WEB.urlEncode(paste))
   
@@ -61,24 +59,24 @@ local function get(paste)
     
     return response
   else
-    printError("Failed: "..tostring(err))
+    printErr("Failed: "..tostring(err))
   end
 end
 
-local sCommand = tArgs[1]
-if sCommand == "put" then
+local command = args[1]
+if command == "put" then
   -- Upload a file to pastebin.com
   -- Determine file to upload
-  local sFile = tArgs[2]
-  local sPath = term.resolve(sFile)
-  if not fs.exists(sPath) or fs.isDirectory(sPath) then
-    printError("No such file")
+  local file = args[2]
+  local path = term.resolve(file)
+  if not fs.exists(path) or fs.isDirectory(path) then
+    printErr("No such file")
     return
   end
   
   -- Read in the file
-  local sName = getName(sPath:gsub("///","/"))
-  local sText = fs.read(sPath)
+  local name = getName(path:gsub("///","/"))
+  local text = fs.read(path)
   
   -- POST the contents to pastebin
   color(9) print("Connecting to pastebin.com...") color(7) flip()
@@ -87,44 +85,44 @@ if sCommand == "put" then
     method = "POST",
     data = "api_option=paste&"..
            "api_dev_key="..key.."&"..
-           (sName:sub(-4,-1) == ".lua" and "api_paste_format=lua&" or "")..
-           "api_paste_name="..WEB.urlEncode(sName).."&"..
-           "api_paste_code="..WEB.urlEncode(sText)
+           (name:sub(-4,-1) == ".lua" and "api_paste_format=lua&" or "")..
+           "api_paste_name="..WEB.urlEncode(name).."&"..
+           "api_paste_code="..WEB.urlEncode(text)
   })
   
   if response then
     color(11) print("Success.") flip() sleep(0.01) color(7)
     
-    local sCode = string.match(response, "[^/]+$")
+    local pasteCode = string.match(response, "[^/]+$")
     color(12) print("Uploaded as "..response) sleep(0.01) color(7)
-    print('Run "',false) color(6) print('pastebin get '..sCode,false) color(7) print('" to download anywhere') sleep(0.01)
+    print('Run "',false) color(6) print('pastebin get '..pasteCode,false) color(7) print('" to download anywhere') sleep(0.01)
   else
-    printError("Failed: "..tostring(err))
+    printErr("Failed: "..tostring(err))
   end
-elseif sCommand == "get" then
+elseif command == "get" then
   -- Download a file from pastebin.com
-  if #tArgs < 3 then
+  if #args < 3 then
     printUsage()
     return
   end
   
   --Determine file to download
-  local sCode = tArgs[2]
-  local sFile = tArgs[3]
-  local sPath = term.resolve(sFile)
-  if fs.exists( sPath ) then
-    printError("File already exists")
+  local pasteCode = args[2]
+  local file = args[3]
+  local path = term.resolve(file)
+  if fs.exists( path ) then
+    printErr("File already exists")
     return
   end
   
-  -- GET the contents from pastebin
-  local res = get(sCode)
-  if res then
-    fs.write(sPath,res)
+  -- Downloads the  pastebin
+  local result = getPaste(pasteCode)
+  if result then
+    fs.write(path,result)
     
-    color(12) print("Downloaded as "..sFile) sleep(0.01) color(7)
+    color(12) print("Downloaded as "..file) sleep(0.01) color(7)
   else
-    printError("Failed")
+    printErr("Failed")
   end
 else
   printUsage()
