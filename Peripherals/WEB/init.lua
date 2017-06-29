@@ -1,7 +1,7 @@
 local perpath = select(1,...) --The path to the web folder
 
 local events = require("Engine.events")
-local json = require("Engine.json")
+local json = require("Engine.JSON")
 
 local thread = love.thread.newThread(perpath.."webthread.lua")
 local to_channel = love.thread.getChannel("To_WebThread")
@@ -9,6 +9,10 @@ local from_channel = love.thread.getChannel("From_WebThread")
 
 local to_counter = 0
 local from_counter = 0
+
+to_channel:clear()
+from_channel:clear()
+thread:start()
 
 local function clearFuncsFromTable(t)
   for k,v in pairs(t) do
