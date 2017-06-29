@@ -1,7 +1,9 @@
 --Lists the folders and files at the current directory.
 --The same of dir.lua
 local term = require("C://terminal") --Require the terminal api.
+local dir = select(1,...) or ""
 local path = term.getpath() --Get the current active directory.
+if dir then path = path .. "/" .. dir .. "/" end
 local files = fs.directoryItems(path) --Returns a table containing the names of folders and files in the given directory
 
 for k, f in ipairs(files) do
