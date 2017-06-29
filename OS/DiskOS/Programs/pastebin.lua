@@ -87,7 +87,7 @@ if sCommand == "put" then
     method = "POST",
     data = "api_option=paste&"..
            "api_dev_key="..key.."&"..
-           "api_paste_format=lua&"..
+           "api_paste_format="..(sName:sub(-4,-1) == ".lua" and "lua" or "").."&"..
            "api_paste_name="..WEB.urlEncode(sName).."&"..
            "api_paste_code="..WEB.urlEncode(sText)
   })
