@@ -49,3 +49,5 @@ local RAMConfig = {
 }
 
 local RAM, RAMKit = assert(P("RAM","RAM",RAMConfig))
+
+local WEB, WEBKit = assert(P("WEB","WEB"))
