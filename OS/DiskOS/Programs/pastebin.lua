@@ -13,7 +13,7 @@ local function printError(str)
 end
 
 local function getName(str)
-  local path, name, ext = string.match(str, "(.-)([^\\]-([^%.]+))$")
+  local path, name, ext = string.match(str, "(.-)([^\\/]-%.?([^%.\\/]*))$")
   return name
 end
 
@@ -24,7 +24,8 @@ local function request(url, args)
       if id == ticket then
         if data then
           data.code = tonumber(data.code)
-          if data.code < 200 or data.code >= 300 then
+          if (data.code < 200 or data.code >= 300) and data.body:sub(1,21) ~= "https://pastebin.com/" then
+            cprint("Body: "..tostring(data.body))
             return false, "HTTP Error: "..data.code
           end
           if data.body:sub(1,15) == "Bad API request" then
@@ -76,7 +77,7 @@ if sCommand == "put" then
   end
   
   -- Read in the file
-  local sName = getName(sPath)
+  local sName = getName(sPath:gsub("///","/"))
   local sText = fs.read(sPath)
   
   -- POST the contents to pastebin
