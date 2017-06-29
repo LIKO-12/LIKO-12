@@ -29,6 +29,8 @@ function input()
       elseif a == "escape" then
         return false --User canceled text input.
       end
+    elseif event == "touchpressed" then
+      textinput(true)
     elseif event == "update" then --Blink
       blinktimer = blinktimer + a
       if blinktimer > blinktime then
