@@ -1,5 +1,7 @@
 local perpath = select(1,...) --The path to the web folder
 
+local bit = require("bit")
+
 local events = require("Engine.events")
 local json = require("Engine.JSON")
 
@@ -47,6 +49,27 @@ return function(config) --A function that creates a new WEB peripheral.
     to_counter = to_counter + 1
     
     return true, to_counter --Return the request ID
+  end
+  
+  --Taken from: https://github.com/dan200/ComputerCraft/blob/master/src/main/resources/assets/computercraft/lua/rom/apis/textutils.lua
+  function WEB.urlEncode(str)
+    if type(str) ~= "string" then return false, "STR must be a string, provided: "..type(str) end
+    str = string.gsub(str, "\n", "\r\n")
+    tr = string.gsub(str, "([^A-Za-z0-9 %-%_%.])", function(c)
+      local n = string.byte(c)
+      if n < 128 then
+        -- ASCII
+        return string.format("%%%02X", n)
+      else
+        -- Non-ASCII (encode as UTF-8)
+        return string.format("%%%02X", 192 + bit.band( bit.arshift(n,6), 31 )) .. 
+               string.format("%%%02X", 128 + bit.band( n, 63 ))
+      end
+    end)
+    
+    str = string.gsub(str, " ", "+")
+    
+    return true,str
   end
   
   events:register("love:update",function(dt)
