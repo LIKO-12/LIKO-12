@@ -92,3 +92,8 @@ function eventLoop()
     end
   end
 end
+
+local bmap = {
+  {"left","right","up","down","z","x"}, --Player 1
+  {"s","f","e","d","tab","q"} --Player 2
+}
