@@ -1,6 +1,8 @@
 local events = require("Engine.events")
 local coreg = require("Engine.coreg")
 
+local _LuaBCHeader = string.char(0x1B).."LJ"
+
 --A function that calculates the total size of a directory
 local function calcSize(dir)
   local total = 0
@@ -172,6 +174,8 @@ return function(config) --A function that creates a new HDD peripheral.
       path = "/drives/"..d.."/"..(p or "/")
     end
     if not love.filesystem.exists(path) then return true, false, "File doesn't exists ("..tostring(fname)..")" end
+    local data = love.filesystem.read(path)
+    if data and data:sub(1,3) == _LuaBCHeader then return false, "LOADING BYTECODE IS NOT ALLOWED, YOU HACKER !" end
     local ok, chunk, err = pcall(love.filesystem.load, path)
     if not ok then return true, ok, chunk end
     if not chunk then return true, chunk, err end

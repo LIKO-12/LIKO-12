@@ -49,21 +49,36 @@ memset(MapDataAddr, mapToBin(TileMap))
 memset(LuaCodeAddr, codeToBin(luacode:sub(1,20*1024)))
 
 --Create the sandboxed global variables
-local glob = _FreshGlobals()
+local glob = _Freshglobals()
 glob._G = glob --Magic ;)
 
-glob.loadstring = function(...)
- local chunk, err = loadstring(...)
- if not chunk then return nil, err end
- setfenv(chunk,glob)
- return chunk
-end
+local co
 
-glob.coroutine.create = function(chunk)
- --if type(chunk) == "function" then setfenv(chunk,glob) end
- local ok,co = pcall(coroutine.create,chunk)
- if not ok then return error(co) end
- return co 
+glob.getfenv = function(f)
+  if type(f) ~= "function" then return error("bad argument #1 to 'getfenv' (function expected, got "..type(f)) end
+  local ok, env = pcall(getfenv,f)
+  if not ok then return error(env) end
+  if env == _G then env = {} end --Protection
+  return env
+end
+glob.setfenv = function(f,env)
+  if type(f) ~= "function" then return error("bad argument #1 to 'setfenv' (function expected, got "..type(f)) end
+  if type(env) ~= "table" then return error("bad argument #2 to 'setfenv' (table expected, got "..type(env)) end
+  local oldenv = getfenv(f)
+  if oldenv == _G then return end --Trying to make a crash ! evil.
+  local ok, err = pcall(setfenv,f,env)
+  if not ok then return error(err) end
+end
+glob.loadstring = function(data)
+  local chunk, err = loadstring(data)
+  if not chunk then return nil, err end
+  setfenv(chunk,glob)
+  return chunk
+end
+glob.coroutine.running = function()
+  local curco = coroutine.running()
+  if co and curco == co then return end
+  return curco
 end
 
 --Add peripherals api
@@ -136,7 +151,7 @@ setfenv(helpersloader,glob) helpersloader()
 setfenv(diskchunk,glob)
 
 --Create the coroutine
-local co = coroutine.create(diskchunk)
+co = coroutine.create(diskchunk)
 
 --Too Long Without Yielding
 local checkclock = true

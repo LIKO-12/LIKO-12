@@ -3,7 +3,9 @@
 local basexx = require("Engine.basexx")
 local bit = require("bit")
 
-return function()
+local _LuaBCHeader = string.char(0x1B).."LJ"
+
+return function(parent)
   local GLOB = {
     assert=assert,
     error=error,
@@ -18,10 +20,11 @@ return function()
     unpack=unpack,
     _VERSION=_VERSION,
     xpcall=xpcall,
-    getfenv=getfenv,
-    setfenv=setfenv,
     setmetatable=setmetatable,
     getmetatable=getmetatable,
+    rawget = rawget,
+    rawset = rawset,
+    rawequal = rawequal,
     string={
       byte=string.byte,
       char=string.char,
@@ -84,6 +87,7 @@ return function()
       decompress = love.math.decompress
     },
     coroutine={
+      create = coroutine.create,
       resume = coroutine.resume,
       yield = coroutine.yield,
       status = coroutine.status
@@ -108,23 +112,38 @@ return function()
       bswap=bit.swap
     }
   }
-  GLOB.loadstring = function(...)
-    local chunk, err = loadstring(...)
+  GLOB.getfenv = function(f)
+    if type(f) ~= "function" then return error("bad argument #1 to 'getfenv' (function expected, got "..type(f)) end
+    local ok, env = pcall(getfenv,f)
+    if not ok then return error(env) end
+    if env.love == love then env = {} end --Protection
+    return env
+  end
+  GLOB.setfenv = function(f,env)
+    if type(f) ~= "function" then return error("bad argument #1 to 'setfenv' (function expected, got "..type(f)) end
+    if type(env) ~= "table" then return error("bad argument #2 to 'setfenv' (table expected, got "..type(env)) end
+    local oldenv = getfenv(f)
+    if oldenv.love == love then return end --Trying to make a crash ! evil.
+    local ok, err = pcall(setfenv,f,env)
+    if not ok then return error(err) end
+  end
+  GLOB.loadstring = function(data)
+    if data:sub(1,3) == _LuaBCHeader then return error("LOADING BYTECODE IS NOT ALLOWED, YOU HACKER !") end
+    local chunk, err = loadstring(data)
     if not chunk then return nil, err end
     setfenv(chunk,GLOB)
     return chunk
   end
-  GLOB.coroutine.create = function(chunk)
-    --if type(chunk) == "function" then setfenv(chunk,GLOB) end
-    local ok,co = pcall(coroutine.create,chunk)
-    if not ok then return error(co) end
-    return co 
-  end
   GLOB.coroutine.sethook = function(co,...)
-    if type(co) ~= "thread" then return error("wrong argument #1 (thread expected, got "..type(co)..")") end
+    if type(co) ~= "thread" then return error("bad argument #1 (thread expected, got "..type(co)..")") end
     local ok, err = pcall(debug.sethook,co,...)
     if not ok then return error(err) end
     return err
+  end
+  GLOB.coroutine.running = function()
+    local curco = coroutine.running()
+    if parent and parent.co and curco == parent.co then return end
+    return curco
   end
   GLOB._G=GLOB --Mirror Mirror
   return GLOB
