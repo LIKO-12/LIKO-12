@@ -49,7 +49,7 @@ memset(MapDataAddr, mapToBin(TileMap))
 memset(LuaCodeAddr, codeToBin(luacode:sub(1,20*1024)))
 
 --Create the sandboxed global variables
-local glob = _Freshglobals()
+local glob = _FreshGlobals()
 glob._G = glob --Magic ;)
 
 local co
@@ -156,12 +156,6 @@ co = coroutine.create(diskchunk)
 --Too Long Without Yielding
 local checkclock = true
 local eventclock = os.clock()
-local lastclock = os.clock()
-coroutine.sethook(co,function()
-  if os.clock() > lastclock + 3.5 and checkclock then
-    error("Too Long Without Yielding",2)
-  end
-end,"",10000)
 
 --Run the thing !
 local function extractArgs(args,factor)
@@ -181,7 +175,6 @@ while true do
   end
   
   local args = {coroutine.resume(co,unpack(lastArgs))}
-  checkclock = false
   if not args[1] then
     local err = tostring(args[2])
     local pos = string.find(err,":") or 0
@@ -202,11 +195,8 @@ while true do
         end
       end
     end
-    lastclock = os.clock()
-    checkclock = true
   end
 end
 
-coroutine.sethook(co)
 clearEStack()
 print("")
