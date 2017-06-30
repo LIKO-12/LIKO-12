@@ -76,7 +76,7 @@ local function P(per,m,conf)
   return success, peripheral, devkit, nocache
 end
 
-if not love.filesystem.exists("/bconf.lua") or true then
+if not love.filesystem.exists("/bconf.lua") or love.filesystem.exists("devmode.txt") then
   love.filesystem.write("/bconf.lua",love.filesystem.read("/BIOS/bconf.lua"))
 end
 
@@ -205,7 +205,7 @@ end
 local function bootOS()
   fs.drive("C") --Switch to the C drive.
   
-  if not fs.exists("/boot.lua") or true then noOS() end
+  if not fs.exists("/boot.lua") or love.filesystem.exists("devmode.txt") then noOS() end
   
   local bootchunk, err = fs.load("/boot.lua")
   if not bootchunk then error(err or "") end --Must be replaced with an error screen.
@@ -246,7 +246,7 @@ if gpu then
       gpu.print("Copyright (C) Rami Sabbagh",15,13)
       
       gpu.printCursor(0,3,0)
-      gpu.print("NormBIOS Revision 060-008")
+      gpu.print("NormBIOS Revision 060-009")
       gpu.print("")
       
       gpu.print("Press DEL to enter setup",2,sh-7)

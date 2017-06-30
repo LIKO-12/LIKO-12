@@ -4,11 +4,6 @@ ___luacode___
 --By ZEP
 --Originally for PICO-8
 
-local bmap = {"left","right","up","down","z","x"}
-function btn(n,p)
- return isKDown(bmap[n+1])
-end
-
 size = 10
 ballx = 64
 bally = size
@@ -69,17 +64,14 @@ function _update()
  
  --Gravity!
  vely = vely + 0.2
-end
-
-function _keypressed(key)
+ 
  --Press a button to randomly
  --choose a new velocity
- if key == bmap[5+1] then
+ if btnp(6) then
   velx = math.random(1,6)-3
   vely = math.random(1,6)-8
   --sfx(2)
  end
- 
 end
 ___spritesheet___
 LK12;GPUIMG;192x128;

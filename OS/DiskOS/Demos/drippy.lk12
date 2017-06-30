@@ -15,17 +15,11 @@ function _draw()
  imdata:image():draw(0,0)
 end
 
---Controls Map
-local bmap = {"left","right","up","down","z","x"}
-function btn(n)
- return isKDown(bmap[n+1])
-end
-
 function _update()
- if btn(0) then x=x-1 end
- if btn(1) then x=x+1 end
- if btn(2) then y=y-1 end
- if btn(3) then y=y+1 end
+ if btn(1) then x=x-1 end
+ if btn(2) then x=x+1 end
+ if btn(3) then y=y-1 end
+ if btn(4) then y=y+1 end
  
  if x > 191 then x = 0 end
  if x < 0 then x = 191 end

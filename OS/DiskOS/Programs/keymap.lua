@@ -52,8 +52,8 @@ for p=1, 2 do
     print("")
   end
 end
+color(9) print("Would you like to save the new configuration ? (y/n)",false)
 while true do
-  color(9) print("Would you like to save the new configuration ? (y/n)",false)
   local answer = getKey()
   if answer == "y" then
     fs.write("C://keymap.json",json:encode_pretty(bmap))
