@@ -131,15 +131,15 @@ glob.SheetFlagsData = FlagsData
 glob.TileMap = TileMap
 glob.MapObj = mapobj
 
-local json = require("C://Libraries/json")
+local json = require("C://Libraries/JSON")
 
 local pkeys = {}
 local rkeys = {}
 local dkeys = {}
 
 local defaultbmap = {
-  {"left","right","up","down","z","x"}, --Player 1
-  {"s","f","e","d","tab","q"} --Player 2
+  {"left","right","up","down","z","x","c"}, --Player 1
+  {"s","f","e","d","tab","q","w"} --Player 2
 }
 
 if not fs.exists("C://keymap.json") then
