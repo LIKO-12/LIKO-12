@@ -87,13 +87,15 @@ function eventLoop()
     if _G["_"..name] and type(_G["_"..name]) == "function" then
       _G["_"..name](a,b,c,d,e,f)
     end
+    
     if name == "update" and _G["_draw"] and type(_G["_draw"]) == "function" then
       _G["_draw"](a,b,c,d,e,f)
     end
+    
+    if name == "keypressed" then
+      __BTNKeypressed(a,c)
+    elseif name == "update" then
+      __BTNUpdate(a)
+    end
   end
 end
-
-local bmap = {
-  {"left","right","up","down","z","x"}, --Player 1
-  {"s","f","e","d","tab","q"} --Player 2
-}

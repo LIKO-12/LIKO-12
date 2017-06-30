@@ -131,6 +131,67 @@ glob.SheetFlagsData = FlagsData
 glob.TileMap = TileMap
 glob.MapObj = mapobj
 
+local json = require("C://Libraries/json")
+
+local pkeys = {}
+local rkeys = {}
+local dkeys = {}
+
+local defaultbmap = {
+  {"left","right","up","down","z","x"}, --Player 1
+  {"s","f","e","d","tab","q"} --Player 2
+}
+
+if not fs.exists("C://keymap.json") then
+  fs.write("C://keymap.json",json:encode_pretty(defaultbmap))
+end
+
+do --So I can hide this part in ZeroBran studio
+  local bmap = json:decode(fs.read("C://keymap.json"))
+
+  function glob.btn(n,p)
+    local p = p or 1
+    if type(n) ~= "number" then return error("Button id must be a number, provided: "..type(n)) end
+    if type(p) ~= "number" then return error("Player id must be a number or nil, provided: "..type(p)) end
+    n, p = math.floor(n), math.floor(p)
+    if p < 1 or p > #bmap then return error("The Player id is out of range ("..p..") must be [1,"..#bmap.."]") end
+    local map = bmap[p]
+    if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
+    return dkeys[map[n]]
+  end
+
+  function glob.btnp(n,p)
+    local p = p or 1
+    if type(n) ~= "number" then return error("Button id must be a number, provided: "..type(n)) end
+    if type(p) ~= "number" then return error("Player id must be a number or nil, provided: "..type(p)) end
+    n, p = math.floor(n), math.floor(p)
+    if p < 1 or p > #bmap then return error("The Player id is out of range ("..p..") must be [1,"..#bmap.."]") end
+    local map = bmap[p]
+    if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
+    if rkeys[map[n]] then
+      return false, true
+    else
+      return pkeys[map[n]]
+    end
+  end
+
+  glob.__BTNUpdate = function()
+    pkeys = {} --Reset the table (easiest way)
+    rkeys = {} --Reset the table (easiest way)
+    for k,v in pairs(dkeys) do
+      if not isKDown(k) then
+        dkeys[k] = nil
+      end
+    end
+  end
+
+  glob.__BTNKeypressed = function(a,b)
+    pkeys[a] = true
+    rkeys[a] = b
+    dkeys[a] = true
+  end
+end
+
 local UsedDoFile = false --So it can be only used for once
 glob.dofile = function(path)
   if UsedDoFile then return error("dofile() can be only used for once !") end
@@ -142,6 +203,18 @@ glob.dofile = function(path)
   if not ok then return error(err) end
 end
 glob["__".."_".."autoEventLoop"] = autoEventLoop --Because trible _ are not allowed in LIKO-12
+
+--Libraries
+local function addLibrary(path,name)
+  local lib, err = loadstring(fs.read(path))
+  if not lib then error("Failed to load library ("..name.."): "..err) end
+  setfenv(lib,glob) 
+  glob[name] = lib()
+end
+
+addLibrary("C://Libraries/lume.lua","lume")
+addLibrary("C://Libraries/middleclass.lua","middleclass")
+addLibrary("C://Libraries/bump.lua","bump")
 
 local helpersloader, err = loadstring(fs.read("C://Libraries/diskHelpers.lua"))
 if not helpersloader then error(err) end
