@@ -34,6 +34,10 @@ local function request(url, args)
           return false, errmsg
         end
       end
+    elseif event == "keypressed" then
+      if id == "escape" then
+        return false, "Request Canceled"
+      end
     end
   end
 end
