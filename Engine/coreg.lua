@@ -45,7 +45,7 @@ end
 
 function coreg:sandbox(f,cache)
   if self.co and self.coglob then setfenv(f,self.coglob) return end
-  local GLOB = sandbox() --Create a new sandbox.
+  local GLOB = sandbox(self) --Create a new sandbox.
   
   setfenv(f,GLOB)
   return GLOB
