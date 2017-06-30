@@ -71,7 +71,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   _HOST_W, _HOST_H = love.graphics.getDimensions()
   
-  love.window.setTitle("LIKO-12")
+  love.window.setTitle("LIKO-12 ".._LVERSION)
   love.window.setIcon(love.image.newImageData("icon.png"))
   
   --End of config loading--

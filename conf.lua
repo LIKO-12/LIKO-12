@@ -1,4 +1,5 @@
 --Nothing should be changed with this config expect: window size, enabling a module.
+_LVERSION = "V0.6.0_PRE_01"
 function love.conf(t)
     t.identity = "liko12"               -- The name of the save directory (string)
     t.version = "0.10.2"                -- The LÖVE version this game was made for (string)
