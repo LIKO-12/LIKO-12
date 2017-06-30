@@ -59,22 +59,22 @@ function _update(dt)
  rect(1,1,sw-1,sh-1,true,0)
  
  --Fire moving controls
- if isKDown("left") then
+ if btn(1) then
   x = x - speed
   if x < 1 then x = sw+x end
  end
  
- if isKDown("right") then
+ if btn(2) then
   x = x + speed
   if x > sw then x = x-sw end
  end
  
- if isKDown("up") then
+ if btn(3) then
   y = y - speed
   if y < 1 then y = sh+y end 
  end
  
- if isKDown("down") then
+ if btn(4) then
   y = y + speed
   if y > sh then y = y-sh end
  end

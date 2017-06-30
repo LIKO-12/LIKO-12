@@ -1,6 +1,6 @@
 --The terminal !--
 local PATH = "C://Programs/;"
-local curdrive, curdir, curpath = "C", "/", "C:///"
+local curdrive, curdir, curpath = "D", "/", "D:///"
 
 local editor = require("C://Editors")
 
@@ -37,7 +37,7 @@ end
 local term = {}
 
 function term.init()
-  clear()
+  clear() fs.drive("D")
   SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
   printCursor(0,1,0)
   color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
@@ -132,6 +132,7 @@ end
 
 function term.execute(command,...)
   if not command then return false, "No command" end
+  command = string.lower(command)
   if fs.exists(curpath..command..".lua") then
     term.executeFile(curpath..command..".lua",...)
     color(8) pal() palt() cam() clip() return true
