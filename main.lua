@@ -26,11 +26,13 @@ I don't think anyone would want to edit anything in this file.
 
 love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
 
---DLL Path
+--CLibraries Path
 local OS = love.system.getOS()
-package.cpath = package.cpath .. ";.\\DLL\\?.dll"
-if OS == "Windows" then package.cpath = package.cpath .. ";.\\DLL\\Windows\\?.dll" end
-if OS == "Android" then package.cpath = package.cpath .. ";.\\DLL\\Android\\?.dll" end
+package.cpath = package.cpath .. ";.\\CLibs\\?.dll"
+package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\?.dll"
+package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\?.so"
+package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\"..jit.arch.."\\?.dll"
+package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\"..jit.arch.."\\?.so"
 
 --Internal Callbacks--
 function love.load(args)
