@@ -30,7 +30,7 @@ sudo apt-get update
 sudo apt install love=0.10.2ppa1
 ```
 
-3. Download the `_Universal.love` build from Go to https://github.com/RamiLego4Game/LIKO-12/releases/
+3. Download the `_Universal.love` build from https://github.com/RamiLego4Game/LIKO-12/releases/
 4. Double-click the .love file, LIKO-12 should run
 5. If not you can run the .love file via the terminal:
 `love LIKO-12_Universal.love`
@@ -41,3 +41,7 @@ sudo apt install love=0.10.2ppa1
 ## Mac OS X:
 
 ---
+
+1. Download the `_Mac.zip` build from https://github.com/RamiLego4Game/LIKO-12/releases/
+2. Extract the .zip
+3. Run LIKO-12 app and enjoy !
