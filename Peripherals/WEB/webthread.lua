@@ -3,8 +3,7 @@ require("love.thread")
 local to_channel = love.thread.getChannel("To_WebThread")
 local from_channel = love.thread.getChannel("From_WebThread")
 
-local ok, request = pcall(require,"Engine.luajit-request")
-print("Thread failed: "..tostring(request))
+local request = require("Engine.luajit-request")
 if not ok then return end
 local json = require("Engine.JSON")
 

@@ -26,12 +26,8 @@ I don't think anyone would want to edit anything in this file.
 
 love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
 
---CLibraries Path
-local OS = love.system.getOS()
-if OS == "Windows" then
-  package.cpath = package.cpath .. ";.\\CLibs\\?.dll"
-  package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\?.dll"
-  package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\"..jit.arch.."\\?.dll"
+if jit.os == "Windows" and jit.arch == "x86" then
+  package.cpath = package.cpath .. ";.\\CLibs\\Windows\\"..jit.arch.."\\?.dll"
 end
 
 --Internal Callbacks--
