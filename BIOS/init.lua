@@ -1,11 +1,7 @@
 --The BIOS should control the system of LIKO-12 and load the peripherals--
 --For now it's just a simple BIOS to get LIKO-12 working.
 
-local _LIKO_Magor = 0
-local _LIKO_Minor = 6
-local _LIKO_Patch = 0
-local _LIKO_Build = 1
-local _LIKO_Version = _LIKO_Magor..".".._LIKO_Minor..".".._LIKO_Patch..".".._LIKO_Build
+local _LIKO_Version = _LVer.magor..".".._LVer.minor..".".._LVer.patch..".".._LVer.build
 love.filesystem.write(".version",tostring(_LIKO_Version))
 
 --Require the engine libraries--
