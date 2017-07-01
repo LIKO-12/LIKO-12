@@ -28,11 +28,11 @@ love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
 
 --CLibraries Path
 local OS = love.system.getOS()
-package.cpath = package.cpath .. ";.\\CLibs\\?.dll"
-package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\?.dll"
-package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\?.so"
-package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\"..jit.arch.."\\?.dll"
-package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\"..jit.arch.."\\?.so"
+if OS == "Windows" then
+  package.cpath = package.cpath .. ";.\\CLibs\\?.dll"
+  package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\?.dll"
+  package.cpath = package.cpath .. ";.\\CLibs\\"..OS.."\\"..jit.arch.."\\?.dll"
+end
 
 --Internal Callbacks--
 function love.load(args)
