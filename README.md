@@ -1,3 +1,26 @@
+# Releases/Downloads Page: 
+https://github.com/RamiLego4Game/LIKO-12/releases/tag/0.6.0-PRE.02
+
+# Installation Guide:
+http://liko-12.readthedocs.io/en/latest/Installation%20Guide/
+
+# Official Documentation:
+http://liko-12.readthedocs.io/en/latest/
+
+# Social Links:
+* **Twitter**: [@ramilego4game](http://www.twitter.com/ramilego4game)
+* **Discord Server**: https://discord.gg/Z5zTN
+* **Trello Board**: https://trello.com/b/bHo8Y9sx/liko-12
+* **LÖVE Forums Thread**: https://love2d.org/forums/viewtopic.php?f=5&t=82913
+
+---
+
+---
+
+# Old Readme
+
+---
+
 # LIKO-12
 LIKO-12 is a fantasy computer inspired by PICO-8 but with extra abilities, different API and bigger screen width.
 
