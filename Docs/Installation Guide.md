@@ -27,7 +27,7 @@ Currently, LIKO-12 provides official builds for Windows, Linux and Mac.
 2. Install LÖVE Framework:
 ```
 sudo apt-get update
-sudo apt-get install love
+sudo apt-get install love=0.10.2ppa1
 ```
 
 3. Download the `_Universal.love` build from Go to https://github.com/RamiLego4Game/LIKO-12/releases/
