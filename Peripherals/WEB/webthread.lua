@@ -4,7 +4,6 @@ local to_channel = love.thread.getChannel("To_WebThread")
 local from_channel = love.thread.getChannel("From_WebThread")
 
 local request = require("Engine.luajit-request")
-if not ok then return end
 local json = require("Engine.JSON")
 
 while true do
