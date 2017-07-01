@@ -26,10 +26,6 @@ I don't think anyone would want to edit anything in this file.
 
 love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
 
-if jit.os == "Windows" and jit.arch == "x86" then
-  package.cpath = package.cpath .. ";.\\CLibs\\Windows\\"..jit.arch.."\\?.dll"
-end
-
 --Internal Callbacks--
 function love.load(args)
   love.filesystem.load("BIOS/init.lua")() --Initialize the BIOS.
