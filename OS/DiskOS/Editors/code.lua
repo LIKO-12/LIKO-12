@@ -108,6 +108,12 @@ function ce:checkPos()
   return flag
 end
 
+-- Make the cursor visible and reset the blink timer
+function ce:resetCursorBlink()
+  ce.btimer = 0
+  ce.bflag = true
+end
+
 --Draw the cursor blink
 function ce:drawBlink()
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
@@ -145,18 +151,21 @@ end
 function ce:textinput(t)
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
   self.cx = self.cx + t:len()
+  self:resetCursorBlink()
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
   self:drawLineNum()
 end
 
 function ce:gotoLineStart()
   self.cx = 1
+  self:resetCursorBlink()
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
   self:drawLineNum()
 end
 
 function ce:gotoLineEnd()
   self.cx = buffer[self.cy]:len()+1
+  self:resetCursorBlink()
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
   self:drawLineNum()
 end
@@ -173,6 +182,7 @@ function ce:insertNewLine()
   else
     buffer = lume.concat(lume.slice(buffer,0,self.cy-1),{newLine},lume.slice(buffer,self.cy,-1)) --Insert between 2 different lines
   end
+  self:resetCursorBlink()
   self:checkPos()
   self:drawBuffer()
   self:drawLineNum()
@@ -235,6 +245,7 @@ ce.keymap = {
         flag = true
       end
     end
+    self:resetCursorBlink()
     if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
@@ -249,12 +260,14 @@ ce.keymap = {
         flag = true
       end
     end
+    self:resetCursorBlink()
     if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
 
   ["up"] = function(self)
     self.cy = self.cy -1
+    self:resetCursorBlink()
     self:checkPos()
     self:drawBuffer()
     self:drawLineNum()
@@ -262,6 +275,7 @@ ce.keymap = {
 
   ["down"] = function(self)
     self.cy = self.cy +1
+    self:resetCursorBlink()
     self:checkPos()
     self:drawBuffer()
     self:drawLineNum()
@@ -270,6 +284,7 @@ ce.keymap = {
   ["backspace"] = function(self)
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx-1,self.cy)
+    self:resetCursorBlink()
     if self:checkPos() or lineChange then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
@@ -277,6 +292,7 @@ ce.keymap = {
   ["delete"] = function(self)
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx,self.cy)
+    self:resetCursorBlink()
     if self:checkPos() or lineChange then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
@@ -289,6 +305,7 @@ ce.keymap = {
     self.vy = self.vy-self.th
     if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
+    self:resetCursorBlink()
     self:drawBuffer()
   end,
 
@@ -296,6 +313,7 @@ ce.keymap = {
     self.vy = self.vy+self.th
     if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
+    self:resetCursorBlink()
     self:drawBuffer()
   end,
 
