@@ -24,8 +24,14 @@ not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ]]
 
+local libname = "libcurl"
+
+if jit.os == "Windows" and jit.arch == "x64" then
+  libname = ".\\CLibs\\Windows\\x64\\libcurl.dll"
+end
+
 local ffi = require("ffi")
-local curl = ffi.load("libcurl")
+local curl = ffi.load(libname)
 
 if (jit.os == "Windows") then
 	--Windows!
