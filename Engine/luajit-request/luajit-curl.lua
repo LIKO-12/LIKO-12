@@ -26,10 +26,6 @@ not be misrepresented as being the original software.
 
 local libname = "libcurl"
 
-if jit.os == "Windows" and jit.arch == "x64" then
-  libname = ".\\CLibs\\Windows\\x64\\libcurl.dll"
-end
-
 local ffi = require("ffi")
 local curl = ffi.load(libname)
 
