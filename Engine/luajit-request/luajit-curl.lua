@@ -24,10 +24,8 @@ not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 ]]
 
-local libname = "libcurl"
-
 local ffi = require("ffi")
-local curl = ffi.load(libname)
+local curl = ffi.load("libcurl")
 
 if (jit.os == "Windows") then
 	--Windows!
