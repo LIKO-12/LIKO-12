@@ -6,9 +6,9 @@ Currently, LIKO-12 provides official builds for Windows, Linux and Mac.
 
 ---
 
-1. Go to https://github.com/RamiLego4Game/LIKO-12/releases/ and download the windows build.
-	- `_Windows_x86.zip`: For Windows 32-bit.
-	- `_Windows_x64.zip`: For Windows 64-bit.
+1. Go to [Github Releases][releases] and download the windows build.
+	- `..._Windows_x86.zip`: For Windows 32-bit.
+	- `..._Windows_x64.zip`: For Windows 64-bit.
 
 2. Right click the .zip file and press `Extract All...`
 3. Double click `LIKO-12.exe` in the extracted folder and enjoy !
@@ -30,7 +30,7 @@ sudo apt-get update
 sudo apt install love=0.10.2ppa1
 ```
 
-3. Download the `_Universal.love` build from https://github.com/RamiLego4Game/LIKO-12/releases/
+3. Download the `..._Universal.love` build from [Github Releases][releases]
 4. Double-click the .love file, LIKO-12 should run
 5. If not you can run the .love file via the terminal:
 `love LIKO-12_Universal.love`
@@ -42,6 +42,8 @@ sudo apt install love=0.10.2ppa1
 
 ---
 
-1. Download the `_Mac.zip` build from https://github.com/RamiLego4Game/LIKO-12/releases/
+1. Download the `..._Mac.zip` build from [Github Releases][releases]
 2. Extract the .zip
 3. Run LIKO-12 app and enjoy !
+
+[releases]: https://github.com/RamiLego4Game/LIKO-12/releases/
