@@ -364,6 +364,7 @@ function ce:leaved()
 end
 
 function ce:mousepressed(x, y, button, istouch)
+  if istouch then return end
   local cx, cy = whereInGrid(x,y, charGrid)
   if cx then
     self.cx = self.vx + (cx-1)
@@ -381,7 +382,42 @@ function ce:wheelmoved(x, y)
   self:drawBuffer()
 end
 
-function ce:touchpressed() textinput(true) end
+local touches = {}
+local touchesNum = 0
+local touchscroll = 0
+
+function ce:touchpressed(id,x,y,dx,dy,p)
+  table.insert(touches,id)
+  touchesNum = touchesNum + 1
+end
+
+function ce:touchmoved(id,x,y,dx,dy,p)
+  if touchesNum > 1 then
+    if id == touches[2] then
+      touchscroll = touchscroll + dy
+      if touchscroll > 7 or touchscroll < 7 then
+        ce:wheelmoved(0,touchscroll/7)
+        touchscroll = touchscroll % 7
+      end
+    end
+  end
+end
+
+function ce:touchreleased(id,x,y,dx,dy,p)
+  table.remove(touches,lume.find(id))
+  touchesNum = touchesNum - 1
+  if touchesNum == 0 then
+    textinput(true)
+    local cx, cy = whereInGrid(x,y, charGrid)
+    if cx then
+      self.cx = self.vx + (cx-1)
+      self.cy = self.vy + (cy-1)
+      self:checkPos()
+      self:drawBuffer()
+      self:drawLineNum()
+    end
+  end
+end
 
 function ce:update(dt)
   --Blink timer
