@@ -383,38 +383,47 @@ function ce:wheelmoved(x, y)
 end
 
 local touches = {}
+local touchesLastY = {}
 local touchesNum = 0
 local touchscroll = 0
+local touchskipinput = false
 
 function ce:touchpressed(id,x,y,dx,dy,p)
   table.insert(touches,id)
+  touchesLastY[id] = y
   touchesNum = touchesNum + 1
 end
 
-function ce:touchmoved(id,x,y,dx,dy,p)
+function ce:touchmoved(id,x,y)
   if touchesNum > 1 then
-    if id == touches[2] then
-      touchscroll = touchscroll + dy
-      if touchscroll > 7 or touchscroll < 7 then
-        ce:wheelmoved(0,touchscroll/7)
-        touchscroll = touchscroll % 7
-      end
+    textinput(false) touchskipinput = true
+    local dy = y - touchesLastY[id]
+    touchscroll = touchscroll + dy
+    if touchscroll >= 7 or touchscroll <= -7 then
+      ce:wheelmoved(0,touchscroll/7)
+      touchscroll = touchscroll - math.floor(touchscroll/7)
     end
   end
+  touchesLastY[id] = y
 end
 
 function ce:touchreleased(id,x,y,dx,dy,p)
   table.remove(touches,lume.find(touches,id))
+  touchesLastY[id] = nil
   touchesNum = touchesNum - 1
   if touchesNum == 0 then
-    textinput(true)
-    local cx, cy = whereInGrid(x,y, charGrid)
-    if cx then
-      self.cx = self.vx + (cx-1)
-      self.cy = self.vy + (cy-1)
-      self:checkPos()
-      self:drawBuffer()
-      self:drawLineNum()
+    if touchskipinput then
+      touchskipinput = false
+    else
+      textinput(true)
+      local cx, cy = whereInGrid(x,y, charGrid)
+      if cx then
+        self.cx = self.vx + (cx-1)
+        self.cy = self.vy + (cy-1)
+        self:checkPos()
+        self:drawBuffer()
+        self:drawLineNum()
+      end
     end
   end
 end
