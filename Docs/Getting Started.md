@@ -1,6 +1,6 @@
 # Welcome to LIKO-12 V0.6.0_PRE
 
-LIKO-12 is a _fantasy computer_ for making, sharing and playing tiny games, when you power it on the BIOS POST screen show up and DiskOS will be booted, Then you will be greeted with terminal waiting for your commands.
+LIKO-12 is a _fantasy computer_ for making, sharing and playing tiny games, when you power it on the POST screen shows up and DiskOS will be booted, Then you will be greeted with terminal waiting for your commands.
 
 It comes with a general set of commands, including:
 
