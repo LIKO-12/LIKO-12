@@ -404,7 +404,7 @@ function ce:touchmoved(id,x,y,dx,dy,p)
 end
 
 function ce:touchreleased(id,x,y,dx,dy,p)
-  table.remove(touches,lume.find(id))
+  table.remove(touches,lume.find(touches,id))
   touchesNum = touchesNum - 1
   if touchesNum == 0 then
     textinput(true)
