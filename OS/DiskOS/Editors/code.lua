@@ -63,6 +63,11 @@ local charGrid = {0,8, ce.sw,ce.sh-16, ce.tw, ce.th}
 
 ce.colorize = true --Color lua syntax
 
+ce.touches = {}
+ce.touchesNum = 0
+ce.touchscroll = 0
+ce.touchskipinput = false
+
 --A usefull print function with color support !
 function ce:colorPrint(tbl)
   pushColor()
@@ -357,6 +362,10 @@ function ce:entered()
   cam("translate",0,1)
   self:drawBuffer()
   self:drawLineNum()
+  ce.touches = {}
+  ce.touchesNum = 0
+  ce.touchscroll = 0
+  ce.touchskipinput = false
 end
 
 function ce:leaved()
@@ -382,33 +391,28 @@ function ce:wheelmoved(x, y)
   self:drawBuffer()
 end
 
-local touches = {}
-local touchesNum = 0
-local touchscroll = 0
-local touchskipinput = false
-
 function ce:touchpressed(id,x,y,dx,dy,p)
-  table.insert(touches,id)
-  touchesNum = touchesNum + 1
+  table.insert(self.touches,id)
+  self.touchesNum = self.touchesNum + 1
 end
 
 function ce:touchmoved(id,x,y,dx,dy,p)
-  if touchesNum > 1 then
-    textinput(false) touchskipinput = true
-    touchscroll = touchscroll + dy
-    if touchscroll >= 7 or touchscroll <= -7 then
-      ce:wheelmoved(0,touchscroll/7)
-      touchscroll = touchscroll - math.floor(touchscroll/7)
+  if self.touchesNum > 1 then
+    textinput(false) self.touchskipinput = true
+    self.touchscroll = self.touchscroll + dy
+    if self.touchscroll >= 14 or self.touchscroll <= -14 then
+      ce:wheelmoved(0,self.touchscroll/14)
+      self.touchscroll = self.touchscroll - math.floor(self.touchscroll/14)
     end
   end
 end
 
 function ce:touchreleased(id,x,y,dx,dy,p)
-  table.remove(touches,lume.find(touches,id))
-  touchesNum = touchesNum - 1
-  if touchesNum == 0 then
-    if touchskipinput then
-      touchskipinput = false
+  table.remove(self.touches,lume.find(self.touches,id))
+  self.touchesNum = self.touchesNum - 1
+  if self.touchesNum == 0 then
+    if self.touchskipinput then
+      self.touchskipinput = false
     else
       textinput(true)
       local cx, cy = whereInGrid(x,y, charGrid)
