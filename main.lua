@@ -38,10 +38,6 @@ function love.run(arg)
     events:register("love:reboot",function(args) --Code can trigger this event to do a soft restart.
       reboot = args or {}
     end)
-    
-    events:register("love:threaderror",function(thread, errorstr)
-      error("Thread Error: "..errorstr)
-    end)
    
     if love.math then
       love.math.setRandomSeed(os.time())
