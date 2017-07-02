@@ -32,7 +32,7 @@ local GPU, GPUKit = assert(P("GPU","GPU",{
 local VRAMHandler = GPUKit.VRAMHandler
 
 --Create a new keyboard api mounted as "KB"
-assert(P("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "Android"),_EXKB = true}))
+assert(P("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "Android"),_EXKB = false}))
 
 --Create a new virtual hdd system mounted as "HDD"
 assert(P("HDD","HDD",{
