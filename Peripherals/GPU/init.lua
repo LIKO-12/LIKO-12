@@ -331,19 +331,19 @@ return function(config) --A function that creates a new GPU peripheral.
   --Touch Hooks (To translate them to LIKO12 screen)--
   events:register("love:touchpressed",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
-    local dx, dy = _HostToLiko(dx,dy)
+    local dx, dy = dx/_LIKOScale, dy/_LIKOScale
     events:trigger("GPU:touchpressed",id,x,y,dx,dy,p)
     if cpukit then cpukit.triggerEvent("touchpressed",id,x,y,dx,dy,p) end
   end)
   events:register("love:touchmoved",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
-    local dx, dy = _HostToLiko(dx,dy)
+    local dx, dy = dx/_LIKOScale, dy/_LIKOScale
     events:trigger("GPU:touchmoved",id,x,y,dx,dy,p)
     if cpukit then cpukit.triggerEvent("touchmoved",id,x,y,dx,dy,p) end
   end)
   events:register("love:touchreleased",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
-    local dx, dy = _HostToLiko(dx,dy)
+    local dx, dy = dx/_LIKOScale, dy/_LIKOScale
     events:trigger("GPU:touchreleased",id,x,y,dx,dy,p)
     if cpukit then cpukit.triggerEvent("touchreleased",id,x,y,dx,dy,p) end
   end)
