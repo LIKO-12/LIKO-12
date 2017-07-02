@@ -383,33 +383,28 @@ function ce:wheelmoved(x, y)
 end
 
 local touches = {}
-local touchesLastY = {}
 local touchesNum = 0
 local touchscroll = 0
 local touchskipinput = false
 
 function ce:touchpressed(id,x,y,dx,dy,p)
   table.insert(touches,id)
-  touchesLastY[id] = y
   touchesNum = touchesNum + 1
 end
 
-function ce:touchmoved(id,x,y)
+function ce:touchmoved(id,x,y,dx,dy,p)
   if touchesNum > 1 then
     textinput(false) touchskipinput = true
-    local dy = y - touchesLastY[id]
     touchscroll = touchscroll + dy
     if touchscroll >= 7 or touchscroll <= -7 then
       ce:wheelmoved(0,touchscroll/7)
       touchscroll = touchscroll - math.floor(touchscroll/7)
     end
   end
-  touchesLastY[id] = y
 end
 
 function ce:touchreleased(id,x,y,dx,dy,p)
   table.remove(touches,lume.find(touches,id))
-  touchesLastY[id] = nil
   touchesNum = touchesNum - 1
   if touchesNum == 0 then
     if touchskipinput then
