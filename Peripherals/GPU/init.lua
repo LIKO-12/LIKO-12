@@ -314,7 +314,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end)
   events:register("love:mousemoved",function(x,y,dx,dy,istouch)
     local x,y = _HostToLiko(x,y)
-    local dx, dy = _HostToLiko(dx,dy)
+    local dx, dy = dx/_LIKOScale, dy/_LIKOScale
     events:trigger("GPU:mousemoved",x,y,dx,dy,istouch)
     if cpukit then cpukit.triggerEvent("mousemoved",x,y,dx,dy,istouch) end
   end)

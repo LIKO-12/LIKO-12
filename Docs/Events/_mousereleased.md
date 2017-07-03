@@ -1,10 +1,10 @@
-This function is called everytime a mouse button is pressed.
+This function is called everytime a mouse button is released.
 
 ---
 
 #### Syntax:
 ```lua
-function _mousepressed(x,y,button)
+function _mousereleased(x,y,button)
   --Do something here
 end
 ```
