@@ -213,7 +213,7 @@ local function addLibrary(path,name)
 end
 
 addLibrary("C://Libraries/lume.lua","lume")
-addLibrary("C://Libraries/middleclass.lua","middleclass")
+addLibrary("C://Libraries/middleclass.lua","class")
 addLibrary("C://Libraries/bump.lua","bump")
 
 local helpersloader, err = loadstring(fs.read("C://Libraries/diskHelpers.lua"))
