@@ -27,7 +27,7 @@ local function clearFuncsFromTable(t)
 end
 
 return function(config) --A function that creates a new WEB peripheral.
-  if not thread:isRunning() then error("Failed to load luajit-request") end
+  if not thread:isRunning() then error("Failed to load luajit-request: "..tostring(thread:getError())) end
   
   local CPUKit = config.CPUKit
   if not CPUKit then error("WEB Peripheral can't work without the CPUKit passed") end
