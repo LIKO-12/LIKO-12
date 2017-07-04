@@ -90,6 +90,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     if _PixelPerfect then _LIKOScale = math.floor(_LIKOScale) end
     _LIKO_X, _LIKO_Y = (_HOST_W-_LIKO_W*_LIKOScale)/2, (_HOST_H-_LIKO_H*_LIKOScale)/2
+    if love.system.getOS() == "Android" or config._Android then _LIKO_Y = 0 end
     _ShouldDraw = true
   end)
   
