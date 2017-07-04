@@ -10,6 +10,12 @@ local function printErr(str)
   color(8) print(str) color(7)
 end
 
+if not WEB then
+  printErr( "Pastebin requires WEB peripheral" )
+  printErr( "Edit /bios/bconf.lua and make sure that the WEB peripheral exists" )
+  return
+end
+
 local function getName(str)
   local path, name, ext = string.match(str, "(.-)([^\\/]-%.?([^%.\\/]*))$")
   return name
@@ -45,12 +51,6 @@ end
 local args = { ... }
 if #args < 2 then
   printUsage()
-  return
-end
-
-if not WEB then
-  printErr( "Pastebin requires WEB peripheral" )
-  printErr( "Edit /bios/bconf.lua and make sure that the WEB peripheral exists" )
   return
 end
 
