@@ -1,5 +1,5 @@
 --The terminal !--
-local PATH = "C://Programs/;"
+local PATH = "D://Programs/;C://Programs/;"
 local curdrive, curdir, curpath = "D", "/", "D:///"
 
 local editor = require("C://Editors")
