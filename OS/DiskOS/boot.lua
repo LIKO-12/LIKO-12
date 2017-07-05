@@ -88,6 +88,7 @@ keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
 require("C://api") --Load DiskOS APIs
+require("C://osapi") --Load DiskOS OS APIs
 
 local SWidth, SHeight = screenSize()
 
