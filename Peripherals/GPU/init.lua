@@ -22,6 +22,9 @@ return function(config) --A function that creates a new GPU peripheral.
   local _GIFFrameTime = (config._GIFFrameTime or 1/60)*2  --The delta timr between each gif frame.
   local _GIFTimer, _GIFRec = 0
   
+  local _ScreenshotKey = config._ScreenshotKey or "f6"
+  local _ScreenshotScale = config._ScreenshotScale or 3
+  
   local _LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
   
   local _FontW, _FontH = config._FontW or 4, config._FontH or 5 --Font character size
@@ -1351,6 +1354,15 @@ return function(config) --A function that creates a new GPU peripheral.
   
   exe(GPU.cursor(exe(GPU.imagedata(1,1)):setPixel(0,0,7),"default"))
   exe(GPU.cursor(_Cursor))
+  
+  events:register("love:keypressed", function(key,sc,isrepeat)
+    if key == _ScreenshotKey then
+      local sc = exe(GPU.screenshot())
+      sc = sc:enlarge(_ScreenshotScale)
+      local png = sc:exportOpaque()
+      love.filesystem.write("/LIKO12-"..os.time()..".png",png)
+    end
+  end)
   
   --End of API--
   
