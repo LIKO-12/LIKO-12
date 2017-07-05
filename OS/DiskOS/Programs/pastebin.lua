@@ -100,6 +100,12 @@ if command == "put" then
     
     local pasteCode = string.match(response, "[^/]+$")
     color(12) print("Uploaded as "..response) sleep(0.01) color(7)
+    print("Copy "..pasteCode.." to clipboard? Y/N: ")
+    local resp=input() print("")
+    if string.upper(resp)=="Y" then 
+      clipboard(pasteCode)
+      print("Code copied to clipboard")
+    end
     print('Run "',false) color(6) print('pastebin get '..pasteCode,false) color(7) print('" to download anywhere') sleep(0.01)
   else
     printErr("Failed: "..tostring(err))
