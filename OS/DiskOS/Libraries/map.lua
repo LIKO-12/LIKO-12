@@ -28,7 +28,7 @@ local function newMap(w,h,sheet)
   end
 
   function Map:cell(x,y,newID)
-    if x >= self.w-1 or y >= self.h-1 or x < 0 or y < 0 then return false, "out of range" end
+    if x >= self.w or y >= self.h or x < 0 or y < 0 then return false, "out of range" end
     if newID then
       self.m[x][y] = newID or 0
       return self
