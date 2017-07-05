@@ -203,7 +203,6 @@ function se:import(data)
     local w,h,imgdata, fdata = string.match(data,"LK12;GPUIMG;(%d+)x(%d+);(.-);(.+)")
     flagsData, fdata = "", ";"..fdata:gsub(";",";;")..";"
     for flag in fdata:gmatch(";(%x+);") do
-      if flag ~= "0" then print(flag) end
       flagsData = flagsData..string.char(tonumber(flag,16))
     end
     if flagsData:len() < sheetW*sheetH then
