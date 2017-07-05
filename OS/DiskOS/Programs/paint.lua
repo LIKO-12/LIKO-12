@@ -1,4 +1,6 @@
 --Paint Program--
+if true then color(8) print("Work in progress ....") return end
+
 local args = {...}
 if #args < 1 then color(8) print("Must provide the path to the file") return end
 local tar = table.concat(args," ")..".lk12" --The path may include whitespaces
