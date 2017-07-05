@@ -9,6 +9,13 @@ local eapi = require("C://Editors")
 
 local source = select(1,...)
 
+if not source or source == "-?" then
+  printUsage(
+    "portCart <cart>","Ports old LIKO-12 cartridges from V0.0.5A"
+  )
+  return
+end
+
 if source then source = term.resolve(source)..".lk12" end
 
 if not source then color(8) print("Must provide path to the file to port") return end

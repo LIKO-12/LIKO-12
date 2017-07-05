@@ -10,7 +10,15 @@ if destination and destination ~= "@clip" then destination = term.resolve(destin
   destination = eapi.filePath
 end
 
-if not destination then color(8) print("Must provide the destination file path") return end
+if not destination or destination == "-?" then
+  printUsage(
+    "save <file>","Saves the current loaded game",
+    "save <file> -c","Saves with compression",
+    "save","Saves on the last known file",
+    "save @clip","Saves into the clipboard"
+  )
+  return
+end
 
 if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end
 

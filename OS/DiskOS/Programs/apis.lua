@@ -1,3 +1,11 @@
+if select(1,...) == "-?" then
+  printUsage(
+    "apis","Prints the available peripherals functions",
+    "apis <peripheral>","Prints the functions of a specific peripheral"
+  )
+  return
+end
+
 --Print the list of functions for a peripheral, or all peripherals
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
 

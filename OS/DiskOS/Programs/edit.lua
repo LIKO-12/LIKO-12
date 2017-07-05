@@ -1,6 +1,12 @@
 --Text editor--
 local args = {...} --Get the arguments passed to this program
-if #args < 1 then color(8) print("Must provide the path to the file") return end
+if #args < 1 or args[1] == "-?" then
+  printUsage(
+    "edit <file>","Open in the file editor"
+  )
+  return
+end
+
 local tar = table.concat(args," ") --The path may include whitespaces
 local term = require("C://terminal")
 tar = term.resolve(tar)

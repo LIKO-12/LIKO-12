@@ -1,3 +1,10 @@
+if select(1,...) == "-?" then
+  printUsage(
+    "install_demos","Installs some demo games"
+  )
+  return
+end
+
 fs.newDirectory("D://Demos/")
 for k,v in ipairs(fs.directoryItems("C://Demos/")) do
   local data = fs.read("C://Demos/"..v)

@@ -1,4 +1,11 @@
 --Liko12 Help System !
+if select(1,...) == "-?" then
+  printUsage(
+    "man","Displays the main page of the manual",
+    "man <topic>", "Displays a manual topic"
+  )
+  return
+end
 
 local helpPATH = "C://Manual/;C://Manual/GPU/"
 local function nextPath()

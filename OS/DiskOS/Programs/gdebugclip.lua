@@ -1,3 +1,10 @@
+if select(1,...) == "-?" then
+  printUsage(
+    "gdebugclip","Loads a GPU debug report from the clipboard"
+  )
+  return
+end
+
 local data = clipboard()
 data = math.b64dec(data)
 data = math.decompress(data,"lz4")
