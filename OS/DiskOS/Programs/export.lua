@@ -3,7 +3,14 @@ local destination = select(1,...)
 local term = require("C://terminal")
 local eapi = require("C://Editors")
 
-if not destination then color(8) print("Must provide the destination file path") return end
+if not destination then
+  printUsage(
+    "export <sheet>.png","Exports the spritesheet",
+    "export <sheet>.png --opaque","Exports the spritesheet with opaque black",
+    "export <luacode>.lua","Exports the game's code"
+  )
+  return
+end
 
 destination = term.resolve(destination)
 

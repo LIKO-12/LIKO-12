@@ -1,4 +1,10 @@
 --This file loads a lk12 disk and executes it
+if select(1,...) == "-?" then
+  printUsage(
+    "run","Runs the current loaded game"
+  )
+  return
+end
 
 --First we will start by obtaining the disk data
 --We will run the current code in the editor

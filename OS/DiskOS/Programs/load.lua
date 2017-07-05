@@ -5,7 +5,14 @@ local eapi = require("C://Editors")
 
 if source and source ~= "@clip" then source = term.resolve(source)..".lk12" elseif source ~= "@clip" then source = eapi.filePath end
 
-if not source then color(8) print("Must provide path to the file to load") return end
+if not source or source == "-?" then
+  printUsage(
+    "load <file>","Loads a game into memory",
+    "load","Reloads the current game",
+    "load @clip","Load from clipboard"
+  )
+  return
+end
 if source ~= "@clip" and not fs.exists(source) then color(8) print("File doesn't exists") return end
 if source ~= "@clip" and fs.isDirectory(source) then color(8) print("Couldn't load a directory !") return end
 

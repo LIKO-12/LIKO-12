@@ -1,3 +1,10 @@
+if select(1,...) == "-?" then
+  printUsage(
+    "keymap","Remaps the controls keys"
+  )
+  return
+end
+
 local json = require("C://Libraries/JSON")
 
 color(9) print("(esc): set to default\n(enter): leave unchanged") color(7)

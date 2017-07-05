@@ -1,9 +1,10 @@
 local term = require("C://terminal")
 
-local function printUsage()
-  color(9) print("Usages:") color(7)
-  print("pastebin put <filename>")
-  print("pastebin get <code> <filename>")
+local function printPBUsage()
+  printUsage(
+    "pastebin put <filename>","Uploads a file into pastebin.com",
+    "pastebin get <code> <filename>","Downloads a file from pastebin.com"
+  )
 end
 
 local function printErr(str)
@@ -50,7 +51,7 @@ end
 
 local args = { ... }
 if #args < 2 then
-  printUsage()
+  printPBUsage()
   return
 end
 
@@ -106,7 +107,7 @@ if command == "put" then
 elseif command == "get" then
   -- Download a file from pastebin.com
   if #args < 3 then
-    printUsage()
+    printPBUsage()
     return
   end
   
@@ -129,6 +130,6 @@ elseif command == "get" then
     printErr("Failed")
   end
 else
-  printUsage()
+  printPBUsage()
   return
 end
