@@ -38,11 +38,11 @@ local function newMap(w,h,sheet)
   end
   
   function Map:cut(x,y,w,h)
-    local x,y,w,h = x or 0, y or 0, w or self.w, h or self.h
+    local x,y,w,h = math.floor(x or 0), math.floor(y or 0), math.floor(w or self.w), math.floor(h or self.h)
     local nMap = newMap(w,h)
     local m = nMap:map()
-    for my=y,y+h do
-      for mx=x,x+w do
+    for my=y, y+h-1 do
+      for mx=x, x+w-1 do
         if self.m[mx] and self.m[mx][my] then
           m[mx-x][my-y] = self.m[mx][my]
         end
