@@ -87,17 +87,18 @@ return function(config)
   end
   
   devkit.buttons = {false,false,false,false, false,false,false}
+  devkit.bmap = {2,3,1,4}
   
   function devkit.updateButtons()
     for i=0,3 do
       if devkit.isInButton(i,touchangle) then
         if not devkit.buttons[i+1] then
-          CPUKit.triggerEvent("touchcontrol",true,i+1)
+          CPUKit.triggerEvent("touchcontrol",true,devkit.bmap[i+1])
           devkit.buttons[i+1] = true
         end
       else
         if devkit.buttons[i+1] then
-          CPUKit.triggerEvent("touchcontrol",false,i+1)
+          CPUKit.triggerEvent("touchcontrol",false,devkit.bmap[i+1])
           devkit.buttons[i+1] = false
         end
       end
