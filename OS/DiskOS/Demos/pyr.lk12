@@ -2,6 +2,8 @@ LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 --Pyramids Demo
 --By @HomineLudens
+Controls("none")
+
 local function pir(x,y,w,h,cx,cy)
 --6 7 12 2
  ccx=w/2+cx-1

@@ -3,6 +3,8 @@ ___luacode___
 --Ping Pong By RamiLego4Game
 --Contorllable by touch on mobile devices.
 
+Controls("touch")
+
 local fw, fh = fontSize()
 local sw, sh = screenSize()
 local bx, by, vx, vy
