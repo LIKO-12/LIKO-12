@@ -142,7 +142,7 @@ local json = require("C://Libraries/JSON")
 local pkeys = {}
 local rkeys = {}
 local dkeys = {}
-local tbtn = {}
+local tbtn = {false,false,false,false,false,false,false}
 
 local defaultbmap = {
   {"left","right","up","down","z","x","c"}, --Player 1
@@ -178,11 +178,11 @@ do --So I can hide this part in ZeroBran studio
     if rkeys[map[n]] or (tbtn[n] and tbtn[n] >= 2) then
       return false, true
     else
-      return pkeys[map[n]] or tbtn[n] == 0
+      return pkeys[map[n]] or (tbtn[n] and tbtn[n] == 0)
     end
   end
 
-  glob.__BTNUpdate = function()
+  glob.__BTNUpdate = function(dt)
     pkeys = {} --Reset the table (easiest way)
     rkeys = {} --Reset the table (easiest way)
     for k,v in pairs(dkeys) do
