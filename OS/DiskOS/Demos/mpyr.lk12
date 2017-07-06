@@ -2,6 +2,8 @@ LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 --Mouse Pyrameds Demo
 --By Filippo @HomineLudens
+Controls("touch")
+
 local xm=0 --Mouse x
 local ym=0 --Mouse y
 local t=0 --Timer

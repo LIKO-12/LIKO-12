@@ -1,5 +1,6 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
+Controls("none")
 
 function nextColor(s)
  local i = (s or 9)-1

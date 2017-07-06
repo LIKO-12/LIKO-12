@@ -1,5 +1,7 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
+Controls("none")
+
 --NOISE DEMO BY: RAMILEGO4GAME--
 for y=0,127 do for x=0,191 do
  point(x,y,math.random(0,15))
