@@ -83,6 +83,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local _ShouldDraw = false --This flag means that the gpu has to update the screen for the user.
   local _AlwaysDraw = false --This flag means that the gpu has to always update the screen for the user.
+  local _DevKitDraw = false --This flag means that the gpu has to always update the screen for the user, set by other peripherals
   
   --Hook the resize function--
   events:register("love:resize",function(w,h) --Do some calculations
@@ -1379,7 +1380,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Host to love.run when graphics is active--
   events:register("love:graphics",function()
-    if _ShouldDraw or _AlwaysDraw then --When it's required to draw (when changes has been made to the canvas)
+    if _ShouldDraw or _AlwaysDraw or _DevKitDraw then --When it's required to draw (when changes has been made to the canvas)
       UnbindVRAM(true) --Make sure that the VRAM changes are applied.
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
       love.graphics.push()
@@ -1389,8 +1390,7 @@ return function(config) --A function that creates a new GPU peripheral.
       
       GPU.pushColor() --Push the current color to the stack.
       love.graphics.setColor(255,255,255,255) --I don't want to tint the canvas :P
-      
-      if _ClearOnRender then love.graphics.clear(0,0,0,255) end --Clear the screen (Some platforms are glitching without this).
+      if _ClearOnRender then love.graphics.clear((_HOST_H > _HOST_W) and {25,25,25,255} or {0,0,0,255}) end --Clear the screen (Some platforms are glitching without this).
       
       love.graphics.draw(_ScreenCanvas, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
       
@@ -1401,6 +1401,18 @@ return function(config) --A function that creates a new GPU peripheral.
         mx,my = _LikoToHost(mx,my)
         local hotx, hoty = _CursorsCache[_Cursor].hx*_LIKOScale, _CursorsCache[_Cursor].hy*_LIKOScale --Converted to host scale
         love.graphics.draw(_CursorsCache[_Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty,0,_LIKOScale,_LIKOScale)
+      end
+      
+      if _DevKitDraw then
+        events:trigger("GPU:DevKitDraw")
+        love.graphics.origin()
+        love.graphics.setColor(255,255,255,255)
+        love.graphics.setLineStyle("rough")
+        love.graphics.setLineJoin("miter")
+        love.graphics.setPointSize(1)
+        love.graphics.setLineWidth(1)
+        love.graphics.setShader()
+        love.graphics.setCanvas()
       end
       
       love.graphics.present() --Present the screen to the host & the user.
@@ -1461,7 +1473,9 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local devkit = {}
   devkit._LIKO_W = _LIKO_W
-  devkit._LIKO_X = _LIKO_Y
+  devkit._LIKO_H = _LIKO_H
+  devkit._LIKO_X = _LIKO_X
+  devkit._LIKO_Y = _LIKO_Y
   devkit._HOST_W = _HOST_W
   devkit._HOST_H = _HOST_H
   devkit._DrawPalette = _DrawPalette
@@ -1502,6 +1516,10 @@ return function(config) --A function that creates a new GPU peripheral.
   devkit.AddressPos = AddressPos
   devkit.VRAMHandler = VRAMHandler
   devkit.indirect = indirect
+  
+  function devkit.DevKitDraw(bool)
+    _DevKitDraw = bool
+  end
   
   return GPU, devkit, indirect --Return the table containing all of the api functions.
 end
