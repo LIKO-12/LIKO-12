@@ -66,16 +66,18 @@ return function(config) --A function that creates a new GPU peripheral.
   local _HOST_W, _HOST_H = _LIKO_W*_LIKOScale, _LIKO_H*_LIKOScale --The host window size.
   if _Mobile then _HOST_W, _HOST_H = 0,0 end
   
-  love.window.setMode(_HOST_W,_HOST_H,{
-    resizable = true,
-    minwidth = _LIKO_W,
-    minheight = _LIKO_H
-  })
+  if not love.window.isOpen() then
+    love.window.setMode(_HOST_W,_HOST_H,{
+      resizable = true,
+      minwidth = _LIKO_W,
+      minheight = _LIKO_H
+    })
+
+    love.window.setTitle("LIKO-12 ".._LVERSION)
+    love.window.setIcon(love.image.newImageData("icon.png"))
+  end
   
   _HOST_W, _HOST_H = love.graphics.getDimensions()
-  
-  love.window.setTitle("LIKO-12 ".._LVERSION)
-  love.window.setIcon(love.image.newImageData("icon.png"))
   
   --End of config loading--
   
