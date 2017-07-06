@@ -176,7 +176,7 @@ do --So I can hide this part in ZeroBran studio
     local map = bmap[p]
     if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
     if rkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] >= 2) then
-      return false, true
+      return true, true
     else
       return pkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] == 0)
     end
