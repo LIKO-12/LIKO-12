@@ -1,5 +1,7 @@
 sLK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
+Controls("none")
+
 local r=96
 local t=0
 local sc = {}

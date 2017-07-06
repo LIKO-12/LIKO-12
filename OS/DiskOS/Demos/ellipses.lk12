@@ -3,6 +3,8 @@ ___luacode___
 --Ellipses Demo By Rami Sabbagh
 --@RamiLego4Game
 
+Controls("none")
+
 local ww = 6 --Wave width
 local speed = 1 --Speed
 
