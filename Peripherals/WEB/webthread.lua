@@ -1,7 +1,8 @@
+local args = {}
 require("love.thread")
 
-local to_channel = love.thread.getChannel("To_WebThread")
-local from_channel = love.thread.getChannel("From_WebThread")
+local to_channel = select(1,...)
+local from_channel = select(2,...)
 
 local request = require("Engine.luajit-request")
 local json = require("Engine.JSON")
@@ -13,5 +14,9 @@ while true do
     local args = json:decode(req[2])
     local out, errorcode, errorstr, errline = request.send(url,args)
     from_channel:push(json:encode({ url, out, errorcode, errorstr, errline }))
+  elseif type(req) == "string" then
+    if req == "shutdown" then
+      break --Job done.
+    end
   end
 end
