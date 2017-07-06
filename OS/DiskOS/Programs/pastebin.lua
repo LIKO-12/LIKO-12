@@ -1,8 +1,12 @@
 local term = require("C://terminal")
+local lume = require("C://Libraries/lume")
 
 local function printPBUsage()
   printUsage(
-    "pastebin put <filename>","Uploads a file into pastebin.com",
+    "pastebin put <filename> [-c] [-u]",
+    "Uploads a file into pastebin.com\n  "..
+    "-c    Copy code to clipboard\n  "..
+    "-u    Copy full URL to clipboard",
     "pastebin get <code> <filename>","Downloads a file from pastebin.com"
   )
 end
@@ -99,7 +103,11 @@ if command == "put" then
     color(11) print("Success.") flip() sleep(0.01) color(7)
     
     local pasteCode = string.match(response, "[^/]+$")
-    color(12) print("Uploaded as "..response) sleep(0.01) color(7)
+    color(12) print("Uploaded as "..response) sleep(0.01)
+    if lume.find(args,"-c") then print(pasteCode.." copied to clipboard") clipboard(pasteCode)
+    elseif lume.find(args,"-u") then print("URL copied to clipboard") clipboard(response)
+    end
+    color(7)
     print('Run "',false) color(6) print('pastebin get '..pasteCode,false) color(7) print('" to download anywhere') sleep(0.01)
   else
     printErr("Failed: "..tostring(err))
