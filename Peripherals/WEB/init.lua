@@ -6,15 +6,13 @@ local events = require("Engine.events")
 local json = require("Engine.JSON")
 
 local thread = love.thread.newThread(perpath.."webthread.lua")
-local to_channel = love.thread.getChannel("To_WebThread")
-local from_channel = love.thread.getChannel("From_WebThread")
+local to_channel = love.thread.newChannel()
+local from_channel = love.thread.newChannel()
 
 local to_counter = 0
 local from_counter = 0
 
-to_channel:clear()
-from_channel:clear()
-thread:start()
+thread:start(to_channel, from_channel)
 
 local function clearFuncsFromTable(t)
   for k,v in pairs(t) do
@@ -28,6 +26,8 @@ end
 
 return function(config) --A function that creates a new WEB peripheral.
   if not thread:isRunning() then error("Failed to load luajit-request: "..tostring(thread:getError())) end
+  
+  local timeout = config.timeout or 5
   
   local CPUKit = config.CPUKit
   if not CPUKit then error("WEB Peripheral can't work without the CPUKit passed") end
@@ -44,6 +44,7 @@ return function(config) --A function that creates a new WEB peripheral.
     if type(args) ~= "table" then return false, "Args Must be a table or nil, provided: "..type(args) end
     
     clearFuncsFromTable(args) --Since JSON can't encode functions !
+    args.timeout = timeout
     
     args = json:encode(args)
     
@@ -82,6 +83,17 @@ return function(config) --A function that creates a new WEB peripheral.
       local data = json:decode(result)
       CPUKit.triggerEvent("webrequest",from_counter,unpack(data))
     end
+  end)
+
+  events:register("love:reboot",function()
+    to_channel:clear()
+    to_channel:push("shutdown")
+  end)
+
+  events:register("love:quit",function()
+    to_channel:clear()
+    to_channel:push("shutdown")
+    thread:wait()
   end)
   
   return WEB, devkit, indirect
