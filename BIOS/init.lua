@@ -72,7 +72,7 @@ local function P(per,m,conf)
   return success, peripheral, devkit, nocache
 end
 
-if not love.filesystem.exists("/bconf.lua") or love.filesystem.exists("devmode.txt") then
+if not love.filesystem.exists("/bconf.lua") or love.filesystem.exists("devmode.txt") or true then
   love.filesystem.write("/bconf.lua",love.filesystem.read("/BIOS/bconf.lua"))
 end
 

@@ -142,6 +142,7 @@ local json = require("C://Libraries/JSON")
 local pkeys = {}
 local rkeys = {}
 local dkeys = {}
+local tbtn = {false,false,false,false,false,false,false}
 
 local defaultbmap = {
   {"left","right","up","down","z","x","c"}, --Player 1
@@ -163,7 +164,7 @@ do --So I can hide this part in ZeroBran studio
     if p < 1 or p > #bmap then return error("The Player id is out of range ("..p..") must be [1,"..#bmap.."]") end
     local map = bmap[p]
     if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
-    return dkeys[map[n]]
+    return dkeys[map[n]] or (p == 1 and tbtn[n])
   end
 
   function glob.btnp(n,p)
@@ -174,19 +175,28 @@ do --So I can hide this part in ZeroBran studio
     if p < 1 or p > #bmap then return error("The Player id is out of range ("..p..") must be [1,"..#bmap.."]") end
     local map = bmap[p]
     if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
-    if rkeys[map[n]] then
-      return false, true
+    if rkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] >= 2) then
+      return true, true
     else
-      return pkeys[map[n]]
+      return pkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] == 0)
     end
   end
 
-  glob.__BTNUpdate = function()
+  glob.__BTNUpdate = function(dt)
     pkeys = {} --Reset the table (easiest way)
     rkeys = {} --Reset the table (easiest way)
     for k,v in pairs(dkeys) do
       if not isKDown(k) then
         dkeys[k] = nil
+      end
+    end
+    
+    for k,v in ipairs(tbtn) do
+      if v then
+        if tbtn[k] >= 2 then
+          tbtn[k] = 1.9
+        end
+        tbtn[k] = tbtn[k] + dt
       end
     end
   end
@@ -195,6 +205,14 @@ do --So I can hide this part in ZeroBran studio
     pkeys[a] = true
     rkeys[a] = b
     dkeys[a] = true
+  end
+  
+  glob.__BTNTouchControl = function(state,n)
+    if state then
+      tbtn[n] = 0
+    else
+      tbtn[n] = false
+    end
   end
 end
 
@@ -235,6 +253,9 @@ co = coroutine.create(diskchunk)
 --Too Long Without Yielding
 local checkclock = true
 local eventclock = os.clock()
+
+if isMobile() then TC.setInput(true) end
+textinput(not isMobile())
 
 --Run the thing !
 local function extractArgs(args,factor)
@@ -279,3 +300,5 @@ end
 
 clearEStack()
 print("")
+
+TC.setInput(false)

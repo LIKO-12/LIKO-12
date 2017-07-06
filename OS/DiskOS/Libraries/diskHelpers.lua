@@ -103,6 +103,8 @@ function eventLoop()
       __BTNKeypressed(a,c)
     elseif name == "update" then
       __BTNUpdate(a)
+    elseif name == "touchcontrol" then
+      __BTNTouchControl(a,b)
     end
   end
 end
@@ -200,4 +202,21 @@ function mset(x,y,id)
   if y < 0 or y > maph-1 then return error("Y out of range ("..y.."), must be [0,"..(maph-1).."]") end
   if id < 0 or id > 255 then return error("TileID out of range ("..id.."), must be [0,255]") end
   TileMap:cell(x,y,id)
+end
+
+function Controls(c)
+  local c = c or "gamepad"
+  if c == "gamepad" then
+    TC.setInput(true)
+    textinput(not isMobile())
+  elseif c == "keyboard" then
+    TC.setInput(false)
+    textinput(true)
+  elseif c == "touch" or c == "mouse" then
+    TC.setInput(false)
+    textinput(false)
+  elseif c == "none" then
+    TC.setInput(false)
+    textinput(false)
+  end
 end

@@ -41,12 +41,9 @@ function _update()
  for i=1, #G do
   draw_giraffe(i*16,100,G[i])
  end
-end
-
-function _keypressed(key,isrepeat)
  
  -- Down to sort
- if key == "down" then
+ if btnp(4) then
   for i=1, (#G-1) do
    
    if (G[i] > G[i+1]) then
@@ -64,18 +61,13 @@ function _keypressed(key,isrepeat)
  end
  
  -- Up to randomise
- if key == "up" then
+ if btnp(3) then
   
   for i=1,#G do
    G[i] = math.floor(math.random(9))
   end
   
  end
-end
-
---Show the onscreen keyboard for android users.
-function _touchpressed()
- textinput(true)
 end
 ___spritesheet___
 LK12;GPUIMG;192x128;
