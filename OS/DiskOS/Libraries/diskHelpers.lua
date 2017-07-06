@@ -108,6 +108,7 @@ function eventLoop()
 end
 
 --Get and set functions for lazy people
+--ScreenPixels--
 local sw, sh = screenSize()
 local VRAMLine = sw/2
 local firstNibble, lastNibble = tonumber(1111,2), tonumber(11110000,2)
@@ -156,4 +157,26 @@ function pset(x,y,col)
     byte = bit.bor(byte,col)
   end
   poke(address,byte)
+end
+
+--Map cells--
+local mapw, maph = TileMap:size()
+function mget(x,y)
+  if type(x) ~= "number" then return error("X must be a number, provided: "..type(x)) end
+  if type(y) ~= "number" then return error("Y must be a number, provided: "..type(y)) end
+  x, y = math.floor(x), math.floor(y)
+  if x < 0 or x > mapw-1 then return error("X out of range ("..x.."), must be [0,"..(mapw-1).."]") end
+  if y < 0 or y > maph-1 then return error("Y out of range ("..y.."), must be [0,"..(maph-1).."]") end
+  return TileMap:cell(x,y)
+end
+
+function mset(x,y,id)
+  if type(x) ~= "number" then return error("X must be a number, provided: "..type(x)) end
+  if type(y) ~= "number" then return error("Y must be a number, provided: "..type(y)) end
+  if type(id) ~= "number" then return error("TileID must be a number, provided: "..type(id)) end
+  x, y, id = math.floor(x), math.floor(y), math.floor(id)
+  if x < 0 or x > mapw-1 then return error("X out of range ("..x.."), must be [0,"..(mapw-1).."]") end
+  if y < 0 or y > maph-1 then return error("Y out of range ("..y.."), must be [0,"..(maph-1).."]") end
+  if id < 0 or id > 255 then return error("TileID out of range ("..id.."), must be [0,255]") end
+  TileMap:cell(x,y,id)
 end
