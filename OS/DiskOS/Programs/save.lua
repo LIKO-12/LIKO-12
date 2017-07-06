@@ -11,7 +11,7 @@ if destination and destination ~= "@clip" and destination ~= "-?" then destinati
   destination = eapi.filePath
 end
 
-if not destination or then
+if not destination then
   printUsage(
     "save <file>","Saves the current loaded game",
     "save <file> -c","Saves with compression",
