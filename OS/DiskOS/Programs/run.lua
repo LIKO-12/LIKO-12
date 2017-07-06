@@ -164,7 +164,7 @@ do --So I can hide this part in ZeroBran studio
     if p < 1 or p > #bmap then return error("The Player id is out of range ("..p..") must be [1,"..#bmap.."]") end
     local map = bmap[p]
     if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
-    return dkeys[map[n]] or tbtn[n]
+    return dkeys[map[n]] or (p == 1 and tbtn[n])
   end
 
   function glob.btnp(n,p)
@@ -175,10 +175,10 @@ do --So I can hide this part in ZeroBran studio
     if p < 1 or p > #bmap then return error("The Player id is out of range ("..p..") must be [1,"..#bmap.."]") end
     local map = bmap[p]
     if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
-    if rkeys[map[n]] or (tbtn[n] and tbtn[n] >= 2) then
+    if rkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] >= 2) then
       return false, true
     else
-      return pkeys[map[n]] or (tbtn[n] and tbtn[n] == 0)
+      return pkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] == 0)
     end
   end
 
