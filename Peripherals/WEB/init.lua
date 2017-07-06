@@ -91,6 +91,7 @@ return function(config) --A function that creates a new WEB peripheral.
   end)
 
   events:register("love:quit",function()
+    love.window.close()
     to_channel:clear()
     to_channel:push("shutdown")
     thread:wait()
