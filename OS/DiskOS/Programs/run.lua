@@ -194,7 +194,7 @@ do --So I can hide this part in ZeroBran studio
     for k,v in ipairs(tbtn) do
       if v then
         if tbtn[k] >= 2 then
-          tbtn[k] = 1.8
+          tbtn[k] = 1.9
         end
         tbtn[k] = tbtn[k] + dt
       end
