@@ -31,6 +31,9 @@ local GPU, GPUKit = assert(P("GPU","GPU",{
 }))
 local VRAMHandler = GPUKit.VRAMHandler
 
+--Create Touch Controls
+assert(P("TouchControls","TC",{CPUKit = CPUKit, GPUKit = GPUKit}))
+
 --Create a new keyboard api mounted as "KB"
 assert(P("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "Android"),_EXKB = false}))
 
