@@ -159,6 +159,27 @@ function pset(x,y,col)
   poke(address,byte)
 end
 
+--Spritesheet pixels--
+function pget(x,y)
+  if type(x) ~= "number" then return error("X must be a number, provided: "..type(x)) end
+  if type(y) ~= "number" then return error("Y must be a number, provided: "..type(y)) end
+  x, y = math.floor(x), math.floor(y)
+  if x < 0 or x > sw-1 then return error("X out of range ("..x.."), must be [0,"..(sw-1).."]") end
+  if y < 0 or y > sh-1 then return error("Y out of range ("..y.."), must be [0,"..(sh-1).."]") end
+  return SpriteMap.img:data():getPixel(x,y)
+end
+
+function pset(x,y,col)
+  if type(x) ~= "number" then return error("X must be a number, provided: "..type(x)) end
+  if type(y) ~= "number" then return error("Y must be a number, provided: "..type(y)) end
+  if type(col) ~= "number" then return error("Color must be a number, provided: "..type(col)) end
+  x, y, col = math.floor(x), math.floor(y), math.floor(col)
+  if x < 0 or x > sw-1 then return error("X out of range ("..x.."), must be [0,"..(sw-1).."]") end
+  if y < 0 or y > sh-1 then return error("Y out of range ("..y.."), must be [0,"..(sh-1).."]") end
+  if col < 0 or col > 15 then return error("Color out of range ("..col.."), must be [0,15]") end
+  SpriteMap.img = SpriteMap.img:data():setPixel(x,y):image()
+end
+
 --Map cells--
 local mapw, maph = TileMap:size()
 function mget(x,y)
