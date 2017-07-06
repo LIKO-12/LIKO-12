@@ -1,4 +1,7 @@
+--SpriteID, Top-left x, Top-left y, rotation in radians, scaleX, scaleY, spritesheet
 function Sprite(id,x,y,r,sx,sy,sheet) (sheet or SpriteMap):draw(id,x,y,r,sx,sy) end
+
+--Topleft SpriteID, Top-left x, Top-left y, group width in sprites, group height in sprites, scaleX, scaleY, rotatin in radian, spritesheet
 function SpriteGroup(id,x,y,w,h,sx,sy,r,sheet)
   local sx,sy = math.floor(sx or 1), math.floor(sy or 1)
   if r then
@@ -17,6 +20,7 @@ function SpriteGroup(id,x,y,w,h,sx,sy,r,sheet)
 end
 
 --Flags API
+--SpriteID, [bit number] (Note: currently bits are numbered from left to right)
 function fget(id,n)
   if type(id) ~= "number" then return error("SpriteId must be a number, provided: "..type(id)) end
   if n and type(n) ~= "number" then return error("BitNumber must be a number, provided: "..type(n)) end
@@ -38,6 +42,8 @@ function fget(id,n)
   end
 end
 
+--SpriteID, bit number (Note: currently bits are numbered from left to right), new value
+--SpriteID, new byte value
 function fset(id,n,v)
   if type(id) ~= "number" then return error("SpriteId must be a number, provided: "..type(id)) end
   local id = math.floor(id)
@@ -74,6 +80,7 @@ function fset(id,n,v)
   end
 end
 
+--DrawX, DrawY, Top-left map cell, Top-left map cell, Map width in cells, Map height in cells, scaleX,scaleY, spritesheet
 function map(...)
  if not TileMap then return error("TileMap Global is lost") end
  local ok, err = pcall(TileMap.draw,TileMap,...)
@@ -98,4 +105,55 @@ function eventLoop()
       __BTNUpdate(a)
     end
   end
+end
+
+--Get and set functions for lazy people
+local sw, sh = screenSize()
+local VRAMLine = sw/2
+local firstNibble, lastNibble = tonumber(1111,2), tonumber(11110000,2)
+
+function pget(x,y)
+  if type(x) ~= "number" then return error("X must be a number, provided: "..type(x)) end
+  if type(y) ~= "number" then return error("Y must be a number, provided: "..type(y)) end
+  x, y = math.floor(x), math.floor(y)
+  if x < 0 or x > sw-1 then return error("X out of range ("..x.."), must be [0,"..(sw-1).."]") end
+  if y < 0 or y > sh-1 then return error("Y out of range ("..y.."), must be [0,"..(sh-1).."]") end
+  
+  local odd = (x%2 == 1)
+  if odd then x = x-1 end
+  
+  local address = 0x15000 + y*VRAMLine + x/2
+  local byte = peek(address)
+  if odd then
+    local bits = bit.band(byte,lastNibble)
+    bits = bit.rshift(bits,4)
+    return bits
+  else
+    return bit.band(byte,firstNibble)
+  end
+end
+
+function pset(x,y,col)
+  if type(x) ~= "number" then return error("X must be a number, provided: "..type(x)) end
+  if type(y) ~= "number" then return error("Y must be a number, provided: "..type(y)) end
+  if type(col) ~= "number" then return error("Color must be a number, provided: "..type(col)) end
+  x, y, col = math.floor(x), math.floor(y), math.floor(col)
+  if x < 0 or x > sw-1 then return error("X out of range ("..x.."), must be [0,"..(sw-1).."]") end
+  if y < 0 or y > sh-1 then return error("Y out of range ("..y.."), must be [0,"..(sh-1).."]") end
+  if col < 0 or col > 15 then return error("Color out of range ("..col.."), must be [0,15]") end
+  
+  local odd = (x%2 == 1)
+  if odd then x = x-1 end
+  
+  local address = 0x15000 + y*VRAMLine + x/2
+  local byte = peek(address)
+  if odd then
+    byte = bit.band(byte,firstNibble)
+    col = bit.lshift(col,4)
+    byte = bit.bor(byte,col)
+  else
+    byte = bit.band(byte,lastNibble)
+    byte = bit.bor(byte,col)
+  end
+  poke(address,byte)
 end
