@@ -6,18 +6,19 @@ local clvl = tonumber(select(4,...) or "-1")
 local term = require("C://terminal")
 local eapi = require("C://Editors")
 
-if destination and destination ~= "@clip" then destination = term.resolve(destination)..".lk12" elseif destination ~= "@clip" then
-  destination = eapi.filePath
-end
-
 if not destination or destination == "-?" then
   printUsage(
     "save <file>","Saves the current loaded game",
     "save <file> -c","Saves with compression",
     "save","Saves on the last known file",
-    "save @clip","Saves into the clipboard"
+    "save @clip","Saves into the clipboard",
+    "save <image> --sheet","Saves the spritesheet as external .lk12 image"
   )
   return
+end
+
+if destination and destination ~= "@clip" then destination = term.resolve(destination)..".lk12" elseif destination ~= "@clip" then
+  destination = eapi.filePath
 end
 
 if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end
