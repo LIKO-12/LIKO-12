@@ -14,9 +14,6 @@ return function(config)
   local fg_alpha = config.fg_alpha or 100 --The dpad lines
   local bg_alpha = config.bg_alpha or 40 --The dpad background
   
-  --Buttons touch variables
-  local taid, tbid, tsid
-  
   local devkit = {}
   
   local ControlsEnabled = false
@@ -153,16 +150,16 @@ return function(config)
         end
       else --The start button
         if state == "pressed" and not touchids[id] then
-          if x >= start_x and x <= start_x + start_w then
-            if y >= start_y and start_y + start_h then
-              tsid = id
+          if tx >= start_x and tx <= start_x + start_w then
+            if ty >= start_y and ty <= start_y + start_h then
+              touchids[id] = tid
               devkit.buttons[7] = true
               CPUKit.triggerEvent("touchcontrol",true,7)
               return
             end
           end
         elseif state == "moved" and touchids[id] and touchids[id] == tid then
-          if x >= start_x and x <= start_x + start_w and y >= start_y and start_y + start_h then
+          if tx >= start_x and tx <= start_x + start_w and ty >= start_y and ty <= start_y + start_h then
             if not devkit.buttons[7] then
               devkit.buttons[7] = true
               CPUKit.triggerEvent("touchcontrol",true,7)
@@ -186,13 +183,13 @@ return function(config)
   
   local function drawButtons()
     for id=5, 7 do
-      love.graphics.setLineWidth(2)
+      love.graphics.setLineWidth(devkit.buttons[id] and 4 or 2)
       if id < 7 then --AB buttons
         local cx, cy, col; if id == 5 then cx,cy,col = a_cx,a_cy,a_col  else cx,cy,col = b_cx,b_cy,b_col end
         col[4] = bg_alpha; love.graphics.setColor(col)
         love.graphics.circle("fill",cx, cy, btn_radius)
         if devkit.buttons[id] then love.graphics.circle("fill",cx, cy, btn_radius) end
-        col[4] = alpha; love.graphics.setColor(a_col)
+        col[4] = alpha; love.graphics.setColor(col)
         love.graphics.circle("line",cx, cy, btn_radius)
       else --Start button
         start_col[4] = bg_alpha; love.graphics.setColor(start_col)
@@ -213,10 +210,6 @@ return function(config)
     if onMobile then GPUKit.DevKitDraw(ControlsEnabled) end
     return true
   end
-  
-  if not (onMobile or config.onMobile) then return TC, devkit, indirect end --The rest of the code shouldn't be run on normal computers.
-  
-  GPUKit.DevKitDraw(ControlsEnabled)
   
   --Buttons Touch
   events:register("love:touchpressed",function(id,x,y,dx,dy,p) updateButtons(id,"pressed",x,y) end)
