@@ -212,7 +212,11 @@ end
 local function bootOS()
   fs.drive("C") --Switch to the C drive.
   
-  if not fs.exists("/boot.lua") or love.filesystem.exists("devmode.txt") then noOS() end
+  if not fs.exists("/boot.lua") or love.filesystem.exists("devmode.txt") then _LIKO_Old = false; noOS() end
+  
+  if _LIKO_Old then --Show update screen
+    noOS() --Nah just reflash
+  end
   
   local bootchunk, err = fs.load("/boot.lua")
   if not bootchunk then error(err or "") end --Must be replaced with an error screen.
