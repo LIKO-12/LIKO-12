@@ -127,7 +127,7 @@ return function(config)
           if dist <= btn_radius then
             touchids[id] = tid
             devkit.buttons[id] = true
-            CPUKit.triggerEvent("touchcontrol",true,5)
+            CPUKit.triggerEvent("touchcontrol",true,id)
           end
         elseif state == "moved" and touchids[id] and touchids[id] == tid then
           if dist <= btn_radius then
