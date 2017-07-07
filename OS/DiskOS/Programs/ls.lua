@@ -3,7 +3,7 @@
 
 if select(1,...) == "-?" then
   printUsage(
-    "dir","Lists the files and folders in the current directory"
+    "ls","Lists the files and folders in the current directory"
   )
   return
 end
