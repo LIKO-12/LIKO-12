@@ -6,6 +6,7 @@ if #args < 1 or args[1] == "-?" then
     "cd ..", "Go back one directory",
     "cd <drive>:", "Change active drive"
   )
+  return
 end
 
 local tar = table.concat(args," ") --The path may include whitespaces
