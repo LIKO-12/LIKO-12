@@ -24,5 +24,10 @@ pastebin - Uploads and Downloads from pastebin.
 
 Press escape to switch to editors mode.
 
+Type "install_demos" to install some demos,
+"cd Demos"
+"load bump"
+"run"
+
 Official documentation:
 http://liko-12.readthedocs.io/

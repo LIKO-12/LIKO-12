@@ -68,6 +68,7 @@ local function newMap(w,h,sheet)
   function Map:export()
     local data = "LK12;TILEMAP;"..self.w.."x"..self.h..";"
     self:map(function(x,y,sprid)
+      if x == 0 then data = data.."\n" end
       data = data..sprid..";"
     end)
     return data
@@ -75,6 +76,7 @@ local function newMap(w,h,sheet)
   
   function Map:import(data)
     if not data:sub(1,13) == "LK12;TILEMAP;" then error("Wrong header") end
+    data = data:gsub("\n","")
     local w,h,mdata = string.match(data,"LK12;TILEMAP;(%d+)x(%d+);(.+)")
     local nextid = mdata:gmatch("(.-);")
     self:map(function(x,y,sprid)
