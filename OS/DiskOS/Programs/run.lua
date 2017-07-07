@@ -216,10 +216,7 @@ do --So I can hide this part in ZeroBran studio
   end
 end
 
-local UsedDoFile = false --So it can be only used for once
 glob.dofile = function(path)
-  if UsedDoFile then return error("dofile() can be only used for once !") end
-  UsedDoFile = true
   local chunk, err = fs.load(path)
   if not chunk then return error(err) end
   setfenv(chunk,glob)
