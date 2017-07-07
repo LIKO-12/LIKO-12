@@ -1,8 +1,15 @@
 --The BIOS should control the system of LIKO-12 and load the peripherals--
 --For now it's just a simple BIOS to get LIKO-12 working.
 
-local _LIKO_Version = _LVer.magor..".".._LVer.minor..".".._LVer.patch..".".._LVer.build
-love.filesystem.write(".version",tostring(_LIKO_Version))
+local _LIKO_Version, _LIKO_Old = _LVer.magor..".".._LVer.minor..".".._LVer.patch..".".._LVer.build
+if love.filesystem.exists(".version") then
+  _LIKO_Old = love.filesystem.read(".version")
+  if _LIKO_Old == _LIKO_Version then
+    _LIKO_Old = false
+  end
+else
+  love.filesystem.write(".version",tostring(_LIKO_Version))
+end
 
 --Require the engine libraries--
 local events = require("Engine.events")
@@ -137,6 +144,10 @@ end,"BIOS:listPeripherals")
 coreg:register(function()
   return true, DirectAPI
 end,"BIOS:DirectAPI")
+
+coreg:register(function()
+  return true, _LIKO_Version, _LIKO_Old
+end,"BIOS:GetVersion")
 
 local function exe(...) --Execute a LIKO12 api function (to handle errors)
   local args = {...}
