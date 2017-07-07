@@ -7,7 +7,10 @@ local term = require("C://terminal")
 local eapi = require("C://Editors")
 
 
-if destination and destination ~= "@clip" and destination ~= "-?" then destination = term.resolve(destination)..".lk12" elseif destination ~= "@clip" and destination ~= "-?" then
+if destination and destination ~= "@clip" and destination ~= "-?" then
+  destination = term.resolve(destination)
+  if destination:sub(-5,-1) ~= ".lk12" then destination = destination..".lk12" end
+elseif destination ~= "@clip" and destination ~= "-?" then
   destination = eapi.filePath
 end
 
