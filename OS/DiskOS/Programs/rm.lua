@@ -27,8 +27,8 @@ local function index(path,notfirst)
   return true
 end
 
-local tarExists; tar, tarExists = term.resolve(tar)
+tar = term.resolve(tar)
 
-if not tarExists then color(8) print("Path doesn't exists") return end
+if not fs.exists(tar) then color(8) print("Path doesn't exists") return end
 
 index(tar)
