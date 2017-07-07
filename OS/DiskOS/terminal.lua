@@ -155,6 +155,7 @@ function term.execute(command,...)
       for _,file in ipairs(files) do
         if file == command..".lua" then
           term.executeFile(path..file,...)
+          textinput(true)
           color(7) pal() palt() cam() clip() return true
         end
       end
