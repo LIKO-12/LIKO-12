@@ -9,62 +9,73 @@ return function(config)
   local GPUKit = config.GPUKit
   if not GPUKit then error("TouchControls Peripheral can't work without the GPUKit passed") end
   
-  local alpha = config.alpha or 160
-  local fg_alpha = config.fg_alpha or 100
-  local bg_alpha = config.bg_alpha or 40
+  --Three levels of alpha
+  local alpha = config.alpha or 160 --The dpad outline
+  local fg_alpha = config.fg_alpha or 100 --The dpad lines
+  local bg_alpha = config.bg_alpha or 40 --The dpad background
   
-  local touchid
-  local touchangle
-  
+  --Buttons touch variables
   local taid, tbid, tsid
   
   local devkit = {}
   
-  devkit.enabled = false
+  local ControlsEnabled = false
   
-  devkit.a_col = GPUKit._GetColor(11)
-  devkit.b_col = GPUKit._GetColor(8)
-  devkit.start_col = GPUKit._GetColor(12)
+  --DPAD Variables
+  local dpad_radius = love.window.toPixels(160/2) --The radius of the depad circle
+  local dpad_extra = love.window.toPixels(16) --The extra detection zone around the dpad
+  local dpad_cx, dpad_cy = love.window.toPixels(100) --The dpad center position 
+  local dpad_line = math.sin(math.pi/4)*dpad_radius --The position of a point in pi/4 (For the cross line to draw)
+  local touchangle --Touch variable
   
-  devkit.dpad_extra = love.window.toPixels(16)
-  devkit.dpad_radius = love.window.toPixels(160/2)
-  devkit.dpad_cx = love.window.toPixels(100)
-  devkit.dpad_line = math.sin(math.pi/4)*devkit.dpad_radius
+  --A Button
+  local a_col = GPUKit._GetColor(11) --The color of the A button
+  local a_cx, a_cy --The center of the A button circle
   
-  devkit.btn_radius = devkit.dpad_radius/2
-  devkit.start_w = devkit.dpad_radius*2*0.75
-  devkit.start_h = devkit.dpad_radius*0.75*0.75
-  devkit.start_x = love.window.toPixels(30) + devkit.dpad_radius/8
-  devkit.start_r = devkit.start_h/2
+  --B Button
+  local b_col = GPUKit._GetColor(8) --The color of the B button
+  local b_cx, b_cy --The center of the B button circle
+  
+  --Start Button
+  local start_col = GPUKit._GetColor(12) --The color of the Start button
+  local start_w, start_h = dpad_radius*2*0.75, dpad_radius*0.75*0.75 --The size of the Start button rectangle
+  local start_x, start_y = love.window.toPixels(30) + dpad_radius/8 --The position of the Start button
+  local start_r = start_h/2 --The radius of the Start button corners
+  
+  --All Buttons (Shared)
+  local btn_radius = dpad_radius/2 --The radius of button A and B circles
+  local touchids = {}
+  
+  local protrait --Is the device in protrait orientation
   
   devkit.resize = function(w,h)
-    devkit.w = w
-    devkit.h = h
+    if h > w then protrait = true else protrait = false end --Detect if the device is in protrait.
     
-    if h > w then devkit.protrait = true else devkit.protrait = false end
+    b_cx = w - (dpad_cx-dpad_radius/2) --Calculate the button B center X coord.
+    a_cx = b_cx - dpad_radius --Calculate the button A center X coord.
     
-    devkit.b_cx = w - (devkit.dpad_cx-devkit.dpad_radius/2)
-    devkit.a_cx = devkit.b_cx - devkit.dpad_radius
-    
-    if devkit.protrait then
-      local likoH = (GPUKit._LIKO_H*(w/GPUKit._LIKO_W))
-      devkit.dpad_cy = likoH + (h - likoH)/2
+    --Better button position when in protrait
+    if protrait then
+      local likoH = (GPUKit._LIKO_H*(w/GPUKit._LIKO_W)) --The LIKO-12 screen size.
+      dpad_cy = likoH + (h - likoH)/2 --Calculate the dpad center Y coord.
     else
-      devkit.dpad_cy = h/2
+      dpad_cy = h/2 --Calculate the dpad center Y coord.
     end
     
-    devkit.b_cy = devkit.dpad_cy
-    devkit.a_cy = devkit.b_cy + devkit.dpad_radius
-    devkit.start_y = h - (devkit.start_h+devkit.start_x/2)
+    b_cy = dpad_cy --Calculate the button B center Y coord
+    a_cy = b_cy + dpad_radius --Calculate the button A center Y coord
+    start_y = h - (start_h+start_x/2) --Calculate the Start button Y coord
   end
   
-  devkit.resize(love.graphics.getDimensions())
+  devkit.resize(love.graphics.getDimensions()) --Calculate the positions for the first time.
   
-  function devkit.isInButton(id,angle)
-    if not angle then return false end
+  events:register("love:resize", devkit.resize) --Register the resize event.
+  
+  local function isDpadPressed(id,angle)
+    if not angle then return false end --If the user is not touching the dpad, then all buttons are not pressed
     local zero = (math.pi/2)*id
-    local astart = zero - math.pi/10
-    local aend = zero + math.pi/2 +  math.pi/10
+    local astart = zero - math.pi/10 --The start angle
+    local aend = zero + math.pi/2 +  math.pi/10 --The end angle
     if astart < 0 then
       return (angle >= math.pi*2+astart or angle <= aend)
     elseif aend > math.pi*2 then
@@ -74,11 +85,13 @@ return function(config)
     end
   end
   
-  function devkit.calcDistance(x1,y1,x2,y2)
+  --Calculates the distance between 2 points
+  local function calcDistance(x1,y1,x2,y2)
     return math.sqrt((x2-x1)^2 + (y2-y1)^2)
   end
   
-  function devkit.calcAngle(dy,dx)
+  --Calculates the angle of a touch in dpad circle
+  local function calcAngle(dy,dx)
     local angle = -math.atan2(dy,dx)
     if angle < 0 then angle = math.pi*2 + angle end
     angle = angle + math.pi/4
@@ -86,12 +99,14 @@ return function(config)
     return angle
   end
   
+  --The buttons memory
   devkit.buttons = {false,false,false,false, false,false,false}
-  devkit.bmap = {2,3,1,4}
+  devkit.bmap = {2,3,1,4} --Remap the dpad buttons ids to their real numbers.
   
-  function devkit.updateButtons()
+  --Update dpad buttons.
+  local function updateDpad()
     for i=0,3 do
-      if devkit.isInButton(i,touchangle) then
+      if isDpadPressed(i,touchangle) then
         if not devkit.buttons[i+1] then
           CPUKit.triggerEvent("touchcontrol",true,devkit.bmap[i+1])
           devkit.buttons[i+1] = true
@@ -105,26 +120,37 @@ return function(config)
     end
   end
   
+  local function updateButton(id,state,tx,ty)
+    if id < 7 then --The AB buttons
+      local cx, cy; if id == 5 then cx,cy = a_cx, a_cy else cx,cy = b_cx, b_cy end
+      local tid = {};
+      if state == "pressed" then
+        
+      end
+    else --The start button
+      
+    end
+  end
+  
   local indirect = {}
   local TC = {}
   
+  --Toggle the touch controls
   function TC.setInput(bool)
-    devkit.enabled = bool
-    if onMobile then GPUKit.DevKitDraw(devkit.enabled) end
+    ControlsEnabled = bool
+    if onMobile then GPUKit.DevKitDraw(ControlsEnabled) end
     return true
   end
   
-  events:register("love:resize", devkit.resize)
+  if not (onMobile or config.onMobile) then return TC, devkit, indirect end --The rest of the code shouldn't be run on normal computers.
   
-  if not (onMobile or config.onMobile) then return TC, devkit, indirect end
-  
-  GPUKit.DevKitDraw(devkit.enabled)
+  GPUKit.DevKitDraw(ControlsEnabled)
   
   --Buttons Touch
   events:register("love:touchpressed",function(id,x,y,dx,dy,p)
     if not taid then
-      local dist = devkit.calcDistance(x,y,devkit.a_cx, devkit.a_cy)
-      if dist <= devkit.btn_radius then
+      local dist = calcDistance(x,y,a_cx, a_cy)
+      if dist <= btn_radius then
         taid = id
         devkit.buttons[5] = true
         CPUKit.triggerEvent("touchcontrol",true,5)
@@ -133,8 +159,8 @@ return function(config)
     end
     
     if not tbid then
-      local dist = devkit.calcDistance(x,y,devkit.b_cx, devkit.b_cy)
-      if dist <= devkit.btn_radius then
+      local dist = calcDistance(x,y,b_cx, b_cy)
+      if dist <= btn_radius then
         tbid = id
         devkit.buttons[6] = true
         CPUKit.triggerEvent("touchcontrol",true,6)
@@ -143,8 +169,8 @@ return function(config)
     end
     
     if not tsid then
-      if x >= devkit.start_x and x <= devkit.start_x + devkit.start_w then
-        if y >= devkit.start_y and devkit.start_y + devkit.start_h then
+      if x >= start_x and x <= start_x + start_w then
+        if y >= start_y and start_y + start_h then
           tsid = id
           devkit.buttons[7] = true
           CPUKit.triggerEvent("touchcontrol",true,7)
@@ -156,8 +182,8 @@ return function(config)
   
   events:register("love:touchmoved",function(id,x,y,dx,dy,p)
     if taid and taid == id then
-      local dist = devkit.calcDistance(x,y,devkit.a_cx, devkit.a_cy)
-      if dist <= devkit.btn_radius then
+      local dist = calcDistance(x,y,a_cx, a_cy)
+      if dist <= btn_radius then
         if not devkit.buttons[5] then
           devkit.buttons[5] = true
           CPUKit.triggerEvent("touchcontrol",true,5)
@@ -173,8 +199,8 @@ return function(config)
     end
     
     if tbid and tbid == id then
-      local dist = devkit.calcDistance(x,y,devkit.b_cx, devkit.b_cy)
-      if dist <= devkit.btn_radius then
+      local dist = calcDistance(x,y,b_cx, b_cy)
+      if dist <= btn_radius then
         if not devkit.buttons[6] then
           devkit.buttons[6] = true
           CPUKit.triggerEvent("touchcontrol",true,6)
@@ -190,8 +216,8 @@ return function(config)
     end
     
     if tsid and tsid == id then
-      if x >= devkit.start_x and x <= devkit.start_x + devkit.start_w and 
-      y >= devkit.start_y and devkit.start_y + devkit.start_h then
+      if x >= start_x and x <= start_x + start_w and 
+      y >= start_y and start_y + start_h then
         if not devkit.buttons[7] then
           devkit.buttons[7] = true
           CPUKit.triggerEvent("touchcontrol",true,7)
@@ -241,30 +267,30 @@ return function(config)
   
   --Dpad Touch
   events:register("love:touchpressed",function(id,x,y,dx,dy,p)
-    if touchid then return end
-    local dist = devkit.calcDistance(x,y,devkit.dpad_cx,devkit.dpad_cy)
-    if dist > devkit.dpad_radius/3 and dist < devkit.dpad_radius + devkit.dpad_extra then
-      touchangle = devkit.calcAngle(y - devkit.dpad_cy, x - devkit.dpad_cx)
-      touchid = id
+    if touchids[1] then return end
+    local dist = calcDistance(x,y,dpad_cx,dpad_cy)
+    if dist > dpad_radius/3 and dist < dpad_radius + dpad_extra then
+      touchangle = calcAngle(y - dpad_cy, x - dpad_cx)
+      touchids[1] = id
     end
   end)
   
   events:register("love:touchmoved",function(id,x,y,dx,dy,p)
-    if (not touchid) or touchid ~= id then return end
-    local dist = devkit.calcDistance(x,y,devkit.dpad_cx,devkit.dpad_cy)
-    if dist > devkit.dpad_radius/3 then
-      touchangle = devkit.calcAngle(y - devkit.dpad_cy, x - devkit.dpad_cx)
+    if (not touchids[1]) or touchids[1] ~= id then return end
+    local dist = calcDistance(x,y,dpad_cx,dpad_cy)
+    if dist > dpad_radius/3 then
+      touchangle = calcAngle(y - dpad_cy, x - dpad_cx)
     else
       touchangle = false
     end
-    devkit.updateButtons()
+    updateDpad()
   end)
   
   events:register("love:touchreleased",function(id,x,y,dx,dy,p)
-    if (not touchid) or touchid ~= id then return end
-    touchid = false
+    if (not touchids[1]) or touchids[1] ~= id then return end
+    touchids[1] = false
     touchangle = false
-    devkit.updateButtons()
+    updateDpad()
   end)
   
   events:register("GPU:DevKitDraw",function()
@@ -272,62 +298,62 @@ return function(config)
     --Buttons
     love.graphics.setLineWidth(2)
     --A
-    devkit.a_col[4] = bg_alpha; love.graphics.setColor(unpack(devkit.a_col))
-    love.graphics.circle("fill",devkit.a_cx, devkit.a_cy, devkit.btn_radius)
-    if devkit.buttons[5] then love.graphics.circle("fill",devkit.a_cx, devkit.a_cy, devkit.btn_radius) end
-    devkit.a_col[4] = alpha; love.graphics.setColor(unpack(devkit.a_col))
-    love.graphics.circle("line",devkit.a_cx, devkit.a_cy, devkit.btn_radius)
+    a_col[4] = bg_alpha; love.graphics.setColor(unpack(a_col))
+    love.graphics.circle("fill",a_cx, a_cy, btn_radius)
+    if devkit.buttons[5] then love.graphics.circle("fill",a_cx, a_cy, btn_radius) end
+    a_col[4] = alpha; love.graphics.setColor(unpack(a_col))
+    love.graphics.circle("line",a_cx, a_cy, btn_radius)
     
     --B
-    devkit.b_col[4] = bg_alpha; love.graphics.setColor(unpack(devkit.b_col))
-    love.graphics.circle("fill",devkit.b_cx, devkit.b_cy, devkit.btn_radius)
-    if devkit.buttons[6] then love.graphics.circle("fill",devkit.b_cx, devkit.b_cy, devkit.btn_radius) end
-    devkit.b_col[4] = alpha; love.graphics.setColor(unpack(devkit.b_col))
-    love.graphics.circle("line",devkit.b_cx, devkit.b_cy, devkit.btn_radius)
+    b_col[4] = bg_alpha; love.graphics.setColor(unpack(b_col))
+    love.graphics.circle("fill",b_cx, b_cy, btn_radius)
+    if devkit.buttons[6] then love.graphics.circle("fill",b_cx, b_cy, btn_radius) end
+    b_col[4] = alpha; love.graphics.setColor(unpack(b_col))
+    love.graphics.circle("line",b_cx, b_cy, btn_radius)
     
     --Start
-    devkit.start_col[4] = bg_alpha; love.graphics.setColor(unpack(devkit.start_col))
-    love.graphics.rectangle("fill",devkit.start_x,devkit.start_y,devkit.start_w,devkit.start_h,devkit.start_r)
-    if devkit.buttons[7] then love.graphics.rectangle("fill",devkit.start_x,devkit.start_y,devkit.start_w,devkit.start_h,devkit.start_r) end
-    devkit.start_col[4] = alpha; love.graphics.setColor(unpack(devkit.start_col))
-    love.graphics.rectangle("line",devkit.start_x,devkit.start_y,devkit.start_w,devkit.start_h,devkit.start_r)
+    start_col[4] = bg_alpha; love.graphics.setColor(unpack(start_col))
+    love.graphics.rectangle("fill",start_x,start_y,start_w,start_h,start_r)
+    if devkit.buttons[7] then love.graphics.rectangle("fill",start_x,start_y,start_w,start_h,start_r) end
+    start_col[4] = alpha; love.graphics.setColor(unpack(start_col))
+    love.graphics.rectangle("line",start_x,start_y,start_w,start_h,start_r)
     
     --DPAD
     love.graphics.setLineWidth(2)
     love.graphics.setColor(255,255,255,bg_alpha)
-    love.graphics.circle("fill",devkit.dpad_cx, devkit.dpad_cy, devkit.dpad_radius)
-    love.graphics.circle("fill",devkit.dpad_cx, devkit.dpad_cy, devkit.dpad_radius/3)
+    love.graphics.circle("fill",dpad_cx, dpad_cy, dpad_radius)
+    love.graphics.circle("fill",dpad_cx, dpad_cy, dpad_radius/3)
     
     if touchangle then
       if devkit.buttons[1] then
-        love.graphics.arc("fill","pie",devkit.dpad_cx, devkit.dpad_cy, devkit.dpad_radius,
+        love.graphics.arc("fill","pie",dpad_cx, dpad_cy, dpad_radius,
           (math.pi/2)*0 - math.pi/4, (math.pi/2)*1 - math.pi/4)
       end
       if devkit.buttons[2] then
-        love.graphics.arc("fill","pie",devkit.dpad_cx, devkit.dpad_cy, devkit.dpad_radius,
+        love.graphics.arc("fill","pie",dpad_cx, dpad_cy, dpad_radius,
           (math.pi/2)*3 - math.pi/4, (math.pi/2)*4 - math.pi/4)
       end
       if devkit.buttons[3] then
-        love.graphics.arc("fill","pie",devkit.dpad_cx, devkit.dpad_cy, devkit.dpad_radius,
+        love.graphics.arc("fill","pie",dpad_cx, dpad_cy, dpad_radius,
           (math.pi/2)*2 - math.pi/4, (math.pi/2)*3 - math.pi/4)
       end
       if devkit.buttons[4] then
-        love.graphics.arc("fill","pie",devkit.dpad_cx, devkit.dpad_cy, devkit.dpad_radius,
+        love.graphics.arc("fill","pie",dpad_cx, dpad_cy, dpad_radius,
           (math.pi/2)*1 - math.pi/4, (math.pi/2)*2 - math.pi/4)
       end
     end
     
     love.graphics.setColor(255,255,255,alpha)
-    love.graphics.circle("line",devkit.dpad_cx, devkit.dpad_cy, devkit.dpad_radius)
+    love.graphics.circle("line",dpad_cx, dpad_cy, dpad_radius)
     
     --Draw the lines
     love.graphics.setLineWidth(1)
     love.graphics.setColor(255,255,255,fg_alpha)
-    love.graphics.line(devkit.dpad_cx+devkit.dpad_line, devkit.dpad_cy-devkit.dpad_line,
-                       devkit.dpad_cx-devkit.dpad_line, devkit.dpad_cy+devkit.dpad_line)
+    love.graphics.line(dpad_cx+dpad_line, dpad_cy-dpad_line,
+                       dpad_cx-dpad_line, dpad_cy+dpad_line)
     
-    love.graphics.line(devkit.dpad_cx-devkit.dpad_line, devkit.dpad_cy-devkit.dpad_line,
-                       devkit.dpad_cx+devkit.dpad_line, devkit.dpad_cy+devkit.dpad_line)
+    love.graphics.line(dpad_cx-dpad_line, dpad_cy-dpad_line,
+                       dpad_cx+dpad_line, dpad_cy+dpad_line)
   end)
   
   return TC, devkit, indirect
