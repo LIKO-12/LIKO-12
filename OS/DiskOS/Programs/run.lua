@@ -299,3 +299,4 @@ clearEStack()
 print("")
 
 TC.setInput(false)
+if not isMobile() then textinput(true) end
