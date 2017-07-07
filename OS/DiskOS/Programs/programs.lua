@@ -1,5 +1,6 @@
 if select(1,...) and select(1,...) == "-?" then
   printUsage("programs","Prints the list of available programs")
+  return
 end
 
 local term = require("C://terminal")
