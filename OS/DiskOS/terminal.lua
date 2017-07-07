@@ -72,10 +72,16 @@ function term.setpath(p)
   p = term.resolve(p)
   if not fs.exists(p) then return error("Directory doesn't exists !") end
   if not fs.isDirectory(p) then return error("It must be a directory, not a file") end
-  local drive,path = p:match("(.+):/(.+)")
+  local drive, path
+  if p:sub(-2,-1) == ":/" then
+    drive = p:sub(1,-3)
+    path = ""
+  else
+    drive,path = p:match("(.+):/(.+)")
+  end
   if p:sub(-1,-1) ~= "/" then p = p.."/" end
   
-  curdrive, curdir, curpath = drive, path, p
+  curdrive, curdir, curpath = drive, "/"..path, p
 end
 
 function term.getpath() return curpath end
