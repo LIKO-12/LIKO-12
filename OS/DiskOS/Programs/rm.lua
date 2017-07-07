@@ -22,8 +22,9 @@ local function index(path,notfirst)
       fs.remove(path..item)
     end
   end
+  local isDir = fs.isDirectory(path)
   fs.remove(path)
-  if not notfirst then color(11) print("Deleted File/s successfully") end
+  if not notfirst then color(11) print("Deleted "..(isDir and "Directory" or "File").." successfully") end
   return true
 end
 
