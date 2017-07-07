@@ -103,7 +103,7 @@ function term.resolve(path)
     if #fld == 0 then return curdrive..":///", fs.exists(curdrive..":///") end
     table.remove(fld, #fld) --Remove the last directory
     return curdrive..":///"..table.concat(fld,"/")..path:sub(4,-1), fs.exists(curdrive..":///"..table.concat(fld,"/")..path:sub(4,-1))
-  elseif path:sub(1,2) == "./" then return curpath..sub(3,-1), fs.exists(curpath..sub(3,-1))
+  elseif path:sub(1,2) == "./" then return curpath..path:sub(3,-1), fs.exists(curpath..path:sub(3,-1))
   elseif path == ".." then
     local fld = {} --A list of folders in the path
     for p in string.gmatch(curdir,"(.-)/") do
