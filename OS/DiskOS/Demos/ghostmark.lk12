@@ -71,12 +71,12 @@ function _update()
  color(7) print("FPS :" .. getFPS(),8,16)
 
  -- add 500 more
- print("press any button to add 500 more",8,130)
-end
-
-function _keypressed(key)
- for x=1,500 do
-  bunny = Item()
+ print("press A to add 500 more",8,130)
+ 
+ if btnp(5) then
+   for x=1,500 do
+    bunny = Item()
+   end
  end
 end
 
