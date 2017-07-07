@@ -1,1 +1,32 @@
-The changelog goes here.
+Changelog:
+
+V0.6.0_PRE_03 (7/7/2017):
+=========================
+1. New touch controls.
+2. There's android builds now !
+3. Nolonger crashes if it failed to load the WEB peripheral.
+4. Now automatically reflashes DiskOS when changing LIKO-12 version.
+5. Updated the BIOS to version 060-010
+6. New Demo game: Bump: A demo of middleclasses and bump.lua
+7. New Controls(type) function, defaults to "gamepad"
+8. Improved some Demos.
+9. New scrolling in the code editor via 2 touch fingers.
+10. Removed debug printing from the load program.
+11. Bugfixed million of bugs in the map api.
+12. Restored the help topic system.
+13. New sget, sset, pget, pset, mget, mset.
+14. Made map save format more readable.
+15. Added usage info for all programs, do '<program> -?'.
+16. New 'factory_reset' program to revert changes made to the os files.
+17. lua program can now be exited by typing 'exit'.
+18. Added WIP message to the paint program.
+19. Added 'programs' program to list available programs.
+20. Fixed hard rebooting crash.
+21. Fixed the window is recreated when soft rebooting.
+22. Programs can be added now to D:/Programs/.
+23. Updated to print PRE instead of DEV in the terminal.
+24. Upgraded terminal path resolving.
+25. You can now take screenshots by pressing f6.
+26. Now prints D:/ instead of D:///
+27. The WEB peripherals now closes the thread when rebooting LIKO-12.
+28. New 'appdata' program to open LIKO-12 appdata folder.
