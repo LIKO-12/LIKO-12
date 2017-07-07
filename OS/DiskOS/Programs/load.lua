@@ -3,7 +3,10 @@ local source = select(1,...)
 local term = require("C://terminal")
 local eapi = require("C://Editors")
 
-if source and source ~= "@clip" and source ~= "-?" then source = term.resolve(source)..".lk12" elseif source ~= "@clip" and source ~= "-?" then source = eapi.filePath end
+if source and source ~= "@clip" and source ~= "-?" then
+  source = term.resolve(source)
+  if source:sub(-5,-1) ~= ".lk12" then source = source..".lk12" end
+elseif source ~= "@clip" and source ~= "-?" then source = eapi.filePath end
 
 if not source or source == "-?" then
   printUsage(
