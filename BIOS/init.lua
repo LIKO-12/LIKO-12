@@ -176,13 +176,13 @@ if not fs then error("No HDD peripheral to boot from !") end
 --Installs a specific OS on the drive C
 local function installOS(os,path)
   local path = path or "/"
+  fs.drive("C") --Opereating systems are installed on C drive
   local files = love.filesystem.getDirectoryItems("/OS/"..os..path)
   for k,v in pairs(files) do
     if love.filesystem.isDirectory("/OS/"..os..path..v) then
       fs.newDirectory(path..v)
       installOS(os,path..v.."/")
     else
-      fs.drive("C") --Opereating systems are installed on C drive
       fs.write(path..v,love.filesystem.read("/OS/"..os..path..v))
     end
   end
