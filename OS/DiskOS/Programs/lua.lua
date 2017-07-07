@@ -6,11 +6,12 @@ if select(1,...) == "-?" then
 end
 
 print("LuaJIT ".._VERSION)
+print("Type 'exit' to exit")
 pushColor()
 while true do
   color(7) print("> ",false)
   local code = input(); print("")
-  if not code then break end
+  if not code or code == "exit" then break end
   local chunk, err = loadstring(code)
   if not chunk then
     color(8) print("C-ERR: "..tostring(err))
