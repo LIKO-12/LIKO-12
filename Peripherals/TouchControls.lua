@@ -252,7 +252,7 @@ return function(config)
   events:register("love:touchmoved",function(id,x,y,dx,dy,p)
     if (not touchid) or touchid ~= id then return end
     local dist = devkit.calcDistance(x,y,devkit.dpad_cx,devkit.dpad_cy)
-    if dist > devkit.dpad_radius/3 and dist < devkit.dpad_radius + devkit.dpad_extra then
+    if dist > devkit.dpad_radius/3 then
       touchangle = devkit.calcAngle(y - devkit.dpad_cy, x - devkit.dpad_cx)
     else
       touchangle = false
