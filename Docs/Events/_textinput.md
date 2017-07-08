@@ -1,6 +1,6 @@
 Called when text has been entered by the user. For example if shift-2 is pressed on an American keyboard layout, the text "@" will be generated.
 
-**Important Note:** Besure to call [controls("keyboard")](./DiskOSAPI/controls.md) in the first line of the game !
+**Important Note:** Besure to call [controls("keyboard")](../DiskOS API/Controls.md) in the first line of the game !
 
 ---
 
