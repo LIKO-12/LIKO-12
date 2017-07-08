@@ -1,6 +1,6 @@
 This function is called everytime a key is released.
 
-**Important Note:** Besure to call [controls("keyboard")](./DiskOSAPI/controls.md) in the first line of the game !
+**Important Note:** Besure to call [controls("keyboard")](../DiskOS API/Controls.md) in the first line of the game !
 
 ---
 
