@@ -1,4 +1,4 @@
-Currently, LIKO-12 provides official builds for Windows, Linux and Mac.
+Currently, LIKO-12 provides official builds for Windows, Linux, Mac and Android.
 
 ---
 
@@ -21,8 +21,9 @@ Currently, LIKO-12 provides official builds for Windows, Linux and Mac.
 ---
 
 1. Added the official LÖVE PPA repository (You only have to do this once)
-
-`sudo add-apt-repository ppa:bartbes/love-stable`
+```
+sudo add-apt-repository ppa:bartbes/love-stable
+```
 
 2. Install LÖVE Framework:
 ```
@@ -45,5 +46,16 @@ sudo apt install love=0.10.2ppa1
 1. Download the `..._Mac.zip` build from [Github Releases][releases]
 2. Extract the .zip
 3. Run LIKO-12 app and enjoy !
+
+---
+
+## Android:
+
+---
+
+1. Download `..._Android.apk` build from [Github Releases][releases]
+2. Install the APK.
+3. Run LIKO-12 and enjoy !
+
 
 [releases]: https://github.com/RamiLego4Game/LIKO-12/releases/
