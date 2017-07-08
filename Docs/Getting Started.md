@@ -28,6 +28,7 @@ So, here's a list of the commands that you'll mostly use:
 * **export <FileName\>.png --opaque**: The same of above, but with black as opaque.
 * **import <FileName\>.png**: Imports the spritesheet from an image, all the colors not from the palette will be replaced by back.
 * **pastebin**: Prints the Usage, Allows you to upload and download games, **Use save -c with before uploading !**
+* **keymap**: Allows you to change the controllers keymap.
 * **programs**: Lists the installed Programs (Not all of them are mentioned here).
 
 **Note:** For the programs usage, type in LIKO-12 `<program> -?`, example: `export -?`.
