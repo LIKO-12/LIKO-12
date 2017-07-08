@@ -1,5 +1,11 @@
 This function is called everytime a key is released.
 
+**Important Note:** Besure to call [controls("keyboard")](./DiskOSAPI/controls.md) in the first line of the game !
+
+---
+
+**Another Note:** The keyboard on android can be closed by the user, so to reshow it you should call `textinput(true)` in [_touchpressed](./_touchpressed.md) callback.
+
 ---
 
 #### Syntax:
