@@ -1,4 +1,4 @@
-This function is called directly after [_update](./update.md), available to help you organize your code.
+This function is called directly after [_update()](_update.md), available to help you organize your code.
 
 ---
 
