@@ -1,5 +1,7 @@
 This function is called everytime the mouse moves.
 
+**Important Note:** Besure to call [controls("mouse")](./DiskOSAPI/controls.md) in the first line of the game !
+
 ---
 
 #### Syntax:

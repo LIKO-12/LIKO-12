@@ -1,6 +1,10 @@
 Called when text has been entered by the user. For example if shift-2 is pressed on an American keyboard layout, the text "@" will be generated.
 
-textinput is disabled by default; call `textinput(true)` to enable it.
+**Important Note:** Besure to call [controls("keyboard")](./DiskOSAPI/controls.md) in the first line of the game !
+
+---
+
+**Another Note:** The keyboard on android can be closed by the user, so to reshow it you should call `textinput(true)` in [_touchpressed](./_touchpressed.md) callback.
 
 ---
 
