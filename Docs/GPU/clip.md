@@ -26,6 +26,15 @@ clip(x,y,w,h)
 
 ---
 
+### Note:
+
+The arguments can be passed in a table:
+```lua
+clip( {x,y, w,h} )
+```
+
+---
+
 ### 2. Disable clipping:
 
 ---
