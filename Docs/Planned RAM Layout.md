@@ -1,5 +1,7 @@
 # The Planned RAM Layout:
 
+Here's a look at the planned LIKO-12 RAM layout, it's still **NOT** implemented, expect the VRAM region which is completely working (Starts at address `0x15000`)
+
 ```
 Layout (96 KB)
 --------------
