@@ -1,9 +1,14 @@
 --Paint Program--
-if true then color(8) print("Work in progress ....") return end
+if false then color(8) print("Work in progress ....") return end
 
 local args = {...}
-if #args < 1 then color(8) print("Must provide the path to the file") return end
-local tar = table.concat(args," ")..".lk12" --The path may include whitespaces
+if #args < 1 or args[1] == "-?" then
+  printUsage("paint <filename>", "Creates or edits an existing image.")
+  return
+end
+
+local tar = table.concat(args," ") --The path may include whitespaces
+if tar:sub(-5,-1) ~= ".lk12" then tar = tar..".lk12" end
 local term = require("C://terminal")
 tar = term.resolve(tar)
 
@@ -119,8 +124,6 @@ local controls = {
 for event, a,b,c,d,e,f in pullEvent do
   if event == "keypressed" then
     if a == "escape" then
-      --[[painteditor:leaved()
-      break]]
       eflag = not eflag
       if eflag then
         cursor("none")
@@ -176,6 +179,7 @@ for event, a,b,c,d,e,f in pullEvent do
     if painteditor[event] then painteditor[event](painteditor,a,b,c,d,e,f) end
     local cx, cy = whereInGrid(a,b,controlGrid)
     if cx then
+      if hflag and hflag == "h" then cursor("handrelease") end
       if hflag and hflag == "d" then
         sid = cx-1
         pushMatrix() cam() edit:drawTopBar() popMatrix()
