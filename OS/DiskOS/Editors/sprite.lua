@@ -223,7 +223,7 @@ function se:import(data)
 end
 
 function se:copy()
-  clipboard(math.b64enc(self.SpriteMap:extract(sprsid):export()))
+  clipboard(string.lower(self.SpriteMap:extract(sprsid):encode():gsub("\n",""):sub(17,-1)))
   infotimer = 2 --Show info for 2 seconds
   infotext = "COPIED SPRITE "..sprsid
   self:redrawINFO()
@@ -233,7 +233,22 @@ function se:paste()
   local ok, err = pcall(function()
     local dx,dy,dw,dh = self.SpriteMap:rect(sprsid)
     local sheetdata = self.SpriteMap:data()
-    local sprdata = imagedata(math.b64dec(clipboard()))
+    local data = clipboard()
+    if data:sub(1,5) == "[gfx]" then -- PICO-8 Paste
+      data = data:sub(6,-7) --Remove the start and end tags
+      local width = tonumber(data:sub(1,2),16)
+      local height = tonumber(data:sub(3,4),16)
+      data = string.upper(data:sub(5,-1))
+      data = "LK12;GPUIMG;" .. width.."x"..height ..";".. string.upper(data)
+    else
+      data = data:gsub("%X","")
+      local size = math.sqrt(data:len())
+      if math.floor(size) ~= size then error("Invalid Data") end
+      if size == 0 then error("Empty Data") end
+      if size < 8 then error("Too small to paste") end
+      data = "LK12;GPUIMG;" .. size.."x"..size ..";".. string.upper(data)
+    end
+    local sprdata = imagedata(data)
     sheetdata:paste(sprdata,dx,dy)
     self.SpriteMap.img = sheetdata:image()
     self:_redraw()
