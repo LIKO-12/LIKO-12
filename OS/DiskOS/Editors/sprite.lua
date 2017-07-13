@@ -20,6 +20,7 @@ for i=1, sheetW*sheetH do flagsData = flagsData..string.char(0) end
 draw: spriteID, x,y, w,h, spritesheet| OR: x,y, 0, w,h (marked by IMG_DRAW)
 rect: x,y, w,h, isline, colorid
 grid: gridX,gridY, gridW,gridH, cellW, cellH
+slider: x,y, steps, vertical, icon
 ]]
 
 --SpriteSheet Sprite Selection--
@@ -71,6 +72,12 @@ local psize = temp.size--9 --Zoomed pixel size
 local imgdraw = {3,8+3, 0, psize,psize} --Image Location; IMG_DRAW
 local imgrecto = {imgdraw[1]-1,imgdraw[2]-1,psize*imgw+2,psize*imgh+2, false,0} --The image outline rect position
 local imggrid = {imgdraw[1],imgdraw[2], psize*imgw,psize*imgh, imgw,imgh} --The image drawing grid
+
+--Zoom Slider--
+local zoom = 1 --The current zoom level
+local zflag = "none" --Zoom mouse flag
+local zslider = {imgrecto[1] + imgrecto[3] + 2, imgrecto[2]+2, 6, false, 186} --The Zoom Slider Draw
+local zgrid = {zslider[1]+8,zslider[2]+1,8*zslider[3],6,zslider[3],1} --The Zoom Slider Mouse Grid
 
 --The Color Selection Pallete--
 temp = {col=-1,height=transdraw[3]-(8+3+3)} --Temporary Variable
@@ -159,6 +166,25 @@ local transformations = {
   function(x,y,c,w,h) return x,h-y-1 end, --Flip vertical
   function(x,y,c,w,h) return w-x-1,h-y-1 end --Flip horizentaly + verticaly
 }
+
+local function drawSlider(pos,x,y,steps,vertical,icon)
+  palt(0,false)
+  pos = math.floor(pos)
+  if icon then eapi.editorsheet:draw(icon,x,y) end
+  if vertical then
+    
+  else
+    for sx=1,steps do
+      local sprite = 188
+      if sx == 1 then sprite = 187 elseif sx == steps then sprite = 189 end
+      eapi.editorsheet:draw(sprite,x+sx*8,y)
+    end
+    
+    palt()
+    
+    eapi.editorsheet:draw(185,x+pos*8,y)
+  end
+end
 
 function se:entered()
   eapi:drawUI()
@@ -290,6 +316,10 @@ function se:redrawSPR()
   self.SpriteMap:image():draw(revdraw[1],revdraw[2], 0, 1,1, self.SpriteMap:quad(sprsid))
 end
 
+function se:redrawZSlider()
+  drawSlider(zoom,unpack(zslider))
+end
+
 function se:redrawTOOLS()
   --Tools
   SpriteGroup(unpack(toolsdraw))
@@ -323,6 +353,7 @@ function se:_redraw()
   self:redrawCP()
   self:redrawSPR()
   self:redrawSPRS()
+  self:redrawZSlider()
   self:redrawFLAG()
   self:redrawTOOLS()
 end
@@ -352,6 +383,12 @@ function se:update(dt)
       self:redrawINFO()
     end
   end
+end
+
+function se:updateZoom()
+  sprssrect[3] = zoom*8 + 2
+  sprssrect[4] = zoom*8 + 2
+  
 end
 
 function se:mousepressed(x,y,b,it)
@@ -392,6 +429,15 @@ function se:mousepressed(x,y,b,it)
     sprssrect[2] = sprsrecto[2]+cy*8
     
     self:redrawSPRS() self:redrawSPR() self:redrawFLAG() sprsmflag = true
+  end
+  
+  --Zoom Slider
+  local cx, cy = whereInGrid(x,y,zgrid)
+  if cx then
+    zflag = "down"
+    zoom = cx; self:updateZoom()
+    cursor("handpress")
+    self:redrawSPRS() self:redrawZSlider()
   end
   
   --Tool Selection
@@ -456,6 +502,21 @@ function se:mousemoved(x,y,dx,dy,it)
       self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
     end
   end
+  
+  --Zoom Slider
+  local cx, cy = whereInGrid(x,y,zgrid)
+  if cx then
+    if zflag == "down" then
+      zoom = cx; self:updateZoom()
+      self:redrawSPRS() self:redrawZSlider()
+    else
+      zflag = "hover"
+      cursor("handrelease")
+    end
+  elseif zflag == "hover" then
+    cursor("normal")
+    zflag = "none"
+  end
 end
 
 function se:mousereleased(x,y,b,it)
@@ -483,6 +544,23 @@ function se:mousereleased(x,y,b,it)
     end
   end
   sprsmflag = false
+  
+  --Zoom Slider
+  local cx, cy = whereInGrid(x,y,zgrid)
+  if cx then
+    if zflag == "down" then
+      zoom = cx; self:updateZoom()
+      zflag = "hover"
+      cursor("handrelease")
+      self:redrawSPRS() self:redrawZSlider()
+    else
+      zflag = "hover"
+      cursor("handrelease")
+    end
+  elseif zflag ~= "none" then
+    cursor("normal")
+    zflag = "none"
+  end
 end
 
 function se:keypressed(key)
