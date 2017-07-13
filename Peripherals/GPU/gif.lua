@@ -185,7 +185,7 @@ function giflib.new(filename)
 		local palette=_ColorSet[i]
 		file:write(string.char(palette[1], palette[2], palette[3]))
 	end
-	file:write("\33\255\11NETSCAPE2.0\3\1\0\0\0")
+	file:write("\33\255\11NETSCAPE2.0\3\1\0\0\0") --For gif auto looping
 	local last=love.image.newImageData(_LIKO_W*_GIFScale, _LIKO_H*_GIFScale)
 	return setmetatable({filename=filename, file=file, last=last, first=true}, gifmt)
 end
@@ -195,12 +195,6 @@ function giflib.continue(filename)
 	if not file then
 		return nil, err
 	end
-	--[[file:write("GIF89a"..num2str(_LIKO_W*_GIFScale)..num2str(_LIKO_H*_GIFScale).."\243\0\0")
-	for i=1, 16 do
-		local palette=_ColorSet[i]
-		file:write(string.char(palette[1], palette[2], palette[3]))
-	end
-	file:write("\33\255\11NETSCAPE2.0\3\1\0\0\0")]]
 	local last=love.image.newImageData(_LIKO_W*_GIFScale, _LIKO_H*_GIFScale)
 	return setmetatable({filename=filename, file=file, last=last, first=true}, gifmt)
 end
