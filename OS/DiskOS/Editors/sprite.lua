@@ -300,7 +300,7 @@ end
 function se:redrawSPRS() _ = nil
   rect(sprsrecto)
   self.SpriteMap:image():draw(sprsdraw[1],sprsdraw[2], sprsdraw[3], sprsdraw[4],sprsdraw[5], sprsbquads[sprsbank])
-  rect(sprssrect)
+  clip(sprsrecto) rect(sprssrect) clip()
   rect(sprsidrect)
   color(sprsidrect[7])
   local id = ""; for i=1, maxSpriteIDCells-(tostring(sprsid):len()) do id = id .. "0" end; id = id .. tostring(sprsid)
