@@ -67,11 +67,13 @@ local transtime = 0.1125 --The blink time
 local temp = {SmallestX = transgrid[1] < toolsgrid[1] and transgrid[1] or toolsgrid[1]}
 temp.smallestDistance = sprsrecto[2]-8 < temp.SmallestX and sprsrecto[2]-8 or temp.SmallestX
 temp.size = math.floor((temp.smallestDistance-(3+3))/(imgw > imgh and imgw or imgh))
+if temp.size % 2 == 1 then temp.size = temp.size - 1 end
 
 local psize = temp.size--9 --Zoomed pixel size
 local imgdraw = {3,8+3, 0, psize,psize} --Image Location; IMG_DRAW
 local imgrecto = {imgdraw[1]-1,imgdraw[2]-1,psize*imgw+2,psize*imgh+2, false,0} --The image outline rect position
 local imggrid = {imgdraw[1],imgdraw[2], psize*imgw,psize*imgh, imgw,imgh} --The image drawing grid
+local imgquad = se.SpriteMap.img:quad(0,0,imgw,imgh) --The sprite quad
 
 --The Color Selection Pallete--
 temp = {col=-1,height=transdraw[3]-(8+3+3)} --Temporary Variable
@@ -88,8 +90,9 @@ local colsR = 0 --Selected Color for the right mouse
 
 --Zoom Slider--
 local zoom = 1 --The current zoom level
+local zscale = 1 --The current zoom scaling factor
 local zflag = "none" --Zoom mouse flag
-local zslider = {(imgrecto[1] + imgrecto[3] + palrecto[1])/2 - (5*8)/2, imgrecto[2]+2, 4, false, 186} --The Zoom Slider Draw
+local zslider = {(imgrecto[1] + imgrecto[3] + palrecto[1])/2 - (4*8)/2, imgrecto[2]+2, 3, false, 186} --The Zoom Slider Draw
 local zgrid = {zslider[1]+8,zslider[2]+2,8*zslider[3],4,zslider[3],1} --The Zoom Slider Mouse Grid
 
 --Info system variables--
@@ -311,7 +314,7 @@ end
 
 function se:redrawSPR()
   rect(imgrecto)
-  self.SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],self.SpriteMap:quad(sprsid))
+  self.SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],imgquad)
   rect(revdraw[1],revdraw[2], revdraw[3],revdraw[4] ,false,0)
   self.SpriteMap:image():draw(revdraw[1],revdraw[2], 0, 1,1, self.SpriteMap:quad(sprsid))
 end
@@ -386,13 +389,25 @@ function se:update(dt)
 end
 
 function se:updateZoom()
-  sprssrect[3] = zoom*8 + 2
-  sprssrect[4] = zoom*8 + 2
+  zscale = 2^(zoom-1)
+  
+  --Update the selection box size
+  sprssrect[3] = zscale*8 + 2
+  sprssrect[4] = zscale*8 + 2
+  
+  --Update the selection box position
   local cx, cy = (sprssrect[1]+1)/8 +1, (sprssrect[2]-sprsrecto[2])/8 +1
-  cx, cy = math.min(cx-1,sprsgrid[5]-zoom), math.min(cy-1,sprsgrid[6]-zoom)
+  cx, cy = math.min(cx-1,sprsgrid[5]-zscale), math.min(cy-1,sprsgrid[6]-zscale)
   sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
   sprssrect[1] = cx*8-1
   sprssrect[2] = sprsrecto[2]+cy*8
+  
+  --Update the quad
+  imgquad:setViewport(cx*8,cy*8,imgw*zscale,imgh*zscale)
+  
+  --Update the drawing box
+  imgdraw[4], imgdraw[5] = psize/zscale, psize/zscale
+  imggrid[5], imggrid[6] = imgw*zscale, imgh*zscale
 end
 
 function se:mousepressed(x,y,b,it)
@@ -421,16 +436,17 @@ function se:mousepressed(x,y,b,it)
     sprsbank = cx
     local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
     if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*sheetW*bankH elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*sheetW*bankH end
-    self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
+    self:updateZoom() self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
   end
   
   --Sprite Selection
   local cx, cy = whereInGrid(x,y,sprsgrid)
   if cx then
-    local cx, cy = math.min(cx-1,sprsgrid[5]-zoom), math.min(cy-1,sprsgrid[6]-zoom)
+    local cx, cy = math.min(cx-1,sprsgrid[5]-zscale), math.min(cy-1,sprsgrid[6]-zscale)
     sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
     sprssrect[1] = cx*8 -1
     sprssrect[2] = sprsrecto[2]+cy*8
+    imgquad:setViewport(cx*8,cy*8,imgw*zscale,imgh*zscale)
     
     self:redrawSPRS() self:redrawSPR() self:redrawFLAG() sprsmflag = true
   end
@@ -441,7 +457,7 @@ function se:mousepressed(x,y,b,it)
     zflag = "down"
     zoom = cx; self:updateZoom()
     cursor("handpress")
-    self:redrawSPRS() self:redrawZSlider()
+    self:redrawSPRS() self:redrawSPR() self:redrawZSlider()
   end
   
   --Tool Selection
@@ -498,10 +514,11 @@ function se:mousemoved(x,y,dx,dy,it)
   if (not it and sprsmflag) or it then
     local cx, cy = whereInGrid(x,y,sprsgrid)
     if cx then
-      local cx, cy = math.min(cx-1,sprsgrid[5]-zoom), math.min(cy-1,sprsgrid[6]-zoom)
+      local cx, cy = math.min(cx-1,sprsgrid[5]-zscale), math.min(cy-1,sprsgrid[6]-zscale)
       sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
       sprssrect[1] = cx*8-1
       sprssrect[2] = sprsrecto[2]+cy*8
+      imgquad:setViewport(cx*8,cy*8,imgw*zscale,imgh*zscale)
       
       self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
     end
@@ -512,7 +529,7 @@ function se:mousemoved(x,y,dx,dy,it)
   if cx then
     if zflag == "down" then
       zoom = cx; self:updateZoom()
-      self:redrawSPRS() self:redrawZSlider()
+      self:redrawSPRS() self:redrawSPR() self:redrawZSlider()
     else
       zflag = "hover"
       cursor("handrelease")
@@ -539,10 +556,11 @@ function se:mousereleased(x,y,b,it)
   if (not it and sprsmflag) or it then
     local cx, cy = whereInGrid(x,y,sprsgrid)
     if cx then
-      local cx, cy = math.min(cx-1,sprsgrid[5]-zoom), math.min(cy-1,sprsgrid[6]-zoom)
+      local cx, cy = math.min(cx-1,sprsgrid[5]-zscale), math.min(cy-1,sprsgrid[6]-zscale)
       sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
       sprssrect[1] = cx*8-1
       sprssrect[2] = sprsrecto[2]+cy*8
+      imgquad:setViewport(cx*8,cy*8,imgw*zscale,imgh*zscale)
       
       self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
     end
@@ -556,7 +574,7 @@ function se:mousereleased(x,y,b,it)
       zoom = cx; self:updateZoom()
       zflag = "hover"
       cursor("handrelease")
-      self:redrawSPRS() self:redrawZSlider()
+      self:redrawSPRS() self:redrawSPR() self:redrawZSlider()
     else
       zflag = "hover"
       cursor("handrelease")
