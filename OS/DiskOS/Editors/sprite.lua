@@ -73,12 +73,6 @@ local imgdraw = {3,8+3, 0, psize,psize} --Image Location; IMG_DRAW
 local imgrecto = {imgdraw[1]-1,imgdraw[2]-1,psize*imgw+2,psize*imgh+2, false,0} --The image outline rect position
 local imggrid = {imgdraw[1],imgdraw[2], psize*imgw,psize*imgh, imgw,imgh} --The image drawing grid
 
---Zoom Slider--
-local zoom = 1 --The current zoom level
-local zflag = "none" --Zoom mouse flag
-local zslider = {imgrecto[1] + imgrecto[3] + 2, imgrecto[2]+2, 6, false, 186} --The Zoom Slider Draw
-local zgrid = {zslider[1]+8,zslider[2]+1,8*zslider[3],6,zslider[3],1} --The Zoom Slider Mouse Grid
-
 --The Color Selection Pallete--
 temp = {col=-1,height=transdraw[3]-(8+3+3)} --Temporary Variable
 local palpsize = math.floor(temp.height/4) --The size of each color box in the color selection pallete
@@ -91,6 +85,12 @@ local colsrectL = {palrecto[1],palrecto[2],palpsize+2,palpsize+2, true, 7} --The
 local colsrectR = {paldraw[1],paldraw[2],palpsize,palpsize, true, 0} --The color select box for the right mouse button (The white one)
 local colsL = 0 --Selected Color for the left mouse
 local colsR = 0 --Selected Color for the right mouse
+
+--Zoom Slider--
+local zoom = 1 --The current zoom level
+local zflag = "none" --Zoom mouse flag
+local zslider = {(imgrecto[1] + imgrecto[3] + palrecto[1])/2 - (5*8)/2, imgrecto[2]+2, 4, false, 186} --The Zoom Slider Draw
+local zgrid = {zslider[1]+8,zslider[2]+2,8*zslider[3],4,zslider[3],1} --The Zoom Slider Mouse Grid
 
 --Info system variables--
 local infotimer = 0 --The info timer, 0 if no info.
@@ -388,7 +388,11 @@ end
 function se:updateZoom()
   sprssrect[3] = zoom*8 + 2
   sprssrect[4] = zoom*8 + 2
-  
+  local cx, cy = (sprssrect[1]+1)/8 +1, (sprssrect[2]-sprsrecto[2])/8 +1
+  cx, cy = math.min(cx-1,sprsgrid[5]-zoom), math.min(cy-1,sprsgrid[6]-zoom)
+  sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
+  sprssrect[1] = cx*8-1
+  sprssrect[2] = sprsrecto[2]+cy*8
 end
 
 function se:mousepressed(x,y,b,it)
@@ -423,8 +427,8 @@ function se:mousepressed(x,y,b,it)
   --Sprite Selection
   local cx, cy = whereInGrid(x,y,sprsgrid)
   if cx then
-    sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
-    local cx, cy = cx-1, cy-1
+    local cx, cy = math.min(cx-1,sprsgrid[5]-zoom), math.min(cy-1,sprsgrid[6]-zoom)
+    sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
     sprssrect[1] = cx*8 -1
     sprssrect[2] = sprsrecto[2]+cy*8
     
@@ -494,8 +498,8 @@ function se:mousemoved(x,y,dx,dy,it)
   if (not it and sprsmflag) or it then
     local cx, cy = whereInGrid(x,y,sprsgrid)
     if cx then
-      sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
-      local cx, cy = cx-1, cy-1
+      local cx, cy = math.min(cx-1,sprsgrid[5]-zoom), math.min(cy-1,sprsgrid[6]-zoom)
+      sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
       sprssrect[1] = cx*8-1
       sprssrect[2] = sprsrecto[2]+cy*8
       
@@ -535,8 +539,8 @@ function se:mousereleased(x,y,b,it)
   if (not it and sprsmflag) or it then
     local cx, cy = whereInGrid(x,y,sprsgrid)
     if cx then
-      sprsid = (cy-1)*sheetW+cx+(sprsbank*sheetW*bankH-sheetW*bankH)
-      local cx, cy = cx-1, cy-1
+      local cx, cy = math.min(cx-1,sprsgrid[5]-zoom), math.min(cy-1,sprsgrid[6]-zoom)
+      sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
       sprssrect[1] = cx*8-1
       sprssrect[2] = sprsrecto[2]+cy*8
       
