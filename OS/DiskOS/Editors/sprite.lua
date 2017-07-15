@@ -150,10 +150,14 @@ local tools = {
   end
 }
 
+local function extractSprite()
+  local quadx, quady, quadw, quadh = imgquad:getViewport()
+  return imagedata(quadw, quadh):paste(se.SpriteMap.img:data(),0,0,quadx,quady,quadw,quadh)
+end
+
 --The transformations code--
 local function transform(tfunc)
-  local quadx, quady, quadw, quadh = imgquad:getViewport()
-  local current = imagedata(quadw, quadh):paste(se.SpriteMap.img:data(),0,0,quadx,quady,quadw,quadh)
+  local current = extractSprite()
   local new = imagedata(current:width(),current:height())
   current:map(function(x,y,c)
     local nx,ny,nc = tfunc(x,y,c,current:width(),current:height())
@@ -255,7 +259,8 @@ function se:import(data)
 end
 
 function se:copy()
-  clipboard(string.lower(self.SpriteMap:extract(sprsid):encode():gsub("\n",""):sub(17,-1)))
+  local headerlen = 15 + (tostring(8*zscale):len()*2)
+  clipboard(string.lower(extractSprite():encode():gsub("\n",""):sub(headerlen,-1)))
   infotimer = 2 --Show info for 2 seconds
   infotext = "COPIED SPRITE "..sprsid
   self:redrawINFO()
