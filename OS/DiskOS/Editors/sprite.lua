@@ -116,8 +116,9 @@ local tools = {
     local col = (b == 2 or isMDown(2)) and colsR or colsL
     local tofill = data:getPixel(qx+cx-1,qy+cy-1)
     if tofill == col then return end
-    local function spixel(x,y) if x >= qx and x <= qx+7 and y >= qy and y <= qy+7 then data:setPixel(x,y,col) end end
-    local function gpixel(x,y) if x >= qx and x <= qx+7 and y >= qy and y <= qy+7 then return data:getPixel(x,y) else return false end end
+    local size = 8*zscale - 1
+    local function spixel(x,y) if x >= qx and x <= qx+size and y >= qy and y <= qy+size then data:setPixel(x,y,col) end end
+    local function gpixel(x,y) if x >= qx and x <= qx+size and y >= qy and y <= qy+size then return data:getPixel(x,y) else return false end end
     local function mapPixel(x,y)
       if gpixel(x,y) and gpixel(x,y) == tofill then spixel(x,y) end
       if gpixel(x+1,y) and gpixel(x+1,y) == tofill then mapPixel(x+1,y) end
@@ -140,7 +141,8 @@ local tools = {
   function(self) --Delete (Erase)
     local data = self.SpriteMap:data()
     local qx,qy = self.SpriteMap:rect(sprsid)
-    for px = 0, 7 do for py = 0, 7 do
+    local size = 8*zscale - 1
+    for px = 0, size do for py = 0, size do
       data:setPixel(qx+px,qy+py,0)
     end end
     self.SpriteMap.img = data:image()
@@ -150,7 +152,8 @@ local tools = {
 
 --The transformations code--
 local function transform(tfunc)
-  local current = se.SpriteMap:extract(sprsid)
+  local quadx, quady, quadw, quadh = imgquad:getViewport()
+  local current = imagedata(quadw, quadh):paste(se.SpriteMap.img:data(),0,0,quadx,quady,quadw,quadh)
   local new = imagedata(current:width(),current:height())
   current:map(function(x,y,c)
     local nx,ny,nc = tfunc(x,y,c,current:width(),current:height())
