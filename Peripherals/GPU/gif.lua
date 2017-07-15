@@ -4,16 +4,21 @@
 local _ColorSet, _GIFScale, _LIKO_W, _LIKO_H = unpack({...})
 local palmap={}
 
+local lshift, rshift, band = bit.lshift, bit.rshift, bit.band
+local strchar = string.char
+local mthmin = math.min
+local tostring=tostring
+
 for i=0, 15 do
 	local palette=_ColorSet[i]
-	local value=bit.lshift(palette[1], 16)+bit.lshift(palette[2], 8)+palette[3]
+	local value=lshift(palette[1], 16)+lshift(palette[2], 8)+palette[3]
 	palmap[i]=value
 	palmap[value]=i
 end
 
 	
 local function num2str(data)
-	return string.char(bit.band(data, 0xFF), bit.rshift(data, 8))
+	return strchar(band(data, 0xFF), rshift(data, 8))
 end
 
 local gif={}
@@ -21,6 +26,8 @@ local gif={}
 function gif:frame(data)
 	self.file:write("\33\249\4\4\3\0\0\0")
 	local last=self.last
+  local lastget = last.getPixel
+  local dataget = data.getPixel
 	local x0, y0, x1, y1=0, nil, _LIKO_W*_GIFScale-1, _LIKO_H*_GIFScale-1
 	if self.first then
 		y0=0
@@ -29,8 +36,8 @@ function gif:frame(data)
 		for y=0, y1 do
 			local kill=false
 			for x=x0, x1 do
-				local r1, g1, b1=last:getPixel(x, y)
-				local r2, g2, b2=data:getPixel(x, y)
+				local r1, g1, b1=lastget(last, x, y)
+				local r2, g2, b2=dataget(data, x, y)
 				if r1~=r2 or g1~=g2 or b1~=b2 then
 					y0=y
 					kill=true
@@ -48,8 +55,8 @@ function gif:frame(data)
 		for x=x0, x1 do
 			local kill=false
 			for y=y0, y1 do
-				local r1, g1, b1=last:getPixel(x, y)
-				local r2, g2, b2=data:getPixel(x, y)
+				local r1, g1, b1=lastget(last, x, y)
+				local r2, g2, b2=dataget(data, x, y)
 				if r1~=r2 or g1~=g2 or b1~=b2 then
 					x0=x
 					kill=true
@@ -63,8 +70,8 @@ function gif:frame(data)
 		for y=y1, y0, -1 do
 			local kill=false
 			for x=x0, x1 do
-				local r1, g1, b1=last:getPixel(x, y)
-				local r2, g2, b2=data:getPixel(x, y)
+				local r1, g1, b1=lastget(last, x, y)
+				local r2, g2, b2=dataget(data, x, y)
 				if r1~=r2 or g1~=g2 or b1~=b2 then
 					y1=y
 					kill=true
@@ -78,8 +85,8 @@ function gif:frame(data)
 		for x=x1, x0, -1 do
 			local kill=false
 			for y=y0, y1 do
-				local r1, g1, b1=last:getPixel(x, y)
-				local r2, g2, b2=data:getPixel(x, y)
+				local r1, g1, b1=lastget(last, x, y)
+				local r2, g2, b2=dataget(data, x, y)
 				if r1~=r2 or g1~=g2 or b1~=b2 then
 					x1=x
 					kill=true
@@ -94,15 +101,15 @@ function gif:frame(data)
 	self.file:write("\44"..num2str(x0)..num2str(y0)..num2str(x1-x0+1)..num2str(y1-y0+1).."\0\4")
 	local codetbl={}
 	for i=0, 15 do
-		codetbl[string.char(i)]=i
+		codetbl[strchar(i)]=i
 	end
 	local last=17
 	local buffer=""
 	local stream={16}
 	for y=y0, y1 do
 		for x=x0, x1 do
-			local r, g, b=data:getPixel(x, y)
-			local index=string.char(palmap[bit.lshift(r, 16)+bit.lshift(g, 8)+b] or error("R:"..tostring(r).." G:"..tostring(g).." B:"..tostring(b).." X:"..x.." Y:"..y)) --FIXME PLEASE
+			local r, g, b=dataget(data, x, y)
+			local index=strchar(palmap[lshift(r, 16)+lshift(g, 8)+b] or error("R:"..tostring(r).." G:"..tostring(g).." B:"..tostring(b).." X:"..x.." Y:"..y)) --FIXME PLEASE
 			local temp=buffer..index
 			if codetbl[temp] then
 				buffer=temp
@@ -115,7 +122,7 @@ function gif:frame(data)
 					stream[#stream+1]=16
 					codetbl={}
 					for i=0, 15 do
-						codetbl[string.char(i)]=i
+						codetbl[strchar(i)]=i
 					end
 					last=17
 				end
@@ -131,12 +138,12 @@ function gif:frame(data)
 	local pack=0
 	local base=-16
 	for i=1, #stream do
-		pack=pack+bit.lshift(stream[i], bits)
+		pack=pack+lshift(stream[i], bits)
 		bits=bits+size
 		while bits>=8 do
 			bits=bits-8
-			output[#output+1]=string.char(bit.band(pack, 0xFF))
-			pack=bit.rshift(pack, 8)
+			output[#output+1]=strchar(band(pack, 0xFF))
+			pack=rshift(pack, 8)
 		end
 		if i-base>=2^size then
 			size=size+1
@@ -148,12 +155,12 @@ function gif:frame(data)
 	end
 	while bits>0 do
 		bits=bits-8
-		output[#output+1]=string.char(bit.band(pack, 0xFF))
-		pack=bit.rshift(pack, 8)
+		output[#output+1]=strchar(band(pack, 0xFF))
+		pack=rshift(pack, 8)
 	end
 	output=table.concat(output)
 	while #output>0 do
-		self.file:write(string.char(math.min(#output, 255))..output:sub(1, 255))
+		self.file:write(strchar(mthmin(#output, 255))..output:sub(1, 255))
 		output=output:sub(256)
 	end
 	self.file:write("\0")
@@ -183,7 +190,7 @@ function giflib.new(filename)
 	file:write("GIF89a"..num2str(_LIKO_W*_GIFScale)..num2str(_LIKO_H*_GIFScale).."\243\0\0")
 	for i=0, 15 do
 		local palette=_ColorSet[i]
-		file:write(string.char(palette[1], palette[2], palette[3]))
+		file:write(strchar(palette[1], palette[2], palette[3]))
 	end
 	file:write("\33\255\11NETSCAPE2.0\3\1\0\0\0") --For gif auto looping
 	local last=love.image.newImageData(_LIKO_W*_GIFScale, _LIKO_H*_GIFScale)
