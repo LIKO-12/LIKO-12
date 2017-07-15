@@ -14,6 +14,6 @@ save - Save the current game data from the editors.
 load - Load a game data to the editors.
 new - Clear the game data in the editors.
 run - Run the current game in the editors.
-portCart - A script for loading old LIKO-12 games.
+loadcart - A script for loading old LIKO-12 games.
 apis - List the peripherals api functions.
 peripherals - List the available peripherals.
