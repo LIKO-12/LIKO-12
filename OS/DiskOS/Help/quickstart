@@ -29,5 +29,10 @@ Type "install_demos" to install some demos,
 "load bump"
 "run"
 
+Type "install_games" to install some built-in games,
+"cd Games"
+"load snake"
+"run"
+
 Official documentation:
 http://liko-12.readthedocs.io/
