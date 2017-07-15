@@ -457,7 +457,7 @@ function se:mousepressed(x,y,b,it)
     zflag = "down"
     zoom = cx; self:updateZoom()
     cursor("handpress")
-    self:redrawSPRS() self:redrawSPR() self:redrawZSlider()
+    self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawZSlider()
   end
   
   --Tool Selection
@@ -529,7 +529,7 @@ function se:mousemoved(x,y,dx,dy,it)
   if cx then
     if zflag == "down" then
       zoom = cx; self:updateZoom()
-      self:redrawSPRS() self:redrawSPR() self:redrawZSlider()
+      self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawZSlider()
     else
       zflag = "hover"
       cursor("handrelease")
@@ -574,7 +574,7 @@ function se:mousereleased(x,y,b,it)
       zoom = cx; self:updateZoom()
       zflag = "hover"
       cursor("handrelease")
-      self:redrawSPRS() self:redrawSPR() self:redrawZSlider()
+      self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawZSlider()
     else
       zflag = "hover"
       cursor("handrelease")
