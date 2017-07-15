@@ -46,7 +46,7 @@ local flagsgrid = {swidth-(8*7+1),revdraw[2]-8-1, 8*7,6, 8,1} --The sprite flags
 local flagsdraw = {flagsgrid[1]-1,flagsgrid[2]-1} --The position of the first (leftmost) flag
 
 --Tools Selection--
-local toolsdraw = {104, revdraw[1]-(8*5+4),revdraw[2], 5,1, 1,1,false, eapi.editorsheet} --Tools draw arguments
+local toolsdraw = {104, 2,revdraw[2]-1, 5,1, 1,1,false, eapi.editorsheet} --Tools draw arguments
 local toolsgrid = {toolsdraw[2],toolsdraw[3], toolsdraw[4]*8,toolsdraw[5]*8, toolsdraw[4],toolsdraw[5]} --Tools Selection Grid
 local stool = 1 --Current selected tool id
 
@@ -55,7 +55,7 @@ local tbtime = 0.1125 --The blink time
 local tbflag = false --Is the blink timer activated ?
 
 --Transformations Selection--
-local transdraw = {109, flagsgrid[1]-(8*5+3),toolsdraw[3]-(8+3), 5,1, 1,1,false, eapi.editorsheet} --Transformations draw arguments
+local transdraw = {109, toolsdraw[2] + toolsdraw[4]*8 + 3,toolsdraw[3], 5,1, 1,1,false, eapi.editorsheet} --Transformations draw arguments
 local transgrid = {transdraw[2],transdraw[3], transdraw[4]*8, transdraw[5]*8, transdraw[4], transdraw[5]} --Transformations Selection Grid
 local strans --Selected Transformation
 
@@ -64,19 +64,15 @@ local transtime = 0.1125 --The blink time
 
 --The Sprite (That you are editing--
 --Temp is a variables used to hold values while calculating positions
-local temp = {SmallestX = transgrid[1] < toolsgrid[1] and transgrid[1] or toolsgrid[1]}
-temp.smallestDistance = sprsrecto[2]-8 < temp.SmallestX and sprsrecto[2]-8 or temp.SmallestX
-temp.size = math.floor((temp.smallestDistance-(3+3))/(imgw > imgh and imgw or imgh))
-if temp.size % 2 == 1 then temp.size = temp.size - 1 end
 
-local psize = temp.size--9 --Zoomed pixel size
-local imgdraw = {3,8+3, 0, psize,psize} --Image Location; IMG_DRAW
+local psize = 8--Zoomed pixel size
+local imgdraw = {2,8+2, 0, psize,psize} --Image Location; IMG_DRAW
 local imgrecto = {imgdraw[1]-1,imgdraw[2]-1,psize*imgw+2,psize*imgh+2, false,0} --The image outline rect position
 local imggrid = {imgdraw[1],imgdraw[2], psize*imgw,psize*imgh, imgw,imgh} --The image drawing grid
 local imgquad = se.SpriteMap.img:quad(0,0,imgw,imgh) --The sprite quad
 
 --The Color Selection Pallete--
-temp = {col=-1,height=transdraw[3]-(8+3+3)} --Temporary Variable
+temp = {col=-1,height=flagsdraw[2]-(8+3+3)} --Temporary Variable
 local palpsize = math.floor(temp.height/4) --The size of each color box in the color selection pallete
 local palimg = imagedata(4,4):map(function() temp.col = temp.col + 1 return temp.col end ):image() --The image of the color selection pallete
 local palrecto = {swidth-(palpsize*4+3+1),8+3-1, palpsize*4+2,palpsize*4+2, false, 0} --The outline rectangle of the color selection pallete
@@ -92,7 +88,7 @@ local colsR = 0 --Selected Color for the right mouse
 local zoom = 1 --The current zoom level
 local zscale = 1 --The current zoom scaling factor
 local zflag = "none" --Zoom mouse flag
-local zslider = {(imgrecto[1] + imgrecto[3] + palrecto[1])/2 - (4*8)/2, imgrecto[2]+2, 3, false, 186} --The Zoom Slider Draw
+local zslider = {(transdraw[2] + transdraw[4]*8 + revdraw[1])/2 - (4*8)/2, transdraw[3]+1, 3, false, 186} --The Zoom Slider Draw
 local zgrid = {zslider[1]+8,zslider[2]+2,8*zslider[3],4,zslider[3],1} --The Zoom Slider Mouse Grid
 
 --Info system variables--
