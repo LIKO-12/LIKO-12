@@ -26,11 +26,6 @@ I don't think anyone would want to edit anything in this file.
 
 love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
 
---DLL Path
-local OS = love.system.getOS()
-package.cpath = package.cpath .. ";.\\DLL\\?.dll"
-if OS == "Windows" then package.cpath = package.cpath .. ";.\\DLL\\Windows\\?.dll" end
-
 --Internal Callbacks--
 function love.load(args)
   love.filesystem.load("BIOS/init.lua")() --Initialize the BIOS.
@@ -42,10 +37,6 @@ function love.run(arg)
     events = require("Engine.events")
     events:register("love:reboot",function(args) --Code can trigger this event to do a soft restart.
       reboot = args or {}
-    end)
-    
-    events:register("love:threaderror",function(thread, errorstr)
-      error("Thread Error: "..errorstr)
     end)
    
     if love.math then

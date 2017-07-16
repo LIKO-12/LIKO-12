@@ -1,6 +1,13 @@
 --Liko12 Help System !
+if select(1,...) == "-?" then
+  printUsage(
+    "help","Displays the help info",
+    "help <topic>", "Displays a help topic"
+  )
+  return
+end
 
-local helpPATH = "C://Help/;C://Help/GPU/"
+local helpPATH = "C://Help/;C://Manual/Help/"
 local function nextPath()
   if helpPATH:sub(-1)~=";" then helpPATH=helpPATH..";" end
   return helpPATH:gmatch("(.-);")

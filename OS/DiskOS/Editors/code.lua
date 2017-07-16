@@ -63,6 +63,11 @@ local charGrid = {0,8, ce.sw,ce.sh-16, ce.tw, ce.th}
 
 ce.colorize = true --Color lua syntax
 
+ce.touches = {}
+ce.touchesNum = 0
+ce.touchscroll = 0
+ce.touchskipinput = false
+
 --A usefull print function with color support !
 function ce:colorPrint(tbl)
   pushColor()
@@ -108,6 +113,12 @@ function ce:checkPos()
   return flag
 end
 
+-- Make the cursor visible and reset the blink timer
+function ce:resetCursorBlink()
+  ce.btimer = 0
+  ce.bflag = true
+end
+
 --Draw the cursor blink
 function ce:drawBlink()
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
@@ -145,18 +156,21 @@ end
 function ce:textinput(t)
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
   self.cx = self.cx + t:len()
+  self:resetCursorBlink()
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
   self:drawLineNum()
 end
 
 function ce:gotoLineStart()
   self.cx = 1
+  self:resetCursorBlink()
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
   self:drawLineNum()
 end
 
 function ce:gotoLineEnd()
   self.cx = buffer[self.cy]:len()+1
+  self:resetCursorBlink()
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
   self:drawLineNum()
 end
@@ -173,6 +187,7 @@ function ce:insertNewLine()
   else
     buffer = lume.concat(lume.slice(buffer,0,self.cy-1),{newLine},lume.slice(buffer,self.cy,-1)) --Insert between 2 different lines
   end
+  self:resetCursorBlink()
   self:checkPos()
   self:drawBuffer()
   self:drawLineNum()
@@ -235,6 +250,7 @@ ce.keymap = {
         flag = true
       end
     end
+    self:resetCursorBlink()
     if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
@@ -249,12 +265,14 @@ ce.keymap = {
         flag = true
       end
     end
+    self:resetCursorBlink()
     if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
 
   ["up"] = function(self)
     self.cy = self.cy -1
+    self:resetCursorBlink()
     self:checkPos()
     self:drawBuffer()
     self:drawLineNum()
@@ -262,6 +280,7 @@ ce.keymap = {
 
   ["down"] = function(self)
     self.cy = self.cy +1
+    self:resetCursorBlink()
     self:checkPos()
     self:drawBuffer()
     self:drawLineNum()
@@ -270,6 +289,7 @@ ce.keymap = {
   ["backspace"] = function(self)
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx-1,self.cy)
+    self:resetCursorBlink()
     if self:checkPos() or lineChange then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
@@ -277,6 +297,7 @@ ce.keymap = {
   ["delete"] = function(self)
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx,self.cy)
+    self:resetCursorBlink()
     if self:checkPos() or lineChange then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
@@ -289,6 +310,7 @@ ce.keymap = {
     self.vy = self.vy-self.th
     if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
+    self:resetCursorBlink()
     self:drawBuffer()
   end,
 
@@ -296,6 +318,7 @@ ce.keymap = {
     self.vy = self.vy+self.th
     if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
+    self:resetCursorBlink()
     self:drawBuffer()
   end,
 
@@ -339,6 +362,10 @@ function ce:entered()
   cam("translate",0,1)
   self:drawBuffer()
   self:drawLineNum()
+  ce.touches = {}
+  ce.touchesNum = 0
+  ce.touchscroll = 0
+  ce.touchskipinput = false
 end
 
 function ce:leaved()
@@ -346,6 +373,7 @@ function ce:leaved()
 end
 
 function ce:mousepressed(x, y, button, istouch)
+  if istouch then return end
   local cx, cy = whereInGrid(x,y, charGrid)
   if cx then
     self.cx = self.vx + (cx-1)
@@ -363,7 +391,41 @@ function ce:wheelmoved(x, y)
   self:drawBuffer()
 end
 
-function ce:touchpressed() textinput(true) end
+function ce:touchpressed(id,x,y,dx,dy,p)
+  table.insert(self.touches,id)
+  self.touchesNum = self.touchesNum + 1
+end
+
+function ce:touchmoved(id,x,y,dx,dy,p)
+  if self.touchesNum > 1 then
+    textinput(false) self.touchskipinput = true
+    self.touchscroll = self.touchscroll + dy
+    if self.touchscroll >= 14 or self.touchscroll <= -14 then
+      ce:wheelmoved(0,self.touchscroll/14)
+      self.touchscroll = self.touchscroll - math.floor(self.touchscroll/14)
+    end
+  end
+end
+
+function ce:touchreleased(id,x,y,dx,dy,p)
+  table.remove(self.touches,lume.find(self.touches,id))
+  self.touchesNum = self.touchesNum - 1
+  if self.touchesNum == 0 then
+    if self.touchskipinput then
+      self.touchskipinput = false
+    else
+      textinput(true)
+      local cx, cy = whereInGrid(x,y, charGrid)
+      if cx then
+        self.cx = self.vx + (cx-1)
+        self.cy = self.vy + (cy-1)
+        self:checkPos()
+        self:drawBuffer()
+        self:drawLineNum()
+      end
+    end
+  end
+end
 
 function ce:update(dt)
   --Blink timer

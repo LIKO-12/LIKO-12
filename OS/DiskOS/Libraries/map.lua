@@ -1,13 +1,13 @@
 local path = select(1,...)
-return function(w,h,sheet)
+local function newMap(w,h,sheet)
   local Map = {}
   
   Map.w, Map.h = w or 24, h or 9
   --Initialize the map table
   Map.m = {}
-  for x=1, Map.w do
+  for x=0, Map.w-1 do
     Map.m[x] = {}
-    for y=1, Map.h do
+    for y=0, Map.h-1 do
       Map.m[x][y] = 0
     end
   end
@@ -18,8 +18,8 @@ return function(w,h,sheet)
   --If called with no args, it will return the map table.
   function Map:map(func)
     if func then
-      for y=1, self.h do
-        for x=1, self.w do
+      for y=0, self.h-1 do
+        for x=0, self.w-1 do
           self.m[x][y] = func(x,y,self.m[x][y]) or self.m[x][y]
         end
       end
@@ -30,21 +30,21 @@ return function(w,h,sheet)
   function Map:cell(x,y,newID)
     if x >= self.w or y >= self.h or x < 0 or y < 0 then return false, "out of range" end
     if newID then
-      self.m[x+1][y+1] = newID or 0
+      self.m[x][y] = newID or 0
       return self
     else
-      return self.m[x+1][y+1]
+      return self.m[x][y]
     end
   end
   
   function Map:cut(x,y,w,h)
-    local x,y,w,h = x or 0, y or 0, w or self.w-1, h or self.h-1
-    local nMap = require(path)(w,h)
+    local x,y,w,h = math.floor(x or 0), math.floor(y or 0), math.floor(w or self.w), math.floor(h or self.h)
+    local nMap = newMap(w,h)
     local m = nMap:map()
-    for my=1,h do
-      for mx=1,w do
-        if self.m[mx+x] and self.m[mx+x][my+y] then
-          m[mx][my] = self.m[mx+x][my+y]
+    for my=y, y+h-1 do
+      for mx=x, x+w-1 do
+        if self.m[mx] and self.m[mx][my] then
+          m[mx-x][my-y] = self.m[mx][my]
         end
       end
     end
@@ -60,7 +60,7 @@ return function(w,h,sheet)
     local cm = self:cut(x,y,w,h)
     cm:map(function(spx,spy,sprid)
       if sprid < 1 then return end
-      (self.sheet or sheet):draw(sprid,dx + spx*8*sx - 8*sx, dy + spy*8*sy - 8*sy, 0, sx, sy)
+      (self.sheet or sheet):draw(sprid,dx + spx*8*sx, dy + spy*8*sy, 0, sx, sy)
     end)
     return self
   end
@@ -68,13 +68,15 @@ return function(w,h,sheet)
   function Map:export()
     local data = "LK12;TILEMAP;"..self.w.."x"..self.h..";"
     self:map(function(x,y,sprid)
+      if x == 0 then data = data.."\n" end
       data = data..sprid..";"
     end)
     return data
   end
   
   function Map:import(data)
-    if not data:sub(0,13) == "LK12;TILEMAP;" then error("Wrong header") end
+    if not data:sub(1,13) == "LK12;TILEMAP;" then error("Wrong header") end
+    data = data:gsub("\n","")
     local w,h,mdata = string.match(data,"LK12;TILEMAP;(%d+)x(%d+);(.+)")
     local nextid = mdata:gmatch("(.-);")
     self:map(function(x,y,sprid)
@@ -92,3 +94,5 @@ return function(w,h,sheet)
   
   return Map
 end
+
+return newMap

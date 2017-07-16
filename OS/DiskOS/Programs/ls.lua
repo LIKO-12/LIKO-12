@@ -1,5 +1,13 @@
 --Lists the folders and files at the current directory.
 --The same of dir.lua
+
+if select(1,...) == "-?" then
+  printUsage(
+    "ls","Lists the files and folders in the current directory"
+  )
+  return
+end
+
 local term = require("C://terminal") --Require the terminal api.
 local dir = select(1,...) or ""
 local path = term.getpath() --Get the current active directory.

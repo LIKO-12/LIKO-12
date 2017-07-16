@@ -1,6 +1,16 @@
 --The BIOS should control the system of LIKO-12 and load the peripherals--
 --For now it's just a simple BIOS to get LIKO-12 working.
 
+local _LIKO_Version, _LIKO_Old = _LVer.magor..".".._LVer.minor..".".._LVer.patch..".".._LVer.build
+if love.filesystem.exists(".version") then
+  _LIKO_Old = love.filesystem.read(".version")
+  if _LIKO_Old == _LIKO_Version then
+    _LIKO_Old = false
+  end
+else
+  love.filesystem.write(".version",tostring(_LIKO_Version))
+end
+
 --Require the engine libraries--
 local events = require("Engine.events")
 local coreg = require("Engine.coreg")
@@ -69,7 +79,7 @@ local function P(per,m,conf)
   return success, peripheral, devkit, nocache
 end
 
-if not love.filesystem.exists("/bconf.lua") or true then
+if not love.filesystem.exists("/bconf.lua") or love.filesystem.exists("devmode.txt") or true then
   love.filesystem.write("/bconf.lua",love.filesystem.read("/BIOS/bconf.lua"))
 end
 
@@ -135,6 +145,10 @@ coreg:register(function()
   return true, DirectAPI
 end,"BIOS:DirectAPI")
 
+coreg:register(function()
+  return true, _LIKO_Version, _LIKO_Old
+end,"BIOS:GetVersion")
+
 local function exe(...) --Execute a LIKO12 api function (to handle errors)
   local args = {...}
   if args[1] then
@@ -173,13 +187,13 @@ if not fs then error("No HDD peripheral to boot from !") end
 --Installs a specific OS on the drive C
 local function installOS(os,path)
   local path = path or "/"
+  fs.drive("C") --Opereating systems are installed on C drive
   local files = love.filesystem.getDirectoryItems("/OS/"..os..path)
   for k,v in pairs(files) do
     if love.filesystem.isDirectory("/OS/"..os..path..v) then
       fs.newDirectory(path..v)
       installOS(os,path..v.."/")
     else
-      fs.drive("C") --Opereating systems are installed on C drive
       fs.write(path..v,love.filesystem.read("/OS/"..os..path..v))
     end
   end
@@ -198,7 +212,11 @@ end
 local function bootOS()
   fs.drive("C") --Switch to the C drive.
   
-  if not fs.exists("/boot.lua") or true then noOS() end
+  if not fs.exists("/boot.lua") or love.filesystem.exists("devmode.txt") then _LIKO_Old = false; noOS() end
+  
+  if _LIKO_Old then --Show update screen
+    noOS() --Nah just reflash
+  end
   
   local bootchunk, err = fs.load("/boot.lua")
   if not bootchunk then error(err or "") end --Must be replaced with an error screen.
@@ -239,7 +257,7 @@ if gpu then
       gpu.print("Copyright (C) Rami Sabbagh",15,13)
       
       gpu.printCursor(0,3,0)
-      gpu.print("NormBIOS Revision 060-008")
+      gpu.print("NormBIOS Revision 060-010")
       gpu.print("")
       
       gpu.print("Press DEL to enter setup",2,sh-7)

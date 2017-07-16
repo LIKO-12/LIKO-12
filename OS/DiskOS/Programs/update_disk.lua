@@ -1,11 +1,17 @@
 local source = select(1,...)
 
+if not source or source == "-?" then
+  printUsage(
+    "update_disk <disk>","Updates an outdated LIKO-12 disk"
+  )
+  return
+end
+
+
 local term = require("C://terminal")
 local eapi = require("C://Editors")
 
 if source then source = term.resolve(source)..".lk12" else source = eapi.filePath end
-
-if not source then color(8) print("Must provide path to the file to update") return end
 if not fs.exists(source) then color(8) print("File doesn't exists") return end
 if fs.isDirectory(source) then color(8) print("Couldn't load a directory !") return end
 

@@ -1,6 +1,6 @@
 --The terminal !--
-local PATH = "C://Programs/;"
-local curdrive, curdir, curpath = "C", "/", "C:///"
+local PATH = "D:/Programs/;C:/Programs/;"
+local curdrive, curdir, curpath = "D", "/", "D:/"
 
 local editor = require("C://Editors")
 
@@ -37,10 +37,10 @@ end
 local term = {}
 
 function term.init()
-  clear()
+  clear() fs.drive("D")
   SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
   printCursor(0,1,0)
-  color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
+  color(9) print("PRE",5*8+1,3) flip() sleep(0.125)
   cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  0.6") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
   flip() sleep(0.0625)
@@ -56,31 +56,32 @@ function term.setdrive(d)
   if type(d) ~= "string" then return error("DriveLetter must be a string, provided: "..type(d)) end
   if not fs.drives()[d] then return error("Drive '"..d.."' doesn't exists !") end
   curdrive = d
-  curpath = curdrive.."://"..curdir
+  curpath = curdrive..":/"..curdir
 end
 
 function term.setdirectory(d)
   if type(d) ~= "string" then return error("Directory must be a string, provided: "..type(d)) end
-  if not fs.exists(curdrive.."://"..d) then return error("Directory doesn't exists !") end
-  if not fs.isDirectory(curdrive.."://"..d) then return error("It must be a directory, not a file") end
-  if d:sub(0,1) ~= "/" then d = "/"..d end
-  if d:sub(-2,-1) ~= "/" then d = d.."/" end
-  d = d:gsub("//","/")
-  curdir = d
-  curpath = curdrive.."://"..d
+  local p = term.resolve(d)
+  if not fs.exists(p) then return error("Directory doesn't exists !") end
+  if not fs.isDirectory(p) then return error("It must be a directory, not a file") end
+  term.setpath(p)
 end
 
 function term.setpath(p)
   if type(p) ~= "string" then return error("Path must be a string, provided: "..type(p)) end
-  local dv, d = p:match("(.+)://(.+)")
-  if (not dv) or (not d) then return error("Invalied path: "..p) end
-  if not fs.drives()[dv] then return error("Drive '"..dv.."' doesn't exists !") end
-  if d:sub(0,1) ~= "/" then d = "/"..d end
-  if d:sub(-2,-1) ~= "/" then d = d.."/" end
-  if not fs.exists(dv.."://"..d) then return error("Directory doesn't exists !") end
-  if not fs.isDirectory(dv.."://"..d) then return error("It must be a directory, not a file") end
-  d = d:gsub("//","/")
-  curdrive, curdir, curpath = dv, d, dv.."://"..d
+  p = term.resolve(p)
+  if not fs.exists(p) then return error("Directory doesn't exists !") end
+  if not fs.isDirectory(p) then return error("It must be a directory, not a file") end
+  local drive, path
+  if p:sub(-2,-1) == ":/" then
+    drive = p:sub(1,-3)
+    path = ""
+  else
+    drive,path = p:match("(.+):/(.+)")
+  end
+  if p:sub(-1,-1) ~= "/" then p = p.."/" end
+  
+  curdrive, curdir, curpath = drive, "/"..path, p
 end
 
 function term.getpath() return curpath end
@@ -95,31 +96,48 @@ function term.prompt()
 end
 
 function term.resolve(path)
-  if path:sub(1,3) == "../" then
-    local fld = {} --A list of folders in the path
-    for p in string.gmatch(curdir,"(.-)/") do
-      table.insert(fld,p)
+  path = path:gsub("\\","/") --Windows users :P
+  
+  if path:sub(-1,-1) == ":" then -- C:
+    path = path.."/"
+    return path, fs.exists(path)
+  end
+  
+  if path:sub(-2,-1) == ":/" then -- C:/
+    return path, fs.exists(path)
+  end
+  
+  if not path:match("(.+):/(.+)") then
+    if path:sub(1,1) == "/" then -- /Programs
+      path = curdrive..":"..path
+    else
+      if curpath:sub(-1,-1) == "/" then
+        path = curpath..path -- Demos/bump
+      else
+        path = curpath.."/"..path -- Demos/bump
+      end
     end
-    if #fld == 0 then return curdrive..":///", fs.exists(curdrive..":///") end
-    table.remove(fld, #fld) --Remove the last directory
-    return curdrive..":///"..table.concat(fld,"/")..path:sub(4,-1), fs.exists(curdrive..":///"..table.concat(fld,"/")..path:sub(4,-1))
-  elseif path:sub(1,2) == "./" then return curpath..sub(3,-1), fs.exists(curpath..sub(3,-1))
-  elseif path == ".." then
-    local fld = {} --A list of folders in the path
-    for p in string.gmatch(curdir,"(.-)/") do
-      table.insert(fld,p)
+  end
+  
+  local d, p = path:match("(.+):/(.+)") --C:/./Programs/../Editors
+  if d and p then
+    p = "/"..p.."/"; local dirs = {}
+    p = p:gsub("/","//"):sub(2,-1)
+    for dir in string.gmatch(p,"/(.-)/") do
+      if dir == "." then
+        --Do nothing, it's useless
+      elseif dir == ".." then
+        if #dirs > 0 then
+          table.remove(dirs,#dirs) --remove the last directory
+        end
+      elseif dir ~= "" then
+        table.insert(dirs,dir)
+      end
     end
-    if #fld == 0 then return curdrive..":///", fs.exists(curdrive..":///") end
-    table.remove(fld, #fld) --Remove the last directory
-    return curdrive..":///"..table.concat(fld,"/"), fs.exists(curdrive..":///"..table.concat(fld,"/"))
-  elseif path == "." then return curpath, fs.exists(curpath) end
-  local d, p = path:match("(.+)://(.+)")
-  if d and p then return path, fs.exists(path) end
-  local d = path:match("(.+):") --ex: D:
-  if d then return d..":///", fs.exists(d..":///") end
-  local d = path:match("/(.+)")
-  if d then return curdrive.."://"..path, fs.exists(curdrive.."://"..path) end
-  return curpath..path, fs.exists(curpath..path)
+    
+    path = d..":/"..table.concat(dirs,"/")
+    return path, fs.exists(path)
+  end
 end
 
 function term.executeFile(file,...)
@@ -127,11 +145,12 @@ function term.executeFile(file,...)
   if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
   local ok, err = pcall(chunk,...)
   if not ok then color(8) print("\nERR: "..tostring(err)) color(7) return false, tostring(err) end
-  if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":///" end
+  if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":/" end
 end
 
 function term.execute(command,...)
   if not command then return false, "No command" end
+  command = string.lower(command)
   if fs.exists(curpath..command..".lua") then
     term.executeFile(curpath..command..".lua",...)
     color(8) pal() palt() cam() clip() return true
@@ -142,6 +161,7 @@ function term.execute(command,...)
       for _,file in ipairs(files) do
         if file == command..".lua" then
           term.executeFile(path..file,...)
+          textinput(true)
           color(7) pal() palt() cam() clip() return true
         end
       end

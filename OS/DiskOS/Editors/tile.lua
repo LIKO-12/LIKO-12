@@ -63,7 +63,7 @@ local panoldx, panoldy --Pan tool variables.
 local toolshold = {true,true,true,false,false,true,true} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
   function(self,state,x,y,cx,cy,dx,dy) --Pencil (Default)
-    if cx < 1 or cy < 1 or cx > MapW or cy > MapH or state == "outmove" or state == "outrelease" then return end --Out of range
+    if cx < 0 or cy < 0 or cx > MapW-1 or cy > MapH-1 or state == "outmove" or state == "outrelease" then return end --Out of range
     Map:cell(cx,cy,sprsid)
   end,
 
@@ -72,7 +72,7 @@ local tools = {
   end,
   
   function(self,state,x,y,cx,cy,dx,dy) --Eraser
-    if cx < 1 or cy < 1 or cx > MapW or cy > MapH or state == "outmove" or state == "outrelease" then return end --Out of range
+    if cx < 0 or cy < 0 or cx > MapW-1 or cy > MapH-1 or state == "outmove" or state == "outrelease" then return end --Out of range
     Map:cell(cx,cy,0)
   end,
   
@@ -162,7 +162,7 @@ function t:redrawMap()
   end
   --rect(1,9,Map:width()*8,Map:height()*8+2,false,1)
   clip(unpack(maprect))
-  Map:draw(maprect[1]-8+(mapdx%8),maprect[2]-8+(mapdy%8),-math.floor(mapdx/8),-math.floor(mapdy/8),MapVW+2,MapVH+2,false,false,SpriteMap)
+  Map:draw(maprect[1]-8+(mapdx%8),maprect[2]-8+(mapdy%8),-math.floor(mapdx/8)-1,-math.floor(mapdy/8)-1,MapVW+2,MapVH+2,false,false,SpriteMap)
   clip()
   palt(0,true)
 end
@@ -238,7 +238,7 @@ function t:mousepressed(x,y,b,it)
     local cx, cy = whereInGrid(x-(mapdx%8),y-(mapdy%8),mapgrid)
     if cx then
       if not it then mflag = true end
-      tools[stool](self,"press",x-mapdx,y-mapdy,cx-math.floor(mapdx/8),cy-math.floor(mapdy/8),0,0)
+      tools[stool](self,"press",x-mapdx,y-mapdy,cx-math.floor(mapdx/8)-1,cy-math.floor(mapdy/8)-1,0,0)
       self:redrawMap()
     end
   end
@@ -269,7 +269,7 @@ function t:mousemoved(x,y,dx,dy,it)
   if isInRect(x,y,maprect) then
     local cx, cy = whereInGrid(x-(mapdx%8),y-(mapdy%8),mapgrid)
     if cx and (it or mflag) then
-      tools[stool](self,"move",x-mapdx,y-mapdy,cx-math.floor(mapdx/8),cy-math.floor(mapdy/8),dx,dy)
+      tools[stool](self,"move",x-mapdx,y-mapdy,cx-math.floor(mapdx/8)-1,cy-math.floor(mapdy/8)-1,dx,dy)
       self:redrawMap()
     end
   elseif mflag then
@@ -305,7 +305,7 @@ function t:mousereleased(x,y,b,it)
   if isInRect(x,y,maprect) then
     local cx, cy = whereInGrid(x-(mapdx%8),y-(mapdy%8),mapgrid)
     if cx and (it or mflag) then
-      tools[stool](self,"release",x-mapdx,y-mapdy,cx-math.floor(mapdx/8),cy-math.floor(mapdy/8),0,0)
+      tools[stool](self,"release",x-mapdx,y-mapdy,cx-math.floor(mapdx/8)-1,cy-math.floor(mapdy/8)-1,0,0)
       self:redrawMap() mflag = false
     end
   elseif mflag then

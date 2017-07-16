@@ -2,6 +2,8 @@ LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 -- by HomineLudens
 
+Controls("none")
+
 --Shapes parameters Tables, 
 --feel free to add more:
 

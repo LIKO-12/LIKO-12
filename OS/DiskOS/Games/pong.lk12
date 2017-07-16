@@ -1,8 +1,9 @@
 LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 --Ping Pong By RamiLego4Game
---Controls: P1: W,S; P2: Up, Down
---Contorllable by touch on mobile devices.
+--Controllable by touch on mobile devices.
+
+Controls("touch")
 
 local fw, fh = fontSize()
 local sw, sh = screenSize()
@@ -74,20 +75,20 @@ function _update(dt)
  
  --Check players controls
  --Player 1
- if isKDown("w") then --UP
+ if btn(3,1) then --UP
   p1y = p1y - ps
  end
  
- if isKDown("s") then --DOWN
+ if btn(4,1) then --DOWN
   p1y = p1y + ps
  end
  
  --Player 2
- if isKDown("up") then --UP
+ if btn(3,2) then --UP
   p2y = p2y - ps
  end
  
- if isKDown("down") then --Down
+ if btn(4,2) then --Down
   p2y = p2y + ps
  end
  

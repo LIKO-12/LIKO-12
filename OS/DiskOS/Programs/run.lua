@@ -1,4 +1,10 @@
 --This file loads a lk12 disk and executes it
+if select(1,...) == "-?" then
+  printUsage(
+    "run","Runs the current loaded game"
+  )
+  return
+end
 
 --First we will start by obtaining the disk data
 --We will run the current code in the editor
@@ -52,18 +58,33 @@ memset(LuaCodeAddr, codeToBin(luacode:sub(1,20*1024)))
 local glob = _FreshGlobals()
 glob._G = glob --Magic ;)
 
-glob.loadstring = function(...)
- local chunk, err = loadstring(...)
- if not chunk then return nil, err end
- setfenv(chunk,glob)
- return chunk
-end
+local co
 
-glob.coroutine.create = function(chunk)
- --if type(chunk) == "function" then setfenv(chunk,glob) end
- local ok,co = pcall(coroutine.create,chunk)
- if not ok then return error(co) end
- return co 
+glob.getfenv = function(f)
+  if type(f) ~= "function" then return error("bad argument #1 to 'getfenv' (function expected, got "..type(f)) end
+  local ok, env = pcall(getfenv,f)
+  if not ok then return error(env) end
+  if env == _G then env = {} end --Protection
+  return env
+end
+glob.setfenv = function(f,env)
+  if type(f) ~= "function" then return error("bad argument #1 to 'setfenv' (function expected, got "..type(f)) end
+  if type(env) ~= "table" then return error("bad argument #2 to 'setfenv' (table expected, got "..type(env)) end
+  local oldenv = getfenv(f)
+  if oldenv == _G then return end --Trying to make a crash ! evil.
+  local ok, err = pcall(setfenv,f,env)
+  if not ok then return error(err) end
+end
+glob.loadstring = function(data)
+  local chunk, err = loadstring(data)
+  if not chunk then return nil, err end
+  setfenv(chunk,glob)
+  return chunk
+end
+glob.coroutine.running = function()
+  local curco = coroutine.running()
+  if co and curco == co then return end
+  return curco
 end
 
 --Add peripherals api
@@ -116,10 +137,86 @@ glob.SheetFlagsData = FlagsData
 glob.TileMap = TileMap
 glob.MapObj = mapobj
 
-local UsedDoFile = false --So it can be only used for once
+local json = require("C://Libraries/JSON")
+
+local pkeys = {}
+local rkeys = {}
+local dkeys = {}
+local tbtn = {false,false,false,false,false,false,false}
+
+local defaultbmap = {
+  {"left","right","up","down","z","x","c"}, --Player 1
+  {"s","f","e","d","tab","q","w"} --Player 2
+}
+
+if not fs.exists("C://keymap.json") then
+  fs.write("C://keymap.json",json:encode_pretty(defaultbmap))
+end
+
+do --So I can hide this part in ZeroBran studio
+  local bmap = json:decode(fs.read("C://keymap.json"))
+
+  function glob.btn(n,p)
+    local p = p or 1
+    if type(n) ~= "number" then return error("Button id must be a number, provided: "..type(n)) end
+    if type(p) ~= "number" then return error("Player id must be a number or nil, provided: "..type(p)) end
+    n, p = math.floor(n), math.floor(p)
+    if p < 1 or p > #bmap then return error("The Player id is out of range ("..p..") must be [1,"..#bmap.."]") end
+    local map = bmap[p]
+    if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
+    return dkeys[map[n]] or (p == 1 and tbtn[n])
+  end
+
+  function glob.btnp(n,p)
+    local p = p or 1
+    if type(n) ~= "number" then return error("Button id must be a number, provided: "..type(n)) end
+    if type(p) ~= "number" then return error("Player id must be a number or nil, provided: "..type(p)) end
+    n, p = math.floor(n), math.floor(p)
+    if p < 1 or p > #bmap then return error("The Player id is out of range ("..p..") must be [1,"..#bmap.."]") end
+    local map = bmap[p]
+    if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
+    if rkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] >= 2) then
+      return true, true
+    else
+      return pkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] == 0)
+    end
+  end
+
+  glob.__BTNUpdate = function(dt)
+    pkeys = {} --Reset the table (easiest way)
+    rkeys = {} --Reset the table (easiest way)
+    for k,v in pairs(dkeys) do
+      if not isKDown(k) then
+        dkeys[k] = nil
+      end
+    end
+    
+    for k,v in ipairs(tbtn) do
+      if v then
+        if tbtn[k] >= 2 then
+          tbtn[k] = 1.9
+        end
+        tbtn[k] = tbtn[k] + dt
+      end
+    end
+  end
+
+  glob.__BTNKeypressed = function(a,b)
+    pkeys[a] = true
+    rkeys[a] = b
+    dkeys[a] = true
+  end
+  
+  glob.__BTNTouchControl = function(state,n)
+    if state then
+      tbtn[n] = 0
+    else
+      tbtn[n] = false
+    end
+  end
+end
+
 glob.dofile = function(path)
-  if UsedDoFile then return error("dofile() can be only used for once !") end
-  UsedDoFile = true
   local chunk, err = fs.load(path)
   if not chunk then return error(err) end
   setfenv(chunk,glob)
@@ -127,6 +224,18 @@ glob.dofile = function(path)
   if not ok then return error(err) end
 end
 glob["__".."_".."autoEventLoop"] = autoEventLoop --Because trible _ are not allowed in LIKO-12
+
+--Libraries
+local function addLibrary(path,name)
+  local lib, err = loadstring(fs.read(path))
+  if not lib then error("Failed to load library ("..name.."): "..err) end
+  setfenv(lib,glob) 
+  glob[name] = lib()
+end
+
+addLibrary("C://Libraries/lume.lua","lume")
+addLibrary("C://Libraries/middleclass.lua","class")
+addLibrary("C://Libraries/bump.lua","bump")
 
 local helpersloader, err = loadstring(fs.read("C://Libraries/diskHelpers.lua"))
 if not helpersloader then error(err) end
@@ -136,17 +245,14 @@ setfenv(helpersloader,glob) helpersloader()
 setfenv(diskchunk,glob)
 
 --Create the coroutine
-local co = coroutine.create(diskchunk)
+co = coroutine.create(diskchunk)
 
 --Too Long Without Yielding
 local checkclock = true
 local eventclock = os.clock()
-local lastclock = os.clock()
-coroutine.sethook(co,function()
-  if os.clock() > lastclock + 3.5 and checkclock then
-    error("Too Long Without Yielding",2)
-  end
-end,"",10000)
+
+if isMobile() then TC.setInput(true) end
+textinput(not isMobile())
 
 --Run the thing !
 local function extractArgs(args,factor)
@@ -166,7 +272,6 @@ while true do
   end
   
   local args = {coroutine.resume(co,unpack(lastArgs))}
-  checkclock = false
   if not args[1] then
     local err = tostring(args[2])
     local pos = string.find(err,":") or 0
@@ -187,11 +292,10 @@ while true do
         end
       end
     end
-    lastclock = os.clock()
-    checkclock = true
   end
 end
 
-coroutine.sethook(co)
 clearEStack()
 print("")
+
+TC.setInput(false)

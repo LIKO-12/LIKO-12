@@ -1,6 +1,5 @@
 --Imports files--
 --For now it imports images--
-
 local source = select(1,...)
 local destination = select(2,...)
 
@@ -9,10 +8,17 @@ local eapi = require("C://Editors")
 
 local sw, sh = screenSize()
 
-if source then source = term.resolve(source) end
+if not source or source == "-?" then
+  printUsage(
+    "import <image>","Imports an image (gif, jpg, png)",
+    "import <image> <destination>","Converts an image to a .lk12 image file"
+  )
+  return
+end
+
+source = term.resolve(source)
 if destination then destination = term.resolve(destination) end
 
-if not source then color(8) print("Must provide path to the source file") return end
 if not fs.exists(source) then color(8) print("Source doesn't exists") return end
 if fs.isDirectory(source) then color(8) print("Source can't be a directory") return end
 if destination then if fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end end

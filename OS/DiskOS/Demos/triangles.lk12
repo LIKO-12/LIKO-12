@@ -2,6 +2,8 @@ LK12;OSData;DiskOS;DiskGame;V2;192x128;C:none;CLvl:0;
 ___luacode___
 --Random Triangles Demo
 --By RamiLego4Game
+Controls("none")
+
 --The table containing the triangle vertices
 local v = {}
 

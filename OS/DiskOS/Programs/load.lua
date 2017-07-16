@@ -3,14 +3,26 @@ local source = select(1,...)
 local term = require("C://terminal")
 local eapi = require("C://Editors")
 
-if source and source ~= "@clip" then source = term.resolve(source)..".lk12" elseif source ~= "@clip" then source = eapi.filePath end
+if source and source ~= "@clip" and source ~= "-?" then
+  source = term.resolve(source)
+  if source:sub(-5,-1) ~= ".lk12" then source = source..".lk12" end
+elseif source ~= "@clip" and source ~= "-?" then source = eapi.filePath end
 
-if not source then color(8) print("Must provide path to the file to load") return end
+if not source or source == "-?" then
+  printUsage(
+    "load <file>","Loads a game into memory",
+    "load","Reloads the current game",
+    "load @clip","Load from clipboard"
+  )
+  return
+end
 if source ~= "@clip" and not fs.exists(source) then color(8) print("File doesn't exists") return end
 if source ~= "@clip" and fs.isDirectory(source) then color(8) print("Couldn't load a directory !") return end
 
 local saveData = source == "@clip" and clipboard() or fs.read(source)
 if not saveData:sub(0,5) == "LK12;" then color(8) print("This is not a valid LK12 file !!") return end
+
+saveData = saveData:gsub("\r\n","\n")
 
 --LK12;OSData;OSName;DataType;Version;Compression;CompressLevel; data"
 --local header = "LK12;OSData;DiskOS;DiskGame;V"..saveVer..";"..sw.."x"..sh..";C:"
@@ -75,7 +87,9 @@ if not clevel then color(8) print("Invalid Data !") return end clevel = tonumber
 local data = saveData:sub(datasum+2,-1)
 
 if compress ~= "none" then --Decompress
-  data = math.decompress(data,compress,clevel)
+  local b64data, char = math.b64dec(data)
+  if not b64data then cprint(char) cprint(string.byte(char)) error(tostring(char)) end
+  data = math.decompress(b64data,compress,clevel)
 end
 
 eapi.filePath = source

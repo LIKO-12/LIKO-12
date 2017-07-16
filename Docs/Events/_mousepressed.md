@@ -1,5 +1,7 @@
 This function is called everytime a mouse button is pressed.
 
+**Important Note:** Besure to call [controls("mouse")](../DiskOS API/Controls.md) in the first line of the game !
+
 ---
 
 #### Syntax:
@@ -15,4 +17,4 @@ end
 
 * **x (Number)**: x position of cursor.
 * **y (Number)**: y position of cursor.
-* **button  (Number)**: pressed button (1 for left mouse button, 2 for right mouse button, 3 for middle mouse button).
+* **button  (Number)**: pressed button, check [MouseButtons Enum](../Enums/MouseButtons.md).
