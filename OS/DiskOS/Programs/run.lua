@@ -221,6 +221,15 @@ do --So I can hide this part in ZeroBran studio
       tbtn[n] = false
     end
   end
+  
+   glob.__BTNGamepad = function(state,n,id)
+    if not gpads[id] then gpads[id] = {false,false,false,false,false,false} end
+    if state then
+      gpads[id][n] = 0
+    else
+      gpads[id][n] = false
+    end
+  end
 end
 
 glob.dofile = function(path)

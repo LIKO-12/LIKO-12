@@ -105,6 +105,8 @@ function eventLoop()
       __BTNUpdate(a)
     elseif name == "touchcontrol" then
       __BTNTouchControl(a,b)
+    elseif name == "gamepad" then
+      __BTNGamepad(a,b,c)
     end
   end
 end
