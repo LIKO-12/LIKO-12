@@ -139,10 +139,11 @@ glob.MapObj = mapobj
 
 local json = require("C://Libraries/JSON")
 
-local pkeys = {}
-local rkeys = {}
-local dkeys = {}
-local tbtn = {false,false,false,false,false,false,false}
+local pkeys = {} --Pressed keys
+local rkeys = {} --Repeated keys
+local dkeys = {} --Down keys
+local tbtn = {false,false,false,false,false,false,false} --Touch buttons
+local gpads = {} --Gamepads
 
 local defaultbmap = {
   {"left","right","up","down","z","x","c"}, --Player 1
@@ -161,9 +162,12 @@ do --So I can hide this part in ZeroBran studio
     if type(n) ~= "number" then return error("Button id must be a number, provided: "..type(n)) end
     if type(p) ~= "number" then return error("Player id must be a number or nil, provided: "..type(p)) end
     n, p = math.floor(n), math.floor(p)
-    if p < 1 or p > #bmap then return error("The Player id is out of range ("..p..") must be [1,"..#bmap.."]") end
+    if p < 1  then return error("The Player id is negative ("..p..") it must be positive !") end
+    if n < 1 or n > 7 then return error("The Button id is out of range ("..n..") must be [1,7]") end
+    
+    
+    
     local map = bmap[p]
-    if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
     return dkeys[map[n]] or (p == 1 and tbtn[n])
   end
 
@@ -172,9 +176,12 @@ do --So I can hide this part in ZeroBran studio
     if type(n) ~= "number" then return error("Button id must be a number, provided: "..type(n)) end
     if type(p) ~= "number" then return error("Player id must be a number or nil, provided: "..type(p)) end
     n, p = math.floor(n), math.floor(p)
-    if p < 1 or p > #bmap then return error("The Player id is out of range ("..p..") must be [1,"..#bmap.."]") end
+    if p < 1  then return error("The Player id is negative ("..p..") it must be positive !") end
+    if n < 1 or n > 7 then return error("The Button id is out of range ("..n..") must be [1,7]") end
+    
+    
+    
     local map = bmap[p]
-    if n < 1 or n > #map then return error("The Button id is out of range ("..n..") must be [1,"..#map.."]") end
     if rkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] >= 2) then
       return true, true
     else
