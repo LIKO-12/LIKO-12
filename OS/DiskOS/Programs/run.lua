@@ -165,10 +165,11 @@ do --So I can hide this part in ZeroBran studio
     if p < 1  then return error("The Player id is negative ("..p..") it must be positive !") end
     if n < 1 or n > 7 then return error("The Button id is out of range ("..n..") must be [1,7]") end
     
-    
-    
     local map = bmap[p]
-    return dkeys[map[n]] or (p == 1 and tbtn[n])
+    local gmap = gpads[p]
+    if not (map or gmap) then return false end --Failed to find a controller
+    
+    return dkeys[map[n]] or (p == 1 and tbtn[n]) or (gmap and gmap[n])
   end
 
   function glob.btnp(n,p)
@@ -179,13 +180,14 @@ do --So I can hide this part in ZeroBran studio
     if p < 1  then return error("The Player id is negative ("..p..") it must be positive !") end
     if n < 1 or n > 7 then return error("The Button id is out of range ("..n..") must be [1,7]") end
     
-    
-    
     local map = bmap[p]
-    if rkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] >= 2) then
+    local gmap = gpads[p]
+    if not (map or gmap) then return false end --Failed to find a controller
+    
+    if rkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] >= 2) or (gmap and gmap[n] and gmap[n] >= 2) then
       return true, true
     else
-      return pkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] == 0)
+      return pkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] == 0) or (gmap and gmap[n] and gmap[n] == 0)
     end
   end
 
@@ -222,7 +224,7 @@ do --So I can hide this part in ZeroBran studio
     end
   end
   
-   glob.__BTNGamepad = function(state,n,id)
+  glob.__BTNGamepad = function(state,n,id)
     if not gpads[id] then gpads[id] = {false,false,false,false,false,false} end
     if state then
       gpads[id][n] = 0
