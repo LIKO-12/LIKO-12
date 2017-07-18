@@ -31,6 +31,9 @@ local GPU, GPUKit = assert(P("GPU","GPU",{
 }))
 local VRAMHandler = GPUKit.VRAMHandler
 
+--Create gamepad contols
+assert(P("Gamepad","Gamepad",{CPUKit = CPUKit}))
+
 --Create Touch Controls
 assert(P("TouchControls","TC",{CPUKit = CPUKit, GPUKit = GPUKit}))
 
