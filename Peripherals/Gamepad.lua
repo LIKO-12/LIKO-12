@@ -1,4 +1,5 @@
 local events = require("Engine.events")
+local coreg = require("Engine.coreg")
 
 return function(config) --A function that creates a new Gamepad peripheral.
   local GP, devkit, indirect = {}, {}, {}
@@ -6,8 +7,19 @@ return function(config) --A function that creates a new Gamepad peripheral.
   local CPUKit = config.CPUKit
   if not CPUKit then error("The gamepad peripheral can't work without the CPUKit passed !") end
   
-  local deadzone = config.deadzone or 0.3
+  if love.filesystem.exists("GamepadMapping.txt") then
+    love.joystick.loadGamepadMappings("GamepadMapping.txt")
+  end
+  
+  local debug = config.debug
+  
+  local deadzone = config.deadzone or 0.49
   local axisMemory = {}
+  
+  local mappingState = false --Is joystick -> gamepad mapping mode active ?
+  local alreadyMapped = {}
+  
+  local buttonsids = { "leftx","lefty","dpleft","dpright","dpup","dpdown","a","b","start" }
   
   local map = {
     ["dpleft"] = 1,
@@ -20,22 +32,28 @@ return function(config) --A function that creates a new Gamepad peripheral.
   }
   
   events:register("love:joystickadded",function(joystick)
-    print("Joystick Connected ! Gamepad = "..tostring(joystick:isGamepad())..", ID = "..joystick:getID()..", GUID = "..joystick:getGUID())
+    print("Joystick Connected ! Gamepad: "..tostring(joystick:isGamepad())..", ID: "..joystick:getID()..", GUID: "..joystick:getGUID()..", Name: "..joystick:getName())
   end)
   
   events:register("love:gamepadpressed",function(joystick, button)
+    if mappingState then return end
+    
     local id = joystick:getID()
     if not map[button] then return end --The button doesn't have a binding.
     CPUKit.triggerEvent("gamepad",true,map[button],id)
   end)
   
   events:register("love:gamepadreleased",function(joystick, button)
+    if mappingState then return end
+    
     local id = joystick:getID()
     if not map[button] then return end --The button doesn't have a binding.
     CPUKit.triggerEvent("gamepad",false,map[button],id)
   end)
   
   events:register("love:gamepadaxis",function(joystick, axis)
+    if mappingState then return end
+    
     local id = joystick:getID()
     
     if not axisMemory[id] then axisMemory[id] = {false,false,false,false} end
@@ -50,7 +68,7 @@ return function(config) --A function that creates a new Gamepad peripheral.
         return
       end
       
-      if value > 0 then --Left
+      if value < 0 then --Left
         if memory[2] then CPUKit.triggerEvent("gamepad",false,2,id); memory[2] = false end
         if not memory[1] then CPUKit.triggerEvent("gamepad",true,1,id); memory[1] = true end
       else --Right
@@ -65,13 +83,85 @@ return function(config) --A function that creates a new Gamepad peripheral.
         return
       end
       
-      if value > 0 then --Up
+      if value < 0 then --Up
         if memory[4] then CPUKit.triggerEvent("gamepad",false,4,id); memory[4] = false end
         if not memory[3] then CPUKit.triggerEvent("gamepad",true,3,id); memory[3] = true end
       else --Down
         if memory[3] then CPUKit.triggerEvent("gamepad",false,3,id); memory[3] = false end
         if not memory[4] then CPUKit.triggerEvent("gamepad",true,4,id); memory[4] = true end
       end
+    end
+  end)
+  
+  function GP._GetGUID()
+    mappingState = {mode="getGUID"}
+    return true
+  end
+  
+  function GP._MapButton(guid,bid)
+    local axis = (bid < 3)
+    if axis then
+      mappingState = {mode="MapAxis",guid=guid,id=buttonsids[bid]}
+    else
+      mappingState = {mode="MapButton",guid=guid,id=buttonsids[bid]}
+    end
+    return true
+  end
+  
+  function GP._CancelMapping()
+    mappingState = false
+    return true
+  end
+  
+  function GP._SaveMap()
+    return true, love.joystick.saveGamepadMappings("GamepadMapping.txt")
+  end
+  
+  events:register("love:joystickpressed",function(joystick,button)
+    if debug then print("Joystick pressed",button) end
+    if not mappingState then return end
+    if mappingState.mode == "getGUID" then
+      mappingState = false
+      CPUKit.triggerEvent("_gamepadmap",joystick:getGUID())
+    elseif mappingState.mode == "MapButton" then
+      local guid = joystick:getGUID()
+      local bid = mappingState.id
+      if not guid == mappingState.guid then return end --It's not the joystick we are mapping !
+      mappingState = false
+      CPUKit.triggerEvent("_gamepadmap",love.joystick.setGamepadMapping(guid,bid,"button",button))
+    end
+  end)
+  
+  events:register("love:joystickaxis",function(joystick,axis,value)
+    if debug then print("Joystick axis",axis,value) end
+    if not mappingState then return end
+    if math.abs(value) < deadzone then return end
+    if mappingState.mode == "getGUID" then
+      mappingState = false
+      coreg:resumeCoroutine(true,joystick:getGUID())
+    elseif mappingState.mode == "MapAxis" then
+      local guid = joystick:getGUID()
+      local bid = mappingState.id
+      if (not guid == mappingState.guid) or alreadyMapped[axis] then return end --It's not the joystick we are mapping !
+      mappingState = false
+      if bid == "leftx" then alreadyMapped[axis] = true else alreadyMapped = {} end
+      CPUKit.triggerEvent("_gamepadmap",love.joystick.setGamepadMapping(guid,bid,"axis",axis))
+    end
+  end)
+  
+  events:register("love:joystickhat",function(joystick,hat,direction)
+    if debug then print("Joystick hat",hat,direction) end
+    if not mappingState then return end
+    if direction == "c" or direction:len() > 1 then return end
+    if mappingState.mode == "getGUID" then
+      mappingState = false
+      coreg:resumeCoroutine(true,joystick:getGUID())
+    elseif mappingState.mode == "MapButton" then
+      local guid = joystick:getGUID()
+      local bid = mappingState.id
+      if not guid == mappingState.guid then return end --It's not the joystick we are mapping !
+      mappingState = false
+      CPUKit.triggerEvent("_gamepadmap",love.joystick.setGamepadMapping(guid,bid,"hat",hat,direction))
     end
   end)
   
