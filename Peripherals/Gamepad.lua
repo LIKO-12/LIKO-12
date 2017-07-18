@@ -19,6 +19,10 @@ return function(config) --A function that creates a new Gamepad peripheral.
     ["start"] = 7
   }
   
+  events:register("love:joystickadded",function(joystick)
+    print("Joystick Connected ! Gamepad = "..tostring(joystick:isGamepad())..", ID = "..joystick:getID()..", GUID = "..joystick:getGUID())
+  end)
+  
   events:register("love:gamepadpressed",function(joystick, button)
     local id = joystick:getID()
     if not map[button] then return end --The button doesn't have a binding.
