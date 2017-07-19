@@ -184,7 +184,7 @@ do --So I can hide this part in ZeroBran studio
     local gmap = gpads[p]
     if not (map or gmap) then return false end --Failed to find a controller
     
-    if rkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] >= 2) or (gmap and gmap[n] and gmap[n] >= 2) then
+    if rkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] >= 1) or (gmap and gmap[n] and gmap[n] >= 1) then
       return true, true
     else
       return pkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] == 0) or (gmap and gmap[n] and gmap[n] == 0)
@@ -202,8 +202,8 @@ do --So I can hide this part in ZeroBran studio
     
     for k,v in ipairs(tbtn) do
       if v then
-        if tbtn[k] >= 2 then
-          tbtn[k] = 1.9
+        if tbtn[k] >= 1 then
+          tbtn[k] = 0.9
         end
         tbtn[k] = tbtn[k] + dt
       end
@@ -212,8 +212,8 @@ do --So I can hide this part in ZeroBran studio
     for id, gpad in pairs(gpads) do
       for k,v in ipairs(gpad) do
         if v then
-          if gpad[k] >= 2 then
-            gpad[k] = 1.9
+          if gpad[k] >= 1 then
+            gpad[k] = 0.9
           end
           gpad[k] = gpad[k] + dt
         end
