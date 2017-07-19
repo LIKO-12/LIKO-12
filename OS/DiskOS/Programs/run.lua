@@ -208,6 +208,17 @@ do --So I can hide this part in ZeroBran studio
         tbtn[k] = tbtn[k] + dt
       end
     end
+    
+    for id, gpad in pairs(gpads) do
+      for k,v in ipairs(gpad) do
+        if v then
+          if gpad[k] >= 2 then
+            gpad[k] = 1.9
+          end
+          gpad[k] = gpad[k] + dt
+        end
+      end
+    end
   end
 
   glob.__BTNKeypressed = function(a,b)
