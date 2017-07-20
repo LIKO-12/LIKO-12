@@ -61,6 +61,10 @@ function split(inputstr, sep)
 end
 
 --Restore Require Function--
+local terminal = fs.load("C:/terminal.lua")("terminal")
+fs.load("C:/package.lua")(terminal)
+package.loaded["C:/terminal.lua"] = terminal
+
 local function extractArgs(args,factor)
   local nargs = {}
   for k,v in ipairs(args) do
@@ -69,26 +73,11 @@ local function extractArgs(args,factor)
   return nargs
 end
 
-package = {loaded  = {}} --Fake package system
-function require(path,...)
-  if type(path) ~= "string" then return error("Require path must be a string, provided: "..type(path)) end
-  path = path:gsub("%.","/")
-  if package.loaded[path] then return unpack(package.loaded[path]) end
-  local origPath = path
-  if not fs.exists(path..".lua") then path = path.."/init" end
-  local chunk, err = fs.load(path..".lua")
-  if not chunk then return error(err or "Load error ("..tostring(path)..")") end
-  local args = {pcall(chunk,path,...)}
-  if not args[1] then return error(args[2] or "Runtime error") end
-  package.loaded[origPath] = extractArgs(args,1)
-  return unpack(package.loaded[origPath])
-end
-
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
-require("C://api") --Load DiskOS APIs
-require("C://osapi") --Load DiskOS OS APIs
+require("api") --Load DiskOS APIs
+require("osapi") --Load DiskOS OS APIs
 
 local SWidth, SHeight = screenSize()
 
@@ -124,5 +113,5 @@ memset(0x008E, numToBin(SHeight,2)) --Spritesheet Height
 memset(0x0090, numToBin(SWidth*0.75,1)) --Map Width
 memset(0x0093, numToBin(SHeight,1)) --Map Height
 
-local terminal = require("C://terminal")
+terminal.init() --Initialize the terminal
 terminal.loop()

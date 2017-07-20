@@ -2,7 +2,7 @@
 local PATH = "D:/Programs/;C:/Programs/;"
 local curdrive, curdir, curpath = "D", "/", "D:/"
 
-local editor = require("C://Editors")
+local editor
 
 local function nextPath(p)
   if p:sub(-1)~=";" then p=p..";" end
@@ -37,6 +37,7 @@ end
 local term = {}
 
 function term.init()
+  editor = require("Editors") --Load the editors
   clear() fs.drive("D")
   SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
   printCursor(0,1,0)
@@ -171,7 +172,6 @@ function term.execute(command,...)
 end
 
 function term.loop() --Enter the while loop of the terminal
-  term.init()
   cursor("none")
   clearEStack()
   checkCursor() term.prompt()
