@@ -3,8 +3,8 @@ local flag = select(2,...) or ""
 local ctype = select(3,...) or "lz4"
 local clvl = tonumber(select(4,...) or "-1")
 
-local term = require("C://terminal")
-local eapi = require("C://Editors")
+local term = require("terminal")
+local eapi = require("Editors")
 
 
 if destination and destination ~= "@clip" and destination ~= "-?" then

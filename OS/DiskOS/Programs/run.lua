@@ -8,9 +8,9 @@ end
 
 --First we will start by obtaining the disk data
 --We will run the current code in the editor
-local term = require("C://terminal")
-local eapi = require("C://Editors")
-local mapobj = require("C://Libraries/map")
+local term = require("terminal")
+local eapi = require("Editors")
+local mapobj = require("Libraries/map")
 
 local sprid = 3 --"spritesheet"
 local codeid = 2 --"luacode"
@@ -116,7 +116,7 @@ for peripheral,funcs in pairs(perlist) do
  end
 end
 
-local apiloader = loadstring(fs.read("C://api.lua"))
+local apiloader = loadstring(fs.read("C:/api.lua"))
 setfenv(apiloader,glob) apiloader()
 
 local function autoEventLoop()
@@ -137,7 +137,7 @@ glob.SheetFlagsData = FlagsData
 glob.TileMap = TileMap
 glob.MapObj = mapobj
 
-local json = require("C://Libraries/JSON")
+local json = require("Libraries/JSON")
 
 local pkeys = {} --Pressed keys
 local rkeys = {} --Repeated keys
@@ -150,12 +150,12 @@ local defaultbmap = {
   {"s","f","e","d","tab","q","w"} --Player 2
 }
 
-if not fs.exists("C://keymap.json") then
-  fs.write("C://keymap.json",json:encode_pretty(defaultbmap))
+if not fs.exists("C:/keymap.json") then
+  fs.write("C:/keymap.json",json:encode_pretty(defaultbmap))
 end
 
 do --So I can hide this part in ZeroBran studio
-  local bmap = json:decode(fs.read("C://keymap.json"))
+  local bmap = json:decode(fs.read("C:/keymap.json"))
 
   function glob.btn(n,p)
     local p = p or 1
@@ -262,11 +262,11 @@ local function addLibrary(path,name)
   glob[name] = lib()
 end
 
-addLibrary("C://Libraries/lume.lua","lume")
-addLibrary("C://Libraries/middleclass.lua","class")
-addLibrary("C://Libraries/bump.lua","bump")
+addLibrary("C:/Libraries/lume.lua","lume")
+addLibrary("C:/Libraries/middleclass.lua","class")
+addLibrary("C:/Libraries/bump.lua","bump")
 
-local helpersloader, err = loadstring(fs.read("C://Libraries/diskHelpers.lua"))
+local helpersloader, err = loadstring(fs.read("C:/Libraries/diskHelpers.lua"))
 if not helpersloader then error(err) end
 setfenv(helpersloader,glob) helpersloader()
 

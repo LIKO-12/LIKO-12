@@ -3,8 +3,8 @@
 local source = select(1,...)
 local destination = select(2,...)
 
-local term = require("C://terminal")
-local eapi = require("C://Editors")
+local term = require("terminal")
+local eapi = require("Editors")
 
 local sw, sh = screenSize()
 

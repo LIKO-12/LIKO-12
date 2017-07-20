@@ -6,8 +6,8 @@ if select(1,...) == "-?" then
 end
 
 fs.newDirectory("D://Games/")
-for k,v in ipairs(fs.directoryItems("C://Games/")) do
-  local data = fs.read("C://Games/"..v)
+for k,v in ipairs(fs.directoryItems("C:/Games/")) do
+  local data = fs.read("C:/Games/"..v)
   fs.write("D://Games/"..v, data)
 end
 color(11) print("Installed to D://Games/")

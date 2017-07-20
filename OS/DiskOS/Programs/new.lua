@@ -5,7 +5,7 @@ if select(1,...) == "-?" then
   return
 end
 
-local eapi = require("C://Editors")
+local eapi = require("Editors")
 eapi.filePath = nil
 eapi:clearData()
 color(11) print("Cleared editors data successfully")

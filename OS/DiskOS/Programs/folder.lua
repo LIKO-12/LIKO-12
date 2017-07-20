@@ -7,5 +7,5 @@ if select(1,...) == "-?" then
   return
 end
 
-local term = require("C://terminal")
+local term = require("terminal")
 openAppData("/drives/"..term.getdrive()..term.getdirectory())

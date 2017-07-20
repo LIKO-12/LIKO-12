@@ -37,8 +37,8 @@ local ce = {} --Code editor
 local buffer = {""} --A table containing lines of code
 
 local screenW, screenH = screenSize()
-local lume = require("C://Libraries/lume")
-local clua = require("C://Libraries/colorize_lua")
+local lume = require("Libraries/lume")
+local clua = require("Libraries/colorize_lua")
 local cluacolors = {
 text = 7,
 keyword = 10,

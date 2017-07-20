@@ -1,7 +1,7 @@
 local source = select(1,...)
 
-local term = require("C://terminal")
-local eapi = require("C://Editors")
+local term = require("terminal")
+local eapi = require("Editors")
 
 if source and source ~= "@clip" and source ~= "-?" then
   source = term.resolve(source)

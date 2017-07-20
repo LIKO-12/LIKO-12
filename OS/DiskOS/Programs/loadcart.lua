@@ -7,8 +7,8 @@ if #args < 1 or args[1] == "-?" then
  return
 end
 
-local term = require("C://terminal")
-local eapi = require("C://Editors")
+local term = require("terminal")
+local eapi = require("Editors")
 
 local function printErr(...)
  local str = table.concat({...})

@@ -60,7 +60,7 @@ function edit:initialize()
   self.flavorBack = 4 --Brown
   self.background = 5 --Dark Grey
   
-  self.editorsheet = SpriteSheet(image(fs.read("C://editorsheet.lk12")),24,16)
+  self.editorsheet = SpriteSheet(image(fs.read("C:/editorsheet.lk12")),24,16)
 
   self.active = 3
   self.editors = {"soon","code","sprite","tile","soon","soon"}
@@ -69,7 +69,7 @@ function edit:initialize()
   self.leditors = {}
 
   for k,v in ipairs(self.editors) do
-    local chunk, err = fs.load("C://Editors/"..v..".lua")
+    local chunk, err = fs.load("C:/Editors/"..v..".lua")
     if not chunk then error(err or "Error loading: "..tostring(v)) end
     table.insert(self.chunks,k,chunk)
   end
@@ -206,7 +206,7 @@ function edit:loop() --Starts the while loop
           sc = "shift-" .. sc
         end
         
-        local term = require("C://terminal")
+        local term = require("terminal")
         
         pushMatrix() pushPalette() pushColor()
         if key == "ctrl-s" then

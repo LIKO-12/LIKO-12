@@ -1,5 +1,5 @@
 local eapi = select(1,...)
-local MapObj = require("C://Libraries/map")
+local MapObj = require("Libraries/map")
 
 local t = {}
 
