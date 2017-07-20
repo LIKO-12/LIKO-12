@@ -7,7 +7,7 @@ if select(1,...) == "-?" then
   return
 end
 
-local helpPATH = "C://Help/;C://Manual/Help/"
+local helpPATH = "C:/Help/;C:/Manual/Help/"
 local function nextPath()
   if helpPATH:sub(-1)~=";" then helpPATH=helpPATH..";" end
   return helpPATH:gmatch("(.-);")
@@ -32,7 +32,7 @@ if type(giveApi) == "boolean" then --Requesting HELP api
   return api
 end
 
-helpPath = require("C://Programs/help",true).getHelpPath() --A smart way to keep the helpPath
+helpPath = require("Programs/help",true).getHelpPath() --A smart way to keep the helpPath
 
 palt(0,false) --Make black opaque
 

@@ -8,11 +8,11 @@ if #args < 1 or args[1] == "-?" then
 end
 
 local tar = table.concat(args," ") --The path may include whitespaces
-local term = require("C://terminal")
+local term = require("terminal")
 tar = term.resolve(tar)
 
 if fs.exists(tar) and fs.isDirectory(tar) then color(8) print("Can't edit directories !") return end
-local eapi = require("C://Editors")
+local eapi = require("Editors")
 local edit = {}
 edit.editorsheet = eapi.editorsheet
 edit.flavor = eapi.flavor
@@ -46,7 +46,7 @@ function edit:drawUI()
   self:drawBottomBar() --Draw the bottom bar
 end
 
-local ok, texteditor = assert(pcall(assert(fs.load("C://Editors/code.lua")),edit))
+local ok, texteditor = assert(pcall(assert(fs.load("C:/Editors/code.lua")),edit))
 if tar:sub(-4,-1) ~= ".lua" then texteditor.colorize = false end
 
 local screen = screenshot()

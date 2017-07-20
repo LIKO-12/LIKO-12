@@ -1,4 +1,4 @@
-local eapi, img, imgdata = ... --Check C://Programs/paint.lua
+local eapi, img, imgdata = ... --Check C:/Programs/paint.lua
 
 local sw, sh = screenSize()
 

@@ -7,7 +7,7 @@ if #args < 1 or args[1] == "-?" then
   return
 end
 local tar = table.concat(args," ") --The path may include whitespaces
-local term = require("C://terminal")
+local term = require("terminal")
 
 tar = term.resolve(tar)
 

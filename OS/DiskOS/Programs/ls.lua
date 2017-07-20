@@ -8,7 +8,7 @@ if select(1,...) == "-?" then
   return
 end
 
-local term = require("C://terminal") --Require the terminal api.
+local term = require("terminal") --Require the terminal api.
 local path = term.getpath() --Get the current active directory.
 local files = fs.directoryItems(path) --Returns a table containing the names of folders and files in the given directory
 

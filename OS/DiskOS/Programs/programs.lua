@@ -3,7 +3,7 @@ if select(1,...) and select(1,...) == "-?" then
   return
 end
 
-local term = require("C://terminal")
+local term = require("terminal")
 local PATH = term.getPATH()
 local programs = {}
 for path in string.gmatch(PATH,"(.-);") do

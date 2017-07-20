@@ -8,8 +8,8 @@ if not source or source == "-?" then
 end
 
 
-local term = require("C://terminal")
-local eapi = require("C://Editors")
+local term = require("terminal")
+local eapi = require("Editors")
 
 if source then source = term.resolve(source)..".lk12" else source = eapi.filePath end
 if not fs.exists(source) then color(8) print("File doesn't exists") return end
@@ -67,7 +67,6 @@ if not clevel then color(8) print("Invalid Data !") return end clevel = tonumber
 --local data = saveData:sub(datasum+1,-1)
 local data = ""
 for d in nextarg do data = data..d..";" end
-fs.write("C://tdata",data)
 
 if compress ~= "none" then --Decompress
   data = math.decompress(data,compress,clevel)

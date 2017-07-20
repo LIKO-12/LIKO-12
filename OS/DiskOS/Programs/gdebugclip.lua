@@ -8,7 +8,7 @@ end
 local data = clipboard()
 data = math.b64dec(data)
 data = math.decompress(data,"lz4")
-fs.write("C://gdebugclip.lk12",data)
+fs.write("C:/gdebugclip.lk12",data)
 --color(12) print("Saved debug image successfully")
 clear(0)
 local img = image(data)

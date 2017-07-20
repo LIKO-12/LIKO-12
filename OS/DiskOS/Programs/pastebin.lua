@@ -1,5 +1,5 @@
-local term = require("C://terminal")
-local lume = require("C://Libraries/lume")
+local term = require("terminal")
+local lume = require("Libraries/lume")
 
 local function printPBUsage()
   printUsage(

@@ -5,8 +5,8 @@ if select(1,...) == "-?" then
   return
 end
 
-local term = require("C://terminal")
-fs.remove("C://boot.lua")
+local term = require("terminal")
+fs.remove("C:/boot.lua")
 for addr=0x15000, 0x17FFF do
   poke(addr,0x82)
 end

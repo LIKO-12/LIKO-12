@@ -9,7 +9,7 @@ end
 
 local tar = table.concat(args," ") --The path may include whitespaces
 if tar:sub(-5,-1) ~= ".lk12" then tar = tar..".lk12" end
-local term = require("C://terminal")
+local term = require("terminal")
 tar = term.resolve(tar)
 
 if fs.exists(tar) and fs.isDirectory(tar) then color(8) print("Can't edit directories !") return end
@@ -42,7 +42,7 @@ else --Load the image
   imgdata = img:data()
 end
 
-local eapi = require("C://Editors")
+local eapi = require("Editors")
 local edit = {}
 edit.editorsheet = eapi.editorsheet
 edit.flavor = eapi.flavor
@@ -88,7 +88,7 @@ end
 
 local screen = screenshot()
 local px,py,pc = printCursor()
-local ok, painteditor = assert(pcall(assert(fs.load("C://Editors/paint.lua")),edit,img,imgdata))
+local ok, painteditor = assert(pcall(assert(fs.load("C:/Editors/paint.lua")),edit,img,imgdata))
 
 cursor("normal")
 painteditor:entered()

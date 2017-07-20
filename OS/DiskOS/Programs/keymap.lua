@@ -5,7 +5,7 @@ if select(1,...) == "-?" then
   return
 end
 
-local json = require("C://Libraries/JSON")
+local json = require("Libraries/JSON")
 
 color(9) print("(esc): set to default\n(enter): leave unchanged") color(7)
 
@@ -14,11 +14,11 @@ local defaultbmap = {
   {"s","f","e","d","tab","q","w"} --Player 2
 }
 
-if not fs.exists("C://keymap.json") then
-  fs.write("C://keymap.json",json:encode_pretty(defaultbmap))
+if not fs.exists("C:/keymap.json") then
+  fs.write("C:/keymap.json",json:encode_pretty(defaultbmap))
 end
 
-local bmap = json:decode(fs.read("C://keymap.json"))
+local bmap = json:decode(fs.read("C:/keymap.json"))
 
 local bname = {"Left","Right","Up","Down","A","B","Start"}
 
@@ -63,7 +63,7 @@ color(9) print("Would you like to save the new configuration ? (y/n)",false)
 while true do
   local answer = getKey()
   if answer == "y" then
-    fs.write("C://keymap.json",json:encode_pretty(bmap))
+    fs.write("C:/keymap.json",json:encode_pretty(bmap))
     color(11) print(" Saved")
     break
   elseif answer == "n" then
