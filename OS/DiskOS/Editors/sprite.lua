@@ -514,6 +514,24 @@ function se:mousemoved(x,y,dx,dy,it)
     end
   end
   
+  --Image Drawing Cursor
+  if false then
+    if whereInGrid(x,y,imggrid) and stool < 3 then
+      if stool == 1 then
+        if isKDown("lshift","rshift") or isMDown(2) then
+          cursor("eraser")
+        else
+          cursor("pencil")
+        end
+      elseif stool == 2 then
+        cursor("bucket")
+      end
+    else
+      local cur = cursor()
+      if cur == "pencil" or cur == "bucket" or cur == "eraser" then cursor("normal") end
+    end
+  end
+  
   --Sprite Selection
   if (not it and sprsmflag) or it then
     local cx, cy = whereInGrid(x,y,sprsgrid)
