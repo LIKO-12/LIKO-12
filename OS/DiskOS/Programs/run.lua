@@ -12,9 +12,9 @@ local term = require("terminal")
 local eapi = require("Editors")
 local mapobj = require("Libraries/map")
 
-local sprid = 3 --"spritesheet"
-local codeid = 2 --"luacode"
-local tileid = 4 --"tilemap"
+local sprid = eapi.editors.sprite --"spritesheet"
+local codeid = eapi.editors.code --"luacode"
+local tileid = eapi.editors.tile --"tilemap"
 
 local swidth, sheight = screenSize()
 
