@@ -65,7 +65,7 @@ function edit:initialize()
   
   self.active = 4 --Active editor3
   
-  self.editors = {"music","sfx","map","sprite","code","soon"; music=1,sfx=2,map=3,sprite=4,code=5,config=6}
+  self.editors = {"music","sfx","tile","sprite","code","soon"; music=1,sfx=2,tile=3,sprite=4,code=5,config=6}
   self.saveid = {-1,-1,"tilemap","spritesheet","luacode",-1}
   self.chunks = {} --Editors Code Chunks
   self.leditors = {} --Loaded editors (Executed chunks)
