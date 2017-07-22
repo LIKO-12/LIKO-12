@@ -84,6 +84,76 @@ function edit:initialize()
   self:loadCursors()
 end
 
+--WIP new editors system
+function edit:initialize()
+  self.flavor = 9 --Orange
+  self.flavorBack = 4 --Brown
+  self.background = 5 --Dark Grey
+  
+  self.editorsheet = SpriteSheet(image(fs.read("C:/editorsheet.lk12")),24,16)
+  
+  self.active = 4 --Active editor3
+  
+  self.editors = {"music","sfx","map","sprite","code","soon"; music=1,sfx=2,map=3,sprite=4,code=5,config=6}
+  self.saveid = {-1,-1,"tilemap","spritesheet","luacode",-1}
+  self.chunks = {} --Editors Code Chunks
+  self.leditors = {} --Loaded editors (Executed chunks)
+  
+  self.icons = imagedata(6*8,2*8)
+  self.icons:paste(self.editorsheet.img:data(),0,0, (24-#self.editors)*8,0, #self.editors*8,8)
+  self.icons:paste(self.editorsheet.img:data(),0,8, (24-#self.editors)*8,0, #self.editors*8,8)
+  fs.write("C:/editoricons_test.lk12",self.icons:encode())
+  self.icons:map(function(x,y,c)
+    if y < 8 then if c == 0 then return self.flavor else return self.flavorBack end; else
+    if c == 0 then return self.flavorBack else return self.flavor end; end
+  end)
+  fs.write("C:/editoricons.lk12",self.icons:encode())
+  self.icons = self.icons:image()
+  
+  self.iconsBGQuad = self.icons:quad(0,0,self.icons:width(),8)
+  self.iconsQuads = {}
+  for i=1,#self.editors do
+    table.insert(self.iconsQuads,self.icons:quad(self.icons:width()-i*8,8, 8,8))
+  end
+  
+  local editors = {"soon","soon","tile","sprite","code","soon"} --List of built-in editors to create chunks of
+  for k, v in ipairs(editors) do --Load chunks
+    local chunk, err = fs.load("C:/Editors/"..v..".lua")
+    if not chunk then error(err or "Error loading: "..tostring(v)) end
+    table.insert(self.chunks,k,chunk)
+  end
+  
+  for k,v in ipairs(self.chunks) do --Execute the chunks
+    table.insert(self.leditors,k,v(self))
+  end
+  
+  self.modeGrid = {swidth-(#self.editors*8),0,#self.editors*8,8,#self.editors,1} --The editor selection grid
+  self.modeGridFlag = false
+  self.modeGridHover = false
+  self:loadCursors()
+end
+
+function edit:addEditor(code, name, saveid, icon)
+  --Verification
+  if type(code) ~= "string" and type(code) ~= "function" then return error("The editor code must be a string or a chunk, provided: "..type(code)) end
+  if type(name) ~= "string" then return error("Editor name must be a string, provided: "..type(name)) end
+  if type(saveid) ~= "number" and type(saveid) ~= "string" then return error("The saveid must be -1 or a string, provided: "..type(saveid)) end
+  if type(saveid) == "number" and saveid ~= -1 then return error("The saveid can be -1 or a string, provided: "..saveid) end
+  if type(icon) ~= "table" then return error("Icon must be provided, got "..type(icon).." instead") end
+  if not (icon.typeOf and icon.type) then return error("Invalid Icon") end
+  if icon:typeOf("GPU.image") then icon = icon:data() end
+  if not icon:typeOf("GPU.imageData") then return error("Icon must be a GPU image or imagedata !, provided: "..icon:type()) end
+  
+  --Chunk creation
+  local chunk, err = code, "Unknown Error"
+  if type(code) == "string" then
+    chunk = false
+    chunk, err = loadstring(code)
+  end
+  if not chunk then return error("Failed to load the chunk: "..tostring(err)) end
+  
+end
+
 function edit:clearData()
   --Will restart the editors simply
   self.leditors = {}
@@ -119,8 +189,11 @@ end
 function edit:drawTopBar()
   rect(0,0,swidth,8,false,self.flavor)
   SpriteGroup(55, 0,0, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
-  SpriteGroup(24-#self.editors+1, (swidth-#self.editors*8), 0, #self.editors,1, 1,1, false, self.editorsheet) --The programs selection
-  self.editorsheet:draw(48-(#self.editors-self.active),swidth-(#self.editors-self.active+1)*8,0) --The current selected program
+  --SpriteGroup(24-#self.editors+1, (swidth-#self.editors*8), 0, #self.editors,1, 1,1, false, self.editorsheet) --The programs selection
+  --self.editorsheet:draw(48-(#self.editors-self.active),swidth-(#self.editors-self.active+1)*8,0) --The current selected program
+  
+  self.icons:draw((swidth-#self.editors*8),0, 0, 1,1, self.iconsBGQuad)
+  self.icons:draw(swidth-self.active*8,0, 0, 1,1, self.iconsQuads[self.active])
 end
 
 function edit:drawUI()
@@ -261,7 +334,7 @@ function edit:loop() --Starts the while loop
       if cx then
         self.modeGridFlag = true
         cursor("handpress")
-        self:switchEditor(cx)
+        self:switchEditor(#self.editors-cx+1)
       else
         if self.leditors[self.active][event] then self.leditors[self.active][event](self.leditors[self.active],a,b,c,d,e,f) end
       end
@@ -269,7 +342,7 @@ function edit:loop() --Starts the while loop
       local cx, cy = whereInGrid(a,b, self.modeGrid)
       if cx then
         if self.modeGridFlag then
-          self:switchEditor(cx)
+          self:switchEditor(#self.editors-cx+1)
         else
           self.modeGridHover = true
           cursor("handrelease")
@@ -290,7 +363,7 @@ function edit:loop() --Starts the while loop
           self.modeGridHover = true
           self.modeGridFlag = false
           cursor("handrelease")
-          self:switchEditor(cx)
+          self:switchEditor(#self.editors-cx+1)
         end
       else
         if self.modeGridFlag then
