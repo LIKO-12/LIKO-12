@@ -117,7 +117,7 @@ function t:import(data)
 end
 
 function t:entered()
-  SpriteMap = eapi.leditors[3].SpriteMap
+  SpriteMap = eapi.leditors[eapi.editors.sprite].SpriteMap
   eapi:drawUI()
   self:_redraw()
 end
