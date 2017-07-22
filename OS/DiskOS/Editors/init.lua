@@ -112,8 +112,8 @@ function edit:addEditor(code, name, saveid, icon)
   if type(saveid) == "number" and saveid ~= -1 then return error("The saveid can be -1 or a string, provided: "..saveid) end
   if type(icon) ~= "table" then return error("Icon must be provided, got "..type(icon).." instead") end
   if not (icon.typeOf and icon.type) then return error("Invalid Icon") end
-  if icon:typeOf("GPU.image") then icon = icon:data() end
-  if not icon:typeOf("GPU.imageData") then return error("Icon must be a GPU image or imagedata !, provided: "..icon:type()) end
+  if icon:type() == "GPU.image" then icon = icon:data() end
+  if icon:type() ~= "GPU.imageData" then return error("Icon must be a GPU image or imagedata !, provided: "..icon:type()) end
   
   --Chunk creation
   local chunk, err = code, "Unknown Error"
@@ -124,8 +124,8 @@ function edit:addEditor(code, name, saveid, icon)
   if not chunk then return error("Failed to load the chunk: "..tostring(err)) end
   
   --Execute the chunk
-  local editor, err = pcall(chunk)
-  if not editor then return error("Failed to execute the chunk: "..tostring(err)) end
+  local ok, editor = pcall(chunk,self)
+  if not ok then return error("Failed to execute the chunk: "..tostring(editor)) end
   
   --Proccess the icon
   local bgicon = imagedata(8,8):paste(icon)
@@ -143,14 +143,14 @@ function edit:addEditor(code, name, saveid, icon)
     local oldx,oldy = quad:getViewport()
     self.iconsQuads[k] = self.icons:quad(oldx+8,oldy,8,8)
   end
-  table.insert(iconsQuads,self.icons:quad(0,8,8,8))
+  table.insert(self.iconsQuads,self.icons:quad(0,8,8,8))
   
   --Register the editor
   table.insert(self.editors,name)
   self.editors[name] = #self.editors
   table.insert(self.saveid,saveid)
   table.insert(self.chunks,chunk)
-  table.inserT(self.leditors,editor)
+  table.insert(self.leditors,editor)
   
   --Update the mode grid
   self.modeGrid = {swidth-(#self.editors*8),0,#self.editors*8,8,#self.editors,1}
