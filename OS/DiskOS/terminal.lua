@@ -45,8 +45,10 @@ function term.init()
   cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  0.6") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
   flip() sleep(0.0625)
-  if fs.exists("autoexec.lua") then
-    term.executeFile("autoexec.lua")
+  if fs.exists("D:/autoexec.lua") then
+    term.executeFile("D:/autoexec.lua")
+  elseif fs.exists("C:/autoexec.lua") then
+    term.executeFile("C:/autoexec.lua")
   else
     color(9) print("TYPE HELP FOR HELP")
     flip() sleep(0.0625)
