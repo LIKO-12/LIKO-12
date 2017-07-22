@@ -55,35 +55,6 @@ Good luck !
 
 local swidth, sheight = screenSize()
 
-function edit:initialize()
-  self.flavor = 9 --Orange
-  self.flavorBack = 4 --Brown
-  self.background = 5 --Dark Grey
-  
-  self.editorsheet = SpriteSheet(image(fs.read("C:/editorsheet.lk12")),24,16)
-
-  self.active = 3
-  self.editors = {"soon","code","sprite","tile","soon","soon"}
-  self.saveid =  {-1 , "luacode", "spritesheet", "tilemap", -1, -1}
-  self.chunks = {}
-  self.leditors = {}
-
-  for k,v in ipairs(self.editors) do
-    local chunk, err = fs.load("C:/Editors/"..v..".lua")
-    if not chunk then error(err or "Error loading: "..tostring(v)) end
-    table.insert(self.chunks,k,chunk)
-  end
-
-  for k,v in ipairs(self.chunks) do
-    table.insert(self.leditors,k,v(self))
-  end
-
-  self.modeGrid = {swidth-(#self.editors*8),0,#self.editors*8,8,#self.editors,1} --The editor selection grid
-  self.modeGridFlag = false
-  self.modeGridHover = false
-  self:loadCursors()
-end
-
 --WIP new editors system
 function edit:initialize()
   self.flavor = 9 --Orange
@@ -152,6 +123,37 @@ function edit:addEditor(code, name, saveid, icon)
   end
   if not chunk then return error("Failed to load the chunk: "..tostring(err)) end
   
+  --Execute the chunk
+  local editor, err = pcall(chunk)
+  if not editor then return error("Failed to execute the chunk: "..tostring(err)) end
+  
+  --Proccess the icon
+  local bgicon = imagedata(8,8):paste(icon)
+  local fgicon = imagedata(8,8):paste(icon)
+  bgicon:map(function(x,y,c) if c == 0 then return self.flavor else return self.flavorBack end end)
+  fgicon:map(function(x,y,c) if c == 0 then return self.flavorBack else return self.flavor end end)
+  
+  local newicons = imagedata(self.icons:width()+8,16)
+  newicons:paste(self.icons:data(),8,0)
+  newicons:paste(bgicon,0,0):paste(fgicon,0,8)
+  
+  self.icons = newicons:image()
+  self.iconsBGQuad = self.icons:quad(0,0,self.icons:width(),8)
+  for k,quad in ipairs(self.iconsQuads) do
+    local oldx,oldy = quad:getViewport()
+    self.iconsQuads[k] = self.icons:quad(oldx+8,oldy,8,8)
+  end
+  table.insert(iconsQuads,self.icons:quad(0,8,8,8))
+  
+  --Register the editor
+  table.insert(self.editors,name)
+  self.editors[name] = #self.editors
+  table.insert(self.saveid,saveid)
+  table.insert(self.chunks,chunk)
+  table.inserT(self.leditors,editor)
+  
+  --Update the mode grid
+  self.modeGrid = {swidth-(#self.editors*8),0,#self.editors*8,8,#self.editors,1}
 end
 
 function edit:clearData()
@@ -189,8 +191,6 @@ end
 function edit:drawTopBar()
   rect(0,0,swidth,8,false,self.flavor)
   SpriteGroup(55, 0,0, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
-  --SpriteGroup(24-#self.editors+1, (swidth-#self.editors*8), 0, #self.editors,1, 1,1, false, self.editorsheet) --The programs selection
-  --self.editorsheet:draw(48-(#self.editors-self.active),swidth-(#self.editors-self.active+1)*8,0) --The current selected program
   
   self.icons:draw((swidth-#self.editors*8),0, 0, 1,1, self.iconsBGQuad)
   self.icons:draw(swidth-self.active*8,0, 0, 1,1, self.iconsQuads[self.active])
