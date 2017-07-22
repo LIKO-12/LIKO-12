@@ -30,12 +30,12 @@ if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destinat
 local sw, sh = screenSize()
 
 if string.lower(flag) == "--sheet" then --Sheet export
-  local data = eapi.leditors[3]:export(true)
+  local data = eapi.leditors[eapi.editors.sprite]:export(true)
   if destination == "@clip" then clipboard(data) else fs.write(destination,data) end
   color(11) print("Exported Spritesheet successfully")
   return
 elseif string.lower(flag) == "--code" then
-  local data = eapi.leditors[2]:export(true)
+  local data = eapi.leditors[eapi.editors["lua"]]:export(true)
   if destination == "@clip" then clipboard(data) else fs.write(destination:sub(0,-6),data) end
   color(11) print("Exported Lua code successfully")
   return

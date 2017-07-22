@@ -24,8 +24,8 @@ if not fs.isFile(source) then printErr("Cart can't be a directory !") return end
 local cartdata = fs.read(source)
 local cart = loadstring(cartdata)()
 
-local code = eapi.leditors[2]
-local sprite = eapi.leditors[3]
+local code = eapi.leditors[eapi.editors["code"]]
+local sprite = eapi.leditors[eapi.editors.sprite]
 
 --Loading the code
 code:import(cart.code)

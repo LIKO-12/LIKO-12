@@ -31,6 +31,6 @@ else --Import to disk
   local image = imagedata(sw,sh)
   image:paste(imgd)
   image = image:encode()
-  eapi.leditors[3]:import(image..";\0;")
+  eapi.leditors[eapi.editors.sprite]:import(image..";\0;")
   color(11) print("Imported Successfully")
 end
