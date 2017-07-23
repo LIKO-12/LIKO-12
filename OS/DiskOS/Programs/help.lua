@@ -16,7 +16,7 @@ end
 local topic = select(1,...)
 topic = topic or "Welcome"
 
-local giveApi = select(2,...)
+local giveApi = select(1,...)
 
 if type(giveApi) == "boolean" then --Requesting HELP api
   local api = {}
