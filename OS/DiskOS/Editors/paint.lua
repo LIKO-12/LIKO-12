@@ -3,18 +3,22 @@ local eapi, img, imgdata = ... --Check C:/Programs/paint.lua
 local sw, sh = screenSize()
 
 local paint = {}
+
+--The palette image
 paint.pal = imagedata(16,1)
 paint.pal:map(function(x,y,c) return x end)
 paint.pal = paint.pal:image()
 
---paint.drawCursor = eapi.editorsheet:extract(149):image()
-
+--Selected colors
 paint.fgcolor, paint.bgcolor = 7,0
 
+--The color selection grid
 paint.palGrid = {sw-16*8,sh-8,16*8,8,16,1}
 
+--The image drawing arguments
 paint.imageDraw = {0,0 ,0, 1,1}
 
+--The rectangle where the image is visible
 local imagerect = {0,8,sw,sh-2*8}
 
 --Zoom Slider--
@@ -43,7 +47,7 @@ local tools = {
     if state == "outmove" or state == "outrelease" then return end
     local data = imgdata
     local col = (b == 1 or isMDown(1)) and self.fgcolor or self.bgcolor
-    data:setPixel(x-1,y-1,col)
+    data:setPixel(x,y,col)
     img = data:image()
   end,
 
@@ -51,10 +55,10 @@ local tools = {
     if state == "outmove" or state == "outrelease" then return end
     local data = imgdata
     local col = (b == 1 or isMDown(1)) and self.fgcolor or self.bgcolor
-    local tofill = data:getPixel(cx-2,cy-2)
+    local tofill = data:getPixel(cx,cy)
     if tofill == col then return end
     local function spixel(x,y) data:setPixel(x,y,col) end
-    local function gpixel(x,y) if x >= 1 and x <= imgdata:width() and y >= y and y <= imgdata:height() then return data:getPixel(x,y) else return false end end
+    local function gpixel(x,y) if x >= 0 and x <= imgdata:width() and y >= 0 and y <= imgdata:height() then return data:getPixel(x,y) else return false end end
     local function mapPixel(x,y)
       if gpixel(x,y) and gpixel(x,y) == tofill then spixel(x,y) end
       if gpixel(x+1,y) and gpixel(x+1,y) == tofill then mapPixel(x+1,y) end
@@ -62,7 +66,7 @@ local tools = {
       if gpixel(x,y+1) and gpixel(x,y+1) == tofill then mapPixel(x,y+1) end
       if gpixel(x,y-1) and gpixel(x,y-1) == tofill then mapPixel(x,y-1) end
     end
-    pcall(mapPixel,cx-2,cy-2)
+    pcall(mapPixel,cx,cy)
     img = data:image()
   end,
 
@@ -70,7 +74,6 @@ local tools = {
     if state == "press" and not pflag then
       pflag = true
       poldx, poldy = x, y
-      cursor("hand")
     elseif (state == "move" or state == "outmove") and pflag then
       local dx, dy = x-poldx, y-poldy
       self.imageDraw[1] = self.imageDraw[1]+dx
@@ -85,15 +88,17 @@ local tools = {
   end
 }
 
-local bgsprite = eapi.editorsheet:extract(59):image()
-local bgquad = bgsprite:quad(0,0,imagerect[3],imagerect[4])
+local bgsprite = eapi.editorsheet:extract(59):image() --The background sprite
+local bgquad = bgsprite:quad(0,0,imagerect[3],imagerect[4]) --The background quad
 
 local mflag = false
 
+--Draw the color selection palette
 function paint:drawPalette()
   self.pal:draw(sw-16*8,sh-8,0,8,8)
 end
 
+--Draw the rectangle that shows the selected colors
 function paint:drawColorCell()
   palt(0,true)
   pal(8,self.fgcolor)
@@ -103,6 +108,7 @@ function paint:drawColorCell()
   palt(0,false)
 end
 
+--Draw the image we are editing
 function paint:drawImage()
   clip(0,8,sw,sh-8*2)
   bgsprite:draw(imagerect[1],imagerect[2],0,1,1,bgquad)
@@ -110,6 +116,7 @@ function paint:drawImage()
   clip()
 end
 
+--Draw the buttom bar of the editor
 function paint:drawBottomBar()
   eapi:drawBottomBar()
   self:drawPalette()
@@ -118,13 +125,14 @@ function paint:drawBottomBar()
   self:drawSlider()
 end
 
+--Draw the tools selection GUI
 function paint:drawTOOLS()
   SpriteGroup(unpack(toolsdraw))
   eapi.editorsheet:draw((toolsdraw[1]+(stool-1))-24, toolsdraw[2]+(stool-1)*8,toolsdraw[3], 0, toolsdraw[6],toolsdraw[7])
 end
 
+--Draw the zooming slider
 function paint:drawSlider()
-  --SpriteGroup(unpack(zSliderDraw))
   eapi.editorsheet:draw(zSliderDraw[1],zSliderDraw[2],zSliderDraw[3])
   for i=2,zSliderDraw[4]-1 do
     eapi.editorsheet:draw(zSliderDraw[1]+1,zSliderDraw[2]+(i-1)*8,zSliderDraw[3])
@@ -158,6 +166,7 @@ function paint:export()
 end
 
 function paint:update(dt)
+  --Update the tools blink timer
   if tbflag then
     tbtimer = tbtimer + dt
     if tbtime <= tbtimer then
@@ -165,6 +174,20 @@ function paint:update(dt)
       tbflag = false
       self:drawTOOLS()
     end
+  end
+end
+
+function paint:updateCursor(x,y)
+  if isInRect(x,y,imagerect) then
+    if stool == 1 then --Pen
+      cursor("pencil",true)
+    elseif stool == 2 then --Bucket
+      cursor("bucket",true)
+    elseif stool == 3 then --Pan
+      cursor("hand",true)
+    end
+  else
+    cursor("normal")
   end
 end
 
@@ -194,9 +217,9 @@ function paint:mousepressed(x,y,b,it)
   --Image Drawing
   if isInRect(x,y,imagerect) then
     mflag = true
-    local x,y = x-imagerect[1]+1, y-imagerect[2]+1
+    local x,y = x-imagerect[1], y-imagerect[2]
     x,y = x-self.imageDraw[1], y-self.imageDraw[2]
-    x,y = math.floor(x/self.imageDraw[4])+1, math.floor(y/self.imageDraw[5])+1
+    x,y = math.floor(x/self.imageDraw[4]), math.floor(y/self.imageDraw[5])
     tools[stool](self,x,y,b,"press")
     self:drawImage()
   end
@@ -215,21 +238,23 @@ function paint:mousepressed(x,y,b,it)
       self:drawImage() self:drawTOOLS()
     end
   end
+  
+  self:updateCursor(x,y)
 end
 
 function paint:mousemoved(x,y,dx,dy,it)
   --Image Drawing
   if mflag then
     if isInRect(x,y,imagerect) then
-      local x,y = x-imagerect[1]+1, y-imagerect[2]+1
+      local x,y = x-imagerect[1], y-imagerect[2]
       x,y = x-self.imageDraw[1], y-self.imageDraw[2]
-      x,y = math.floor(x/self.imageDraw[4])+1, math.floor(y/self.imageDraw[5])+1
+      x,y = math.floor(x/self.imageDraw[4]), math.floor(y/self.imageDraw[5])
       tools[stool](self,x,y,false,"move")
       self:drawImage()
     else
-      local x,y = x-imagerect[1]+1, y-imagerect[2]+1
+      local x,y = x-imagerect[1], y-imagerect[2]
       x,y = x-self.imageDraw[1], y-self.imageDraw[2]
-      x,y = math.floor(x/self.imageDraw[4])+1, math.floor(y/self.imageDraw[5])+1
+      x,y = math.floor(x/self.imageDraw[4]), math.floor(y/self.imageDraw[5])
       tools[stool](self,x,y,false,"outmove")
       self:drawImage()
     end
@@ -245,41 +270,22 @@ function paint:mousemoved(x,y,dx,dy,it)
     self:drawImage()
   end
   
-  --Cursor Drawing
-  if isInRect(x,y,{1,9,sw,sh-8*2}) then
-    --[[eapi:drawBackground(); self:drawImage()
-    eapi:drawTopBar(); self:drawBottomBar()
-    palt(0,true)
-    local zx,zy = self.imageDraw[4], self.imageDraw[5]
-    self.drawCursor:draw(x-3*zx,y-3*zy,0,zx,zy)
-    palt(0,false)]]
-    if stool == 1 then --Pen
-      cursor("pencil",true)
-    elseif stool == 2 then --Bucket
-      cursor("bucket",true)
-    elseif stool == 3 then --Pan
-      cursor("hand",true)
-    end
-  else
-    --[[if cursor() == "none" then eapi:drawBackground(); self:drawImage(); eapi:drawTopBar(); self:drawBottomBar() end
-    if cursor() == "none" or cursor() == "draw" then cursor("normal") end]]
-    cursor("normal")
-  end
+  self:updateCursor(x,y)
 end
 
 function paint:mousereleased(x,y,b,it)
   --Image Drawing
   if mflag then
     if isInRect(x,y,imagerect) then
-      local x,y = x-imagerect[1]+1, y-imagerect[2]+1
+      local x,y = x-imagerect[1], y-imagerect[2]
       x,y = x-self.imageDraw[1], y-self.imageDraw[2]
-      x,y = math.floor(x/self.imageDraw[4])+1, math.floor(y/self.imageDraw[5])+1
+      x,y = math.floor(x/self.imageDraw[4]), math.floor(y/self.imageDraw[5])
       tools[stool](self,x,y,b,"release")
       self:drawImage()
     else
-      local x,y = x-imagerect[1]+1, y-imagerect[2]+1
+      local x,y = x-imagerect[1], y-imagerect[2]
       x,y = x-self.imageDraw[1], y-self.imageDraw[2]
-      x,y = math.floor(x/self.imageDraw[4])+1, math.floor(y/self.imageDraw[5])+1
+      x,y = math.floor(x/self.imageDraw[4]), math.floor(y/self.imageDraw[5])
       tools[stool](self,x,y,b,"outrelease")
       self:drawImage()
     end
@@ -297,6 +303,8 @@ function paint:mousereleased(x,y,b,it)
     self:drawImage()
   end
   zsflag = false
+  
+  self:updateCursor(x,y)
 end
 
 return paint
