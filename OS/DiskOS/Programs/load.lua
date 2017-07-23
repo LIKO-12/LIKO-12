@@ -43,7 +43,10 @@ if not filetype then color(8) print("Invalid Data !") return end
 if filetype ~= "OSData" then
   if filetype == "GPUIMG" then --Import it
     if eapi.leditors[eapi.editors.sprite] then
-      eapi.leditors[eapi.editors.sprite]:import(saveData..";0;") --saveData:sub(0,-2))
+      local simg = imagedata(screenSize())
+      local limg = imagedata(saveData)
+      simg:paste(limg)
+      eapi.leditors[eapi.editors.sprite]:import(simg:encode()..";0;")
       color(11) print("Imported to sprite editor successfully") return
     end
   else
