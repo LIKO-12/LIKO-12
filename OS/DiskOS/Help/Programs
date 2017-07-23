@@ -4,7 +4,7 @@ help - The Current help program.
 drives - Lists the available storage drives and their space usage.
 ls - Lists the files and directories in the current directory.
 cd - Changes the current directory.
-rm - Remove/Delete a file or a folder, cunnot undo , be warned !
+rm - Remove/Delete a file or a folder, cannot undo , be warned !
 mkdir - Create a new directory.
 cls - Clears the screen.
 folder - Open the current folder in the host explorer.
