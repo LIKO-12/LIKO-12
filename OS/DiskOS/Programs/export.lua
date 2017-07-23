@@ -28,6 +28,6 @@ elseif destination:sub(-4,-1) == ".lua" then --Lua code Exporting.
   fs.write(destination,eapi.leditors[eapi.editors.code]:export())
   color(11) print("Exported Luacode successfully")
 else --Unknown
-  color(8) print("Unknown exporte extension")
+  color(8) print("Unknown export extension")
 end
 
