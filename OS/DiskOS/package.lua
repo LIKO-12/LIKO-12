@@ -46,13 +46,13 @@ function package.searchpath(name,path,sep,rep)
 end
 
 --Create default searchers
-package.searchers[1] = function(modname)
+package.searchers[1] = function(modname, arg)
   local errmsg = ""
   if package.preload[modname] then
     if type(package.preload[modname]) ~= "function" then
       errmsg = "invalid field package.preload['"..modname.."']"
     end
-    return package.preload[modname], modname
+    return package.preload[modname], arg or modname
   else
     errmsg = "\nno field package.preload['"..modname.."']"
   end
@@ -60,21 +60,21 @@ package.searchers[1] = function(modname)
   return nil, errmsg
 end
 
-package.searchers[2] = function(modname)
+package.searchers[2] = function(modname,arg)
   local path, err = package.searchpath(modname,package.path)
   local errmsg = ""
   
   if path then
     local chunk, err = fs.load(path)
     if not chunk then errmsg = errmsg.."\nfailed to load: "..err else
-      return chunk, modname, path
+      return chunk, arg or modname, path
     end
   end
   
   return nil, errmsg
 end
 
-function require(modname)
+function require(modname,arg)
   if type(modname) ~= "string" then return error("bad argument #1 to '?' (string expected, got "..type(modname)..")") end
   if package.loaded[modname] then return package.loaded[modname] end
   local path, err = package.searchpath(modname,package.path)
@@ -84,7 +84,7 @@ function require(modname)
   while true do
     sn = sn + 1
     if not package.searchers[sn] then break end
-    local result, arg, newname = package.searchers[sn](modname)
+    local result, arg, newname = package.searchers[sn](modname,arg)
     if result then
       if newname then modname = newname end
       local ok, err = pcall(result,arg)
