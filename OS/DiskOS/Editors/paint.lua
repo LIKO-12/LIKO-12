@@ -85,6 +85,7 @@ local tools = {
       self.imageDraw[2] = self.imageDraw[2]+dy
       pflag = false
     end
+    self:checkPosition()
   end
 }
 
@@ -177,10 +178,25 @@ function paint:update(dt)
   end
 end
 
+function paint:checkPosition()
+  local scalew, scaleh = self.imageDraw[4], self.imageDraw[5]
+  local iw, ih = img:size(); iw, ih = iw * scalew, ih * scaleh
+  local ix, iy = self.imageDraw[1], self.imageDraw[2]
+  if ix > sw then ix = sw end
+  if iy > sh-16 then iy = sh-16 end
+  if ix+iw < 0 then ix = -iw end
+  if iy+ih < 0 then iy = -ih end
+  self.imageDraw[1], self.imageDraw[2] = ix, iy
+end
+
 function paint:updateCursor(x,y)
   if isInRect(x,y,imagerect) then
     if stool == 1 then --Pen
-      cursor("pencil",true)
+      if isMDown(2) then
+        cursor("eraser",true)
+      else
+        cursor("pencil",true)
+      end
     elseif stool == 2 then --Bucket
       cursor("bucket",true)
     elseif stool == 3 then --Pan
@@ -210,6 +226,7 @@ function paint:mousepressed(x,y,b,it)
     zSlider = cx
     self.imageDraw = {self.imageDraw[1] + sw*0.25*dz,self.imageDraw[2] + sh*0.25*dz ,0, zSlider,zSlider}
     zsflag = true
+    self:checkPosition()
     self:drawSlider()
     self:drawImage()
   end
@@ -266,6 +283,7 @@ function paint:mousemoved(x,y,dx,dy,it)
     local dz = zSlider - cx
     zSlider = cx
     self.imageDraw = {self.imageDraw[1] + sw*0.25*dz,self.imageDraw[2] + sh*0.25*dz ,0, zSlider,zSlider}
+    self:checkPosition()
     self:drawSlider()
     self:drawImage()
   end
@@ -299,6 +317,7 @@ function paint:mousereleased(x,y,b,it)
     local dz = zSlider - cx
     zSlider = cx
     self.imageDraw = {self.imageDraw[1] + sw*0.25*dz,self.imageDraw[2] + sh*0.25*dz ,0, zSlider,zSlider}
+    self:checkPosition()
     self:drawSlider()
     self:drawImage()
   end
