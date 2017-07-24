@@ -87,7 +87,7 @@ cam("shear",x,y)
 
 ---
 
-5. Reset all the tranformations:
+### 5. Reset all the tranformations:
 
 ---
 
