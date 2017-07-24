@@ -25,6 +25,7 @@ Games are stored as disk files that can be saved, shared and uploaded to pastebi
 | Type           | Link                                                      |
 | -------------- | --------------------------------------------------------- |
 | Itch.io        | [LIKO-12](https://ramilego4game.itch.io/liko12)           |
+| Documentation  | [ReadTheDocs](http://liko-12.readthedocs.io)              |
 | Twitter        | [@RamiLego4Game](https://twitter.com/ramilego4game)       |
 | Discord (Chat) | [Fantasy Consoles Server](https://discord.gg/H48rBJy)     |
 | Trello Board   | [LIKO-12](https://trello.com/b/bHo8Y9sx/liko-12)          |
@@ -38,5 +39,6 @@ Games are stored as disk files that can be saved, shared and uploaded to pastebi
 
 ## Guides:
 
+* **Official Documentation**: [ReadTheDocs](http://liko-12.readthedocs.io)
 * [Installation Guide](http://liko-12.readthedocs.io/en/latest/Installation%20Guide/)
 * [Getting Started](http://liko-12.readthedocs.io/en/latest/Getting%20Started/)
