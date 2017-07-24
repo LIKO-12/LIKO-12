@@ -39,6 +39,7 @@ Games are stored as disk files that can be saved, shared and uploaded to pastebi
 
 ## Guides:
 
-* **Official Documentation**: [ReadTheDocs](http://liko-12.readthedocs.io)
+**Official Documentation**: [ReadTheDocs](http://liko-12.readthedocs.io)
+
 * [Installation Guide](http://liko-12.readthedocs.io/en/latest/Installation%20Guide/)
 * [Getting Started](http://liko-12.readthedocs.io/en/latest/Getting%20Started/)
