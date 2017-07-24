@@ -303,13 +303,13 @@ function edit:loop() --Starts the while loop
         end
         popMatrix() popPalette() popColor()
         
-        if key == "alt-right" then
+        if key == "alt-left" then
           if self.active == #self.editors then
             self:switchEditor(1)
           else
             self:switchEditor(self.active+1)
           end
-        elseif key == "alt-left" then
+        elseif key == "alt-right" then
           if self.active == 1 then
             self:switchEditor(#self.editors)
           else
