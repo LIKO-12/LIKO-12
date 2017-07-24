@@ -287,6 +287,7 @@ ce.keymap = {
   end,
 
   ["backspace"] = function(self)
+    if self.cx == 1 and self.cy == 1 then return end
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx-1,self.cy)
     self:resetCursorBlink()
