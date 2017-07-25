@@ -645,6 +645,51 @@ function se:keypressed(key)
     end
     
     self:redrawCP()
+  elseif key == "w" or key == "a" or key == "s" or key == "d" then
+    local function setBank(bank)
+      local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
+      sprsbank = bank
+      if idbank > sprsbank then
+        sprsid = sprsid-(idbank-sprsbank)*sheetW*bankH
+      elseif sprsbank > idbank then
+        sprsid = sprsid+(sprsbank-idbank)*sheetW*bankH
+      end
+    end
+    
+    --Update the selection box position
+    local cx, cy = (sprssrect[1]+1)/8, (sprssrect[2]-sprsrecto[2])/8
+    if key == "a" then --Left
+      cx = cx - zscale
+    elseif key == "d" then --Right
+      cx = cx + zscale
+    elseif key == "w" then --Up
+      cy = cy - zscale
+    elseif key == "s" then --Down
+      cy = cy + zscale
+    end
+    if cx < 0 then cx, cy = ((cy == 0 and sprsbank == 1) and 0 or sheetW-1), cy-zscale elseif cx >= sheetW then cx, cy = ((cy == bankH-zscale and sprsbank == 4) and sheetW-1 or 0), cy+zscale end
+    if cy < 0 then
+      if sprsbank > 1 then
+        setBank(sprsbank-1)
+        cy = bankH-1
+      else
+        cy = 0
+      end
+    elseif cy > bankH-1 then
+      if sprsbank < 4 then
+        setBank(sprsbank+1)
+        cy = 0
+      else
+        cy = bankH-1
+      end
+    end
+    
+    cx, cy = math.min(cx,sprsgrid[5]-zscale), math.min(cy,sprsgrid[6]-zscale)
+    sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
+    sprssrect[1] = cx*8-1
+    sprssrect[2] = sprsrecto[2]+cy*8
+    imgquad:setViewport(cx*8,cy*8 + (sprsbank-1)*bsizeH,imgw*zscale,imgh*zscale)
+    self:redrawSPRS() self:redrawSPR()
   end
 end
 
