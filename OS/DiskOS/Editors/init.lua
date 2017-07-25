@@ -223,7 +223,8 @@ end
 function edit:import(data) --Import editors data
   data = data:gsub("\r\n","\n")
   local savePos = {}
-  for k,v in ipairs(self.saveid) do
+  for k = #self.saveid, 1, -1 do
+    local v = self.saveid[k]
     if v ~= -1 and self.leditors[k].import then
       local dstart, dend = string.find(data,"___"..tostring(v).."___")
       if dstart then
@@ -243,11 +244,11 @@ end
 
 function edit:export() --Export editors data
   local save = ""
-  for k,v in ipairs(self.saveid) do
+  for k = #self.saveid, 1, -1 do
+    local v = self.saveid[k]
     if v ~= -1 and self.leditors[k].export then
       local data = self.leditors[k]:export()
       if type(data) ~= "nil" then
-        --code = code.."\n['"..tostring(v).."'] = "..string.format("%q",data)..","
         save = save.."___"..tostring(v).."___\n"..data:gsub("___","").."\n"
       end
     end
