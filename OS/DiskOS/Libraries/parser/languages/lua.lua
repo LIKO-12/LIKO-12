@@ -13,8 +13,8 @@ return {
             "in", "local", "nil", "not", "or",
             "repeat", "return", "then", "true", "until", "while"
         }
-        local api = {"clear"}
-        local callbacks = {"callbackexample"}
+        local api = getAPI()
+        local callbacks = {"_draw","_init","_keypressed","_keyreleased","_mousemoved","_mousepressed","_mousereleased","_textinput","_touchcontrol","_touchmoved","_touchpressed","_touchreleased","_update","_wheelmoved"}
 
         -- Convert values to keys
         for _, list in ipairs({keywords, api, callbacks}) do
