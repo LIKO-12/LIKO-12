@@ -44,7 +44,8 @@ text = 7,
 keyword = 10,
 number = 12,
 comment = 13,
-str = 12
+str = 12,
+selection = 6
 }
 
 ce.bgc = 5--Background Color
@@ -53,6 +54,10 @@ ce.fw, ce.fh = fontSize() --The font character size
 ce.tw, ce.th = termSize() --The terminal size
 ce.th = ce.th-2 --Because of the top and bottom bars
 ce.vx, ce.vy = 1,1 --View postions
+--ce.sxs, ce.sys -> Selection start positions, nil when not selecting
+--ce.sxe, ce.sye -> Selection start positions, nil when not selecting
+--ce.sdir -> Selection direction (true for up, false for down), nil when not selecting
+ce.mflag = false --Mouse flag
 
 ce.btimer = 0 --The cursor blink timer
 ce.btime = 0.5 --The cursor blink time
@@ -82,7 +87,6 @@ function ce:colorPrint(tbl)
       print(txt,false,true)--Disable auto newline
     end
   end
-  --print("")--A new line
   popColor()
 end
 
@@ -113,6 +117,24 @@ function ce:checkPos()
   return flag
 end
 
+function ce:clampPos(x,y)
+  --Y position checking--
+  if y > #buffer then y = #buffer end --Passed the end of the file
+
+  if y < self.vy then --Passed the screen to the top
+    if y < 1 then y = 1 end
+  end
+  
+  --X position checking--
+  if buffer[y]:len() < x-1 then x = buffer[y]:len()+1 end --Passed the end of the line !
+
+  if x < self.vx then --Passed the screen to the left
+    if x < 1 then x = 1 end
+  end
+  
+  return x, y
+end
+
 -- Make the cursor visible and reset the blink timer
 function ce:resetCursorBlink()
   ce.btimer = 0
@@ -129,9 +151,29 @@ end
 
 --Draw the code on the screen
 function ce:drawBuffer()
-  local cbuffer = self.colorize and clua(lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)),cluacolors) or lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1))
+  local vbuffer = lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)) --Visible buffer
+  local cbuffer = self.colorize and clua(vbuffer,cluacolors) or vbuffer
   rect(0,7,screenW,screenH-8*2+1,false,self.bgc)
   for k, l in ipairs(cbuffer) do
+    if self.sxs and self.vy+k-1 >= self.sys and self.vy+k-1 <= self.sye then --Selection
+      printCursor(-(self.vx-2)-1,k,cluacolors.selection)
+      local linelen,skip = vbuffer[k]:len(), 0
+      if self.vy+k-1 == self.sys then --Selection start
+        skip = self.sxs-1
+        printCursor(skip-(self.vx-2)-1)
+        linelen = linelen-skip
+      end
+      
+      if self.vy+k-1 == self.sye then --Selection end
+        linelen = self.sxe - skip
+      end
+      
+      if self.vy+k-1 < self.sye then --Not the end of the selection
+        linelen = linelen + 1
+      end
+      
+      print(string.rep(" ",linelen),false,true)
+    end
     printCursor(-(self.vx-2)-1,k,-1)
     self:colorPrint(l)
   end
@@ -377,12 +419,78 @@ function ce:mousepressed(x, y, button, istouch)
   if istouch then return end
   local cx, cy = whereInGrid(x,y, charGrid)
   if cx then
+    self.mflag = true
+    
     self.cx = self.vx + (cx-1)
     self.cy = self.vy + (cy-1)
+    
+    if self.sxs then self.sxs,self.sys,self.sxe,self.sye,self.sdir = false,false,false,false,false end --End selection
+    
     self:checkPos()
     self:drawBuffer()
     self:drawLineNum()
   end
+end
+
+function ce:mousemoved(x,y,dx,dy,it)
+  if istouch or not self.mflag then return end
+  local cx, cy = whereInGrid(x,y, charGrid)
+  if cx then
+    cx, cy = self:clampPos(cx+self.vx-1,cy+self.vy-1)
+    self.bflag = false --Disable blinking
+    if not self.sxs then --Start the selection
+      if self.cy > cy then
+        self.sdir = true --UP
+        self.sxs, self.sys = cx, cy
+        self.sxe, self.sye = self.cx, self.cy
+      else
+        self.sdir = false --DOWN
+        self.sxs, self.sys = self.cx, self.cy
+        self.sxe, self.sye = cx, cy
+      end
+    else
+      local function switch(s)
+        if (s and not self.sdir) then
+          self.sxe, self.sye = self.sxs, self.sys
+        elseif (self.sdir and not s) then
+          self.sxs, self.sys = self.sxe, self.sye
+        end
+        self.sdir = s
+      end
+      
+      if self.sdir then
+        if cy == self.sye and cx > self.sxe then
+          switch(false)
+        elseif cy > self.sye then
+          switch(false)
+        end
+      else
+        if cy == self.sys and cx < self.sxs then
+          switch(true)
+        elseif cy < self.sys then
+          switch(true)
+        end
+      end
+      
+      if self.sdir then
+        self.sxs, self.sys = cx, cy
+      else
+        self.sxe, self.sye = cx, cy
+      end
+    end
+    
+    self:drawBuffer()
+  elseif x > 8 and self.sxs then --Bottom bar
+    self.bflag = false --Disable blinking
+    
+  elseif self.sxs then --Top bar
+    self.bflag = false --Disable blinking
+    
+  end
+end
+
+function ce:mousereleased(x,y,b,it)
+  self.mflag = false
 end
 
 function ce:wheelmoved(x, y)
@@ -430,11 +538,13 @@ end
 
 function ce:update(dt)
   --Blink timer
-  self.btimer = self.btimer + dt
-  if self.btimer >= self.btime then
-    self.btimer = self.btimer - self.btime
-    self.bflag = not self.bflag
-    self:drawLine() --Redraw the current line
+  if not self.sxs then --If not selecting
+    self.btimer = self.btimer + dt
+    if self.btimer >= self.btime then
+      self.btimer = self.btimer - self.btime
+      self.bflag = not self.bflag
+      self:drawLine() --Redraw the current line
+    end
   end
 end
 
