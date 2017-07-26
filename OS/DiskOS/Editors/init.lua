@@ -321,7 +321,7 @@ function edit:loop() --Starts the while loop
         if self.leditors[self.active].keymap then
           local usedKey
           if self.leditors[self.active].keymap[key] then usedKey = key
-          elseif self.leditors[self.active].keymap[sc] then usedKey = sc
+          elseif self.leditors[self.active].keymap["sc_"..sc] then usedKey = "sc_"..sc
           end
           if usedKey then
             self.leditors[self.active].keymap[usedKey](self.leditors[self.active], c)
