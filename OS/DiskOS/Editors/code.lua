@@ -41,15 +41,17 @@ local screenW, screenH = screenSize()
 local lume = require("Libraries/lume")
 local syntax = require("Libraries/syntax")
 syntax:setSyntax('lua')
-syntax:setTheme({
+local syntaxTheme = {
   text = 7,
   keyword = 10,
   number = 12,
   comment = 13,
   string = 11,
   api = 14,
-  callback = 15
-})
+  callback = 15,
+  selection = 6
+}
+syntax:setTheme(syntaxTheme)
 
 ce.bgc = 5--Background Color
 ce.cx, ce.cy = 1, 1 --Cursor Position
@@ -80,7 +82,7 @@ ce.touchskipinput = false
 function ce:colorPrint(tbl)
   pushColor()
   if type(tbl) == "string" then
-    color(7) -- TODO: Get this from the highlighter
+    color(syntaxTheme.text)
     print(tbl,false,true)
   else
     for i=1, #tbl, 2 do
@@ -159,7 +161,7 @@ function ce:drawBuffer()
   rect(0,7,screenW,screenH-8*2+1,false,self.bgc)
   for k, l in ipairs(cbuffer) do
     if self.sxs and self.vy+k-1 >= self.sys and self.vy+k-1 <= self.sye then --Selection
-      printCursor(-(self.vx-2)-1,k,cluacolors.selection)
+      printCursor(-(self.vx-2)-1,k,syntaxTheme.selection)
       local linelen,skip = vbuffer[k]:len(), 0
       if self.vy+k-1 == self.sys then --Selection start
         skip = self.sxs-1
