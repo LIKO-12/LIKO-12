@@ -427,15 +427,17 @@ end
 
 --Mouse function of ImageDrawing
 function se:mouseImageDrawing(x,y,b,it,state)
-  local cx, cy = whereInGrid(x,y,imggrid)
-  if cx then
-    if (not it) and state == "pressed" then mflag = true end
-    tools[stool](self,cx,cy,b)
-    self:redrawSPR() self:redrawSPRS()
+  if state ~= "hover" then
+    local cx, cy = whereInGrid(x,y,imggrid)
+    if cx then
+      if (not it) and state == "pressed" then mflag = true end
+      tools[stool](self,cx,cy,b)
+      self:redrawSPR() self:redrawSPRS()
+    end
   end
   
   --Cursor
-  if false then
+  if true then
     if whereInGrid(x,y,imggrid) and stool < 3 then
       if stool == 1 then
         if isKDown("lshift","rshift") or isMDown(2) then
@@ -583,6 +585,8 @@ function se:mousemoved(x,y,dx,dy,it)
   --Image Drawing
   if (not it and mflag) or it then
     self:mouseImageDrawing(x,y,b,it,"moved")
+  else --For the cursor to update
+    self:mouseImageDrawing(x,y,b,it,"hover")
   end
   
   --Sprite Selection

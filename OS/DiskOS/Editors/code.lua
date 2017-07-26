@@ -30,6 +30,7 @@ Be sure to read the contributing guide in Editors/init.lua
 
 - Rami Sabbagh (RamiLego4Game)
 - Fernando Carmona Varo (Ferk)
+- Lucas Henrique (lhs_azevedo)
 ]]
 
 local ce = {} --Code editor
@@ -38,15 +39,17 @@ local buffer = {""} --A table containing lines of code
 
 local screenW, screenH = screenSize()
 local lume = require("Libraries/lume")
-local clua = require("Libraries/colorize_lua")
-local cluacolors = {
-text = 7,
-keyword = 10,
-number = 12,
-comment = 13,
-str = 12,
-selection = 6
-}
+local syntax = require("Libraries/syntax")
+syntax:setSyntax('lua')
+syntax:setTheme({
+  text = 7,
+  keyword = 10,
+  number = 12,
+  comment = 13,
+  string = 11,
+  api = 14,
+  callback = 15
+})
 
 ce.bgc = 5--Background Color
 ce.cx, ce.cy = 1, 1 --Cursor Position
@@ -77,7 +80,7 @@ ce.touchskipinput = false
 function ce:colorPrint(tbl)
   pushColor()
   if type(tbl) == "string" then
-    color(cluacolors.text)
+    color(7) -- TODO: Get this from the highlighter
     print(tbl,false,true)
   else
     for i=1, #tbl, 2 do
@@ -152,7 +155,7 @@ end
 --Draw the code on the screen
 function ce:drawBuffer()
   local vbuffer = lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)) --Visible buffer
-  local cbuffer = self.colorize and clua(vbuffer,cluacolors) or vbuffer
+  local cbuffer = self.colorize and syntax:highlightLines(vbuffer, self.vy) or vbuffer
   rect(0,7,screenW,screenH-8*2+1,false,self.bgc)
   for k, l in ipairs(cbuffer) do
     if self.sxs and self.vy+k-1 >= self.sys and self.vy+k-1 <= self.sye then --Selection
@@ -182,10 +185,18 @@ end
 
 function ce:drawLine()
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
-  local cline = self.colorize and clua({buffer[self.cy]},cluacolors) or {buffer[self.cy]}
+  local cline, colateral
+  if self.colorize then
+    cline, colateral = syntax:highlightLine(buffer[self.cy], self.cy)
+  end
+  if not cline then cline = buffer[self.cy] end
   rect(0,(self.cy-self.vy+2)*(self.fh+2)-(self.fh+2), screenW,self.fh+2, false,self.bgc)
   printCursor(-(self.vx-2)-1,(self.cy-self.vy+1),self.bgc)
-  self:colorPrint(cline[1])
+  if not colateral then
+    self:colorPrint(cline)
+  else
+    self:drawBuffer()
+  end
   self:drawBlink()
 end
 
