@@ -6,9 +6,10 @@ local keywords = {
 }
 local api = getAPI()
 local callbacks = {"_draw","_init","_keypressed","_keyreleased","_mousemoved","_mousepressed","_mousereleased","_textinput","_touchcontrol","_touchmoved","_touchpressed","_touchreleased","_update","_wheelmoved"}
+local escapable = {"a", "b", "f", "n", "r", "t", "v", "\\", "\"", "'"}
 
 -- Convert values to keys
-for _, list in ipairs({keywords, api, callbacks}) do
+for _, list in ipairs({keywords, api, callbacks, escapable}) do
     for i, word in ipairs(list) do
         list[word] = true
         list[i] = nil
@@ -18,6 +19,7 @@ end
 function startState()
   return {
     tokenizer = "base",
+    starter = ""
   }
 end
 
@@ -36,12 +38,8 @@ function token(stream, state)
           end
       -- String matching
       elseif char == "\"" or char == "'" then
-          if stream:skipTo(char) then
-              stream:next()
-          else
-              stream:skipToEnd()
-          end
-          result = "string"
+        state.starter = char
+        state.tokenizer = "string"
       -- Decimal numbers
       elseif char == '.' and stream:match('%d+') then
           result = 'number'
@@ -76,7 +74,26 @@ function token(stream, state)
       end
   end
 
-  if state.tokenizer == "multilineString" then
+  if state.tokenizer == "string" then
+    char = stream:next()
+    result = "string"
+    if char == "\\" then
+      escaped = stream:peek()
+      if escaped and escapable[escaped] then
+        stream:next()
+        result = "escape"
+      end
+    elseif char == state.starter then
+      state.starter = ""
+      stream:next()
+      state.tokenizer = "base"
+    --else
+    --    stream:skipToEnd()
+    else
+      if stream:eol() then state.tokenizer = "base" end
+    end
+
+  elseif state.tokenizer == "multilineString" then
       if stream:skipTo("%]%]") then
           stream:next()
           state.tokenizer = "base"
