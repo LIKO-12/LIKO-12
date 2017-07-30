@@ -94,13 +94,19 @@ function token(stream, state)
     end
 
   elseif state.tokenizer == "multilineString" then
-      if stream:skipTo("%]%]") then
+      char = stream:next()
+      result = "string"
+      if char == "\\" then
+        escaped = stream:peek()
+        if escaped and escapable[escaped] then
+          stream:next()
+          result = "escape"
+        end
+      elseif char == "]" and stream:eat("%]") then
           stream:next()
           state.tokenizer = "base"
-      else
-          stream:skipToEnd()
       end
-      result = "string"
+
   elseif state.tokenizer == "multilineComment" then
       if stream:skipTo("%]%]") then
           stream:next()
