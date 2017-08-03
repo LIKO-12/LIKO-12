@@ -3,13 +3,23 @@
 
 if select(1,...) == "-?" then
   printUsage(
-    "ls","Lists the files and folders in the current directory"
+    "ls","Lists the files and folders in the current directory",
+    "ls <dir>","Lists the files and folders in a specific directory"
   )
   return
 end
 
 local term = require("terminal") --Require the terminal api.
 local path = term.getpath() --Get the current active directory.
+local dir = select(1,...) 
+
+if dir then
+	local newpath, exists = term.resolve(dir)
+	if not exists then color(9) print("Folder doesn't exists !") return end
+	if not fs.isDirectory(newpath) then color(9) print("It should be a folder, provided a file !") return end
+	path = newpath.."/"
+end
+
 local files = fs.directoryItems(path) --Returns a table containing the names of folders and files in the given directory
 
 for k, f in ipairs(files) do
