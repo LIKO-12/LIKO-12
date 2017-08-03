@@ -1,5 +1,8 @@
 --The BIOS should control the system of LIKO-12 and load the peripherals--
 --For now it's just a simple BIOS to get LIKO-12 working.
+local DevMode = love.filesystem.exists("devmode.txt")
+
+local FThread --File tracking thread
 
 local _LIKO_Version, _LIKO_Old = _LVer.magor..".".._LVer.minor..".".._LVer.patch..".".._LVer.build
 if love.filesystem.exists(".version") then
@@ -79,7 +82,7 @@ local function P(per,m,conf)
   return success, peripheral, devkit, nocache
 end
 
-if not love.filesystem.exists("/bconf.lua") or love.filesystem.exists("devmode.txt") or true then
+if not love.filesystem.exists("/bconf.lua") or DevMode or true then
   love.filesystem.write("/bconf.lua",love.filesystem.read("/BIOS/bconf.lua"))
 end
 
@@ -212,10 +215,27 @@ end
 local function bootOS()
   fs.drive("C") --Switch to the C drive.
   
-  if not fs.exists("/boot.lua") or love.filesystem.exists("devmode.txt") then _LIKO_Old = false; noOS() end
+  if not fs.exists("/boot.lua") or DevMode then _LIKO_Old = false; noOS() end
   
   if _LIKO_Old then --Show update screen
     noOS() --Nah just reflash
+  end
+  
+  --File track thread
+  if DevMode and love.thread then
+	FThread = love.thread.newThread("/BIOS/filethread.lua")
+	FThread:start()
+	
+	events:register("love:reboot",function()
+		local channel = love.thread.getChannel("BIOSFileThread")
+		channel:push(true) --Shutdown the thread
+	end)
+	
+	events:register("love:quit",function()
+		local channel = love.thread.getChannel("BIOSFileThread")
+		channel:push(true) --Shutdown the thread
+		FThread:wait()
+	end)
   end
   
   local bootchunk, err = fs.load("/boot.lua")
@@ -257,7 +277,8 @@ if gpu then
       gpu.print("Copyright (C) Rami Sabbagh",15,13)
       
       gpu.printCursor(0,3,0)
-      gpu.print("NormBIOS Revision 060-010")
+      gpu.print("NormBIOS Revision 060-011")
+      if DevMode then gpu.print("-==Devmode Enabled==-") end
       gpu.print("")
       
       gpu.print("Press DEL to enter setup",2,sh-7)
