@@ -8,7 +8,7 @@ function parser:loadParser(language)
    -- TODO: Factory! https://github.com/luarocks/lua-style-guide#modules
    local chunk, err = fs.load("C:/Libraries/parser/languages/"..language..".lua")
    if not chunk then
-      self.parser = {}
+      self.parser = { token = function(stream) print(err) stream:skipToEnd() end, startState = function() return {} end } -- Default parser
       return false
    else
       self.parser = chunk()

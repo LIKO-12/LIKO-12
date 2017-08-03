@@ -49,7 +49,8 @@ local syntaxTheme = {
   string = 11,
   api = 14,
   callback = 15,
-  selection = 6
+  selection = 6,
+  escape = 12
 }
 syntax:setTheme(syntaxTheme)
 
