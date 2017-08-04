@@ -505,6 +505,10 @@ return function(config) --A function that creates a new GPU peripheral.
   local PaletteStack = {} --The palette stack (pushPalette,popPalette)
   local printCursor = {x=0,y=0,bgc=0} --The print grid cursor pos.
   local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2)) --The size of characters that the screen can fit.
+  local LastMSG = "" --Last system message.
+  local LastMSGTColor = 4 --Last system message text color.
+  local LastMSGColor = 9 --Last system message color.
+  local MSGTimer = 0 --The message timer.
   
   --Those explains themselves.
   function GPU.screenSize() return true, _LIKO_W, _LIKO_H end
@@ -530,7 +534,7 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.color(id)
     if id then
       if type(id) ~= "number" then return false, "The color id must be a number, provided: "..type(id) end --Error
-      if id > 15 or id < 0 then return false, "The color id is out of range." end --Error
+      if id > 15 or id < 0 then return false, "The color id is out of range ("..id..") Must be [0,15]" end --Error
       id = math.floor(id) --Remove the float digits.
       love.graphics.setColor(id,0,0,255) --Set the active color.
       return true --It ran successfuly.
@@ -1367,6 +1371,28 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end)
   
+  function GPU._systemMessage(msg,time,tcol,col)
+	if type(msg) ~= "string" then return false, "Message must be a string, provided: "..type(msg) end
+	
+	if time and type(time) ~= "number" then return false, "Time must be a number or a nil, provided: "..type(time) end
+	if tcol and type(tcol) ~= "number" then return false, "Text color must be a number or a nil, provided: "..type(tcol) end
+	if col and type(col) ~= "number" then return false, "Body Color must be a number or a nil, provided: "..type(col) end
+	local time, tcol, col = time or 1, math.floor(tcol or 4), math.floor(col or 9)
+	if time <= 0 then return false, "Time must be bigger than 0" end
+	if tcol < 0 or tcol > 15 then return false, "Text Color ID out of range ("..tcol..") Must be [0,15]" end
+	if col < 0 or col > 15 then return false, "Body Color ID out of range ("..col..") Must be [0,15]" end
+	LastMSG = msg
+	LastMSGTColor = tcol
+	LastMSGColor = col
+	MSGTimer = time
+	
+	return true
+  end
+  
+  events:register("love:update",function(dt)
+	if MSGTimer > 0 then MSGTimer = MSGTimer - dt end
+  end)
+  
   --End of API--
   
   love.graphics.setLineStyle("rough") --Set the line style.
@@ -1401,6 +1427,19 @@ return function(config) --A function that creates a new GPU peripheral.
         mx,my = _LikoToHost(mx,my)
         local hotx, hoty = _CursorsCache[_Cursor].hx*_LIKOScale, _CursorsCache[_Cursor].hy*_LIKOScale --Converted to host scale
         love.graphics.draw(_CursorsCache[_Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty,0,_LIKOScale,_LIKOScale)
+      end
+      
+      if MSGTimer > 0 then
+		love.graphics.setColor(_GetColor(LastMSGColor))
+		love.graphics.rectangle("fill", _LIKO_X+ofs.screen[1]+ofs.rect[1], _LIKO_Y+ofs.screen[2] + (_LIKO_H-8) * _LIKOScale + ofs.rect[2],
+		_LIKO_W * _LIKOScale + ofs.rectSize[1], 8*_LIKOScale + ofs.rectSize[2])
+		love.graphics.setColor(_GetColor(LastMSGTColor))
+		love.graphics.push()
+		love.graphics.translate(_LIKO_X+ofs.screen[1]+ofs.print[1]+_LIKOScale, _LIKO_Y+ofs.screen[2] + (_LIKO_H-7) * _LIKOScale + ofs.print[2])
+		love.graphics.scale(_LIKOScale,_LIKOScale)
+		love.graphics.print(LastMSG,0,0)
+		love.graphics.pop()
+		love.graphics.setColor(255,255,255,255)
       end
       
       if _DevKitDraw then
