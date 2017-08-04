@@ -1390,7 +1390,10 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   events:register("love:update",function(dt)
-	if MSGTimer > 0 then MSGTimer = MSGTimer - dt end
+	if MSGTimer > 0 then
+	  MSGTimer = MSGTimer - dt
+	  _ShouldDraw = true
+	end
   end)
   
   --End of API--
