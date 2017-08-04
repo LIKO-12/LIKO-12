@@ -14,6 +14,7 @@ local fw, fh = fontSize()
 local history = {}
 local hispos
 local btimer, btime, blink = 0, 0.5, true
+local ecommand
 
 local function checkCursor()
   local cx, cy = printCursor()
@@ -173,6 +174,10 @@ function term.execute(command,...)
   color(9) print("Command not found: " .. command) color(7) return false, "Command not found"
 end
 
+function term.ecommand(command) --Editor post command
+	ecommand = command
+end
+
 function term.loop() --Enter the while loop of the terminal
   cursor("none")
   clearEStack()
@@ -211,7 +216,12 @@ function term.loop() --Enter the while loop of the terminal
         local oldx, oldy, oldbk = printCursor()
         editor:loop() cursor("none")
         printCursor(oldx,oldy,oldbk)
-        palt(0,false) screenbk:image():draw(0,0) color(7) palt(0,true)
+        palt(0,false) screenbk:image():draw(0,0) color(7) palt(0,true) flip()
+        if ecommand then
+		  term.execute(split(ecommand))
+		  checkCursor() term.prompt() blink = true cursor("none")
+		  ecommand = false
+        end
       elseif a == "up" then
         if not hispos then
           table.insert(history,buffer)

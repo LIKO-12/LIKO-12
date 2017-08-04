@@ -285,22 +285,42 @@ function edit:loop() --Starts the while loop
         pushMatrix() pushPalette() pushColor()
         if key == "ctrl-s" then
           local oldprint = print
-          print = function() end
-          term.execute("save")
+          local err
+          print = function(msg) if color() == 9 and not err then err = msg end end
+          
+          if not self.filePath then
+			err = "Missing save name !"
+          else
+			term.execute("save")
+		  end
+		  
+          if err and err:len() > 4 then
+		    _systemMessage(err,5,9,4)
+		  else
+			_systemMessage("Saved successfully",1)
+          end
           print = oldprint
         elseif key == "ctrl-l" then
           local oldprint = print
-          print = function() end
-          term.execute("load")
+          local err
+          print = function(msg) if color() == 9 and not err then err = msg end end
+          
+          if not self.filePath then
+			err = "Missing save name !"
+          else
+			term.execute("load")
+		  end
+		  
+		  if err and err:len() > 4 then
+		    _systemMessage(err,5,9,4)
+		  else
+			_systemMessage("Reloaded successfully",1)
+          end
           print = oldprint
         elseif key == "ctrl-r" then
-          local sbk = screenshot()
-          local px,py,pc = printCursor()
-          cam()
-          term.execute("run")
-          cam()
-          printCursor(px,py,pc)
-          sbk:image():draw(0,0)
+          term.ecommand("run")
+          if edit.leditors[edit.active]["leaved"] then edit.leditors[edit.active]:leaved() end
+          break
         end
         popMatrix() popPalette() popColor()
         
