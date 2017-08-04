@@ -91,10 +91,6 @@ local zflag = "none" --Zoom mouse flag
 local zslider = {(transdraw[2] + transdraw[4]*8 + revdraw[1])/2 - (4*8)/2, transdraw[3]+1, 3, false, 186} --The Zoom Slider Draw
 local zgrid = {zslider[1]+8,zslider[2]+2,8*zslider[3],4,zslider[3],1} --The Zoom Slider Mouse Grid
 
---Info system variables--
-local infotimer = 0 --The info timer, 0 if no info.
-local infotext = "" --The info text to display
-
 --The tools code--
 local toolshold = {true,true,false,false,false} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
@@ -142,7 +138,7 @@ local tools = {
       data:setPixel(qx+px,qy+py,0)
     end end
     self.SpriteMap.img = data:image()
-    infotimer, infotext = 2,"DELETED SPRITE "..sprsid se:redrawINFO()
+    _systemMessage("DELETED SPRITE "..sprsid, 2)
   end
 }
 
@@ -259,9 +255,7 @@ end
 function se:copy()
   local headerlen = 15 + (tostring(8*zscale):len()*2)
   clipboard(string.lower(extractSprite():encode():gsub("\n",""):sub(headerlen,-1)))
-  infotimer = 2 --Show info for 2 seconds
-  infotext = "COPIED SPRITE "..sprsid
-  self:redrawINFO()
+  _systemMessage("COPIED SPRITE "..sprsid,2)
 end
 
 function se:paste()
@@ -289,14 +283,11 @@ function se:paste()
     self:_redraw()
   end)
   if not ok then
-    infotimer = 5 --Display error msg for 5 seconds
-    infotext = "PASTE ERR: "..(err or "nil")
+    _systemMessage("PASTE ERR: "..(err or "nil"),5)
     cprint("PASTE ERR: "..(err or "nil"))
   else
-    infotimer = 2 --Display info for 2 seconds
-    infotext = "PASTED TO SPRITE "..sprsid
+    _systemMessage("PASTED TO SPRITE "..sprsid,2)
   end
-  self:redrawINFO()
 end
 
 --Redraw color pallete
@@ -356,15 +347,6 @@ function se:redrawFLAG()
   end
 end
 
---Redraw the bottom bar messages
-function se:redrawINFO()
-  rect(0,sheight-8,swidth,8,false,9)
-  if infotimer > 0 then
-    color(4)
-    print(infotext or "",1,sheight-6)
-  end
-end
-
 --Redraw all the screen
 function se:_redraw()
   self:redrawCP()
@@ -391,14 +373,6 @@ function se:update(dt)
     if transtimer > transtime then
       transtimer, strans = nil, nil
       self:redrawTOOLS()
-    end
-  end
-  
-  if infotimer > 0 then
-    infotimer = infotimer - dt
-    if infotimer < 0 then
-      infotimer = 0
-      self:redrawINFO()
     end
   end
 end
