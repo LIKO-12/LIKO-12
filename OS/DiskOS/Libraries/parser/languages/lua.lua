@@ -85,7 +85,6 @@ function token(stream, state)
       end
     elseif char == state.starter then
       state.starter = ""
-      stream:next()
       state.tokenizer = "base"
     --else
     --    stream:skipToEnd()
@@ -103,7 +102,6 @@ function token(stream, state)
           result = "escape"
         end
       elseif char == "]" and stream:eat("%]") then
-          stream:next()
           state.tokenizer = "base"
       end
 
