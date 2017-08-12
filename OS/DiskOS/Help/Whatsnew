@@ -1,5 +1,19 @@
 Changelog:
 
+V0.6.0_PRE_04 (Not release yet):
+================================
+New:
+1. Added Paint program back.
+2. New hex string sprite copy format.
+3. Now can paste from pico-8 and tic-80, and can also paste to tic-80.
+4. New sprite editor selection size slider.
+5. New `install_games` program, to install a set of built-in games.
+6. New games: Snake, minesweeper
+
+Bugfixes:
+1. Bugfix appdata program oppening the appdata folder after showing help.
+2. Fix some internal cursors hot position.
+
 V0.6.0_PRE_03 (7/7/2017):
 =========================
 1. New touch controls.
