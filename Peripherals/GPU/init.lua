@@ -789,12 +789,12 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Draws a circle filled, or lines only.
-  function GPU.circle(x,y,r,l,c) UnbindVRAM()
-    local x,y,r,l,c = x, y, r, l or false, c --In case if they are not provided.
+  function GPU.circle(x,y,r,l,c,s) UnbindVRAM()
+    local x,y,r,l,c,s = x, y, r, l or false, c, s --In case if they are not provided.
     
     --It accepts all the args as a table.
     if x and type(x) == "table" then
-      x,y,r,l,c = unpack(x)
+      x,y,r,l,c,s = unpack(x)
       l,c = l or false, c --In case if they are not provided.
     end
     
@@ -804,9 +804,10 @@ return function(config) --A function that creates a new GPU peripheral.
     if type(r) ~= "number" then return false, "R radius must be a number." end --Error
     if type(l) ~= "boolean" then return false, "L linecircle must be a number or nil." end --Error
     if c and type(c) ~= "number" then return false, "The color id must be a number or nil." end --Error
+    if s and type(s) ~= "number" then return false, "Segments must be a number or nil." end --Error
     
     --Remove float digits
-    x,y,r,c = math.floor(x), math.floor(y), math.floor(r), c and math.floor(c) or c
+    x,y,r,c,s = math.floor(x), math.floor(y), math.floor(r), c and math.floor(c) or c, s and math.floor(s) or s
     
     if c then --If the colorid is provided, pushColor then set the color.
       exe(GPU.pushColor())
@@ -820,7 +821,7 @@ return function(config) --A function that creates a new GPU peripheral.
       x,y,r = x+ofs.circle[1], y+ofs.circle[2], r+ofs.circle[3]
     end
     
-    love.graphics.circle(l and "line" or "fill",x,y,r) _ShouldDraw = true --Draw and tell that changes has been made.
+    love.graphics.circle(l and "line" or "fill",x,y,r,s) _ShouldDraw = true --Draw and tell that changes has been made.
     
     if c then exe(GPU.popColor()) end --Restore the color from the stack.
     
