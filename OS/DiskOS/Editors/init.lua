@@ -281,6 +281,7 @@ function edit:loop() --Starts the while loop
         end
         
         local term = require("terminal")
+        local hotkey --Was it an hotkey ?
         
         pushMatrix() pushPalette() pushColor()
         if key == "ctrl-s" then
@@ -289,37 +290,40 @@ function edit:loop() --Starts the while loop
           print = function(msg) if color() == 9 and not err then err = msg end end
           
           if not self.filePath then
-			err = "Missing save name !"
+            err = "Missing save name !"
           else
-			term.execute("save")
-		  end
+            term.execute("save")
+          end
 		  
           if err and err:len() > 4 then
-		    _systemMessage(err,5,9,4)
-		  else
-			_systemMessage("Saved successfully",1)
+            _systemMessage(err,5,9,4)
+          else
+            _systemMessage("Saved successfully",1)
           end
           print = oldprint
+          hotkey = true
         elseif key == "ctrl-l" then
           local oldprint = print
           local err
           print = function(msg) if color() == 9 and not err then err = msg end end
           
           if not self.filePath then
-			err = "Missing save name !"
+            err = "Missing save name !"
           else
-			term.execute("load")
-		  end
-		  
-		  if err and err:len() > 4 then
-		    _systemMessage(err,5,9,4)
-		  else
-			_systemMessage("Reloaded successfully",1)
+            term.execute("load")
+          end
+          
+          if err and err:len() > 4 then
+            _systemMessage(err,5,9,4)
+          else
+            _systemMessage("Reloaded successfully",1)
           end
           print = oldprint
+          hotkey = true
         elseif key == "ctrl-r" then
           term.ecommand("run")
           if edit.leditors[edit.active]["leaved"] then edit.leditors[edit.active]:leaved() end
+          hotkey = true
           break
         end
         popMatrix() popPalette() popColor()
@@ -330,15 +334,17 @@ function edit:loop() --Starts the while loop
           else
             self:switchEditor(self.active+1)
           end
+          hotkey = true
         elseif key == "alt-right" then
           if self.active == 1 then
             self:switchEditor(#self.editors)
           else
             self:switchEditor(self.active-1)
           end
+          hotkey = true
         end
         
-        if self.leditors[self.active].keymap then
+        if self.leditors[self.active].keymap and not hotkey then
           local usedKey
           if self.leditors[self.active].keymap[key] then usedKey = key
           elseif self.leditors[self.active].keymap["sc_"..sc] then usedKey = "sc_"..sc
@@ -348,7 +354,7 @@ function edit:loop() --Starts the while loop
             self.leditors[self.active].lastKey = usedKey
           end
         end
-        if self.leditors[self.active][event] then self.leditors[self.active][event](self.leditors[self.active],a,b,c,d,e,f) end
+        if self.leditors[self.active][event] and not hotkey then self.leditors[self.active][event](self.leditors[self.active],a,b,c,d,e,f) end
       end
     elseif event == "mousepressed" then
       local cx, cy = whereInGrid(a,b, self.modeGrid)
