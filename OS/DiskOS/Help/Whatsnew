@@ -5,10 +5,31 @@ V0.6.0_PRE_04 (Not release yet):
 New:
 1. Added Paint program back.
 2. New hex string sprite copy format.
-3. Now can paste from pico-8 and tic-80, and can also paste to tic-80.
+3. Now can paste from PICO-8 and TIC-80, and can also paste to TIC-80.
 4. New sprite editor selection size slider.
 5. New `install_games` program, to install a set of built-in games.
-6. New games: Snake, minesweeper
+6. New games: Snake, minesweeper, batteryman, pong.
+7. New sprite editor shorcuts, check the docs for them.
+8. New `loadcart` program to load old LIKO-12 V0.0.5a carts.
+9. New joysticks support, with unlimited number of controllers.
+10. New joymap program to remap the joystick buttons.
+11. New controls test demo `joytest`.
+12. Added support for installing custom editors.
+13. New syntax highlighter by lhs_azevedo.
+14. Now colors the api functions in the code editor.
+15. New `exit` command, the same of `shutdown` command.
+16. New ctrl-s, ctrl-l, ctrl-r works in the editors.
+17. New copy program to copy single files.
+18. circle() and ellipse() now accepts segments count argument.
+
+Improvements:
+1. Faster gif recording.
+2. New sprite editor layout.
+
+Engine:
+1. Now uses r8 canvas instead of rgba8.
+2. NormBIOS Revision 060-011: New file tracking when in devmode.
+3. New system messages functionality.
 
 Bugfixes:
 1. Bugfix appdata program oppening the appdata folder after showing help.
