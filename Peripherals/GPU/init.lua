@@ -879,12 +879,12 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Draws a ellipse filled, or lines only.
-  function GPU.ellipse(x,y,rx,ry,l,c) UnbindVRAM()
-    local x,y,rx,ry,l,c = x or 0, y or 0, rx or 1, ry or 1, l or false, c --In case if they are not provided.
+  function GPU.ellipse(x,y,rx,ry,l,c,s) UnbindVRAM()
+    local x,y,rx,ry,l,c,s = x or 0, y or 0, rx or 1, ry or 1, l or false, c, s --In case if they are not provided.
     
     --It accepts all the args as a table.
     if x and type(x) == "table" then
-      x,y,rx,ry,l,c = unpack(x)
+      x,y,rx,ry,l,c,s = unpack(x)
     end
     
     --Args types verification
@@ -894,6 +894,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if type(ry) ~= "number" then return false, "R y radius must be a number." end --Error
     if type(l) ~= "boolean" then return false, "L linecircle must be a number or nil." end --Error
     if c and type(c) ~= "number" then return false, "The color id must be a number or nil." end --Error
+    if s and type(s) ~= "number" then return false, "Segments must be a number or nil." end --Error
     
     if c then --If the colorid is provided, pushColor then set the color.
       exe(GPU.pushColor())
@@ -907,7 +908,7 @@ return function(config) --A function that creates a new GPU peripheral.
       x,y,rx,ry = x+ofs.ellipse[1], y+ofs.ellipse[2], rx+ofs.ellipse[3], ry+ofs.ellipse[4]
     end
     
-    love.graphics.ellipse(l and "line" or "fill",x,y,rx,ry) _ShouldDraw = true --Draw and tell that changes has been made.
+    love.graphics.ellipse(l and "line" or "fill",x,y,rx,ry,s) _ShouldDraw = true --Draw and tell that changes has been made.
     
     if c then exe(GPU.popColor()) end --Restore the color from the stack.
     
