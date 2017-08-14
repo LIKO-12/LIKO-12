@@ -85,7 +85,7 @@ local function newMap(w,h,sheet)
     
     for y=0,h-1 do
       for x=0,w-1 do
-        self:cell(x,y,tonumber(nextid()))
+        self:cell(x,y,tonumber(nextid() or "0"))
       end
     end
     
