@@ -284,7 +284,7 @@ function edit:loop() --Starts the while loop
         local hotkey --Was it an hotkey ?
         
         pushMatrix() pushPalette() pushColor()
-        if key == "ctrl-s" then
+        if sc == "ctrl-s" then
           local oldprint = print
           local err
           print = function(msg) if color() == 9 and not err then err = msg end end
@@ -302,7 +302,7 @@ function edit:loop() --Starts the while loop
           end
           print = oldprint
           hotkey = true
-        elseif key == "ctrl-l" then
+        elseif sc == "ctrl-l" then
           local oldprint = print
           local err
           print = function(msg) if color() == 9 and not err then err = msg end end
@@ -320,7 +320,7 @@ function edit:loop() --Starts the while loop
           end
           print = oldprint
           hotkey = true
-        elseif key == "ctrl-r" then
+        elseif sc == "ctrl-r" then
           term.ecommand("run")
           if edit.leditors[edit.active]["leaved"] then edit.leditors[edit.active]:leaved() end
           hotkey = true
@@ -328,14 +328,14 @@ function edit:loop() --Starts the while loop
         end
         popMatrix() popPalette() popColor()
         
-        if key == "alt-left" then
+        if sc == "alt-left" then
           if self.active == #self.editors then
             self:switchEditor(1)
           else
             self:switchEditor(self.active+1)
           end
           hotkey = true
-        elseif key == "alt-right" then
+        elseif sc == "alt-right" then
           if self.active == 1 then
             self:switchEditor(#self.editors)
           else

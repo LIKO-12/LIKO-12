@@ -294,9 +294,9 @@ end
 ce.lastKey = ""
 
 ce.keymap = {
-  ["return"] = ce.insertNewLine,
+  ["sc_return"] = ce.insertNewLine,
 
-  ["left"] = function(self)
+  ["sc_left"] = function(self)
     local flag = false
     self.cx = self.cx -1
     if self.cx < 1 then
@@ -311,7 +311,7 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["right"] = function(self)
+  ["sc_right"] = function(self)
     local flag = false
     self.cx = self.cx +1
     if self.cx > buffer[self.cy]:len()+1 then
@@ -326,7 +326,7 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["up"] = function(self)
+  ["sc_up"] = function(self)
     self.cy = self.cy -1
     self:resetCursorBlink()
     self:checkPos()
@@ -334,7 +334,7 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["down"] = function(self)
+  ["sc_down"] = function(self)
     self.cy = self.cy +1
     self:resetCursorBlink()
     self:checkPos()
@@ -342,7 +342,7 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["backspace"] = function(self)
+  ["sc_backspace"] = function(self)
     if self.cx == 1 and self.cy == 1 then return end
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx-1,self.cy)
@@ -351,7 +351,7 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["delete"] = function(self)
+  ["sc_delete"] = function(self)
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx,self.cy)
     self:resetCursorBlink()
@@ -359,11 +359,11 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["home"] = ce.gotoLineStart,
+  ["sc_home"] = ce.gotoLineStart,
 
-  ["end"] = ce.gotoLineEnd,
+  ["sc_end"] = ce.gotoLineEnd,
 
-  ["pageup"] = function(self)
+  ["sc_pageup"] = function(self)
     self.vy = self.vy-self.th
     if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
@@ -371,7 +371,7 @@ ce.keymap = {
     self:drawBuffer()
   end,
 
-  ["pagedown"] = function(self)
+  ["sc_pagedown"] = function(self)
     self.vy = self.vy+self.th
     if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
@@ -379,15 +379,15 @@ ce.keymap = {
     self:drawBuffer()
   end,
 
-  ["tab"] = function(self)
+  ["sc_tab"] = function(self)
     self:textinput(" ")
   end,
 
-  ["ctrl-a"] = ce.gotoLineStart,
+  ["sc_ctrl-a"] = ce.gotoLineStart,
 
-  ["ctrl-e"] = ce.gotoLineEnd,
+  ["sc_ctrl-e"] = ce.gotoLineEnd,
 
-  ["ctrl-k"] = function(self)
+  ["sc_ctrl-k"] = function(self)
     local clipbuffer = ""
     if self.cx <= buffer[self.cy]:len() then
       -- cut from cursor position to end of line
@@ -408,9 +408,9 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["ctrl-y"] = ce.pasteText,
+  ["sc_ctrl-y"] = ce.pasteText,
 
-  ["ctrl-v"] = ce.pasteText,
+  ["sc_ctrl-v"] = ce.pasteText,
 }
 
 
