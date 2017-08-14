@@ -7,7 +7,8 @@ local function printPBUsage()
     "Uploads a file into pastebin.com\n  "..
     "-c    Copy code to clipboard\n  "..
     "-u    Copy full URL to clipboard",
-    "pastebin get <code> <filename>","Downloads a file from pastebin.com"
+    "pastebin get <code> <filename>","Downloads a file from pastebin.com",
+    "pastebin run <code>","Runs a Lua file from pastebin.com"
   )
 end
 
@@ -136,6 +137,24 @@ elseif command == "get" then
     fs.write(path,result)
     
     color(12) print("Downloaded as "..file) sleep(0.01) color(7)
+  else
+    printErr("Failed")
+  end
+elseif command == "run" then
+  -- Run a file from pastebin.com
+  if #args < 2 then
+    printPBUsage()
+    return
+  end
+  
+  --Determine file to download
+  local pasteCode = args[2]
+  
+  -- Downloads the  pastebin
+  local result = getPaste(pasteCode)
+  if result then
+    fs.write("C:/.temp/"..pasteCode..".lua",result)
+    term.executeFile("C:/.temp/"..pasteCode..".lua")
   else
     printErr("Failed")
   end
