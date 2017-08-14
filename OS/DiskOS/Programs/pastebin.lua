@@ -85,6 +85,8 @@ if command == "put" then
   
   -- Read in the file
   local name = getName(path:gsub("///","/"))
+  local size = fs.size(path)
+  if size > 512*1024 then color(8) print("File too large to upload,\nuse 'save <game> -c' when saving.") color(7) end
   local text = fs.read(path)
   
   -- POST the contents to pastebin
