@@ -4,7 +4,7 @@ Draws an ellipse on the screen.
 
 #### Syntax:
 ```lua
-ellipse(x,y,rx,ry,l,c)
+ellipse(x,y,rx,ry,l,c,seg)
 ```
 
 ---
@@ -17,6 +17,7 @@ ellipse(x,y,rx,ry,l,c)
 * **<ry\> (Number)**: The radius of the ellipse along the y-axis (half the ellipse's height).
 * **[l] (Number)**: (false/nil) The ellipse will be filled, (true) The ellipse will have only lines (outline).
 * **[r] (Number)**: The color of the ellipse (0-15), defaults to the active color.
+* **[seg] (Number)**: The number of the segments used when drawing the ellipse.
 
 ---
 
@@ -26,3 +27,9 @@ The arguments can be passed in a table:
 ```lua
 ellipse( {x,y, rx,ry ,l, c} )
 ```
+
+---
+
+#### Changelog:
+
+- **V0.6.0_PRE_04**: Added the `seg` argument.
