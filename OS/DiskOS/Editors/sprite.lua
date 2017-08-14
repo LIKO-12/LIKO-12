@@ -591,11 +591,11 @@ function se:mousereleased(x,y,b,it)
   self:mouseZoomSlider(x,y,b,it,"released")
 end
 
-function se:keypressed(key)
+function se:keypressed(key,sc)
   --Palette Switching
-  if key == "q" or key == "e" then
+  if sc == "q" or sc == "e" then
     if isKDown("lshift","rshift") then
-      if key == "e" then
+      if sc == "e" then
         colsR = colsR + 1
         if colsR > 15 then colsR = 0 end
       else
@@ -608,7 +608,7 @@ function se:keypressed(key)
       colsrectR[1] = paldraw[1] + cx*palpsize
       colsrectR[2] = paldraw[2] + cy*palpsize
     else
-      if key == "e" then
+      if sc == "e" then
         colsL = colsL + 1
         if colsL > 15 then colsL = 0 end
       else
@@ -623,7 +623,7 @@ function se:keypressed(key)
     end
     
     self:redrawCP()
-  elseif key == "w" or key == "a" or key == "s" or key == "d" then
+  elseif sc == "w" or sc == "a" or sc == "s" or sc == "d" then
     local function setBank(bank)
       local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
       sprsbank = bank
@@ -636,13 +636,13 @@ function se:keypressed(key)
     
     --Update the selection box position
     local cx, cy = (sprssrect[1]+1)/8, (sprssrect[2]-sprsrecto[2])/8
-    if key == "a" then --Left
+    if sc == "a" then --Left
       cx = cx - zscale
-    elseif key == "d" then --Right
+    elseif sc == "d" then --Right
       cx = cx + zscale
-    elseif key == "w" then --Up
+    elseif sc == "w" then --Up
       cy = cy - zscale
-    elseif key == "s" then --Down
+    elseif sc == "s" then --Down
       cy = cy + zscale
     end
     if cx < 0 then cx, cy = ((cy == 0 and sprsbank == 1) and 0 or sheetW-1), cy-zscale elseif cx >= sheetW then cx, cy = ((cy == bankH-zscale and sprsbank == 4) and sheetW-1 or 0), cy+zscale end
@@ -685,18 +685,18 @@ local bank = function(bank)
 end
 
 se.keymap = {
-  ["ctrl-c"] = se.copy,
-  ["ctrl-v"] = se.paste,
-  ["1"] = bank(1), ["2"] = bank(2), ["3"] = bank(3), ["4"] = bank(4),
-  ["z"] = function() stool=1 se:redrawTOOLS() end,
-  ["x"] = function() stool=2 se:redrawTOOLS() end,
-  ["delete"] = function() tools[5](se) se:redrawSPRS() se:redrawSPR() end,
+  ["sc_ctrl-c"] = se.copy,
+  ["sc_ctrl-v"] = se.paste,
+  ["sc_1"] = bank(1), ["2"] = bank(2), ["3"] = bank(3), ["4"] = bank(4),
+  ["sc_z"] = function() stool=1 se:redrawTOOLS() end,
+  ["sc_x"] = function() stool=2 se:redrawTOOLS() end,
+  ["sc_delete"] = function() tools[5](se) se:redrawSPRS() se:redrawSPR() end,
   --Transformations
-  ["r"] = function() transform(1) end,
-  ["shift-r"] = function() transform(2) end,
-  ["f"] = function() transform(3) end,
-  ["shift-f"] = function() transform(4) end,
-  ["i"] = function() transform(5) end
+  ["sc_r"] = function() transform(1) end,
+  ["sc_shift-r"] = function() transform(2) end,
+  ["sc_f"] = function() transform(3) end,
+  ["sc_shift-f"] = function() transform(4) end,
+  ["sc_i"] = function() transform(5) end
 }
 
 return se
