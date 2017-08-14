@@ -49,6 +49,24 @@ for peripheral,funcs in pairs(perlist) do
   end
 end
 
+--Temp folder
+local function rm(path)
+  local files = fs.directoryItems(path)
+  for k, file in ipairs(files) do
+    if fs.isFile(path..file) then
+      fs.remove(path..file)
+    else
+      rm(path..file.."/")
+      fs.remove(path..file)
+    end
+  end
+end
+
+if fs.exists("C:/.temp") then
+  rm("C:/.temp/")
+end
+fs.newDirectory("C:/.temp/")
+
 --A usefull split function
 function split(inputstr, sep)
   if sep == nil then sep = "%s" end
