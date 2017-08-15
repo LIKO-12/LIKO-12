@@ -110,3 +110,10 @@ print(text,false,true)
 * **<text\> (String)**: The text to draw.
 
 ---
+
+##### See also:
+
+* [color()](color.md)
+* [printCursor()](printCursor.md)
+* [printBackspace()](printBackspace.md)
+* [wrapText()](wrapText.md)

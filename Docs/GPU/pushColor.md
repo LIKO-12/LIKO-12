@@ -6,3 +6,11 @@ Pushes the current active color to the ColorStack.
 ```lua
 pushColor()
 ```
+
+---
+
+##### See also:
+
+* [popColor()](popColor.md)
+* [color()](color.md)
+* [colorPalette()](colorPalette.md)

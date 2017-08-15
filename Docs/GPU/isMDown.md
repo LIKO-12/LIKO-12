@@ -18,3 +18,9 @@ bool = isMDown(b)
 #### Returns:
 
 * **bool (Boolean)**: True if mouse button is down, false if not.
+
+---
+
+##### See also:
+
+* [getMPos()](getMPos.md)

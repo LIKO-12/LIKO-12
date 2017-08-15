@@ -114,3 +114,10 @@ imgdata = imagedata(w,h)
 * [**imgdata:exportOpaque()**](imagedata.exportOpaque.md)
 * [**imgdata:type()**](imagedata.type.md)
 * [**imgdata:typeOf()**](imagedata.typeOf.md)
+
+---
+
+##### See also:
+
+* [image()](image.md)
+* [screenshot()](screenshot.md)

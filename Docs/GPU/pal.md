@@ -63,3 +63,11 @@ pal(A, B, P)
 * **[A]**: The color to replace.
 * **[B]**: The color which will replace A.
 * **[P]**: (0) will affect the Drawing palette, (1) will affect the Images palette, (nil/false) will affect the both palettes.
+
+---
+
+##### See also:
+
+* [palt()](palt.md)
+* [pushPalette()](pushPalette.md)
+* [popPalette()](popPalette.md)

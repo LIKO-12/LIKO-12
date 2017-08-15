@@ -18,3 +18,10 @@ w = termWidth()
 ### NOTE:
 
 Custom fonts can change the output values, don't assume anything.
+
+---
+
+##### See also:
+
+* [termSize()](termSize.md)
+* [termHeight()](termHeight.md)
