@@ -1,4 +1,4 @@
-Prints text to the screen.
+Prints text to the screen, uses the current active color (check [color()](color.md) ).
 
 ---
 
