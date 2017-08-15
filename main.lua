@@ -3,15 +3,7 @@ local reboot, events = false
 
 --==Contribution Guide==--
 --[[
-I did create an events system for liko12, making my work more modular.
-Below there is a modified love.run function which implements 4 things:
-- Instead of calling love callbacks, it triggers the events with name "love:callback", for ex: "love:mousepressed".
-- It contains a small and a nice trick which reloads all the code files (expect main.lua & conf.lua) and reboots liko12 without haveing to restart love.
-- When the love.graphics is active (usable) it triggers "love:graphics" event.
-- If any "love:quit" event returned true, the quit will be canceled.
-
-About the soft restart:
-* To do a soft restart trigger the "love:reboot" event.
+I did"love:reboot" event.
 * This works by clearing package.loaded expect bit library, then calling love.graphics.reset(), and reseting the events library, and finally restarts love.run from the top (there's an extra while loop you can see).
 * In case you changed something in main.lua or conf.lua then you can do a hard restart by calling love.event.quit("restart")
 * In DiskOS you can run 'reboot' command to do a soft reboot, or 'reboot hard' to do a hard one (by restarting love).
@@ -25,18 +17,24 @@ I don't think anyone would want to edit anything in this file.
 ]]
 
 love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
+ create an events system for le trick which reloads all the code files (expect main.lua & conf.lua) and reboots liko12 without haveing to restart love.
+- When the love.graphics is active (usable) it triggers "love:graphics" event.
+- If any "love:quit" event returned true, the quit will be canceled.
 
+About the soft restart:
+* To do a soft restart trigger the 
 --Internal Callbacks--
-function love.load(args)
-  love.filesystem.load("BIOS/init.lua")() --Initialize the BIOS.
-  events:trigger("love:load")
-end
-
-function love.run(arg)
+function love.load(args)iko12, making my work more modular.
+Below there is a modified love.run f
   while true do
     events = require("Engine.events")
     events:register("love:reboot",function(args) --Code can trigger this event to do a soft restart.
-      reboot = args or {}
+      reboot = args or {}unction which implements 4 things:
+- Instead of calling love callbacks, it triggers the events with name "love:callback", for ex: "love:mousepressed".
+- It contains a small and a nic
+end
+
+function love.run(arg)
     end)
    
     if love.math then
@@ -45,6 +43,8 @@ function love.run(arg)
    
     if love.load then love.load(reboot or arg) end reboot = false
    
+  love.filesystem.load("BIOS/init.lua")() --Initialize the BIOS.
+  events:trigger("love:load")
     -- We don't want the first frame's dt to include time taken by love.load.
     if love.timer then love.timer.step() end
    
@@ -63,10 +63,6 @@ function love.run(arg)
             end
             if r then return a end
           else
-            events:trigger("love:"..name,a,b,c,d,e,f)
-          end
-        end
-      end
    
       -- Update dt, as we'll be passing it to update
       if love.timer then
@@ -80,18 +76,22 @@ function love.run(arg)
       if love.graphics and love.graphics.isActive() then
         events:trigger("love:graphics")
       end
-    
+            events:tri
       if love.timer then love.timer.sleep(0.001) end
       
       if reboot then
-        for k,v in pairs(package.loaded) do
-          if k ~= "bit" and k ~= "ffi" then package.loaded[k] = nil end
-        end--Reset the required packages
-        
-        love.graphics.reset() --Reset the GPU
+        for k,v in pairs(pand k ~= "ffi" then package.loaded[k] = nil end
+        end--Reset the requirgger("love:"..name,a,b,c,d,e,f)
+          endckage.loaded) do
+          if k ~= "bit" a
+        end
+      endhe GPU
         events = nil --Must undefine this.
         break --Break our game loop
       end
+    ed packages
+        
+        love.graphics.reset() --Reset t
     end
   end
 end
