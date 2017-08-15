@@ -40,6 +40,7 @@ function token(stream, state)
       elseif char == "\"" or char == "'" then
         state.starter = char
         state.tokenizer = "string"
+        return "string" -- Return immediatelly so quotes doesn't get affected by escape sequences
       -- Decimal numbers
       elseif char == '.' and stream:match('%d+') then
           result = 'number'
@@ -60,6 +61,7 @@ function token(stream, state)
       -- Multiline string matching
       elseif char == "[" and stream:eat("%[") then
           state.tokenizer = "multilineString"
+          return "string"
       -- Keyword matching                
       elseif char:find('[%w_]') then
           stream:eatWhile('[%w_]')
