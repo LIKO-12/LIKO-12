@@ -34,3 +34,11 @@ palt(c,t)
 ```lua
 palt()
 ```
+
+---
+
+##### See also:
+
+* [pal()](pal.md)
+* [pushPalette()](pushPalette.md)
+* [popPalette()](popPalette.md)

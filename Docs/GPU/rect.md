@@ -26,3 +26,10 @@ The arguments can be passed in a table:
 ```lua
 rect( {x, y, w, h, l, c} )
 ```
+
+---
+
+##### See also:
+
+* [color()](color.md)
+* [polygon()](polygon.md)

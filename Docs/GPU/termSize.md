@@ -19,3 +19,10 @@ w, h = termSize()
 ### NOTE:
 
 Custom fonts can change the output values, don't assume anything.
+
+---
+
+##### See also:
+
+* [termWidth()](termWidth.md)
+* [termHeight()](termHeight.md)

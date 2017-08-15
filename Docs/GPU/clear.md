@@ -11,4 +11,8 @@ clear(id)
 
 ### Arguments:
 
-* **[id] (0) (Number)**: The ID of the color to fill the screen with, can be 0-15
+* **[id] (0) (Number)**: The ID of the color to fill the screen with, can be 0-15.
+
+##### See also:
+
+* [rect()](rect.md)

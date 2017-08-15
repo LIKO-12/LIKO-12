@@ -41,3 +41,9 @@ id = color()
 #### Returns:
 
 * **id (number)**: The current active color id (0-15).
+
+##### See also:
+
+* [colorPalette()](colorPalette.md)
+* [pushColor()](pushColor.md)
+* [popColor()](popColor.md)

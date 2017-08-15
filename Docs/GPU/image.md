@@ -37,3 +37,10 @@ img = image(data)
 * [**img:quad()**](image.quad.md)
 * [**img:type()**](image.type.md)
 * [**img:typeOf()**](image.typeOf.md)
+
+---
+
+##### See also:
+
+* [imagedata()](imagedata.md)
+* [screenshot()](screenshot.md)

@@ -43,3 +43,12 @@ x,y, bgcolor = printCursor()
 * **x (Number)**: The current X coord of the cursor in characters.
 * **y (Number)**: The current Y corrd of the cursor in characters.
 * **bgcolor (Number)**: The current background color.
+
+---
+
+##### See also:
+
+* [color()](color.md)
+* [print()](print.md)
+* [printBackspace()](printBackspace.md)
+* [wrapText()](wrapText.md)

@@ -22,3 +22,11 @@ width, wrappedText = wrapText(text, wraplimit)
 
 * **width (String)**: The maximum width of the wrapped text.
 * **wrappedText (Table)**: A sequence containing each line of text that was wrapped.
+
+---
+
+##### See also:
+
+* [print()](print.md)
+* [printBackspace()](printBackspace.md)
+* [printCursor()](printCursor.md)

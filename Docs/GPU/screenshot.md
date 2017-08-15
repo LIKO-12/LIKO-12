@@ -21,3 +21,10 @@ imgdata = screenshot(x,y,w,h)
 #### Returns:
 
 * **imgdata (GPUImageData)**: The created imagedata object.
+
+---
+
+##### See also:
+
+* [imagedata()](imagedata.md)
+* [imagedata:image()](imagedata.image.md)

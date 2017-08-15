@@ -37,3 +37,12 @@ printBackspace(c,true)
 #### Arguments:
 
 * **[c] (Number)**: The background color to fill the character with (**-1**,**15**), **-1** means no background, defaults to the current print cursor background color.
+
+---
+
+##### See also:
+
+* [color()](color.md)
+* [print()](print.md)
+* [printCursor()](printCursor.md)
+* [wrapText()](wrapText.md)

@@ -27,8 +27,12 @@ The arguments can be passed in a table:
 circle( {x,y, r, l, c} )
 ```
 
+##### See also:
+
+* [color()](color.md)
+
 ---
 
-#### Changelog:
+##### Changelog:
 
 - **V0.6.0_PRE_04**: Added the `seg` argument.
