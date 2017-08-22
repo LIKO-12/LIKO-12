@@ -76,7 +76,8 @@ ce.colorize = true --Color lua syntax
 
 ce.touches = {}
 ce.touchesNum = 0
-ce.touchscroll = 0
+ce.touchscrollx = 0
+ce.touchscrolly = 0
 ce.touchskipinput = false
 
 --A usefull print function with color support !
@@ -435,7 +436,8 @@ function ce:entered()
   self:drawLineNum()
   ce.touches = {}
   ce.touchesNum = 0
-  ce.touchscroll = 0
+  ce.touchscrollx = 0
+  ce.touchscrolly = 0
   ce.touchskipinput = false
 end
 
@@ -525,6 +527,8 @@ function ce:wheelmoved(x, y)
   self.vy = math.floor(self.vy-y)
   if self.vy > #buffer then self.vy = #buffer end
   if self.vy < 1 then self.vy = 1 end
+  self.vx = math.floor(self.vx-x)
+  if self.vx < 1 then self.vx = 1 end
   self:drawBuffer()
 end
 
@@ -536,10 +540,17 @@ end
 function ce:touchmoved(id,x,y,dx,dy,p)
   if self.touchesNum > 1 then
     textinput(false) self.touchskipinput = true
-    self.touchscroll = self.touchscroll + dy
-    if self.touchscroll >= 14 or self.touchscroll <= -14 then
-      ce:wheelmoved(0,self.touchscroll/14)
-      self.touchscroll = self.touchscroll - math.floor(self.touchscroll/14)
+    self.touchscrollx = self.touchscrollx + dx
+    self.touchscrolly = self.touchscrolly + dy
+    
+    if self.touchscrollx >= 14 or self.touchscrollx <= -14 then
+      ce:wheelmoved(self.touchscrollx/14,0)
+      self.touchscrollx = self.touchscrollx - math.floor(self.touchscrollx/14)
+    end
+    
+    if self.touchscrolly >= 14 or self.touchscrolly <= -14 then
+      ce:wheelmoved(0,self.touchscrolly/14)
+      self.touchscrolly = self.touchscrolly - math.floor(self.touchscrolly/14)
     end
   end
 end
