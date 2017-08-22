@@ -42,7 +42,7 @@ function term.init()
   clear() fs.drive("D")
   SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
   printCursor(0,1,0)
-  color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
+  color(9) print("PRE",5*8+1,3) flip() sleep(0.125)
   cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  0.6") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
   flip() sleep(0.0625)
@@ -154,7 +154,6 @@ end
 
 function term.execute(command,...)
   if not command then return false, "No command" end
-  command = string.lower(command)
   if fs.exists(curpath..command..".lua") then
     term.executeFile(curpath..command..".lua",...)
     color(8) pal() palt() cam() clip() return true
