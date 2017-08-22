@@ -149,6 +149,7 @@ end
 
 --Draw the cursor blink
 function ce:drawBlink()
+  if self.sxs then return end
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   if self.bflag then
     rect((self.cx-self.vx+1)*(self.fw+1)-4,(self.cy-self.vy+1)*(self.fh+2)+1, self.fw+1,self.fh, false, 4)
@@ -203,6 +204,11 @@ function ce:drawLine()
   self:drawBlink()
 end
 
+--Clear the selection just incase
+function ce:deselect()
+  if self.sxs then self.sxs, self.sys, self.sxe, self.sye = nil, nil, nil, nil; self:drawBuffer() end 
+end
+
 function ce:drawLineNum()
   eapi:drawBottomBar()
   local linestr = "LINE "..tostring(self.cy).."/"..tostring(#buffer).."  CHAR "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len())
@@ -210,6 +216,7 @@ function ce:drawLineNum()
 end
 
 function ce:textinput(t)
+  self:deselect()
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
   self.cx = self.cx + t:len()
   self:resetCursorBlink()
@@ -218,6 +225,7 @@ function ce:textinput(t)
 end
 
 function ce:gotoLineStart()
+  self:deselect()
   self.cx = 1
   self:resetCursorBlink()
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
@@ -225,6 +233,7 @@ function ce:gotoLineStart()
 end
 
 function ce:gotoLineEnd()
+  self:deselect()
   self.cx = buffer[self.cy]:len()+1
   self:resetCursorBlink()
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
@@ -273,6 +282,30 @@ function ce:deleteCharAt(x,y)
   return x,y,lineChange
 end
 
+--Copy selection text (Only if selecting)
+function ce:copyText()
+  if self.sxs then --If there are any selection
+    local clipbuffer = {}
+    
+    for lnum = self.sys, self.sye do
+      local line = buffer[lnum]
+      
+      if lnum == self.sys and lnum == self.sye then --Single line selection
+        line = line:sub(self.sxs,self.sxe)
+      elseif lnum == self.sys then
+        line = line:sub(self.sxs,-1)
+      elseif lnum == self.sye then
+        line = line:sub(1, self.sxe)
+      end
+      
+      table.insert(clipbuffer,line)
+    end
+    
+    local clipdata = table.concat(clipbuffer,"\n")
+    clipboard(clipdata)
+  end
+end
+
 -- Paste the text from the clipboard
 function ce:pasteText()
   local text = clipboard()
@@ -294,9 +327,10 @@ end
 ce.lastKey = ""
 
 ce.keymap = {
-  ["sc_return"] = ce.insertNewLine,
+  ["return"] = ce.insertNewLine,
 
-  ["sc_left"] = function(self)
+  ["left"] = function(self)
+    self:deselect()
     local flag = false
     self.cx = self.cx -1
     if self.cx < 1 then
@@ -311,7 +345,8 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["sc_right"] = function(self)
+  ["right"] = function(self)
+    self:deselect()
     local flag = false
     self.cx = self.cx +1
     if self.cx > buffer[self.cy]:len()+1 then
@@ -326,7 +361,8 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["sc_up"] = function(self)
+  ["up"] = function(self)
+    self:deselect()
     self.cy = self.cy -1
     self:resetCursorBlink()
     self:checkPos()
@@ -334,7 +370,8 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["sc_down"] = function(self)
+  ["down"] = function(self)
+    self:deselect()
     self.cy = self.cy +1
     self:resetCursorBlink()
     self:checkPos()
@@ -342,7 +379,8 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["sc_backspace"] = function(self)
+  ["backspace"] = function(self)
+    self:deselect()
     if self.cx == 1 and self.cy == 1 then return end
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx-1,self.cy)
@@ -351,7 +389,8 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["sc_delete"] = function(self)
+  ["delete"] = function(self)
+    self:deselect()
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx,self.cy)
     self:resetCursorBlink()
@@ -359,11 +398,11 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
-  ["sc_home"] = ce.gotoLineStart,
+  ["home"] = ce.gotoLineStart,
 
-  ["sc_end"] = ce.gotoLineEnd,
+  ["end"] = ce.gotoLineEnd,
 
-  ["sc_pageup"] = function(self)
+  ["pageup"] = function(self)
     self.vy = self.vy-self.th
     if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
@@ -371,7 +410,7 @@ ce.keymap = {
     self:drawBuffer()
   end,
 
-  ["sc_pagedown"] = function(self)
+  ["pagedown"] = function(self)
     self.vy = self.vy+self.th
     if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
@@ -379,36 +418,11 @@ ce.keymap = {
     self:drawBuffer()
   end,
 
-  ["sc_tab"] = function(self)
+  ["tab"] = function(self)
     self:textinput(" ")
   end,
-
-  ["sc_ctrl-a"] = ce.gotoLineStart,
-
-  ["sc_ctrl-e"] = ce.gotoLineEnd,
-
-  ["sc_ctrl-k"] = function(self)
-    local clipbuffer = ""
-    if self.cx <= buffer[self.cy]:len() then
-      -- cut from cursor position to end of line
-      clipbuffer = buffer[self.cy]:sub(self.cx, buffer[self.cy]:len())
-      buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)
-    elseif self.cy < #buffer then
-      -- if at the end of the line, cut the newline
-      clipbuffer = "\n"
-      self:deleteCharAt(self.cx,self.cy)
-    end
-    -- consecutive presses will append the content to the clipboard
-    if self.lastKey == "ctrl-k" then
-      clipbuffer = clipboard()..clipbuffer
-    end
-    clipboard(clipbuffer)
-    self:checkPos()
-    self:drawBuffer()
-    self:drawLineNum()
-  end,
-
-  ["sc_ctrl-y"] = ce.pasteText,
+  
+  ["sc_ctrl-c"] = ce.copyText,
 
   ["sc_ctrl-v"] = ce.pasteText,
 }
