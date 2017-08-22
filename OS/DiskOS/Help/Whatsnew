@@ -21,6 +21,11 @@ New:
 16. New ctrl-s, ctrl-l, ctrl-r works in the editors and the edit program.
 17. New copy program to copy single files.
 18. circle() and ellipse() now accepts segments count argument.
+19. New 'pastebin run' varient.
+20. New Gif recording pause key: F7
+21. Now system messages are shown when starting, pauseing, etc... the gif recording.
+22. New `random` demo by egordorichev.
+23. New selection functionality in the code editor to copy, paste, etc... \o/.
 
 Improvements:
 1. Faster gif recording.
@@ -30,16 +35,21 @@ Bugfixes:
 1. Bugfix appdata program oppening the appdata folder after showing help.
 2. Fix some internal cursors hot position.
 3. Fix `appdata` and `folder` programs on Android to print the path instead of openning the browser.
+4. Fixed a bug that the shaders fail to compile on some opengl es devices.
 
 Operating System:
 1. New Editor.utils, makes adding standalone editors more easier.
 2. New editors api function `eapi:addEditor()`, Allows you to add custom editor.
+3. Made the terminal commands case sensitive.
+4. New temp folder `C:/.temp/`, Gets cleaned at startup.
+5. New `Editors.util` that makes adding standalone editors more easier.
 
 Engine:
 1. Now uses `r8` canvas format instead of `rgba8`.
 2. NormBIOS Revision 060-011: New file tracking when in devmode.
 3. New system messages functionality.
 4. New `CPU.getSaveDirectory` to get the real save directory in the host filesystem.
+5. Added `os.date` to the sandbox.
 
 V0.6.0_PRE_03 (7/7/2017):
 =========================
