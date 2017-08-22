@@ -283,6 +283,32 @@ function ce:deleteCharAt(x,y)
   return x,y,lineChange
 end
 
+--Will delete the current selection
+function ce:deleteSelection()
+  if not self.sxs then return end --If not selection just return back.
+  local lnum,slength = self.sys, self.sye+1
+  while lnum < slength do
+    if lnum == self.sys and lnum == self.sye then --Single line selection
+      buffer[lnum] = buffer[lnum]:sub(1,self.sxs-1) .. buffer[lnum]:sub(self.sxe+1,-1)
+      lnum = lnum + 1
+    elseif lnum == self.sys then
+      buffer[lnum] = buffer[lnum]:sub(1, self.sxs-1)
+      lnum = lnum + 1
+    elseif lnum == slength-1 then
+      buffer[lnum-1] = buffer[lnum-1] .. buffer[lnum]:sub(self.sxe+1, -1)
+      buffer = lume.concat(lume.slice(buffer,1,lnum-1),lume.slice(buffer,lnum+1,-1))
+      slength = slength - 1
+    else --Middle line
+      buffer = lume.concat(lume.slice(buffer,1,lnum-1),lume.slice(buffer,lnum+1,-1))
+      slength = slength - 1
+    end
+  end
+  self.cx, self.cy = self.sxs, self.sys
+  self:checkPos()
+  self:deselect()
+  self:drawLineNum()
+end
+
 --Copy selection text (Only if selecting)
 function ce:copyText()
   if self.sxs then --If there are any selection
@@ -309,6 +335,7 @@ end
 
 -- Paste the text from the clipboard
 function ce:pasteText()
+  if self.sxs then self:deleteSelection() end
   local text = clipboard()
   text = text:gsub("\t"," ") -- tabs mess up the layout, replace them with spaces
   local firstLine = true
@@ -381,7 +408,7 @@ ce.keymap = {
   end,
 
   ["backspace"] = function(self)
-    self:deselect()
+    if self.sxs then self:deleteSelection() return end
     if self.cx == 1 and self.cy == 1 then return end
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx-1,self.cy)
@@ -391,7 +418,7 @@ ce.keymap = {
   end,
 
   ["delete"] = function(self)
-    self:deselect()
+    if self.sxs then self:deleteSelection() return end
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx,self.cy)
     self:resetCursorBlink()
