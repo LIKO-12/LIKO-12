@@ -1,5 +1,5 @@
 --Nothing should be changed with this config expect: window size, enabling a module.
-_LVERSION = "V0.6.0_DEV_04"
+_LVERSION = "V0.6.0_PRE_04"
 _LVer = {
 	magor = 0,
 	minor = 6,
