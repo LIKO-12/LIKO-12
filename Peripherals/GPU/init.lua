@@ -18,7 +18,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local _GIFScale = math.floor(config._GIFScale or 2) --The gif scale factor (must be int).
   local _GIFStartKey = config._GIFStartKey or "f8"
   local _GIFEndKey = config._GIFEndKey or "f9"
-  local _GIFPauseKey = config._GIFPauseKey or "f12"
+  local _GIFPauseKey = config._GIFPauseKey or "f7"
   local _GIFFrameTime = (config._GIFFrameTime or 1/60)*2  --The delta timr between each gif frame.
   local _GIFTimer, _GIFRec = 0
   
@@ -232,6 +232,31 @@ return function(config) --A function that creates a new GPU peripheral.
     return unpack(_ColorSet[r])
   end
   
+  local LastMSG = "" --Last system message.
+  local LastMSGTColor = 4 --Last system message text color.
+  local LastMSGColor = 9 --Last system message color.
+  local LastMSGGif = false --Show Last system message in the gif recording ?
+  local MSGTimer = 0 --The message timer.
+  
+  local function systemMessage(msg,time,tcol,col,hideInGif)
+    if type(msg) ~= "string" then return false, "Message must be a string, provided: "..type(msg) end
+    
+    if time and type(time) ~= "number" then return false, "Time must be a number or a nil, provided: "..type(time) end
+    if tcol and type(tcol) ~= "number" then return false, "Text color must be a number or a nil, provided: "..type(tcol) end
+    if col and type(col) ~= "number" then return false, "Body Color must be a number or a nil, provided: "..type(col) end
+    local time, tcol, col = time or 1, math.floor(tcol or 4), math.floor(col or 9)
+    if time <= 0 then return false, "Time must be bigger than 0" end
+    if tcol < 0 or tcol > 15 then return false, "Text Color ID out of range ("..tcol..") Must be [0,15]" end
+    if col < 0 or col > 15 then return false, "Body Color ID out of range ("..col..") Must be [0,15]" end
+    LastMSG = msg
+    LastMSGTColor = tcol
+    LastMSGColor = col
+    LastMSGGif = not hideInGif
+    MSGTimer = time
+    
+    return true
+  end
+  
   --Convert from real colors to LIKO-12 palette
   local function _ImportImage(x,y, r,g,b,a)
     return _GetColorID(r,g,b,a),0,0,255
@@ -263,14 +288,19 @@ return function(config) --A function that creates a new GPU peripheral.
       if _GIFRec then return end --If there is an already in progress gif
       if love.filesystem.exists("/~gifrec.gif") then
         _GIFRec = _GIF.continue("/~gifrec.gif")
+        systemMessage("Resumed gif recording",1,false,false,true)
         return
       end
       _GIFRec = _GIF.new("/~gifrec.gif")
+      systemMessage("Started gif recording",1,false,false,true)
     elseif key == _GIFEndKey then
       if not _GIFRec then
         if love.filesystem.exists("/~gifrec.gif") then
           _GIFRec = _GIF.continue("/~gifrec.gif")
         else return end
+        systemMessage("Saved old gif recording successfully",2,false,false,true)
+      else
+        systemMessage("Saved gif recording successfully",2,false,false,true)
       end
       _GIFRec:close()
       _GIFRec = nil
@@ -281,6 +311,7 @@ return function(config) --A function that creates a new GPU peripheral.
       _GIFRec.file:flush()
       _GIFRec.file:close()
       _GIFRec = nil
+      systemMessage("Paused gif recording",1,false,false,true)
     end
   end)
   --To save the gif before rebooting.
@@ -505,11 +536,6 @@ return function(config) --A function that creates a new GPU peripheral.
   local PaletteStack = {} --The palette stack (pushPalette,popPalette)
   local printCursor = {x=0,y=0,bgc=0} --The print grid cursor pos.
   local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2)) --The size of characters that the screen can fit.
-  local LastMSG = "" --Last system message.
-  local LastMSGTColor = 4 --Last system message text color.
-  local LastMSGColor = 9 --Last system message color.
-  local LastMSGGif = false --Show Last system message in the gif recording ?
-  local MSGTimer = 0 --The message timer.
   
   --Those explains themselves.
   function GPU.screenSize() return true, _LIKO_W, _LIKO_H end
@@ -1375,29 +1401,14 @@ return function(config) --A function that creates a new GPU peripheral.
   end)
   
   function GPU._systemMessage(msg,time,tcol,col,hideInGif)
-	if type(msg) ~= "string" then return false, "Message must be a string, provided: "..type(msg) end
-	
-	if time and type(time) ~= "number" then return false, "Time must be a number or a nil, provided: "..type(time) end
-	if tcol and type(tcol) ~= "number" then return false, "Text color must be a number or a nil, provided: "..type(tcol) end
-	if col and type(col) ~= "number" then return false, "Body Color must be a number or a nil, provided: "..type(col) end
-	local time, tcol, col = time or 1, math.floor(tcol or 4), math.floor(col or 9)
-	if time <= 0 then return false, "Time must be bigger than 0" end
-	if tcol < 0 or tcol > 15 then return false, "Text Color ID out of range ("..tcol..") Must be [0,15]" end
-	if col < 0 or col > 15 then return false, "Body Color ID out of range ("..col..") Must be [0,15]" end
-	LastMSG = msg
-	LastMSGTColor = tcol
-	LastMSGColor = col
-  LastMSGGif = not hideInGif
-	MSGTimer = time
-	
-	return true
+    return systemMessage(msg,time,tcol,col,hideInGif)
   end
   
   events:register("love:update",function(dt)
-	if MSGTimer > 0 then
-	  MSGTimer = MSGTimer - dt
-	  _ShouldDraw = true
-	end
+    if MSGTimer > 0 then
+      MSGTimer = MSGTimer - dt
+      _ShouldDraw = true
+    end
   end)
   
   --End of API--
