@@ -260,7 +260,7 @@ function term.loop() --Enter the while loop of the terminal
     elseif event == "update" then
       btimer = btimer + a
       if btimer > btime then
-        btimer = btimer-btime
+        btimer = btimer%btime
         blink = not blink
       end
     end

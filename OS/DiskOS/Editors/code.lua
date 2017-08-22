@@ -555,7 +555,7 @@ function ce:update(dt)
   if not self.sxs then --If not selecting
     self.btimer = self.btimer + dt
     if self.btimer >= self.btime then
-      self.btimer = self.btimer - self.btime
+      self.btimer = self.btimer % self.btime
       self.bflag = not self.bflag
       self:drawLine() --Redraw the current line
     end
