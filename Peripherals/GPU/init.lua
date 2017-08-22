@@ -160,43 +160,20 @@ return function(config) --A function that creates a new GPU peripheral.
   _ImagePalette[17] = 0
   _ImageTransparent[17] = 0
   
+  local _Shaders = love.filesystem.load(perpath.."shaders.lua")()
+  
   --Note: Those are modified version of picolove shaders.
   --The draw palette shader
-  local _DrawShader = love.graphics.newShader([[
-  extern float palette[16];
-  
-  vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
-    int index=int(color.r*255.0+0.5);
-    float ta=float(Texel(texture,texture_coords).a);
-    return vec4(palette[index]/255.0, 0.0, 0.0, color.a*ta);
-  }]])
+  local _DrawShader = _Shaders.drawShader
   _DrawShader:send('palette', unpack(_DrawPalette)) --Upload the initial palette.
   
   --The image:draw palette shader
-  local _ImageShader = love.graphics.newShader([[
-  extern float palette[16];
-  extern float transparent[16];
-  
-  vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
-    int index=int(Texel(texture, texture_coords).r*255.0+0.5);
-    float ta=float(Texel(texture,texture_coords).a);
-    return vec4(palette[index]/255.0, 0.0, 0.0, transparent[index]*ta);
-  }]])
+  local _ImageShader = _Shaders.imageShader
   _ImageShader:send('palette', unpack(_ImagePalette)) --Upload the inital palette.
   _ImageShader:send('transparent', unpack(_ImageTransparent)) --Upload the initial palette.
   
   --The final display shader.
-  local _DisplayShader = love.graphics.newShader([[
-    extern vec4 palette[16];
-    
-    vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
-      int index=int(Texel(texture, texture_coords).r*255.0+0.5);
-      float ta=float(Texel(texture,texture_coords).a);
-      // lookup the colour in the palette by index
-      vec4 col=palette[index]/255.0;
-      col.a = col.a*color.a*ta;
-      return col;
-  }]])
+  local _DisplayShader = _Shaders.displayShader
   _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the colorset.
   
   love.graphics.setShader(_DrawShader) --Activate the drawing shader.
