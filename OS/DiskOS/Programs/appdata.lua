@@ -3,4 +3,9 @@ if select(1,...) and select(1,...) == "-?" then
   return
 end
 
-openAppData("/")
+if isMobile() then
+  color(9) print("Appdata folder location: ")
+  color(6) print(getSaveDirectory().."/")
+else
+  openAppData("/")
+end

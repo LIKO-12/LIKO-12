@@ -8,4 +8,9 @@ if select(1,...) == "-?" then
 end
 
 local term = require("terminal")
-openAppData("/drives/"..term.getdrive()..term.getdirectory())
+if isMobile() then
+  color(9) print("Current folder location: ")
+  color(6) print(getSaveDirectory().."/drives/"..term.getdrive()..term.getdirectory())
+else
+  openAppData("/drives/"..term.getdrive()..term.getdirectory())
+end
