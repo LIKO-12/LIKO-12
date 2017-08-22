@@ -1,7 +1,7 @@
 --This file loads a lk12 disk and executes it
 if select(1,...) == "-?" then
   printUsage(
-    "run","Runs the current loaded game"
+    "run [...]","Runs the current loaded game with any provided arguments"
   )
   return
 end
@@ -292,7 +292,7 @@ local function extractArgs(args,factor)
   return nargs
 end
 
-local lastArgs = {}
+local lastArgs = {...}
 while true do
   if coroutine.status(co) == "dead" then break end
   
