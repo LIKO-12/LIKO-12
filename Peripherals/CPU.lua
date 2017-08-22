@@ -130,6 +130,10 @@ return function(config) --A function that creates a new CPU peripheral.
     return true --It ran successfully
   end
   
+  function CPU.getSaveDirectory()
+    return true, love.filesystem.getSaveDirectory()
+  end
+  
   --Prints to developer console.
   function CPU.cprint(...)
     print(...)
