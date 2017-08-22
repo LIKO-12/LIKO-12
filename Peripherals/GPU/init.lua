@@ -508,6 +508,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local LastMSG = "" --Last system message.
   local LastMSGTColor = 4 --Last system message text color.
   local LastMSGColor = 9 --Last system message color.
+  local LastMSGGif = false --Show Last system message in the gif recording ?
   local MSGTimer = 0 --The message timer.
   
   --Those explains themselves.
@@ -1373,7 +1374,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end)
   
-  function GPU._systemMessage(msg,time,tcol,col)
+  function GPU._systemMessage(msg,time,tcol,col,hideInGif)
 	if type(msg) ~= "string" then return false, "Message must be a string, provided: "..type(msg) end
 	
 	if time and type(time) ~= "number" then return false, "Time must be a number or a nil, provided: "..type(time) end
@@ -1386,6 +1387,7 @@ return function(config) --A function that creates a new GPU peripheral.
 	LastMSG = msg
 	LastMSGTColor = tcol
 	LastMSGColor = col
+  LastMSGGif = not hideInGif
 	MSGTimer = time
 	
 	return true
@@ -1435,16 +1437,16 @@ return function(config) --A function that creates a new GPU peripheral.
       end
       
       if MSGTimer > 0 then
-		love.graphics.setColor(_GetColor(LastMSGColor))
-		love.graphics.rectangle("fill", _LIKO_X+ofs.screen[1]+ofs.rect[1], _LIKO_Y+ofs.screen[2] + (_LIKO_H-8) * _LIKOScale + ofs.rect[2],
-		_LIKO_W * _LIKOScale + ofs.rectSize[1], 8*_LIKOScale + ofs.rectSize[2])
-		love.graphics.setColor(_GetColor(LastMSGTColor))
-		love.graphics.push()
-		love.graphics.translate(_LIKO_X+ofs.screen[1]+ofs.print[1]+_LIKOScale, _LIKO_Y+ofs.screen[2] + (_LIKO_H-7) * _LIKOScale + ofs.print[2])
-		love.graphics.scale(_LIKOScale,_LIKOScale)
-		love.graphics.print(LastMSG,0,0)
-		love.graphics.pop()
-		love.graphics.setColor(255,255,255,255)
+        love.graphics.setColor(_GetColor(LastMSGColor))
+        love.graphics.rectangle("fill", _LIKO_X+ofs.screen[1]+ofs.rect[1], _LIKO_Y+ofs.screen[2] + (_LIKO_H-8) * _LIKOScale + ofs.rect[2],
+        _LIKO_W * _LIKOScale + ofs.rectSize[1], 8*_LIKOScale + ofs.rectSize[2])
+        love.graphics.setColor(_GetColor(LastMSGTColor))
+        love.graphics.push()
+        love.graphics.translate(_LIKO_X+ofs.screen[1]+ofs.print[1]+_LIKOScale, _LIKO_Y+ofs.screen[2] + (_LIKO_H-7) * _LIKOScale + ofs.print[2])
+        love.graphics.scale(_LIKOScale,_LIKOScale)
+        love.graphics.print(LastMSG,0,0)
+        love.graphics.pop()
+        love.graphics.setColor(255,255,255,255)
       end
       
       if _DevKitDraw then
@@ -1501,6 +1503,19 @@ return function(config) --A function that creates a new GPU peripheral.
       if _Cursor ~= "none" then --Draw the cursor
         local cx, cy = exe(GPU.getMPos())
         love.graphics.draw(_CursorsCache[_Cursor].gifimg,(cx-_CursorsCache[_Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[_Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
+      end
+      
+      if MSGTimer > 0 and LastMSGGif then
+        love.graphics.setColor(_GetColor(LastMSGColor))
+        love.graphics.rectangle("fill", ofs.screen[1]+ofs.rect[1], ofs.screen[2] + (_LIKO_H-8) * _GIFScale + ofs.rect[2],
+        _LIKO_W *_GIFScale + ofs.rectSize[1], 8*_GIFScale + ofs.rectSize[2])
+        love.graphics.setColor(_GetColor(LastMSGTColor))
+        love.graphics.push()
+        love.graphics.translate(ofs.screen[1]+ofs.print[1]+_GIFScale, ofs.screen[2] + (_LIKO_H-7) * _GIFScale + ofs.print[2])
+        love.graphics.scale(_GIFScale,_GIFScale)
+        love.graphics.print(LastMSG,0,0)
+        love.graphics.pop()
+        love.graphics.setColor(255,255,255,255)
       end
       
       love.graphics.setCanvas()
