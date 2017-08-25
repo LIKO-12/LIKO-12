@@ -27,6 +27,7 @@ New:
 22. New `random` demo by egordorichev.
 23. New selection functionality in the code editor to copy, paste, etc... \o/.
 24. New math functions: math.isConvex, math.triangulate, math.noise and math.randomNormal.
+25. New 'mathcircles' Demo by @egordorichev, check it out !
 
 Improvements:
 1. Faster gif recording.
@@ -37,7 +38,7 @@ Bugfixes:
 2. Fix some internal cursors hot position.
 3. Fix `appdata` and `folder` programs on Android to print the path instead of openning the browser.
 4. Fixed a bug that the shaders fail to compile on some opengl es devices.
-5. Bugfix issue #107 -> "Invalid Print Alignment"
+5. Bugfix issue #107 "Invalid Print Alignment"
 
 Operating System:
 1. New Editor.utils, makes adding standalone editors more easier.
