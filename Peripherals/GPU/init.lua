@@ -948,7 +948,7 @@ return function(config) --A function that creates a new GPU peripheral.
       if limit and type(limit) ~= "number" then return false, "Line limit be a number or a nil, provided: "..type(x) end
       if align then
         if type(align) ~= "string" then return false," Line align must be a string or a nil, provided: "..type(align) end
-        if align ~= "left" or align ~= "center" or align ~= "right" or align ~= "justify" then
+        if align ~= "left" and align ~= "center" and align ~= "right" and align ~= "justify" then
           return false, "Invalid line alignment '"..align.."' !"
         end
       end
