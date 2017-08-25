@@ -1,4 +1,9 @@
 --This is a program for testing LIKO-12 API.
+if tostring(select(1,...) or false) == "-?" then
+  printUsage("testapi","A WIP Program for testing LIKO-12 API, Used by the developer.")
+  return
+end
+
 local sw, sh = screenSize()
 local tw, th = termSize()
 
@@ -128,3 +133,9 @@ for id, test in ipairs(tests) do
   color(9) print("[Press any key to continue]",false)
   if wait() then return end
 end
+
+clear() --Clear the screen
+pal() palt() --Reset the palettes
+cam() --Reset the camera
+printCursor(0,0,0) --Reset the print cursor
+color(7) --Set the color to white
