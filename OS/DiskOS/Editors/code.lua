@@ -217,11 +217,12 @@ function ce:drawLineNum()
 end
 
 function ce:textinput(t)
-  self:deselect()
+  local delsel
+  if self.sxs then self:deleteSelection(); delsel = true end
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
   self.cx = self.cx + t:len()
   self:resetCursorBlink()
-  if self:checkPos() then self:drawBuffer() else self:drawLine() end
+  if self:checkPos() or delsel then self:drawBuffer() else self:drawLine() end
   self:drawLineNum()
 end
 
