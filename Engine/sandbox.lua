@@ -84,7 +84,11 @@ return function(parent)
       hexenc = basexx.to_hex,
       hexdec = basexx.from_hex,
       compress = function(...) return love.math.compress(...):getString() end,
-      decompress = love.math.decompress
+      decompress = love.math.decompress,
+      isConvex = love.math.isConvex,
+      triangulate = love.math.triangulate,
+      noise = love.math.noise,
+      randomNormal = love.math.randomNormal
     },
     coroutine={
       create = coroutine.create,
