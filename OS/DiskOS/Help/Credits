@@ -1,7 +1,10 @@
-LIKO-12 is created by Rami Sabbagh "RamiLego4Game", works by LOVE framework http://love2d.org
+LIKO-12 is created by Rami Sabbagh "RamiLego4Game", that works by LOVE framework http://love2d.org
 
+Contributers:
 Thanks to Fred Bednarski for the system font,
-and to Gamax92 for the gif recorder.
+to Gamax92 for the gif recorder,
+And to lhsazevedo for the code editor syntax highlighter !
+
 
 Including github contributers:
-technomancy, Marcuss2, Ferk, Effer, egordorichev, lhsazevedo, trelemar and josefnpat
+technomancy, Marcuss2, Ferk, Effer, egordorichev, trelemar and josefnpat
