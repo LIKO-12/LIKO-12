@@ -4,7 +4,7 @@ _LVer = {
 	magor = 0,
 	minor = 6,
 	patch = 0,
-	build = 4
+	build = "4A"
 }
 function love.conf(t)
     t.identity = "liko12"               -- The name of the save directory (string)
