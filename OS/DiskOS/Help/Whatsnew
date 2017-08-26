@@ -5,14 +5,14 @@ V0.6.0_PRE_04 (26/8/2017):
 New:
 1. New Paint program.
 2. New hex string sprite copy format.
-3. Now can paste from PICO-8 and TIC-80, and can also paste to TIC-80.
+3. Now can paste from PICO-8 and TIC-80, and can also copy to TIC-80.
 4. New sprite editor selection size slider.
 5. New `install_games` program, to install a set of built-in games.
 6. New games: Snake, minesweeper, batteryman, pong.
 7. New sprite editor shorcuts, check the docs for them.
 8. New `loadcart` program to load old LIKO-12 V0.0.5a carts.
 9. New joysticks support, with unlimited number of controllers.
-10. New joymap program to remap the joystick buttons.
+10. New `joymap` program to remap the joystick buttons.
 11. New controls test demo `joytest`.
 12. Added support for installing custom editors.
 13. New lua syntax highlighter by lhs_azevedo.
@@ -21,13 +21,12 @@ New:
 16. New ctrl-s, ctrl-l, ctrl-r works in the editors and the edit program.
 17. New copy program to copy single files.
 18. circle() and ellipse() now accepts segments count argument.
-19. New 'pastebin run' varient.
-20. New Gif recording pause key: F7
+19. New `pastebin run` varient.
+20. New Gif recording pause key: `F7`
 21. Now system messages are shown when starting, pauseing, etc... the gif recording.
-22. New `random` demo by egordorichev.
-23. New selection functionality in the code editor to copy, paste, etc... \o/.
-24. New math functions: math.isConvex, math.triangulate, math.noise and math.randomNormal.
-25. New 'mathcircles' Demo by @egordorichev, check it out !
+22. New selection functionality in the code editor to copy, paste, etc... \o/.
+23. New math functions: math.isConvex, math.triangulate, math.noise and math.randomNormal.
+24. New 'mathcircles' Demo by @egordorichev, check it out !
 
 Improvements:
 1. Faster gif recording.
@@ -37,7 +36,7 @@ Bugfixes:
 1. Bugfix appdata program oppening the appdata folder after showing help.
 2. Fix some internal cursors hot position.
 3. Fix `appdata` and `folder` programs on Android to print the path instead of openning the browser.
-4. Fixed a bug that the shaders fail to compile on some opengl es devices.
+4. Fixed a bug that the shaders fail to compile on some opengl-es devices.
 5. Bugfix issue #107 "Invalid Print Alignment"
 
 Operating System:
@@ -45,14 +44,13 @@ Operating System:
 2. New editors api function `eapi:addEditor()`, Allows you to add custom editor.
 3. Made the terminal commands case sensitive.
 4. New temp folder `C:/.temp/`, Gets cleaned at startup.
-5. New `Editors.util` that makes adding standalone editors more easier.
 
 Engine:
 1. Now uses `r8` canvas format instead of `rgba8`.
-2. NormBIOS Revision 060-011: New file tracking when in devmode.
+2. `NormBIOS Revision 060-011`: New file tracking when in devmode.
 3. New system messages functionality.
 4. New `CPU.getSaveDirectory` to get the real save directory in the host filesystem.
-5. Added `os.date` to the sandbox.
+5. Added `os.date` to the lua sandbox.
 
 V0.6.0_PRE_03 (7/7/2017):
 =========================
