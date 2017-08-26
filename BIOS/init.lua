@@ -219,6 +219,7 @@ local function bootOS()
   
   if _LIKO_Old then --Show update screen
     noOS() --Nah just reflash
+    love.filesystem.write(".version",tostring(_LIKO_Version)) --Update the .version file
   end
   
   --File track thread
