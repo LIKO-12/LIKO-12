@@ -106,7 +106,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Initialize the gpu--
   love.graphics.setDefaultFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
-  local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H,"r8") --Create the screen canvas.
+  local _CanvasFormats = love.graphics.getCanvasFormats()
+  local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H,_CanvasFormats.r8 and "r8" or "normal") --Create the screen canvas.
   local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale) --Create the gif canvas, used to apply the gif scale factor.
   local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
   
