@@ -1,10 +1,10 @@
 --Nothing should be changed with this config expect: window size, enabling a module.
-_LVERSION = "V0.6.0_PRE_04"
+_LVERSION = "V0.6.0_PRE_05"
 _LVer = {
 	magor = 0,
 	minor = 6,
 	patch = 0,
-	build = "4A"
+	build = 5
 }
 function love.conf(t)
     t.identity = "liko12"               -- The name of the save directory (string)
