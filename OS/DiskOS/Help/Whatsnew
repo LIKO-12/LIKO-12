@@ -1,5 +1,12 @@
 Changelog:
 
+V0.6.0_PRE_05 (1/9/2017):
+================================
+1. Fix some typos in the 'Whatsnew' help file.
+2. Fix a bug slowing down LIKO-12 boot time by causing the OS to always reflash if you used an older version.
+3. Fix LIKO-12 crashing when r8 canvas format is not supported.
+4. New 'version' program to check the running version.
+
 V0.6.0_PRE_04 (26/8/2017):
 ================================
 New:
