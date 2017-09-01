@@ -27,7 +27,7 @@ Games are stored as disk files that can be saved, shared and uploaded to pastebi
 | CPU   | LuaJIT (Lua 5.1)                    |
 | GPU   | 192x128 4-Bit Screen                |
 | Map   | 144x128 Cell (255 Tile)             |
-| HDD   | 144x128 Cell (255 Tile)             |
+| HDD   | 2x 25mb drives                      |
 | Input | Keyboard, Mouse, Touch, and Gamepad |
 
 ---
