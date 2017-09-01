@@ -1,6 +1,6 @@
 This function is called everytime a mouse button is pressed.
 
-**Important Note:** Besure to call [controls("mouse")](../DiskOS API/Controls.md) in the first line of the game !
+**Important Note:** Besure to call [Controls("mouse")](../DiskOS API/Controls.md) in the first line of the game !
 
 ---
 
