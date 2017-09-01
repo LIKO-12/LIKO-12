@@ -4,7 +4,7 @@ When the button is held for a little bit longer, this function will be called mu
 
 ---
 
-**Important Note:** Besure to call [controls("keyboard")](../DiskOS API/Controls.md) in the first line of the game !
+**Important Note:** Besure to call [Controls("keyboard")](../DiskOS API/Controls.md) in the first line of the game !
 
 **Another Note:** The keyboard on android can be closed by the user, so to reshow it you should call `textinput(true)` in [_touchpressed](./_touchpressed.md) callback.
 
