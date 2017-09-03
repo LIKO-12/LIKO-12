@@ -36,9 +36,9 @@ function gif:frame(data)
 		for y=0, y1 do
 			local kill=false
 			for x=x0, x1 do
-				local r1, g1, b1=lastget(last, x, y)
-				local r2, g2, b2=dataget(data, x, y)
-				if r1~=r2 or g1~=g2 or b1~=b2 then
+				local r1 = lastget(last, x, y)
+				local r2 = dataget(data, x, y)
+				if r1~=r2 then
 					y0=y
 					kill=true
 					break
@@ -55,9 +55,9 @@ function gif:frame(data)
 		for x=x0, x1 do
 			local kill=false
 			for y=y0, y1 do
-				local r1, g1, b1=lastget(last, x, y)
-				local r2, g2, b2=dataget(data, x, y)
-				if r1~=r2 or g1~=g2 or b1~=b2 then
+				local r1 = lastget(last, x, y)
+				local r2 = dataget(data, x, y)
+				if r1~=r2 then
 					x0=x
 					kill=true
 					break
@@ -70,9 +70,9 @@ function gif:frame(data)
 		for y=y1, y0, -1 do
 			local kill=false
 			for x=x0, x1 do
-				local r1, g1, b1=lastget(last, x, y)
-				local r2, g2, b2=dataget(data, x, y)
-				if r1~=r2 or g1~=g2 or b1~=b2 then
+				local r1 = lastget(last, x, y)
+				local r2 = dataget(data, x, y)
+				if r1~=r2 then
 					y1=y
 					kill=true
 					break
@@ -85,8 +85,8 @@ function gif:frame(data)
 		for x=x1, x0, -1 do
 			local kill=false
 			for y=y0, y1 do
-				local r1, g1, b1=lastget(last, x, y)
-				local r2, g2, b2=dataget(data, x, y)
+				local r1 = lastget(last, x, y)
+				local r2 = dataget(data, x, y)
 				if r1~=r2 or g1~=g2 or b1~=b2 then
 					x1=x
 					kill=true
@@ -108,8 +108,8 @@ function gif:frame(data)
 	local stream={16}
 	for y=y0, y1 do
 		for x=x0, x1 do
-			local r, g, b=dataget(data, x, y)
-			local index=strchar(palmap[lshift(r, 16)+lshift(g, 8)+b] or error("R:"..tostring(r).." G:"..tostring(g).." B:"..tostring(b).." X:"..x.." Y:"..y)) --FIXME PLEASE
+			local r = dataget(data, x, y)
+			local index=strchar(r) --FIXME PLEASE
 			local temp=buffer..index
 			if codetbl[temp] then
 				buffer=temp
@@ -126,7 +126,7 @@ function gif:frame(data)
 					end
 					last=17
 				end
-				buffer=tostring(index)
+				buffer=index
 			end
 		end
 	end

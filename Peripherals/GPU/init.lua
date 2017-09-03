@@ -51,8 +51,11 @@ return function(config) --A function that creates a new GPU peripheral.
     {252,204,171,255} --Human Skin 16
   } --The colorset of the gpu
   
+  local _DefaultColorSet = {}
+  
   for k,v in ipairs(_ColorSet) do
     _ColorSet[k-1] = v
+    _DefaultColorSet[k-1] = v
   end
   _ColorSet[16] = nil
   
@@ -526,12 +529,28 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.fontWidth() return true, _FontW end
   function GPU.fontHeight() return true, _FontH end
   
-  function GPU.colorPalette(id)
+  function GPU.colorPalette(id,r,g,b)
     if type(id) ~= "number" then return false, "Color ID must be a number, provided: "..type(id) end
     id = math.floor(id)
     if not _ColorSet[id] then return false, "Color ID out of range ("..id..") Must be [0,15]" end
-    local r,g,b,a = unpack(_ColorSet[id])
-    return true, r,g,b,a
+    if r or g or b then
+      local r,g,b = r or _ColorSet[id][1], g or _ColorSet[id][2], b or _ColorSet[id][3]
+      if type(r) ~= "number" then return false, "Red value must be a number, provided: "..tonumber(r) end
+      if type(g) ~= "number" then return false, "Green value must be a number, provided: "..tonumber(g) end
+      if type(b) ~= "number" then return false, "Blue value must be a number, provided: "..tonumber(b) end
+      r,g,b = math.floor(r), math.floor(g), math.floor(b)
+      if r < 0 or r > 255 then return false, "Red value out of range ("..r..") Must be [0,255]" end
+      if g < 0 or g > 255 then return false, "Green value out of range ("..g..") Must be [0,255]" end
+      if b < 0 or b > 255 then return false, "Blue value out of range ("..b..") Must be [0,255]" end
+      _ColorSet[id] = {r,g,b,255}
+      _DisplayPalette[id+1] = _ColorSet[id]
+      _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
+      _ShouldDraw = true
+      return true
+    else
+      local r,g,b,a = unpack(_ColorSet[id])
+      return true, r,g,b,a
+    end
   end
   
   --Call with color id to set the active color.
@@ -1323,8 +1342,10 @@ return function(config) --A function that creates a new GPU peripheral.
       local enimg = imgdata:enlarge(_LIKOScale)
       local img = love.graphics.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
-      local gifimg = love.image.newImageData(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
+      local gifimg = love.image.newImageData(imgdata:size())
+      gifimg:mapPixel(function(x,y) return imgdata:getPixel(x,y),0,0,255 end)
       gifimg = love.graphics.newImage(gifimg)
+      
       local hotx, hoty = hx*math.floor(_LIKOScale), hy*math.floor(_LIKOScale) --Converted to host scale
       local cur = _Mobile and {} or love.mouse.newCursor(limg,hotx,hoty)
       local palt = {}
@@ -1483,11 +1504,9 @@ return function(config) --A function that creates a new GPU peripheral.
       
       love.graphics.setColor(255,255,255,255)
       
-      love.graphics.setShader(_DisplayShader)
+      love.graphics.setShader()
       
       love.graphics.draw(_ScreenCanvas, ofs.screen[1], ofs.screen[2], 0, _GIFScale, _GIFScale) --Draw the canvas.
-      
-      love.graphics.setShader()
       
       if _Cursor ~= "none" then --Draw the cursor
         local cx, cy = exe(GPU.getMPos())
@@ -1495,10 +1514,10 @@ return function(config) --A function that creates a new GPU peripheral.
       end
       
       if MSGTimer > 0 and LastMSGGif then
-        love.graphics.setColor(_GetColor(LastMSGColor))
+        love.graphics.setColor(LastMSGColor,0,0,255)
         love.graphics.rectangle("fill", ofs.screen[1]+ofs.rect[1], ofs.screen[2] + (_LIKO_H-8) * _GIFScale + ofs.rect[2],
         _LIKO_W *_GIFScale + ofs.rectSize[1], 8*_GIFScale + ofs.rectSize[2])
-        love.graphics.setColor(_GetColor(LastMSGTColor))
+        love.graphics.setColor(LastMSGTColor,0,0,255)
         love.graphics.push()
         love.graphics.translate(ofs.screen[1]+ofs.print[1]+_GIFScale, ofs.screen[2] + (_LIKO_H-7) * _GIFScale + ofs.print[2])
         love.graphics.scale(_GIFScale,_GIFScale)
