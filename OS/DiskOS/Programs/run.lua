@@ -292,21 +292,28 @@ local function extractArgs(args,factor)
   return nargs
 end
 
+local function printErr(msg)
+  colorPalette() --Reset the palette
+  color(8) --Red
+  print(msg)
+end
+
 local lastArgs = {...}
 while true do
   if coroutine.status(co) == "dead" then break end
   
   if os.clock() > eventclock + 3.5 then
-    color(8) print("Too Long Without Pulling Event / Flipping") break
+    printErr("Too Long Without Pulling Event / Flipping") break
   end
   
   local args = {coroutine.resume(co,unpack(lastArgs))}
   if not args[1] then
     local err = tostring(args[2])
     local pos = string.find(err,":") or 0
-    err = err:sub(pos+1,-1); color(8) print("ERR: "..err ); break
+    err = err:sub(pos+1,-1); printErr("ERR: "..err ); break
   end
   if args[2] then
+    if args[2] == "RUN:exit" then break end
     lastArgs = {coroutine.yield(args[2],unpack(extractArgs(args,2)))}
     if args[2] == "CPU:pullEvent" or args[2] == "CPU:rawPullEvent" or args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
       eventclock = os.clock()
@@ -325,6 +332,7 @@ while true do
 end
 
 clearEStack()
+colorPalette() --Reset the color palette.
 print("")
 
 TC.setInput(false)
