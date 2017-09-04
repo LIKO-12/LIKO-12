@@ -530,6 +530,17 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.fontHeight() return true, _FontH end
   
   function GPU.colorPalette(id,r,g,b)
+    if not (id or r or g or b) then --Reset
+      for i=0,15 do
+        local r,g,b = unpack(_DefaultColorSet[i])
+        _ColorSet[i] = {r,g,b,255}
+        _DisplayPalette[i+1] = _ColorSet[i]
+      end
+      _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
+      _ShouldDraw = true
+      return true
+    end
+    
     if type(id) ~= "number" then return false, "Color ID must be a number, provided: "..type(id) end
     id = math.floor(id)
     if not _ColorSet[id] then return false, "Color ID out of range ("..id..") Must be [0,15]" end
