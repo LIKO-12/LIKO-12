@@ -222,3 +222,7 @@ function Controls(c)
     textinput(false)
   end
 end
+
+function exit()
+  coroutine.yield("RUN:exit")
+end
