@@ -1,21 +1,12 @@
 -- GIF encoder specialized for PICO-8
 -- by gamax92.
 -- Updated for liko12 by RamiLego4Game
-local _ColorSet, _GIFScale, _LIKO_W, _LIKO_H = unpack({...})
-local palmap={}
+local _GIFScale, _LIKO_W, _LIKO_H = unpack({...})
 
 local lshift, rshift, band = bit.lshift, bit.rshift, bit.band
 local strchar = string.char
 local mthmin = math.min
-local tostring=tostring
-
-for i=0, 15 do
-	local palette=_ColorSet[i]
-	local value=lshift(palette[1], 16)+lshift(palette[2], 8)+palette[3]
-	palmap[i]=value
-	palmap[value]=i
-end
-
+local tostring = tostring
 	
 local function num2str(data)
 	return strchar(band(data, 0xFF), rshift(data, 8))
@@ -23,13 +14,15 @@ end
 
 local gif={}
 
-function gif:frame(data)
+local lct = strchar(tonumber(10000011,2)) --Local color table identifier
+
+function gif:frame(data,gifpalette,newpal)
 	self.file:write("\33\249\4\4\3\0\0\0")
 	local last=self.last
   local lastget = last.getPixel
   local dataget = data.getPixel
-	local x0, y0, x1, y1=0, nil, _LIKO_W*_GIFScale-1, _LIKO_H*_GIFScale-1
-	if self.first then
+	local x0, y0, x1, y1=0, nil, data:getWidth()-1, data:getHeight()-1
+	if self.first or newpal then
 		y0=0
 		self.first=nil
 	else
@@ -98,7 +91,13 @@ function gif:frame(data)
 			end
 		end
 	end
-	self.file:write("\44"..num2str(x0)..num2str(y0)..num2str(x1-x0+1)..num2str(y1-y0+1).."\0\4")
+	self.file:write("\44"..num2str(x0)..num2str(y0)..num2str(x1-x0+1)..num2str(y1-y0+1))
+	if gifpalette then
+	  self.file:write(lct..gifpalette) --local color table
+	else
+	  self.file:write("\0")
+	end
+ self.file:write("\4")
 	local codetbl={}
 	for i=0, 15 do
 		codetbl[strchar(i)]=i
@@ -109,8 +108,8 @@ function gif:frame(data)
 	for y=y0, y1 do
 		for x=x0, x1 do
 			local r = dataget(data, x, y)
-			local index=strchar(r) --FIXME PLEASE
-			local temp=buffer..index
+			local index = strchar(r)
+			local temp = buffer..index
 			if codetbl[temp] then
 				buffer=temp
 			else
@@ -182,14 +181,14 @@ local gifmt={
 
 local giflib={}
 
-function giflib.new(filename)
+function giflib.new(filename,colorset)
 	local file, err=love.filesystem.newFile(filename, "w")
 	if not file then
 		return nil, err
 	end
 	file:write("GIF89a"..num2str(_LIKO_W*_GIFScale)..num2str(_LIKO_H*_GIFScale).."\243\0\0")
 	for i=0, 15 do
-		local palette=_ColorSet[i]
+		local palette=colorset[i]
 		file:write(strchar(palette[1], palette[2], palette[3]))
 	end
 	file:write("\33\255\11NETSCAPE2.0\3\1\0\0\0") --For gif auto looping

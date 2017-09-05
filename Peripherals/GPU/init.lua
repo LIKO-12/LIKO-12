@@ -21,6 +21,10 @@ return function(config) --A function that creates a new GPU peripheral.
   local _GIFPauseKey = config._GIFPauseKey or "f7"
   local _GIFFrameTime = (config._GIFFrameTime or 1/60)*2  --The delta timr between each gif frame.
   local _GIFTimer, _GIFRec = 0
+  local _GIFPChanged = false --A flag to indicate that the palette did change while gif recording
+  local _GIFPStart --The gif starting palette compairing string.
+  local _GIFPal --The gif palette string, should be 16*3 bytes long.
+  
   
   local _ScreenshotKey = config._ScreenshotKey or "f6"
   local _ScreenshotScale = config._ScreenshotScale or 3
@@ -51,7 +55,7 @@ return function(config) --A function that creates a new GPU peripheral.
     {252,204,171,255} --Human Skin 16
   } --The colorset of the gpu
   
-  local _DefaultColorSet = {}
+  local _DefaultColorSet = {} --The default palette for the operating system.
   
   for k,v in ipairs(_ColorSet) do
     _ColorSet[k-1] = v
@@ -262,17 +266,28 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --GifRecorder
-  local _GIF = love.filesystem.load(perpath.."gif.lua")( _ColorSet, _GIFScale, _LIKO_W, _LIKO_H ) --Load the gif library
+  local _GIF = love.filesystem.load(perpath.."gif.lua")( _GIFScale, _LIKO_W, _LIKO_H ) --Load the gif library
   --To handle gif control buttons
   events:register("love:keypressed", function(key,sc,isrepeat)
     if key == _GIFStartKey then
       if _GIFRec then return end --If there is an already in progress gif
       if love.filesystem.exists("/~gifrec.gif") then
         _GIFRec = _GIF.continue("/~gifrec.gif")
+        _GIFPStart = love.filesystem.read("/~gifrec.pal")
+        _GIFPChanged = true --To check if it's the same palette
+        _GIFPal = false
         systemMessage("Resumed gif recording",1,false,false,true)
         return
       end
-      _GIFRec = _GIF.new("/~gifrec.gif")
+      _GIFRec = _GIF.new("/~gifrec.gif",_ColorSet)
+      _GIFPChanged = false
+      _GIFPStart = ""
+      for i=0,15 do
+        local p = _ColorSet[i]
+        _GIFPStart = _GIFPStart .. string.char(p[1],p[2],p[3])
+      end
+      _GIFPal = false
+      love.filesystem.write("/~gifrec.pal",_GIFPStart)
       systemMessage("Started gif recording",1,false,false,true)
     elseif key == _GIFEndKey then
       if not _GIFRec then
@@ -287,6 +302,7 @@ return function(config) --A function that creates a new GPU peripheral.
       _GIFRec = nil
       love.filesystem.write("/LIKO12-"..os.time()..".gif",love.filesystem.read("/~gifrec.gif"))
       love.filesystem.remove("/~gifrec.gif")
+      love.filesystem.remove("/~gifrec.pal")
     elseif key == _GIFPauseKey then
       if not _GIFRec then return end
       _GIFRec.file:flush()
@@ -538,6 +554,7 @@ return function(config) --A function that creates a new GPU peripheral.
       end
       _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
       _ShouldDraw = true
+      _GIFPChanged = true
       return true
     end
     
@@ -557,6 +574,7 @@ return function(config) --A function that creates a new GPU peripheral.
       _DisplayPalette[id+1] = _ColorSet[id]
       _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
       _ShouldDraw = true
+      _GIFPChanged = true
       return true
     else
       local r,g,b,a = unpack(_ColorSet[id])
@@ -1500,7 +1518,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if not _GIFRec then return end
     _GIFTimer = _GIFTimer + dt
     if _GIFTimer >= _GIFFrameTime then
-      _GIFTimer = _GIFTimer-_GIFFrameTime
+      _GIFTimer = _GIFTimer % _GIFFrameTime
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
       love.graphics.push()
       love.graphics.origin() --Reset all transformations.
@@ -1545,7 +1563,20 @@ return function(config) --A function that creates a new GPU peripheral.
       if Clip then love.graphics.setScissor(unpack(Clip)) end
       GPU.popColor() --Restore the active color.
       
-      _GIFRec:frame(_GIFCanvas:newImageData())
+      if _GIFPChanged then
+        _GIFPal = ""
+        for i=0,15 do
+          local p = _ColorSet[i]
+          _GIFPal = _GIFPal .. string.char(p[1],p[2],p[3])
+        end
+        if _GIFPal == _GIFPStart then
+          _GIFPal = false
+        end
+      end
+      
+      _GIFRec:frame(_GIFCanvas:newImageData(),_GIFPal,_GIFPChanged)
+      
+      _GIFPChanged = false
     end
   end)
   
