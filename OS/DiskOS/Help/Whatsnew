@@ -1,5 +1,11 @@
 Changelog:
 
+V0.6.0_DEV_08 (DEVELOPMENT):
+================================
+1. New custom palettes support, `colorPalette(id,red,green,blue)`
+2. New `exit()` function to exit the current running game.
+3. GIF recorder now supports palette changing.
+
 V0.6.0_PRE_05 (1/9/2017):
 ================================
 1. Fix some typos in the 'Whatsnew' help file.
