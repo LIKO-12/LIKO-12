@@ -26,16 +26,22 @@ button.static.text = "Button"
 function button:initialize(gui,text,x,y,w,h)
   base.initialize(self,gui,x,y,w,h)
   
+  self.align = "center"
+  
   self:setText(text or button.static.text)
 end
 
 function button:setText(t)
   self.text = t or self.text
   
+  local x = self:getX()
+  local gw = self.gui:getWidth()
+  
   local fw = self.gui:getFontWidth()
   local fh = self.gui:getFontHeight()
-  self:setWidth(1+(fw+1)*self.text:len())
-  self:setHeight(fh+2)
+  local maxlen, wt = wrapText(t,gw-x)
+  self:setWidth(maxlen+1)
+  self:setHeight(#wt*(fh+2))
   
   return self
 end
@@ -55,7 +61,7 @@ function button:_draw()
   
   rect(x,y,w,h,false,fgcol)
   color(bgcol)
-  print(text,x+1,y+1)
+  print(text,x+1,y+1,w-1,self.align)
 end
 
 function button:pressed(x,y)
