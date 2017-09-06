@@ -49,9 +49,30 @@ function button:_draw()
   local w,h = self:getSize()
   local text = self:getText()
   
+  if self.down then
+    fgcol,bgcol = bgcol,fgcol
+  end
+  
   rect(x,y,w,h,false,fgcol)
   color(bgcol)
   print(text,x+1,y+1)
+end
+
+function button:pressed(x,y)
+  if isInRect(x,y,{self:getRect()}) then
+    self.down = true
+    return true
+  end
+end
+
+function button:released(x,y)
+  if isInRect(x,y,{self:getRect()}) then
+    if self.onclick then
+      self:onclick()
+    end
+  end
+  
+  self.down = false
 end
 
 return button
