@@ -60,3 +60,5 @@ end
 function getAPI()
   return apilist
 end
+
+class = require("Libraries.middleclass")
