@@ -83,6 +83,18 @@ function base:getWidth() return self.w end
 function base:getHeight() return self.h end
 function base:getSize() return self:getWidth(), self:getHeight() end
 
+function base:setRect(x,y,w,h)
+  self:setPosition(x,y)
+  self:setSize(x,y)
+  return self
+end
+
+function base:getRect()
+  local x,y = self:getPosition()
+  local w,h = self:getSize()
+  return x,y,w,h
+end
+
 --Set object colors
 function base:setFGColor(fgcol) self.fgcol = fgcol or self.fgcol; return self end
 function base:setBGColor(bgcol) self.bgcol = bgcol or self.bgcol; return self end
