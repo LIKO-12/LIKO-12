@@ -144,6 +144,7 @@ end
 
 function base:_touchreleased(id,x,y)
   if (not self.touchid) or self.mousepress then return end
+  if self.touchid ~= id then return end
   self:released(x,y)
   self.touchid = nil
   return true
