@@ -56,6 +56,14 @@ function term.init()
   end
 end
 
+--Reload the system
+function term.reload()
+  package.loaded = {} --Reset the package system
+  package.loaded["C:/terminal.lua"] = term --Restore the current terminal instance
+
+  editor = require("Editors") --Re initialize the editors
+end
+
 function term.setdrive(d)
   if type(d) ~= "string" then return error("DriveLetter must be a string, provided: "..type(d)) end
   if not fs.drives()[d] then return error("Drive '"..d.."' doesn't exists !") end
