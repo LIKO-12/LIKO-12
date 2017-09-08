@@ -28,10 +28,10 @@ function button:initialize(gui,text,x,y,w,h)
   
   self.align = "center"
   
-  self:setText(text or button.static.text)
+  self:setText(text or button.static.text,true)
 end
 
-function button:setText(t)
+function button:setText(t,nodraw)
   self.text = t or self.text
   
   local x = self:getX()
@@ -43,19 +43,24 @@ function button:setText(t)
   self:setWidth(maxlen+1)
   self:setHeight(#wt*(fh+2))
   
+  if not nodraw then
+    self:draw() --Update the button
+  end
+  
   return self
 end
 
 function button:getText() return self.text end
 
-function button:_draw()
+function button:draw()
   local fgcol = self:getFGColor()
   local bgcol = self:getBGColor()
   local x,y = self:getPosition()
   local w,h = self:getSize()
   local text = self:getText()
+  local down = self:isDown()
   
-  if self.down then
+  if down then
     fgcol,bgcol = bgcol,fgcol
   end
   
@@ -66,7 +71,7 @@ end
 
 function button:pressed(x,y)
   if isInRect(x,y,{self:getRect()}) then
-    self.down = true
+    self:draw() --Update the button
     return true
   end
 end
@@ -78,7 +83,7 @@ function button:released(x,y)
     end
   end
   
-  self.down = false
+  self:draw() --Update the button
 end
 
 return button
