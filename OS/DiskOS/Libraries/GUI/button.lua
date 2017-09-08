@@ -40,8 +40,8 @@ function button:setText(t,nodraw)
   local fw = self.gui:getFontWidth()
   local fh = self.gui:getFontHeight()
   local maxlen, wt = wrapText(t,gw-x)
-  self:setWidth(maxlen+1)
-  self:setHeight(#wt*(fh+2))
+  self:setWidth(maxlen+1,true)
+  self:setHeight(#wt*(fh+2),true)
   
   if not nodraw then
     self:draw() --Update the button
