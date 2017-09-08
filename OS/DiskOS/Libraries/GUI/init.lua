@@ -9,10 +9,7 @@ local function wrap(f)
   return function(self,...)
     local args = {pcall(self[f],self,...)}
     if args[1] then
-      local function a(ok,...)
-        return ...
-      end
-      return a(unpack(args))
+      return select(2,unpack(args))
     else
       return error(tostring(args[2]))
     end
