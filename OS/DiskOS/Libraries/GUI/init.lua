@@ -124,7 +124,10 @@ function GUI:getObjects() return self.objects end
 
 --Hooks
 function GUI:event(event,a,b,c,d,e,f)
-  event = "_"..event
+  if event ~= "draw" then
+    event = "_"..event
+  end
+  
   if self[event] then
     if self[event](self,a,b,c,d,e,f) then
       return
@@ -138,10 +141,10 @@ function GUI:event(event,a,b,c,d,e,f)
       end
     end
   end
-  
-  if event == "_update" then
-    self:event("draw",a,b,c,d,e,f)
-  end
+end
+
+function GUI:redraw()
+  self:event("draw")
 end
 
 return GUI
