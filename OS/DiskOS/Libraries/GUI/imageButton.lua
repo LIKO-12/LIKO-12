@@ -20,28 +20,88 @@ local imgbtn = class("DiskOS.GUI.imageButton",base)
 --Default Values:
 
 
-function imgbtn:initialize(gui,text,x,y,align,w,h)
+function imgbtn:initialize(gui,x,y)--,w,h)
   base.initialize(self,gui,x,y,w,h)
   
-  
+  --self.fgimg <- The image when the button is not held
+  --self.bgimg <- The image when the button is held
+  --self.img <- The image when using single-image mode.
+  --self.fcol <- The front color in single-image mode.
+  --self.bcol <- The back color in singel-image mode.
 end
+
+function imgbtn:setImage(img,fcol,bcol,nodraw)
+  self.fgimg, self.bgimg = nil, nil
+  self.img, self.fcol, self.bcol = img or self.img, fcol or self.fcol, bcol or self.bcol
+  
+  if self.img and type(self.img) ~= "number" then self:setSize(self.img:size(),true) end
+  if not nodraw then self:draw() end
+  
+  return self
+end
+
+function imgbtn:setFGImage(img,nodraw)
+  self.img, self.fcol, self.bcol = nil,nil,nil
+  self.fgimg = img
+  
+  if self.fgimg and type(self.fgimg) ~= "number" then self:setSize(self.fgimg:size(),true) end
+  if not nodraw then self:draw() end
+  
+  return self
+end
+
+function imgbtn:setBGImage(img,nodraw)
+  self.img, self.fcol, self.bcol = nil,nil,nil
+  self.bgimg = img
+  
+  if self.bgimg and type(self.bgimg) ~= "number" then self:setSize(self.bgimg:size(),true) end
+  if not nodraw then self:draw() end
+  
+  return self
+end
+
+function imgbtn:getImage() return self.img, self.fcol, self.bcol end
+function imgbtn:getFGImage() return self.fgimg end
+function imgbtn:getBGImage() return self.bgimg end
 
 --Draw the imgbtn
 function imgbtn:draw()
   local fgcol = self:getFGColor()
   local bgcol = self:getBGColor()
+  
+  local fgimg = self:getFGImage()
+  local bgimg = self:getBGImage()
+  
+  local img, fcol, bcol = self:getImage()
+  
+  local sheet = self:sheet()
+  
   local x,y = self:getPosition()
-  local w,h = self:getSize()
-  local text = self:getText()
   local down = self:isDown()
   
   if down then
-    fgcol,bgcol = bgcol,fgcol
+    fgcol, bgcol = bgcol, fgcol
   end
   
-  rect(x,y,w,h,false,fgcol)
-  color(bgcol)
-  print(text,x+1,y+1,w-1,self.align)
+  if img then --Single-image Mode
+    pushPalette()
+    pal(fcol,bgcol)
+    pal(bcol,fgcol)
+    if type(img) == "number" then --SpriteSheet mode
+      sheet:draw(img,x,y)
+    else --Normal image
+      img:draw(x,y)
+    end
+    popPalette()
+  else --Multiple images
+    local i = down and bgimg or fgimg
+    
+    if type(i) == "number" then --SpriteSheet mode
+      sheet:draw(i,x,y)
+    else --Normal image
+      i:draw(x,y)
+    end
+  end
 end
 
 --Internal functions--
