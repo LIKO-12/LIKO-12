@@ -34,7 +34,10 @@ function imgbtn:setImage(img,fcol,bcol,nodraw)
   self.fgimg, self.bgimg = nil, nil
   self.img, self.fcol, self.bcol = img or self.img, fcol or self.fcol, bcol or self.bcol
   
-  if self.img and type(self.img) ~= "number" then self:setSize(self.img:size(),true) end
+  if self.img and type(self.img) ~= "number" then
+    local imgW, imgH = self.img:size()
+    self:setSize(imgW,imgH,true)
+  end
   if not nodraw then self:draw() end
   
   return self
@@ -44,7 +47,10 @@ function imgbtn:setFGImage(img,nodraw)
   self.img, self.fcol, self.bcol = nil,nil,nil
   self.fgimg = img
   
-  if self.fgimg and type(self.fgimg) ~= "number" then self:setSize(self.fgimg:size(),true) end
+  if self.fgimg and type(self.fgimg) ~= "number" then
+    local imgW, imgH = self.fgimg:size()
+    self:setSize(imgW,imgH,true)
+  end
   if not nodraw then self:draw() end
   
   return self
@@ -54,7 +60,10 @@ function imgbtn:setBGImage(img,nodraw)
   self.img, self.fcol, self.bcol = nil,nil,nil
   self.bgimg = img
   
-  if self.bgimg and type(self.bgimg) ~= "number" then self:setSize(self.bgimg:size(),true) end
+  if self.bgimg and type(self.bgimg) ~= "number" then
+    local imgW, imgH = self.bgimg:size()
+    self:setSize(imgW,imgH,true)
+  end
   if not nodraw then self:draw() end
   
   return self
@@ -74,7 +83,7 @@ function imgbtn:draw()
   
   local img, fcol, bcol = self:getImage()
   
-  local sheet = self:sheet()
+  local sheet = self:getSheet()
   
   local x,y = self:getPosition()
   local down = self:isDown()
