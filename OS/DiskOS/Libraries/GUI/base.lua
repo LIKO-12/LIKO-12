@@ -158,6 +158,17 @@ function base:getBGColor() return self.bgcol end
 function base:getTColor() return self.tcol end
 function base:getColors() return self:getFGColor(), self:getBGColor(), self:getTColor() end
 
+--Set the object sheet
+function base:setSheet(sheet,nodraw)
+  self.sheet = sheet or self.sheet
+  if not nodraw then self:draw() end
+  return self
+end
+
+--Get the object sheet
+function base:getSheet() return self.sheet end
+
+--Is the object being held down.
 function base:isDown() return self.down end
 
 --Has to be overwritten
