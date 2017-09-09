@@ -206,6 +206,12 @@ return function(config) --A function that creates a new GPU peripheral.
     return _ColorSetLookup[table.concat(col)] or 0
   end
   
+  --Apply transparent colors effect on LIKO12 Images when encoded to PNG
+  local function _EncodeTransparent(x,y, r,g,b,a)
+    if _ImageTransparent[r+1] == 0 then return 0,0,0,0 end
+    return r,g,b,a
+  end
+  
   --Convert from LIKO12 palette to real colors.
   local function _ExportImage(x,y, r,g,b,a)
     if _ImageTransparent[r+1] == 0 then return 0,0,0,0 end
@@ -1373,6 +1379,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
       local gifimg = love.image.newImageData(imgdata:size())
       gifimg:mapPixel(function(x,y) return imgdata:getPixel(x,y),0,0,255 end)
+      gifimg:mapPixel(_EncodeTransparent)
       gifimg = love.graphics.newImage(gifimg)
       
       local hotx, hoty = hx*math.floor(_LIKOScale), hy*math.floor(_LIKOScale) --Converted to host scale
