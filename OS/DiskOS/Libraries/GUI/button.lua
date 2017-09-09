@@ -83,4 +83,16 @@ function button:released(x,y)
   self:draw() --Update the button
 end
 
+function button:cursor(x,y)
+  local down = self:isDown()
+  
+  if isInRect(x,y,{self:getRect()}) then
+    if down then
+      return "handpress"
+    else
+      return "handrelease"
+    end
+  end
+end
+
 return button

@@ -138,10 +138,30 @@ function GUI:event(event,a,b,c,d,e,f)
       end
     end
   end
+  
+  if event == "_mousepressed" or event == "_mousereleased" then
+    self:_mousemoved(a,b,0,0,d)
+  end
 end
 
 function GUI:redraw()
   self:event("draw")
+end
+
+function GUI:_mousemoved(x,y,dx,dy,istouch)
+  if istouch then return end
+  
+  for k, obj in ipairs(self:getObjects()) do
+    if obj.cursor then
+      local c = obj.cursor(obj,x,y)
+      if c then
+        cursor(c)
+        return
+      end
+    end
+  end
+  
+  cursor("normal") --Defaults to the normal cursor
 end
 
 return GUI

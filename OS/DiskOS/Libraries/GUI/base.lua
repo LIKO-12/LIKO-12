@@ -160,10 +160,11 @@ function base:_update(dt) end
 function base:draw(dt) end
 function base:pressed(x,y) return false end --Called when the mouse/touch is pressed.
 function base:released(x,y) end --Called when the mouse/touch is released after returning try from base:pressed.
+function base:cursor(x,y) end --Should return prefered cursor name.
 
 --Internal functions to handle multitouch
-function base:_mousepressed(x,y,b)
-  if self.down then return end
+function base:_mousepressed(x,y,b,istouch)
+  if self.down or istouch then return end
   self.mousepress = true
   self.down = true
   self.mousepress = self:pressed(x,y,b)
@@ -171,8 +172,8 @@ function base:_mousepressed(x,y,b)
   return self.mousepress
 end
 
-function base:_mousereleased(x,y)
-  if self.touchid or (not self.mousepress) then return end
+function base:_mousereleased(x,y,b,istouch)
+  if self.touchid or (not self.mousepress) or istouch then return end
   self.down = false
   self:released(x,y)
   self.mousepressed = false
