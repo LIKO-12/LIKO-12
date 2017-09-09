@@ -20,7 +20,7 @@ local button = class("DiskOS.GUIbutton",base)
 --Default Values:
 button.static.text = "Button"                                                                
 
-function button:initialize(gui,text,x,y,w,h)
+function button:initialize(gui,text,x,y,align,w,h)
   base.initialize(self,gui,x,y,w,h)
   
   self.align = "center"
@@ -28,6 +28,17 @@ function button:initialize(gui,text,x,y,w,h)
   self:setText(text or button.static.text,true)
 end
 
+--Set the text align in the button label (when using multiline)
+function button:setAlign(align,nodraw)
+  self.align = align or self.align
+  if not nodraw then self:draw() end
+  return self
+end
+
+--Get the current text align
+function button:getAlign() return self.align end
+
+--Set the button text
 function button:setText(t,nodraw)
   self.text = t or self.text
   
@@ -47,8 +58,10 @@ function button:setText(t,nodraw)
   return self
 end
 
+--Get the button text
 function button:getText() return self.text end
 
+--Draw the button
 function button:draw()
   local fgcol = self:getFGColor()
   local bgcol = self:getBGColor()
@@ -66,6 +79,9 @@ function button:draw()
   print(text,x+1,y+1,w-1,self.align)
 end
 
+--Internal functions--
+
+--Handle cursor press
 function button:pressed(x,y)
   if isInRect(x,y,{self:getRect()}) then
     self:draw() --Update the button
@@ -73,6 +89,7 @@ function button:pressed(x,y)
   end
 end
 
+--Handle cursor release
 function button:released(x,y)
   if isInRect(x,y,{self:getRect()}) then
     if self.onclick then
@@ -83,6 +100,7 @@ function button:released(x,y)
   self:draw() --Update the button
 end
 
+--Provide prefered cursor
 function button:cursor(x,y)
   local down = self:isDown()
   
