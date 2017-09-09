@@ -159,7 +159,7 @@ function GUI:_mousemoved(x,y,dx,dy,istouch)
   
   for k, obj in ipairs(self:getObjects()) do
     if obj.cursor then
-      local c = obj.cursor(obj,x,y)
+      local c = obj:cursor(x,y)
       if c then
         cursor(c)
         return
