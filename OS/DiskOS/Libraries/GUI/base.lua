@@ -162,16 +162,16 @@ function base:pressed(x,y) return false end --Called when the mouse/touch is pre
 function base:released(x,y) end --Called when the mouse/touch is released after returning try from base:pressed.
 
 --Internal functions to handle multitouch
-function base:_mousepressed(button,x,y)
+function base:_mousepressed(x,y,b)
   if self.down then return end
   self.mousepress = true
   self.down = true
-  self.mousepress = self:pressed(x,y)
+  self.mousepress = self:pressed(x,y,b)
   self.down = self.mousepress
   return self.mousepress
 end
 
-function base:_mousereleased(button,x,y)
+function base:_mousereleased(x,y)
   if self.touchid or (not self.mousepress) then return end
   self.down = false
   self:released(x,y)
