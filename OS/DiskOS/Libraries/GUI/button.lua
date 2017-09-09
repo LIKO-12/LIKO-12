@@ -15,15 +15,16 @@ local function wrap(f)
 end
 
 --Button with a text label
-local button = class("DiskOS.GUIbutton",base)
+local button = class("DiskOS.GUI.button",base)
 
 --Default Values:
-button.static.text = "Button"                                                                
+button.static.text = "Button"   
+button.static.align = "center"
 
 function button:initialize(gui,text,x,y,align,w,h)
   base.initialize(self,gui,x,y,w,h)
   
-  self.align = "center"
+  self:setAlign(align or button.static.align, true)
   
   self:setText(text or button.static.text,true)
 end
