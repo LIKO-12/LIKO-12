@@ -26,9 +26,11 @@ GUI.static.tcol = 7 --Text color
 --bgcol -> The default background color.
 --tcol -> The defaul text color.
 --w,h -> The size of the screen.
-function GUI:initialize(fgcol,bgcol,tcol,w,h)
+function GUI:initialize(sheet,fgcol,bgcol,tcol,w,h)
   self._objects = {} --The objects that can be created.
   self.objects = {} --Registered objects
+  
+  self.sheet = sheet
   
   self.w = w or screenWidth()
   self.h = h or screenHeight()
@@ -115,6 +117,10 @@ function GUI:getFGColor() return self.fgcol end
 function GUI:getBGColor() return self.bgcol end
 function GUI:getTColor() return self.tcol end
 function GUI:getColors() return self:getFGColor(), self:getBGColor(), self:getTColor() end
+
+--Set the default spritesheet
+function GUI:setSheet(sheet) self.sheet = sheet or self.sheet; return self end
+function GUI:getSheet() return self.sheet end
 
 --Return registered objects list
 function GUI:getObjects() return self.objects end
