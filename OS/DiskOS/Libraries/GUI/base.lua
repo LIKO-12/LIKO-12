@@ -31,6 +31,11 @@ function base:initialize(gui,x,y,w,h)
   self:setTColor(self.gui:getTColor(),true)
 end
 
+--Get object GUI instance.
+function base:getGUI()
+  return self.gui
+end
+
 --Set object position.
 function base:setX(x,nodraw)
   if x then
@@ -162,7 +167,7 @@ function base:pressed(x,y) return false end --Called when the mouse/touch is pre
 function base:released(x,y) end --Called when the mouse/touch is released after returning try from base:pressed.
 function base:cursor(x,y) end --Should return prefered cursor name.
 
---Internal functions to handle multitouch
+--Internal functions to handle multitouch and computer mouse
 function base:_mousepressed(x,y,b,istouch)
   if self.down or istouch then return end
   self.mousepress = true
