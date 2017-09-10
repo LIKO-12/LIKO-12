@@ -136,13 +136,12 @@ end
 
 function numToBin(num,len)
   local bin = ""
-  while true do
+  while num > 0 do
     local byte = bit.band(num,255)
     local char = string.char(byte)
     bin = bin..char
     num = bit.band(num, bit.bnot(255))
     num = bit.rshift(num,8)
-    if num == 0 then break end
   end
   if len and bin:len() < len then bin = bin..string.rep(string.char(0), len-bin:len()) end
   return bin
