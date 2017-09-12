@@ -54,12 +54,12 @@ If you wish to start creating games you can start be reading the demo games code
 
 **To load and play a demo game:**
 
-1. Install the demos !, By typing `install_games` in the terminal.
+1. Install the demos !, By typing `install_demos` in the terminal.
 2. Enter the demos directory: `cd Demos`.
-3. To get a list of the available games do `dir`.
-4. Load a demo game by typing `load <gameName>`, note that you don't have to enter the _.lk12_ extension.
-5. You can press _escape_ to view the game source.
-6. Type `run` to play the game !, press _escape_ to exit the game and return back to the terminal.
+3. To get a list of the available demos do `ls` or `dir`.
+4. Load a demo by typing `load <gameName>`, note that you don't have to enter the _.lk12_ extension.
+5. You can press _escape_ to view the demo source.
+6. Type `run` to play the demo !, press _escape_ to exit the game and return back to the terminal.
 7. Hope you enjoyed !
 
 * More guides are being worked on.
