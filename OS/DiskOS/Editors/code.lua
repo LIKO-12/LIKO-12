@@ -334,6 +334,14 @@ function ce:copyText()
   end
 end
 
+--Cut selection text
+function ce:cutText()
+  if self.sxs then
+    self:copyText()
+    self:deleteSelection()
+  end
+end
+
 -- Paste the text from the clipboard
 function ce:pasteText()
   if self.sxs then self:deleteSelection() end
@@ -350,6 +358,14 @@ function ce:pasteText()
   end
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
   self:drawLineNum()
+end
+
+--Select all text
+function ce:selectAll()
+  self.sxs, self.sys = 1,1
+  self.sye = #buffer
+  self.sxe = buffer[self.sye]:len()
+  self:drawBuffer()
 end
 
 -- Last used key, this should be set to the last keymap used from the ce.keymap table
@@ -451,9 +467,13 @@ ce.keymap = {
     self:textinput(" ")
   end,
   
+  ["sc_ctrl-x"] = ce.cutText,
+  
   ["sc_ctrl-c"] = ce.copyText,
 
   ["sc_ctrl-v"] = ce.pasteText,
+  
+  ["sc_ctrl-a"] = ce.selectAll
 }
 
 
