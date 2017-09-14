@@ -1,10 +1,20 @@
 Changelog:
 
-V0.6.0_DEV_08 (DEVELOPMENT):
+V0.6.0_PRE_06 (14/9/2017):
 ================================
+New:
 1. New custom palettes support, `colorPalette(id,red,green,blue)`
 2. New `exit()` function to exit the current running game.
-3. GIF recorder now supports palette changing.
+3. Ctrl-X and Ctrl-A now works in the code editor.
+
+Operating System:
+4. Now shows the build number under 'PRE' in the terminal, instead of 0.6.
+5. New `reload` program to reload the editorsheet and reset the Lua package system.
+6. Added middleclass to the OS programs globals as 'class'.
+7. WorkInProgress GUI library.
+
+Engine:
+8. GIF recorder now supports palette changing.
 
 V0.6.0_PRE_05 (1/9/2017):
 ================================
