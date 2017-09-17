@@ -15,14 +15,6 @@ function coreg:setCoroutine(co,glob)
   return self
 end
 
-local function extractArgs(args,factor)
-  local nargs = {}
-  for k,v in ipairs(args) do
-    if k > factor then table.insert(nargs,v) end
-  end
-  return nargs
-end
-
 --Resumes the current active coroutine if exists.
 function coreg:resumeCoroutine(...)
   local lastargs = {...}
@@ -31,14 +23,12 @@ function coreg:resumeCoroutine(...)
     local args = {coroutine.resume(self.co,unpack(lastargs))}
     if not args[1] then error(args[2]) end --Should have a better error handelling
     if not args[2] then
-      --if self.co:status() == "dead" then error("done") return end --OS finished ??
-      --self:resumeCoroutine()
-      self.co = nil return
+      self.os = nil; return
     end
-    args = {self:trigger(args[2],unpack(extractArgs(args,2)))}
-    if not args[1] then lastargs = {args[1],unpack(extractArgs(args,1))}
+    args = {self:trigger(select(2,unpack(args)))}
+    if not args[1] then lastargs = args
     elseif not(type(args[1]) == "number" and args[1] == 2) then
-      lastargs = {true,unpack(extractArgs(args,1))}
+      lastargs = {true,select(2,unpack(args))}
     else break end
   end
 end
