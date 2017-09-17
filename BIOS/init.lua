@@ -152,16 +152,11 @@ coreg:register(function()
   return true, _LIKO_Version, _LIKO_Old
 end,"BIOS:GetVersion")
 
-local function exe(...) --Execute a LIKO12 api function (to handle errors)
-  local args = {...}
-  if args[1] then
-    local nargs = {}
-    for k,v in ipairs(args) do --Clone the args, removing the first one
-      nargs[k-1] = v
-    end
-    return unpack(nargs)
+local function exe(ok,err,...) --Execute a LIKO12 api function (to handle errors)
+  if ok then
+    return err,...
   else
-    return error(args[2])
+    return error(err)
   end
 end
 

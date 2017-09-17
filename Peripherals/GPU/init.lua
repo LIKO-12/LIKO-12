@@ -254,20 +254,11 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Excute a LIKO12 api function (to handle errors)
-  local function exe(...)
-    local args = {...}
-    if args[1] then
-      local nargs = {}
-      for k,v in pairs(args) do --Clone the args, removing the first one
-        if type(k) == "number" then
-          nargs[k-1] = v
-        else
-          nargs[k] = v
-        end
-      end
-      return unpack(nargs)
+  local function exe(ok,err,...)
+    if ok then
+      return err,...
     else
-      return error(args[2])
+      return error(err)
     end
   end
   

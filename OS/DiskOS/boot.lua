@@ -39,11 +39,7 @@ for peripheral,funcs in pairs(perlist) do
       holder[func] = function(...)
         local args = {coroutine.yield(command,...)}
         if not args[1] then return error(args[2]) end
-        local nargs = {}
-        for k,v in ipairs(args) do
-          if k >1 then table.insert(nargs,k-1,v) end
-        end
-        return unpack(nargs)
+        return select(2,unpack(args))
       end
     end
   end
