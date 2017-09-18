@@ -26,7 +26,7 @@ end
 function coreg:popCoroutine()
   if #self.stack < 1 then return error("No coroutines in the stack") end
   self.co = self.stack[1]
-  for i=2,#self.stack then
+  for i=2,#self.stack do
     self.stack[i-1] = self.stack[i]
   end
   self.stack[#self.stack] = nil
