@@ -33,7 +33,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local _FontW, _FontH = config._FontW or 4, config._FontH or 5 --Font character size
   local _FontChars = config._FontChars or 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!?[](){}.,;:<>+=%#^*~/\\|$@&`"\'-_ ' --Font chars
-  local _FontPath, _FontExtraSpacing = config._FontPath or "/Engine/font5x4.png", config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
+  local _FontPath, _FontExtraSpacing = config._FontPath or "/Peripherals/GPU/font4x5.png", config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
   
   --The colorset (PICO-8 Palette by default)
   local _ColorSet = config._ColorSet or {
