@@ -32,6 +32,13 @@ function coreg:popCoroutine()
   self.stack[#self.stack] = nil
 end
 
+--Call a function with the coroutine system plugged (A sub-coroutine)
+function coreg:subCoroutine(func,...)
+  self:pushCoroutine()
+  self.co = coroutine.create(func)
+  return self:resumeCoroutine(...)
+end
+
 --Resumes the current active coroutine if exists.
 function coreg:resumeCoroutine(...)
   local lastargs = {...}
@@ -39,17 +46,21 @@ function coreg:resumeCoroutine(...)
     if not self.co or coroutine.status(self.co) == "dead" then return end
     local args = {coroutine.resume(self.co,unpack(lastargs))}
     if not args[1] then error(args[2]) end --Should have a better error handelling
-    if not args[2] then
-      self.os = nil; return
+    if coroutine.status(self.co) == "dead" and #self.stack >= 1 then --Hook system
+      lastargs = args
+      self:popCoroutine()
+    else
+      if not args[2] then self.os = nil; return end
+      args = {self:trigger(select(2,unpack(args)))}
+      if not args[1] then lastargs = args
+      elseif not(type(args[1]) == "number" and args[1] == 2) then
+        lastargs = {true,select(2,unpack(args))}
+      else break end
     end
-    args = {self:trigger(select(2,unpack(args)))}
-    if not args[1] then lastargs = args
-    elseif not(type(args[1]) == "number" and args[1] == 2) then
-      lastargs = {true,select(2,unpack(args))}
-    else break end
   end
 end
 
+--Sandbox a function with the current coroutine environment.
 function coreg:sandbox(f)
   if self.co and self.coglob then setfenv(f,self.coglob) return end
   local GLOB = sandbox(self) --Create a new sandbox.
