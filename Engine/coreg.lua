@@ -1,5 +1,5 @@
 --Corouting Registry: this file is responsible for providing LIKO12 it's api--
-local coreg = {reg={}}
+local coreg = {reg={},stack={}}
 
 local sandbox = require("Engine.sandbox")
 
@@ -10,9 +10,26 @@ end
 
 --Sets the current active coroutine
 function coreg:setCoroutine(co,glob)
-  self.co  = co
-  self.coglob = glob
+  self.co  = co or self.co
+  self.coglob = glob or self.coglob
   return self
+end
+
+--Push the current coroutine to the coroutine stack,
+-- and set the current coroutine to nil
+function coreg:pushCoroutine()
+  table.insert(self.stack,self.co)
+  self.co = nil
+end
+
+--Pop a coroutine from the coroutine stack.
+function coreg:popCoroutine()
+  if #self.stack < 1 then return error("No coroutines in the stack") end
+  self.co = self.stack[1]
+  for i=2,#self.stack then
+    self.stack[i-1] = self.stack[i]
+  end
+  self.stack[#self.stack] = nil
 end
 
 --Resumes the current active coroutine if exists.
@@ -33,7 +50,7 @@ function coreg:resumeCoroutine(...)
   end
 end
 
-function coreg:sandbox(f,cache)
+function coreg:sandbox(f)
   if self.co and self.coglob then setfenv(f,self.coglob) return end
   local GLOB = sandbox(self) --Create a new sandbox.
   
