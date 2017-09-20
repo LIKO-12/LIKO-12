@@ -96,7 +96,7 @@ require("osapi") --Load DiskOS OS APIs
 local SWidth, SHeight = screenSize()
 
 --Setup the RAM
-memset(0x0006, "LIKO12;") --The header
+--[[memset(0x0006, "LIKO12;") --The header
 local curAddr = 0x000D --Color Palette
 for i=0, 15 do
   local r,g,b,a = colorPalette(i)
@@ -126,6 +126,7 @@ memset(0x008E, numToBin(SHeight,2)) --Spritesheet Height
 
 memset(0x0090, numToBin(SWidth*0.75,1)) --Map Width
 memset(0x0093, numToBin(SHeight,1)) --Map Height
+]]
 
 terminal.init() --Initialize the terminal
 terminal.loop()
