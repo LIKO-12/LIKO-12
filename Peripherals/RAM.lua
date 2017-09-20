@@ -59,14 +59,16 @@ return function(config)
   local lastaddr = string.format("0x%X",ramsize-1)
   local ram = string.rep("\0",ramsize)
   
+  local advHandlers = {}
+  local coHandlers = {}
+  
   local handlers = {}
   
   local devkit = {}
   
-  local function tohex(a)
-    return string.format("0x%X",a or 0)
-  end
+  local function tohex(a) return string.format("0x%X",a or 0) end
   
+  --Will be removed
   function devkit.addHandler(startAddress, endAddress, handler)
     if type(startAddress) ~= "number" then return error("Start address must be a number, provided: "..type(startAddress)) end
     if type(endAddress) ~= "number" then return error("End address must be a number, provided: "..type(endAddress)) end
@@ -104,9 +106,12 @@ return function(config)
     end
   end
   
-  local layout = config.layout or {{ramsize}}
+  advHandlers["memory"] = devkit.defaultHandler
+  
+  local layout = {} --config.layout or {{ramsize}}
   
   --Build the layout
+  --[[
   local endAddress = -1
   for id, h in ipairs(layout) do
     if type(h[1]) ~= "number" then error("Invalid Layout Section ("..id..") !") end
@@ -123,10 +128,25 @@ return function(config)
     end
     print("Layout "..id..": "..tohex(startAddress).." -> "..tohex(endAddress).." ("..size..")")
   end
-  
-  local function tohex(val) return string.format("0x%X",val) end
+  ]]
   
   local api = {}
+  
+  local sectionEnd = -1
+  function api._newSection(size,hand)
+    
+    local hand = hand or "default"
+    
+    if sectionEnd + size >= ramsize-1 then return false, "No enough unallocated memory left." end
+    local startAddr = sectionEnd +1
+    local endAddr = sectionEnd + size
+    
+    if type(hand) == "string" then
+      
+    else
+      
+    end
+  end
   
   --Changes the position of a ram separator
   --TODO: Complete the error handleing...
@@ -166,6 +186,8 @@ return function(config)
         return true, v --It ran successfully
       end
     end
+    
+    return true, 0 --No handler is found
   end
   
   function api.memget(address,length)
