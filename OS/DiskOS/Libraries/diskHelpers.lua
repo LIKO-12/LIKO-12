@@ -164,7 +164,7 @@ function pset(x,y,col)
 end
 
 --Spritesheet pixels--
-function pget(x,y)
+function sget(x,y)
   if type(x) ~= "number" then return error("X must be a number, provided: "..type(x)) end
   if type(y) ~= "number" then return error("Y must be a number, provided: "..type(y)) end
   x, y = math.floor(x), math.floor(y)
@@ -173,7 +173,7 @@ function pget(x,y)
   return SpriteMap.img:data():getPixel(x,y)
 end
 
-function pset(x,y,col)
+function sset(x,y,col)
   if type(x) ~= "number" then return error("X must be a number, provided: "..type(x)) end
   if type(y) ~= "number" then return error("Y must be a number, provided: "..type(y)) end
   if type(col) ~= "number" then return error("Color must be a number, provided: "..type(col)) end
