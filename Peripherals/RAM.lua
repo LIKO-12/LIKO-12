@@ -72,10 +72,8 @@ return function(config)
     if type(endAddress) ~= "number" then return error("End address must be a number, provided: "..type(endAddress)) end
     if type(handler) ~= "function" then return error("Handler must be a function, provided: "..type(handler)) end
     
-    if startAddress < 0 then return error("Start Address out of range ("..tohex(startAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
-    if startAddress > ramsize-1 then return error("Start Address out of range ("..tohex(startAddress)..") Must be [0,"..(ramsize-1).."]") end
-    if endAddress < 0 then return error("End Address out of range ("..tohex(endAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
-    if endAddress > ramsize-1 then return error("End Address out of range ("..tohex(endAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
+    if (startAddress < 0) or (startAddress > ramsize-1) then return error("Start Address out of range ("..tohex(startAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
+    if (endAddress < 0) or (endAddresss > ramsize-1) then return error("End Address out of range ("..tohex(endAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
     
     table.insert(handlers,{startAddr = startAddress, endAddr = endAddress, handler = handler})
     table.sort(handlers, function(t1,t2)
