@@ -70,6 +70,6 @@ local RAMConfig = {
   }
 }
 
-local RAM, RAMKit = assert(P("RAM","RAM",RAMConfig))
+--local RAM, RAMKit = assert(P("RAM","RAM",RAMConfig))
 
 local _, WEB, WEBKit = P("WEB","WEB",{CPUKit = CPUKit})

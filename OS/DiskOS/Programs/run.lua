@@ -44,7 +44,7 @@ if not diskchunk then
 end
 
 --Upload the data to the ram
-local SpriteSheetAddr = binToNum(memget(0x0054, 4))
+--[[local SpriteSheetAddr = binToNum(memget(0x0054, 4))
 local MapDataAddr = binToNum(memget(0x0058, 4))
 local LuaCodeAddr = binToNum(memget(0x0068, 4))
 local SpriteFlagsAddr = SpriteSheetAddr + 12*1024
@@ -53,7 +53,7 @@ memset(SpriteSheetAddr, imgToBin(sheetImage))
 memset(SpriteFlagsAddr, FlagsData)
 memset(MapDataAddr, mapToBin(TileMap))
 memset(LuaCodeAddr, codeToBin(luacode:sub(1,20*1024)))
-
+]]
 --Create the sandboxed global variables
 local glob = _FreshGlobals()
 glob._G = glob --Magic ;)
