@@ -54,18 +54,19 @@ Disk META:
 8. Licensed Under CC0.
 ]]
 
+local coreg = require("Engine.coreg")
+
 return function(config)
   local ramsize = config.size or 96*1024 --Defaults to 96 KBytes.
   local lastaddr = string.format("0x%X",ramsize-1)
   local ram = string.rep("\0",ramsize)
   
-  local advHandlers = {}
-  local coHandlers = {}
-  
-  local handlers = {}
+  local eHandlers = config.handlers or {} --The ram handlers provided by the engine peripherals.
+  local handlers = {} --The active ran handlers system
   
   local devkit = {}
   
+  --function to convert a number into a hex string.
   local function tohex(a) return string.format("0x%X",a or 0) end
   
   --Will be removed
@@ -106,61 +107,138 @@ return function(config)
     end
   end
   
-  advHandlers["memory"] = devkit.defaultHandler
-  
-  local layout = {} --config.layout or {{ramsize}}
-  
-  --Build the layout
-  --[[
-  local endAddress = -1
-  for id, h in ipairs(layout) do
-    if type(h[1]) ~= "number" then error("Invalid Layout Section ("..id..") !") end
-    if not h[2] then h[2] = devkit.defaultHandler end
-    if type(h[2]) ~= "function" then error("Invalid Layout Section Handler ("..id.."), provided: "..type(h[2])) end
-    local startAddress = endAddress + 1
-    endAddress = startAddress + h[1] -1
-    devkit.addHandler(startAddress,endAddress, h[2])
-    local size
-    if h[1] < 1024 then
-      size = h[1].." Byte"
-    else
-      size = (h[1]/1024).." KB"
-    end
-    print("Layout "..id..": "..tohex(startAddress).." -> "..tohex(endAddress).." ("..size..")")
-  end
-  ]]
+  eHandlers["memory"] = devkit.defaultHandler
   
   local api = {}
   
   local sectionEnd = -1
   function api._newSection(size,hand)
+    local hand = hand or "memory"
     
-    local hand = hand or "default"
+    if type(size) ~= "number" then return false, "Section size must be a number, provided: "..type(size) end
+    if type(hand) ~= "string" and type(hand) ~= "function" then return false, "Section handler can be a string or a function, provided: "..type(hand) end
+    
+    size = math.floor(size)
     
     if sectionEnd + size >= ramsize-1 then return false, "No enough unallocated memory left." end
     local startAddr = sectionEnd +1
     local endAddr = sectionEnd + size
     
     if type(hand) == "string" then
-      
-    else
-      
+      if not eHandlers[hand] then return false, "Engine handler '"..hand.."' not found." end
+      hand = eHandlers[hand]
     end
+    
+    devkit.addHandler(startAddr,endAddr,hand)
+    return true, #handlers
   end
   
-  --Changes the position of a ram separator
-  --TODO: Complete the error handleing...
-  function api._RAMSeparator(id, newAddress)
-    if type(id) ~= "number" then return false, "Separator ID must be a number, provided: "..type(id) end
-    if type(newAddress) ~= "number" then return false, "The new separator address must be a number, provided: "..type(newAddress) end
-    id, newAddress = math.floor(id), math.floor(newAddress)
-    if id < 0 or id > (#handlers - 3) then return false, "Separator id out of range ("..id.."), must be [0,"..(#handlers-3).."]" end
-    handlers[id+2].endAddr = newAddress-1
-    handlers[id+3].startAddr = newAddress
-    return true --It ran successfilly
+  function api._resizeSection(id,size)
+    if type(id) ~= "number" then return false, "Section ID must be a number, provided: "..type(id) end
+    if type(size) ~= "number" then return false, "Section size must be a number, provided: "..type(size) end
+    
+    id, size = math.floor(id), math.floor(size)
+    
+    if (id < 1) or (id > #handlers) then return false, "Section ID is out of range ("..id..") [1,"..#handlers.."]" end
+    if size < 0 then return false, "Section size can't be a negative number ("..size..")" end
+    
+    local hand = handlers[id]
+    if hand.startAddr+size >= ramsize then return false, "Section size is too big" end
+    
+    hand.endAddr = hand.startAddr + size -1
+    local endAddr = hand.endAddr
+    
+    for i=id+1,#handlers do
+      local h=handlers[id]
+      if h.startAddr <= endAddr then
+        h.startAddr = endAddr+1
+        
+        if h.endAddr < h.startAddr-1 then
+          h.endAddr = h.startAddr-1
+        end
+      else
+        break
+      end
+    end
+    
+    return true
   end
   
-  function api.poke(address,value)
+  function api._removeSection(id)
+    if type(id) ~= "number" then return false, "Section ID must be a number, provided: "..type(id) end
+    id = math.floor(id)
+    if (id < 1) or (id > #handlers) then return false, "Section ID is out of range ("..id..") [1,"..#handlers.."]" end
+    
+    for i=id+1,#handlers do
+      handlers[i-1] = handlers[i]
+    end
+    handlers[#handlers] = nil
+    
+    return true
+  end
+  
+  function api._setHandler(id,hand)
+    if type(id) ~= "number" then return false, "Section ID must be a number, provided: "..type(id) end
+    local id,hand = math.floor(id), hand or "memory"
+    
+    if (id < 1) or (id > #handlers) then return false, "Section ID is out of range ("..id..") [1,"..#handlers.."]" end
+    if type(hand) ~= "string" and type(hand) ~= "function" then return false, "Section handler can be a string or a function, provided: "..type(hand) end
+    
+    if type(hand) == "string" then
+      if not eHandlers[hand] then return false, "Engine handler '"..hand.."' not found." end
+      hand = eHandlers[hand]
+    end
+    
+    handlers[id].handler = hand
+    
+    return true
+  end
+  
+  function api._getSections()
+    local list = {}
+    for k,h in ipairs(handlers) do
+      list[k] = {}
+      for k1,v1 in pairs(h) do
+        list[k][k1] = v1
+      end
+    end
+    return true, list
+  end
+  
+  function api._getRAMSize()
+    return true, ramsize
+  end
+  
+  function api._getUnallocatedSpace()
+    return true, ramsize-sectionEnd+1
+  end
+  
+  function api.poke(...)
+    coreg:subCoroutine(devkit.poke)
+    return true, ...
+  end
+  
+  function api.peek(...)
+    coreg:subCoroutine(devkit.peek)
+    return true, ...
+  end
+  
+  function api.memget(...)
+    coreg:subCoroutine(devkit.memget)
+    return true, ...
+  end
+  
+  function api.memset(...)
+    coreg:subCoroutine(devkit.memset)
+    return true, ...
+  end
+  
+  function api.memcpy(...)
+    coreg:subCoroutine(devkit.memcpy)
+    return true, ...
+  end
+  
+  function devkit.poke(address,value)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(value) ~= "number" then return false, "Value must be a number, provided: "..type(value) end
     address, value = math.floor(address), math.floor(value)
@@ -175,7 +253,7 @@ return function(config)
     end
   end
   
-  function api.peek(address)
+  function devkit.peek(address)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     address = math.floor(address)
     if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
@@ -190,7 +268,7 @@ return function(config)
     return true, 0 --No handler is found
   end
   
-  function api.memget(address,length)
+  function devkit.memget(address,length)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(length) ~= "number" then return false, "Length must be a number, provided: "..type(length) end
     address, length = math.floor(address), math.floor(length)
@@ -215,7 +293,7 @@ return function(config)
     return true, str
   end
   
-  function api.memset(address,data)
+  function devkit.memset(address,data)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(data) ~= "string" then return false, "Data must be a string, provided: "..type(data) end
     address = math.floor(address)
@@ -240,7 +318,7 @@ return function(config)
     return true
   end
   
-  function api.memcpy(from_address,to_address,length)
+  function devkit.memcpy(from_address,to_address,length)
     if type(from_address) ~= "number" then return false, "Source Address must be a number, provided: "..type(from_address) end
     if type(to_address) ~= "number" then return false, "Destination Address must be a number, provided: "..type(to_address) end
     if type(length) ~= "number" then return false,"Length must be a number, provided: "..type(length) end
