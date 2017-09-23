@@ -2,6 +2,7 @@
 --per ,err = P(peripheral,mountedName,configTable)
 
 _DirectAPI = true --An important feature to speed up Peripherals functions calling, calls them directly instead of yeilding the coroutine.
+local RAMHandlers = {}
 
 --Create a new cpu mounted as "CPU"
 local CPU, CPUKit = assert(P("CPU"))
@@ -29,7 +30,7 @@ local GPU, GPUKit = assert(P("GPU","GPU",{
   _ClearOnRender = true, --Speeds up rendering, but may cause glitches on some devices !
   CPUKit = CPUKit
 }))
-local VRAMHandler = GPUKit.VRAMHandler
+RAMHandlers["VRAM"] = GPUKit.VRAMHandler
 
 --Create gamepad contols
 assert(P("Gamepad","Gamepad",{CPUKit = CPUKit}))
@@ -50,7 +51,7 @@ assert(P("Floppy"))
 
 local KB = function(v) return v*1024 end
 
-local RAMConfig = {
+--[[local RAMConfig = {
   layout = {
     {736},    --0x0000 Meta Data (736 Bytes)
     {KB(12)}, --0x02E0 SpriteMap (12 KB)
@@ -68,8 +69,10 @@ local RAMConfig = {
     {KB(12)}, --0x12000 Label Image (12 KBytes)
     {KB(12),VRAMHandler}  --0x15000 VRAM (12 KBytes)
   }
-}
+}]]
 
 --local RAM, RAMKit = assert(P("RAM","RAM",RAMConfig))
+
+local RAM, RAMKit = assert(P("RAM","RAM",{handlers=RAMHandlers}))
 
 local _, WEB, WEBKit = P("WEB","WEB",{CPUKit = CPUKit})
