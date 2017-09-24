@@ -265,6 +265,7 @@ end
 addLibrary("C:/Libraries/lume.lua","lume")
 addLibrary("C:/Libraries/middleclass.lua","class")
 addLibrary("C:/Libraries/bump.lua","bump")
+addLibrary("C:/Libraries/likocam.lua","likocam")
 
 local helpersloader, err = loadstring(fs.read("C:/Libraries/diskHelpers.lua"))
 if not helpersloader then error(err) end
