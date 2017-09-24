@@ -79,14 +79,6 @@ local terminal = fs.load("C:/terminal.lua")("terminal")
 fs.load("C:/package.lua")(terminal)
 package.loaded["C:/terminal.lua"] = terminal
 
-local function extractArgs(args,factor)
-  local nargs = {}
-  for k,v in ipairs(args) do
-    if k > factor then nargs[k-factor] = v end
-  end
-  return nargs
-end
-
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
