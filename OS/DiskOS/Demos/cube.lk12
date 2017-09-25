@@ -18,13 +18,6 @@ local flspeed = 1
 function _draw()
  clear()
  
- --[[color(11)
- c:line({-1,-1,-1}, {1,-1,-1})
- color(12)
- c:line({-1,-1,-1}, {-1,1,-1})
- color(8)
- c:line({-1,-1,-1}, {-1,-1,1})]]
- 
  color(12)
  c:object(cube)
 end
