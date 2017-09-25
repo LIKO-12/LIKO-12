@@ -8,7 +8,9 @@ local function sin(a)
   return -math.sin(a*pi2)
 end
 
-local cameralib = {
+local cameralib
+
+cameralib = {
   new = function(init)
     init = init or {}
     local self = {}
