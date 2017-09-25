@@ -76,7 +76,7 @@ return function(config)
     if type(handler) ~= "function" then return error("Handler must be a function, provided: "..type(handler)) end
     
     if (startAddress < 0) or (startAddress > ramsize-1) then return error("Start Address out of range ("..tohex(startAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
-    if (endAddress < 0) or (endAddresss > ramsize-1) then return error("End Address out of range ("..tohex(endAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
+    if (endAddress < 0) or (endAddress > ramsize-1) then return error("End Address out of range ("..tohex(endAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
     
     table.insert(handlers,{startAddr = startAddress, endAddr = endAddress, handler = handler})
     table.sort(handlers, function(t1,t2)
@@ -120,9 +120,10 @@ return function(config)
     
     size = math.floor(size)
     
-    if sectionEnd + size >= ramsize-1 then return false, "No enough unallocated memory left." end
+    if sectionEnd + size > ramsize-1 then return false, "No enough unallocated memory left." end
     local startAddr = sectionEnd +1
     local endAddr = sectionEnd + size
+    sectionEnd = sectionEnd+size
     
     if type(hand) == "string" then
       if not eHandlers[hand] then return false, "Engine handler '"..hand.."' not found." end
