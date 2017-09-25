@@ -85,6 +85,9 @@ textinput(true) --Show the keyboard on mobile devices
 require("api") --Load DiskOS APIs
 require("osapi") --Load DiskOS OS APIs
 
+RAM = require("Libraries/RAM")
+RAM.initialize()
+
 local SWidth, SHeight = screenSize()
 
 --Setup the RAM
