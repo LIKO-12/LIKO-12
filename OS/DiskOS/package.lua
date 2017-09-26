@@ -1,6 +1,4 @@
 --Reimplement the Lua package library
-local term = select(1,...) --The terminal api is used by package.searchpath
-
 package = {}
 
 package.loaded = {}
@@ -34,7 +32,7 @@ function package.searchpath(name,path,sep,rep)
   
   if path:gsub(-1,-1) ~= ";" then path = path..";" end
   for p in string.gmatch(path,"(.-);") do
-    local presolved = term.resolve(p)
+    local presolved = p
     if fs.exists(presolved) then
       return presolved
     else
