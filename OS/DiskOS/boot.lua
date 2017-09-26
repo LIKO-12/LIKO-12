@@ -74,24 +74,19 @@ function split(inputstr, sep)
   return t
 end
 
---Restore Require Function--
-local terminal = fs.load("C:/terminal.lua")("terminal")
-fs.load("C:/package.lua")(terminal)
-package.loaded["C:/terminal.lua"] = terminal
+--Create the package system--
+fs.load("C:/package.lua")()
 
-local function extractArgs(args,factor)
-  local nargs = {}
-  for k,v in ipairs(args) do
-    if k > factor then nargs[k-factor] = v end
-  end
-  return nargs
-end
+local terminal = require("terminal")
 
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
 require("api") --Load DiskOS APIs
 require("osapi") --Load DiskOS OS APIs
+
+RAM = require("Libraries/RAM")
+RAM.initialize()
 
 local SWidth, SHeight = screenSize()
 

@@ -131,7 +131,7 @@ function mapToBin(map)
 end
 
 function codeToBin(code)
-  return math.compress(code,"lz4",9)
+  return math.compress(code,"gzip",9)
 end
 
 function numToBin(num,len)

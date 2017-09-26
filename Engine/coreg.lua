@@ -33,10 +33,9 @@ function coreg:popCoroutine()
 end
 
 --Call a function with the coroutine system plugged (A sub-coroutine)
-function coreg:subCoroutine(func,...)
+function coreg:subCoroutine(func)
   self:pushCoroutine()
   self.co = coroutine.create(func)
-  return self:resumeCoroutine(...)
 end
 
 --Resumes the current active coroutine if exists.
@@ -54,7 +53,7 @@ function coreg:resumeCoroutine(...)
       args = {self:trigger(select(2,unpack(args)))}
       if not args[1] then lastargs = args
       elseif not(type(args[1]) == "number" and args[1] == 2) then
-        lastargs = {true,select(2,unpack(args))}
+        lastargs = args
       else break end
     end
   end
