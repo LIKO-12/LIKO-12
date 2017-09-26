@@ -24,19 +24,6 @@ function printUsage(...)
   end
 end
 
-function dofile(path,...)
-  local chunk, err = fs.load(path)
-  if not chunk then return error(tostring(err)) end
-  local args = {pcall(chunk,...)}
-  if not args[1] then return error(tostring(args[2])) end
-  for k,v in ipairs(args) do
-    if k > 1 then
-      args[k-1] = v
-    end
-  end
-  return unpack(args)
-end
-
 local apilist = {}
 
 do
