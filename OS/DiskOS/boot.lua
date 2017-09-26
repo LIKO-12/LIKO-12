@@ -63,6 +63,20 @@ if fs.exists("C:/.temp") then
 end
 fs.newDirectory("C:/.temp/")
 
+--Create dofile function
+function dofile(path,...)
+  local chunk, err = fs.load(path)
+  if not chunk then return error(tostring(err)) end
+  local args = {pcall(chunk,...)}
+  if not args[1] then return error(tostring(args[2])) end
+  for k,v in ipairs(args) do
+    if k > 1 then
+      args[k-1] = v
+    end
+  end
+  return unpack(args)
+end
+
 --A usefull split function
 function split(inputstr, sep)
   if sep == nil then sep = "%s" end
@@ -75,20 +89,18 @@ function split(inputstr, sep)
 end
 
 --Create the package system--
-fs.load("C:/package.lua")()
-
-local terminal = require("terminal")
+dofile("C:/package.lua")
 
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
-require("api") --Load DiskOS APIs
-require("osapi") --Load DiskOS OS APIs
+dofile("C:/api.lua") --Load DiskOS APIs
+dofile("C:/osapi.lua") --Load DiskOS OS APIs
 
 RAM = require("Libraries/RAM")
 RAM.initialize()
 
-local SWidth, SHeight = screenSize()
+--local SWidth, SHeight = screenSize()
 
 --Setup the RAM
 --[[memset(0x0006, "LIKO12;") --The header
@@ -122,6 +134,8 @@ memset(0x008E, numToBin(SHeight,2)) --Spritesheet Height
 memset(0x0090, numToBin(SWidth*0.75,1)) --Map Width
 memset(0x0093, numToBin(SHeight,1)) --Map Height
 ]]
+
+local terminal = require("terminal")
 
 terminal.init() --Initialize the terminal
 terminal.loop()
