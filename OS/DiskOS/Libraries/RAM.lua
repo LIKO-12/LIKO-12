@@ -28,6 +28,7 @@ function RAM.initialize()
   local sections = _getSections()
   for i=#sections,1,-1 do _removeSection(i) end
   
+  --Create the new sections
   for id, data in ipairs(InitLayout) do
     _newSection(data[1], data[2])
   end
