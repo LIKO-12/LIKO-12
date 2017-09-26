@@ -74,10 +74,10 @@ function split(inputstr, sep)
   return t
 end
 
---Restore Require Function--
-local terminal = fs.load("C:/terminal.lua")("terminal")
-fs.load("C:/package.lua")(terminal)
-package.loaded["C:/terminal.lua"] = terminal
+--Create the package system--
+fs.load("C:/package.lua")()
+
+local terminal = require("terminal")
 
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
