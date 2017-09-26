@@ -95,7 +95,7 @@ local zgrid = {zslider[1]+8,zslider[2]+2,8*zslider[3],4,zslider[3],1} --The Zoom
 local size = 1 --The current zoom level
 local sscale = 1 --The current zoom scaling factor
 local sflag = "none" --Zoom mouse flag
-local sslider = {(transdraw[2] + transdraw[4]*8 + revdraw[1])/2 - (4*8)/2, transdraw[3]+1 - 8, 4, false, 120} --The Size Slider Draw
+local sslider = {(imgrecto[1]+imgrecto[3]+palrecto[1])/2 - (8*5)/2, paldraw[2], 4, false, 120} --The Size Slider Draw
 local sgrid = {sslider[1]+8,sslider[2]+2,8*sslider[3],4,sslider[3],1} --The Size Slider Mouse Grid
 local sizes = {1,2,3,5} --Brush sizes
 --The tools code--
@@ -106,13 +106,15 @@ local tools = {
     local qx,qy = self.SpriteMap:rect(sprsid)
     local col = (b == 2) and colsR or colsL
 
-		local s = sizes[size]
+    local s = sizes[size]
 
-		for x=-math.floor(s/2),math.ceil(s/2-1) do
-			for y=-math.floor(s/2),math.ceil(s/2-1) do
-				data:setPixel(qx+cx-1+x,qy+cy-1+y,col)
-			end
-		end
+    for x=-math.floor(s/2),math.ceil(s/2-1) do
+      for y=-math.floor(s/2),math.ceil(s/2-1) do
+        if cx-1+x >= 0 and cx-1+x <= 7 and cy-1+y >= 0 and cy-1+y <= 7 then
+          data:setPixel(qx+cx-1+x,qy+cy-1+y,col)
+        end
+      end
+    end
 
     self.SpriteMap.img = data:image()
   end,
