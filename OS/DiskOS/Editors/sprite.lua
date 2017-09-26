@@ -108,9 +108,9 @@ local tools = {
 
 		local s = sizes[size]
 
-		for x=-math.floor(s/2-1),math.ceil(s/2) do
-			for y=-math.floor(s/2-1),math.ceil(s/2) do
-				data:setPixel(qx+cx-2+x,qy+cy-2+y,col)
+		for x=-math.floor(s/2),math.ceil(s/2-1) do
+			for y=-math.floor(s/2),math.ceil(s/2-1) do
+				data:setPixel(qx+cx-1+x,qy+cy-1+y,col)
 			end
 		end
 
