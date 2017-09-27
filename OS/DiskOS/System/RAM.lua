@@ -1,8 +1,17 @@
---Create RAM api
+--Advanced RAM API
 
+--The RAM table is created by boot.lua, It's the peripheral table.
+if not RAM then return end --Incase if the RAM peripheral is disabled.
+
+--Make the non-system functions as globals
+for k,v in pairs(RAM) do
+  if k:sub(1,1) ~= "_" then
+    _G[k] = v
+  end
+end
+
+--A function to convert from kilobytes into bytes, a SyntaxSugar.
 local function KB(v) return v*1024 end
-
-local RAM = {}
 
 local InitLayout = {
   {736},    --0x0000 Meta Data (736 Bytes)
@@ -32,6 +41,11 @@ function RAM.initialize()
   for id, data in ipairs(InitLayout) do
     _newSection(data[1], data[2])
   end
+end
+
+--Create a new RAM handler for an imagedata.
+function RAM.newImageHandler(width,height)
+
 end
 
 return RAM
