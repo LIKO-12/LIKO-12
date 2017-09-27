@@ -116,7 +116,7 @@ for peripheral,funcs in pairs(perlist) do
  end
 end
 
-local apiloader = loadstring(fs.read("C:/api.lua"))
+local apiloader = loadstring(fs.read("C:/System/api.lua"))
 setfenv(apiloader,glob) apiloader()
 
 local function autoEventLoop()
@@ -266,6 +266,7 @@ addLibrary("C:/Libraries/lume.lua","lume")
 addLibrary("C:/Libraries/middleclass.lua","class")
 addLibrary("C:/Libraries/bump.lua","bump")
 addLibrary("C:/Libraries/likocam.lua","likocam")
+addLibrary("C:/Libraries/JSON.lua","json")
 
 local helpersloader, err = loadstring(fs.read("C:/Libraries/diskHelpers.lua"))
 if not helpersloader then error(err) end
@@ -285,14 +286,6 @@ if isMobile() then TC.setInput(true) end
 textinput(not isMobile())
 
 --Run the thing !
-local function extractArgs(args,factor)
-  local nargs = {}
-  for k,v in ipairs(args) do
-    if k > factor then table.insert(nargs,v) end
-  end
-  return nargs
-end
-
 local function printErr(msg)
   colorPalette() --Reset the palette
   color(8) --Red
@@ -315,7 +308,7 @@ while true do
   end
   if args[2] then
     if args[2] == "RUN:exit" then break end
-    lastArgs = {coroutine.yield(args[2],unpack(extractArgs(args,2)))}
+    lastArgs = {coroutine.yield(select(2,unpack(args)))}
     if args[2] == "CPU:pullEvent" or args[2] == "CPU:rawPullEvent" or args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
       eventclock = os.clock()
       if args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
