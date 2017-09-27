@@ -62,7 +62,7 @@ function RAM.newImageHandler(img)
       local pix = ...
       
       --Calculate the position of the left pixel
-      local x = address % imgline
+      local x = (address % imgline) * 2
       local y = math.floor(address / imgline)
       
       --Separate the 2 pixels from each other
@@ -78,7 +78,7 @@ function RAM.newImageHandler(img)
       
     elseif mode == "peek" then
       --Calculate the position of the left pixel
-      local x = address % imgline
+      local x = (address % imgline) * 2
       local y = math.floor(address / imgline)
       
       --Get the colors of the 2 pixels
@@ -98,13 +98,13 @@ function RAM.newImageHandler(img)
       --Requires verification.
       local length = ...
       
-      local x = address % imgline
+      local x = (address % imgline) * 2
       local y = math.floor(address / imgline)
       
       local xStart, data = x, ""
       
-      for Y = y, imgHeight, 2 do
-        for X = xStart, imgWidth, 2 do
+      for Y = y, imgHeight-1, 2 do
+        for X = xStart, imgWidth-1, 2 do
           
           local lpix = img:getPixel(X,Y)
           local rpix = img:getPixel(X+1,Y)
@@ -133,14 +133,14 @@ function RAM.newImageHandler(img)
       local data = ...
       local length = data:len()
       
-      local x = address % imgline - 2
+      local x = (address % imgline - 1) * 2
       local y = math.floor(address / imgline) - 1
       
       local iter = string.gmatch(data,".")
       
       for i=1,length do
         
-        x = (x+2) % imgWidth
+        x = (x+2) % (imgWidth-1)
         y = y+1
         
         local char = iter()
