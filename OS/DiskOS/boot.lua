@@ -17,7 +17,7 @@ function _FreshGlobals()
 end
 
 --Building the peripherals APIs--
-local perglob = {GPU = true, CPU = true, Keyboard = true, RAM = true} --The perihperals to make global not in a table.
+local perglob = {GPU = true, CPU = true, Keyboard = true} --The perihperals to make global not in a table.
 local _,directapi = coroutine.yield("BIOS:DirectAPI"); directapi = directapi or {}
 local _,perlist = coroutine.yield("BIOS:listPeripherals")
 for peripheral,funcs in pairs(perlist) do
@@ -69,12 +69,7 @@ function dofile(path,...)
   if not chunk then return error(tostring(err)) end
   local args = {pcall(chunk,...)}
   if not args[1] then return error(tostring(args[2])) end
-  for k,v in ipairs(args) do
-    if k > 1 then
-      args[k-1] = v
-    end
-  end
-  return unpack(args)
+  return select(2,unpack(args))
 end
 
 --A usefull split function
@@ -89,16 +84,15 @@ function split(inputstr, sep)
 end
 
 --Create the package system--
-dofile("C:/package.lua")
+dofile("C:/System/package.lua")
 
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
-dofile("C:/api.lua") --Load DiskOS APIs
-dofile("C:/osapi.lua") --Load DiskOS OS APIs
+dofile("C:/System/api.lua") --Load DiskOS APIs
+dofile("C:/System/osapi.lua") --Load DiskOS OS APIs
 
-RAM = require("Libraries/RAM")
-RAM.initialize()
+dofile("C:/System/RAM.lua") --Create the advanced RAM api
 
 --local SWidth, SHeight = screenSize()
 
