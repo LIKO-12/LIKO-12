@@ -161,6 +161,8 @@ return function(config)
     if type(hand) == "string" then
       if not eHandlers[hand] then return false, "Engine handler '"..hand.."' not found." end
       hand = eHandlers[hand]
+    else
+      print("Custom Handler #"..(#handlers + 1))
     end
     
     devkit.addHandler(startAddr,endAddr,hand)
@@ -287,7 +289,7 @@ return function(config)
     if value < 0 or value > 15 then return false, "Value out of range ("..value..") must be in range [0,15]" end
     
     for k,h in ipairs(handlers) do
-      if address <= h.endAddr*2 then
+      if address <= h.endAddr*2+1 then
         h.handler("poke4",h.startAddr*2,address,value)
         return true --It ran successfully.
       end
@@ -315,7 +317,7 @@ return function(config)
     if address < 0 or address > (ramsize-1)*2 then return false, "Address out of range ("..tohex(address*2).."), must be in range [0x0,"..lastaddr4.."]" end
     
     for k,h in ipairs(handlers) do
-      if address <= h.endAddr*2 then
+      if address <= h.endAddr*2+1 then
         local v = h.handler("peek4",h.startAddr*2,address)
         return true, v --It ran successfully
       end
