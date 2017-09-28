@@ -440,6 +440,18 @@ return function(config) --A function that creates a new GPU peripheral.
       VRAMImg:setPixel(x,y,evenPixel,0,0,255)
       VRAMImg:setPixel(x+1,y,oddPixel,0,0,255)
       _ShouldDraw = true
+    elseif mode == "poke4" then
+      local address4, value = unpack(args)
+      address4 = address4 - startAddress
+      local address = math.floor(address4 / 2)
+      local x,y = AddressPos(address)
+      
+      if address4 % 2 == 0 then --Left pixel
+        VRAMImg:setPixel(x,y,value,0,0,255)
+      else --Right pixel
+        VRAMImg:setPixel(x+1,y,value,0,0,255)
+      end
+       _ShouldDraw = true
     elseif mode == "peek" then
       local address = args[1]
       address = address - startAddress
@@ -450,6 +462,17 @@ return function(config) --A function that creates a new GPU peripheral.
       
       local pixel = bor(evenPixel,oddPixel)
       return pixel
+    elseif mode == "peek4" then
+      local address4, value = unpack(args)
+      address4 = address4 - startAddress
+      local address = math.floor(address4 / 2)
+      local x,y = AddressPos(address)
+      
+      if address4 % 2 == 0 then --Left pixel
+        return VRAMImg:getPixel(x,y)
+      else --Right pixel
+        return VRAMImg:getPixel(x+1,y)
+      end
     elseif mode == "memcpy" then
       local from, to, len = unpack(args)
       from = from - startAddress
