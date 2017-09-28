@@ -186,15 +186,12 @@ function RAM:newImageHandler(img)
       local data = ...
       local length = data:len()
       
-      local x = (address % imgline - 1) * 2
-      local y = math.floor(address / imgline) - 1
+      local x = (address % imgline) * 2
+      local y = math.floor(address / imgline)
       
       local iter = string.gmatch(data,".")
       
       for i=1,length do
-        
-        x = (x+2) % (imgWidth-1)
-        y = y+1
         
         local char = iter()
         local pix = string.byte(char)
@@ -206,6 +203,13 @@ function RAM:newImageHandler(img)
         
         img:setPixel(x,y,lpix)
         img:setPixel(x+1,y,rpix)
+        
+        x = x+2
+        
+        if x >= imgWidth then
+          x = x - imgWidth
+          y = y+1
+        end
         
       end
       
