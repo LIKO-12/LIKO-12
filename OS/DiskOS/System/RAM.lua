@@ -148,7 +148,6 @@ function RAM:newImageHandler(img)
       return img:getPixel(x,y)
       
     elseif mode == "memget" then
-      --Requires verification.
       local length = ...
       
       local x = (address % imgline) * 2
@@ -182,7 +181,6 @@ function RAM:newImageHandler(img)
       return data
       
     elseif mode == "memset" then
-      --Requires verification.
       local data = ...
       local length = data:len()
       
@@ -237,7 +235,7 @@ function RAM:newImageHandler(img)
             
             if toAddressEnd >= line1 and toAddress <= line1End then
               local sa2 = (toAddress < line1) and line1 or toAddress
-              local ea2 = (toAddressEnd < line1End) and line1End or toAddressEnd
+              local ea2 = (toAddressEnd > line1End) and line1End or toAddressEnd
               
               local address = address + (sa2 - toAddress)
               local addressEnd = addressEnd + (ea2 - toAddressEnd)
@@ -406,7 +404,7 @@ function RAM:newMapHandler(map)
             
             if toAddressEnd >= line1 and toAddress <= line1End then
               local sa2 = (toAddress < line1) and line1 or toAddress
-              local ea2 = (toAddressEnd < line1End) and line1End or toAddressEnd
+              local ea2 = (toAddressEnd > line1End) and line1End or toAddressEnd
               
               local address = address + (sa2 - toAddress)
               local addressEnd = addressEnd + (ea2 - toAddressEnd)
