@@ -38,12 +38,12 @@ local InitLayout = {
 --Initialize the RAM
 function RAM.initialize()
   --Remove any existing sections
-  local sections = _getSections()
-  for i=#sections,1,-1 do _removeSection(i) end
+  local sections = RAM._getSections()
+  for i=1,#sections do RAM._removeSection() end
   
   --Create the new sections
   for id, data in ipairs(InitLayout) do
-    _newSection(data[1], data[2])
+    RAM._newSection(data[1], data[2])
   end
 end
 
@@ -199,4 +199,4 @@ function RAM.newImageHandler(img)
   end
 end
 
-return RAM
+RAM.initialize()
