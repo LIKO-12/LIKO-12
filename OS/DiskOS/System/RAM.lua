@@ -14,41 +14,57 @@ local band, bor, bxor, lshift, rshift = bit.band, bit.bor, bit.bxor, bit.lshift,
 
 local sw,sh = screenSize()
 
+local MapObj = require("Libraries/map")
+
 --A function to convert from kilobytes into bytes, a SyntaxSugar.
 local function KB(v) return v*1024 end
 
-local InitLayout = {
-  {736},    --0x0000 Meta Data (736 Bytes)
-  {KB(12)}, --0x02E0 SpriteMap (12 KB)
-  {288},    --0x32E0 Flags Data (288 Bytes)
-  {KB(18)}, --0x3400 MapData (18 KB)
-  {KB(13)}, --0x7C00 Sound Tracks (13 KB)
-  {KB(20)}, --0xB000 Compressed Lua Code (20 KB)
-  {KB(02)}, --0x10000 Persistant Data (2 KB)
-  {128},    --0x10800 GPIO (128 Bytes)
-  {768},    --0x10880 Reserved (768 Bytes)
-  {64},     --0x10B80 Draw State (64 Bytes)
-  {64},     --0x10BC0 Reserved (64 Bytes)
-  {KB(01)}, --0x10C00 Free Space (1 KB)
-  {KB(04)}, --0x11000 Reserved (4 KB)
-  {KB(12)}, --0x12000 Label Image (12 KBytes)
-  {KB(12),"VRAM"}  --0x15000 VRAM (12 KBytes)
-}
-
 --Initialize the RAM
-function RAM.initialize()
-  --Remove any existing sections
+function RAM:initialize()
+  --Remove any existing sections--
   local sections = RAM._getSections()
   for i=1,#sections do RAM._removeSection() end
   
-  --Create the new sections
-  for id, data in ipairs(InitLayout) do
+  local Layout = {
+    {736},    --[1] 0x0000 Meta Data (736 Bytes)
+    {KB(12)}, --[2] 0x02E0 SpriteMap (12 KB)
+    {288},    --[3] 0x32E0 Flags Data (288 Bytes)
+    {KB(18)}, --[4] 0x3400 MapData (18 KB)
+    {KB(13)}, --[5] 0x7C00 Sound Tracks (13 KB)
+    {KB(20)}, --[6] 0xB000 Compressed Lua Code (20 KB)
+    {KB(02)}, --[7] 0x10000 Persistant Data (2 KB)
+    {128},    --[8] 0x10800 GPIO (128 Bytes)
+    {768},    --[9] 0x10880 Reserved (768 Bytes)
+    {64},     --[10] 0x10B80 Draw State (64 Bytes)
+    {64},     --[11] 0x10BC0 Reserved (64 Bytes)
+    {KB(01)}, --[12] 0x10C00 Free Space (1 KB)
+    {KB(04)}, --[13] 0x11000 Reserved (4 KB)
+    {KB(12)}, --[14] 0x12000 Label Image (12 KBytes)
+    {KB(12),"VRAM"}  --[15] 0x15000 VRAM (12 KBytes)
+  }
+  
+  --Setup the RAM resources--
+  
+  --The Spritesheet
+  self.SheetWidth, self.SheetHeight = 192, 128
+  self.SheetImage = imagedata(self.SheetWidth,self.SheetHeight)
+  self.SheetHandler = self:newImageHandler(self.SheetImage)
+  Layout[2][2] = self.SheetHandler
+  
+  --The Map
+  self.MapWidth, self.MapHeight = 144, 128
+  self.Map = MapObj(self.MapWidth, self.MapHeight)
+  self.MapHandler = self:newMapHandler(self.Map)
+  Layout[4][2] = self.MapHandler
+  
+  --Create the new sections--
+  for id, data in ipairs(Layout) do
     RAM._newSection(data[1], data[2])
   end
 end
 
 --Create a new RAM handler for an imagedata.
-function RAM.newImageHandler(img)
+function RAM:newImageHandler(img)
   local imgline = img:width()/2 --The size of each image line in bytes.
   local imgsize = imgline * img:height() --The size of the image in bytes.
   local imgWidth, imgHeight = img:size()
@@ -58,6 +74,8 @@ function RAM.newImageHandler(img)
   local changed = false --Is there any changes applied on the image ?
   
   local function hand(mode,startAddress,address,...)
+    --cprint("IMAGE HAND",mode,startAddress,address,...)
+    
     if mode == "changed" then
       if changed then
         changed = false
@@ -67,7 +85,7 @@ function RAM.newImageHandler(img)
       end
     end
     
-    local address = address - startAddress +1
+    local address = address - startAddress
     
     if mode == "poke" then
       local pix = ...
@@ -85,7 +103,7 @@ function RAM.newImageHandler(img)
       
       --Set the pixels
       img:setPixel(x,y,lpix)
-      img:setPixel(x,y,rpix)
+      img:setPixel(x+1,y,rpix)
       
       --Update Changed Flag
       changed = true
@@ -98,7 +116,7 @@ function RAM.newImageHandler(img)
       local y = math.floor(address / imgline4)
       
       --Set the pixels
-      img:setPixels(x,y,pix)
+      img:setPixel(x,y,pix)
       
       --Update Changed Flag
       changed = true
@@ -238,9 +256,11 @@ function RAM.newImageHandler(img)
       changed = true
     end
   end
+  
+  return hand
 end
 
-function RAM.newMapHandler(map)
+function RAM:newMapHandler(map)
   local mapline = map:width() --The size of each map line in bytes.
   local mapsize = mapline * map:height() --The size of the map in bytes.
   local mapWidth, mapHeight = map:size()
@@ -248,7 +268,7 @@ function RAM.newMapHandler(map)
   local mapline4, mapsize4 = mapline * 2, mapsize * 2 --For peek4 and poke4
   
   local function hand(mode,startAddress,address,...)
-    local address = address - startAddress +1
+    local address = address - startAddress
     
     if mode == "poke" then
       local tile = ...
@@ -400,6 +420,8 @@ function RAM.newMapHandler(map)
       end
     end
   end
+  
+  return hand
 end
 
-RAM.initialize()
+RAM:initialize()
