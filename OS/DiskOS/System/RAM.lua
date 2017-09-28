@@ -157,7 +157,44 @@ function RAM.newImageHandler(img)
       end
       
     elseif mode == "memcpy" then
+      local toAddress, length = ...
       
+      local addressEnd = address+length-1
+      local toAddressEnd = toAddress+length-1
+      
+      for line0=0,imgsize,imgline do
+        local line0End = line0+imgline-1
+        
+        if addressEnd >= line0 and address <= line0End then
+          local sa1 = (address < line0) and line0 or address
+          local ea1 = (addressEnd > line0End) and line0End or addressEnd
+          
+          local toAddress = toAddress + (sa1 - address)
+          local toAddressEnd = toAddressEnd + (ea1 - addressEnd)
+          
+          for line1=0,imgsize,imgline do
+            local line1End = line1+imgline-1
+            
+            if toAddressEnd >= line1 and toAddress <= line1End then
+              local sa2 = (toAddress < line1) and line1 or toAddress
+              local ea2 = (toAddressEnd < line1End) and line1End or toAddressEnd
+              
+              local address = address + (sa2 - toAddress)
+              local addressEnd = addressEnd + (ea2 - toAddressEnd)
+              
+              local len = addressEnd - address + 1
+              
+              local fromX = (address % imgline) * 2
+              local fromY = math.floor(address / imgline)
+              
+              local toX = (sa2 % imgline) * 2
+              local toY = math.floor(sa2 / imgline)
+              
+              img:paste(img,toX,toY,fromX,fromY,len*2,1)
+            end
+          end
+        end
+      end
     end
   end
 end
