@@ -505,9 +505,11 @@ return function(config) --A function that creates a new GPU peripheral.
       address = address-startAddress
       local len = value:len()
       
+      local iter = string.gmatch(value,".")
+      
       local c=1
       for a=address, address+len-1 do
-        local char = value:sub(c,c)
+        local char = iter()
         char = string.byte(char)
         local x,y = AddressPos(a)
         local evenPixel = band(char,0x0F)
