@@ -46,7 +46,7 @@ function coreg:resumeCoroutine(...)
     local args = {coroutine.resume(self.co,unpack(lastargs))}
     if not args[1] then error(args[2]) end --Should have a better error handelling
     if coroutine.status(self.co) == "dead" and #self.stack >= 1 then --Hook system
-      lastargs = args
+      lastargs = {select(2,unpack(args))}
       self:popCoroutine()
     else
       if not args[2] then self.os = nil; return end
