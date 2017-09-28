@@ -364,20 +364,24 @@ function RAM:newMapHandler(map)
       local data = ...
       local length = data:len()
       
-      local x = address % mapline - 1
-      local y = math.floor(address / mapline) - 1
+      local x = address % mapline
+      local y = math.floor(address / mapline)
       
       local iter = string.gmatch(data,".")
       
       for i=1,length do
         
-        x = (x+1) % (mapWidth-1)
-        y = y+1
-        
         local char = iter()
         local tile = string.byte(char)
         
         map:cell(x,y,tile)
+        
+        x = x + 1
+        
+        if x >= mapWidth then
+          x = x - mapWidth
+          y = y + 1
+        end
         
       end
       
