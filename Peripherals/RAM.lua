@@ -59,6 +59,7 @@ local coreg = require("Engine.coreg")
 return function(config)
   local ramsize = config.size or 96*1024 --Defaults to 96 KBytes.
   local lastaddr = string.format("0x%X",ramsize-1)
+  local lastaddr4 = string.format("0x%X",(ramsize-1)*2) --For peek4 and poke4
   local ram = string.rep("\0",ramsize)
   
   local eHandlers = config.handlers or {} --The ram handlers provided by the engine peripherals.
@@ -90,9 +91,37 @@ return function(config)
     if mode == "poke" then
       local address, value = unpack(args)
       ram = ram:sub(0,address) .. string.char(value) .. ram:sub(address+2,-1)
+    elseif mode == "poke4" then
+      local address4, value = unpack(args)
+      local address = math.floor(address4 / 2)
+      local char = ram:sub(address+1,address+1)
+      local byte = string.byte(char)
+      
+      if address4 % 2 == 0 then --left nibble
+        byte = bit.band(byte,0x0F)
+        value = bit.rshift(value,4)
+        byte = bit.bor(byte,value)
+      else --right nibble
+        byte = bit.band(byte,0xF0)
+        byte = bit.bor(byte,value)
+      end
+      
+      ram = ram:sub(0,address) .. string.char(byte) .. ram:sub(address+2,-1)
     elseif mode == "peek" then
       local address = args[1]
       return string.byte(ram:sub(address+1,address+1))
+    elseif mode == "peek4" then-----------
+      local address4 = args[1]
+      local address = math.floor(address4 / 2)
+      local byte = string.byte(ram:sub(address+1,address+1))
+      
+      if address4 % 2 == 0 then --left nibble
+        byte = bit.lshift(byte,4)
+      else --right nibble
+        byte = bit.band(byte,0x0F)
+      end
+      
+      return byte
     elseif mode == "memcpy" then
       local from, to, len = unpack(args)
       local str = ram:sub(from+1,from+len)
@@ -112,7 +141,7 @@ return function(config)
   local api = {}
   
   local indirect = { --The functions that must be called via coroutine.yield
-    "poke", "peek", "memset", "memget", "memcpy"
+    "poke", "poke4", "peek", "peek4", "memset", "memget", "memcpy"
   }
   
   local sectionEnd = -1
@@ -215,8 +244,18 @@ return function(config)
     return true, ramsize-sectionEnd+1
   end
   
+  function api.poke4(...)
+    coreg:subCoroutine(devkit.poke4)
+    return true, ...
+  end
+  
   function api.poke(...)
     coreg:subCoroutine(devkit.poke)
+    return true, ...
+  end
+  
+  function api.peek4(...)
+    coreg:subCoroutine(devkit.peek4)
     return true, ...
   end
   
@@ -240,6 +279,21 @@ return function(config)
     return true, ...
   end
   
+  function devkit.poke4(_,address,value)
+    if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
+    if type(value) ~= "number" then return false, "Value must be a number, provided: "..type(value) end
+    address, value = math.floor(address), math.floor(value)
+    if address < 0 or address > (ramsize-1)*2 then return false, "Address out of range ("..tohex(address*2).."), must be in range [0x0,"..lastaddr4.."]" end
+    if value < 0 or value > 15 then return false, "Value out of range ("..value..") must be in range [0,15]" end
+    
+    for k,h in ipairs(handlers) do
+      if address <= h.endAddr*2 then
+        h.handler("poke4",h.startAddr*2,address,value)
+        return true --It ran successfully.
+      end
+    end
+  end
+  
   function devkit.poke(_,address,value)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(value) ~= "number" then return false, "Value must be a number, provided: "..type(value) end
@@ -253,6 +307,21 @@ return function(config)
         return true --It ran successfully.
       end
     end
+  end
+  
+  function devkit.peek4(_,address)
+    if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
+    address = math.floor(address)
+    if address < 0 or address > (ramsize-1)*2 then return false, "Address out of range ("..tohex(address*2).."), must be in range [0x0,"..lastaddr4.."]" end
+    
+    for k,h in ipairs(handlers) do
+      if address <= h.endAddr*2 then
+        local v = h.handler("peek4",h.startAddr*2,address)
+        return true, v --It ran successfully
+      end
+    end
+    
+    return true, 0 --No handler is found
   end
   
   function devkit.peek(_,address)
