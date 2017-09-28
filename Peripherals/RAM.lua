@@ -111,6 +111,10 @@ return function(config)
   
   local api = {}
   
+  local indirect = { --The functions that must be called via coroutine.yield
+    "poke", "peek", "memset", "memget", "memcpy"
+  }
+  
   local sectionEnd = -1
   function api._newSection(size,hand)
     local hand = hand or "memory"
@@ -165,14 +169,11 @@ return function(config)
     return true
   end
   
-  function api._removeSection(id)
-    if type(id) ~= "number" then return false, "Section ID must be a number, provided: "..type(id) end
-    id = math.floor(id)
-    if (id < 1) or (id > #handlers) then return false, "Section ID is out of range ("..id..") [1,"..#handlers.."]" end
+  function api._removeSection()
+    if #handlers < 1 then return false, "There are no RAM sections to remove" end
     
-    for i=id+1,#handlers do
-      handlers[i-1] = handlers[i]
-    end
+    sectionEnd = sectionEnd - (handlers[#handlers].endAddr - handlers[#handlers].startAddr +1) --Add the space back into the unallocated one.
+    
     handlers[#handlers] = nil
     
     return true
@@ -197,7 +198,7 @@ return function(config)
   
   function api._getSections()
     local list = {}
-    for k,h in ipairs(handlers) do
+    for k,h in pairs(handlers) do
       list[k] = {}
       for k1,v1 in pairs(h) do
         list[k][k1] = v1
@@ -239,7 +240,7 @@ return function(config)
     return true, ...
   end
   
-  function devkit.poke(address,value)
+  function devkit.poke(_,address,value)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(value) ~= "number" then return false, "Value must be a number, provided: "..type(value) end
     address, value = math.floor(address), math.floor(value)
@@ -254,7 +255,7 @@ return function(config)
     end
   end
   
-  function devkit.peek(address)
+  function devkit.peek(_,address)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     address = math.floor(address)
     if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
@@ -269,7 +270,7 @@ return function(config)
     return true, 0 --No handler is found
   end
   
-  function devkit.memget(address,length)
+  function devkit.memget(_,address,length)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(length) ~= "number" then return false, "Length must be a number, provided: "..type(length) end
     address, length = math.floor(address), math.floor(length)
@@ -294,7 +295,7 @@ return function(config)
     return true, str
   end
   
-  function devkit.memset(address,data)
+  function devkit.memset(_,address,data)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(data) ~= "string" then return false, "Data must be a string, provided: "..type(data) end
     address = math.floor(address)
@@ -311,7 +312,7 @@ return function(config)
           if sa < h.startAddr then sa = h.startAddr end
           if ea > h.endAddr then ea = h.endAddr end
           d = data:sub(sa-address+1,ea-address+1)
-          h.handler("memset",h.startAddr,sa,data)
+          h.handler("memset",h.startAddr,sa,d)
         end
       end
     end
@@ -319,7 +320,7 @@ return function(config)
     return true
   end
   
-  function devkit.memcpy(from_address,to_address,length)
+  function devkit.memcpy(_,from_address,to_address,length)
     if type(from_address) ~= "number" then return false, "Source Address must be a number, provided: "..type(from_address) end
     if type(to_address) ~= "number" then return false, "Destination Address must be a number, provided: "..type(to_address) end
     if type(length) ~= "number" then return false,"Length must be a number, provided: "..type(length) end
@@ -373,5 +374,5 @@ return function(config)
   devkit.handlers = handlers
   devkit.api = api
   
-  return api, devkit
+  return api, devkit, indirect
 end
