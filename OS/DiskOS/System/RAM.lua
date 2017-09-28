@@ -53,9 +53,20 @@ function RAM.newImageHandler(img)
   local imgsize = imgline * img:height() --The size of the image in bytes.
   local imgWidth, imgHeight = img:size()
   
+  local imgline4, imgsize4 = imgline * 2, imgsize * 2 --For peek4 and poke4
+  
   local changed = false --Is there any changes applied on the image ?
   
   local function hand(mode,startAddress,address,...)
+    if mode == "changed" then
+      if changed then
+        changed = false
+        return true
+      else
+        return false
+      end
+    end
+    
     local address = address - startAddress +1
     
     if mode == "poke" then
@@ -76,6 +87,22 @@ function RAM.newImageHandler(img)
       img:setPixel(x,y,lpix)
       img:setPixel(x,y,rpix)
       
+      --Update Changed Flag
+      changed = true
+      
+    elseif mode == "poke4" then
+      local pix = ...
+      
+      --Calculate the position of the left pixel
+      local x = address % imgline4
+      local y = math.floor(address / imgline4)
+      
+      --Set the pixels
+      img:setPixels(x,y,pix)
+      
+      --Update Changed Flag
+      changed = true
+      
     elseif mode == "peek" then
       --Calculate the position of the left pixel
       local x = (address % imgline) * 2
@@ -94,6 +121,14 @@ function RAM.newImageHandler(img)
       --Return the final result
       return pix
       
+    elseif mode == "peek4" then
+      --Calculate the position of the left pixel
+      local x = address % imgline4
+      local y = math.floor(address / imgline4)
+      
+      --Return the pixel color
+      return img:getPixel(x,y)
+      
     elseif mode == "memget" then
       --Requires verification.
       local length = ...
@@ -103,7 +138,7 @@ function RAM.newImageHandler(img)
       
       local xStart, data = x, ""
       
-      for Y = y, imgHeight-1, 2 do
+      for Y = y, imgHeight-1 do
         for X = xStart, imgWidth-1, 2 do
           
           local lpix = img:getPixel(X,Y)
@@ -156,6 +191,9 @@ function RAM.newImageHandler(img)
         
       end
       
+      --Update Changed Flag
+      changed = true
+      
     elseif mode == "memcpy" then
       local toAddress, length = ...
       
@@ -191,6 +229,171 @@ function RAM.newImageHandler(img)
               local toY = math.floor(sa2 / imgline)
               
               img:paste(img,toX,toY,fromX,fromY,len*2,1)
+            end
+          end
+        end
+      end
+      
+      --Update Changed Flag
+      changed = true
+    end
+  end
+end
+
+function RAM.newMapHandler(map)
+  local mapline = map:width() --The size of each map line in bytes.
+  local mapsize = mapline * map:height() --The size of the map in bytes.
+  local mapWidth, mapHeight = map:size()
+  
+  local mapline4, mapsize4 = mapline * 2, mapsize * 2 --For peek4 and poke4
+  
+  local function hand(mode,startAddress,address,...)
+    local address = address - startAddress +1
+    
+    if mode == "poke" then
+      local tile = ...
+      
+      --Calculate the position of the tile
+      local x = address % mapline
+      local y = math.floor(address / mapline)
+      
+      --Set the tile
+      map:cell(x,y,tile)
+      
+    elseif mode == "poke4" then
+      local tile = ...
+      
+      --Calculate the position of the tile
+      local x = address % mapline4
+      local y = math.floor(address / mapline4)
+      
+      --Get the tile byte
+      local byte = map:cell(x,y)
+      
+      --Replace the poked nibble
+      if address % 2 == 0 then --Left nibble
+        byte = bit.band(byte,0x0F)
+        tile = bit.lshift(tile,4)
+        byte = bit.bor(byte,tile)
+      else --Right nibble
+        byte = bit.band(byte,0xF0)
+        byte = bit.bor(byte,tile)
+      end
+      
+      --Set the new tile value
+      map:cell(x,y,byte)
+      
+    elseif mode == "peek" then
+      --Calculate the position of the tile
+      local x = address % mapline
+      local y = math.floor(address / mapline)
+      
+      --Return the tile
+      return map:cell(x,y)
+      
+    elseif mode == "peek4" then
+      --Calculate the position of the tile
+      local x = address % mapline4
+      local y = math.floor(address / mapline4)
+      
+      --Get the tile byte
+      local byte = map:cell(x,y)
+      
+      --Return the wanted nibble
+      if address % 2 == 0 then --Left nibble
+        return bit.rshift(byte,4)
+      else --Right nibble
+        return bit.band(byte,0x0F)
+      end
+      
+    elseif mode == "memget" then
+      --Requires verification.
+      local length = ...
+      
+      local x = address % mapline
+      local y = math.floor(address / mapline)
+      
+      local xStart, data = x, ""
+      
+      for Y = y, mapHeight-1 do
+        for X = xStart, mapWidth-1 do
+          
+          local tile = map:cell(x,y)
+          local char = string.char(tile)
+          
+          data = data .. char
+          
+          length = length -1
+          
+          if length == 0 then
+            return data
+          end
+          
+        end
+        xStart = 0 --Trick
+      end
+      
+      return data
+      
+    elseif mode == "memset" then
+      --Requires verification.
+      local data = ...
+      local length = data:len()
+      
+      local x = address % mapline - 1
+      local y = math.floor(address / mapline) - 1
+      
+      local iter = string.gmatch(data,".")
+      
+      for i=1,length do
+        
+        x = (x+1) % (mapWidth-1)
+        y = y+1
+        
+        local char = iter()
+        local tile = string.byte(char)
+        
+        map:cell(x,y,tile)
+        
+      end
+      
+    elseif mode == "memcpy" then
+      local toAddress, length = ...
+      
+      local addressEnd = address+length-1
+      local toAddressEnd = toAddress+length-1
+      
+      for line0=0,mapsize,mapline do
+        local line0End = line0+mapline-1
+        
+        if addressEnd >= line0 and address <= line0End then
+          local sa1 = (address < line0) and line0 or address
+          local ea1 = (addressEnd > line0End) and line0End or addressEnd
+          
+          local toAddress = toAddress + (sa1 - address)
+          local toAddressEnd = toAddressEnd + (ea1 - addressEnd)
+          
+          for line1=0,mapsize,mapline do
+            local line1End = line1+mapline-1
+            
+            if toAddressEnd >= line1 and toAddress <= line1End then
+              local sa2 = (toAddress < line1) and line1 or toAddress
+              local ea2 = (toAddressEnd < line1End) and line1End or toAddressEnd
+              
+              local address = address + (sa2 - toAddress)
+              local addressEnd = addressEnd + (ea2 - toAddressEnd)
+              
+              local len = addressEnd - address + 1
+              
+              local fromX = (address % mapline) * 2
+              local fromY = math.floor(address / mapline)
+              
+              local toX = (sa2 % mapline) * 2
+              local toY = math.floor(sa2 / mapline)
+              
+              for i=0, len-1 do
+                map:cell(toX+i,toY,map:cell(fromX+i,fromY))
+              end
             end
           end
         end
