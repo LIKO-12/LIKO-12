@@ -1,7 +1,7 @@
 local destination = select(1,...)
 local flag = select(2,...) or ""
-local ctype = select(3,...) or "lz4"
-local clvl = tonumber(select(4,...) or "-1")
+local ctype = select(3,...) or "glib"
+local clvl = tonumber(select(4,...) or "9")
 
 local term = require("terminal")
 local eapi = require("Editors")
@@ -20,7 +20,8 @@ if not destination then
     "save <file> -c","Saves with compression",
     "save","Saves on the last known file",
     "save @clip","Saves into the clipboard",
-    "save <image> --sheet","Saves the spritesheet as external .lk12 image"
+    "save <image> --sheet","Saves the spritesheet as external .lk12 image",
+    "save <filename> --code","Saves the code as a .lua file"
   )
   return
 end
@@ -35,8 +36,8 @@ if string.lower(flag) == "--sheet" then --Sheet export
   color(11) print("Exported Spritesheet successfully")
   return
 elseif string.lower(flag) == "--code" then
-  local data = eapi.leditors[eapi.editors["lua"]]:export(true)
-  if destination == "@clip" then clipboard(data) else fs.write(destination:sub(0,-6),data) end
+  local data = eapi.leditors[eapi.editors.code]:export(true)
+  if destination == "@clip" then clipboard(data) else fs.write(destination:sub(1,-6)..".lua",data) end
   color(11) print("Exported Lua code successfully")
   return
 end
