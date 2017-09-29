@@ -69,6 +69,10 @@ if destination == "@clip" then
   msg.to = "to clipboard "
   clipboard(data)
 else
+  if fs.exists(destination) then
+    backupData = fs.read(destination)
+    fs.write(destination..".backup", backupData)
+  end
   fs.write(destination,data)
 end
 
