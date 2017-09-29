@@ -28,35 +28,53 @@ end
 if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end
 
 local sw, sh = screenSize()
+local data
+local msg = {
+  color = 11,
+  action = "Saved ",
+  type = "",
+  to = "",
+  result = "successfully"
+}
+flag = string.lower(flag)
 
-if string.lower(flag) == "--sheet" then --Sheet export
-  local data = eapi.leditors[eapi.editors.sprite]:export(true)
-  if destination == "@clip" then clipboard(data) else fs.write(destination,data) end
-  color(11) print("Exported Spritesheet successfully")
-  return
-elseif string.lower(flag) == "--code" then
-  local data = eapi.leditors[eapi.editors["lua"]]:export(true)
-  if destination == "@clip" then clipboard(data) else fs.write(destination:sub(0,-6),data) end
-  color(11) print("Exported Lua code successfully")
-  return
-end
-
-eapi.filePath = destination
-local data = eapi:export()
---              LK12;OSData;OSName;DataType;Version;Compression;CompressLevel;data"
-local header = "LK12;OSData;DiskOS;DiskGame;V".._DiskVer..";"..sw.."x"..sh..";C:"
-
-if string.lower(flag) == "-c" then
-  data = math.b64enc(math.compress(data, ctype, clvl))
-  header = header..ctype..";CLvl:"..tostring(clvl)..";"
+if flag == "--sheet" then --Sheet export
+  data = eapi.leditors[eapi.editors.sprite]:export(true)
+  msg.action = "Exported "
+  msg.type = "spritesheet "
+elseif flag == "--code" then
+  data = eapi.leditors[eapi.editors.code]:export(true)
+  if destination ~= "@clip" then destination = destination:sub(0,-6) end
+  msg.action = "Exported "
+  msg.type = "Lua code "
 else
-  header = header.."none;CLvl:0;"
+  eapi.filePath = destination
+  data = eapi:export()
+  --              LK12;OSData;OSName;DataType;Version;Compression;CompressLevel;data"
+  local header = "LK12;OSData;DiskOS;DiskGame;V".._DiskVer..";"..sw.."x"..sh..";C:"
+
+  if flag == "-c" then
+    data = math.b64enc(math.compress(data, ctype, clvl))
+    header = header..ctype..";CLvl:"..tostring(clvl)..";"
+    msg.type = "compressed "
+  else
+    header = header.."none;CLvl:0;"
+  end
+
+  data = header.."\n"..data
 end
 
 if destination == "@clip" then
-  clipboard(header.."\n"..data)
+  msg.action = "Copied "
+  msg.to = "to clipboard "
+  clipboard(data)
 else
-  fs.write(destination,header.."\n"..data)
+  if fs.exists(destination) then
+    backupData = fs.read(destination)
+    fs.write(destination..".backup", backupData)
+  end
+  fs.write(destination,data)
 end
 
-color(11) print(destination == "@clip" and "Saved to clipboard successfully" or "Saved successfully")
+color(msg.color)
+print(msg.action .. msg.type .. msg.to .. msg.result)
