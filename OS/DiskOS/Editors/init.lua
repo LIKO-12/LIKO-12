@@ -73,12 +73,10 @@ function edit:initialize()
   self.icons = imagedata(6*8,2*8)
   self.icons:paste(self.editorsheet.img:data(),0,0, (24-#self.editors)*8,0, #self.editors*8,8)
   self.icons:paste(self.editorsheet.img:data(),0,8, (24-#self.editors)*8,0, #self.editors*8,8)
-  fs.write("C:/editoricons_test.lk12",self.icons:encode())
   self.icons:map(function(x,y,c)
     if y < 8 then if c == 0 then return self.flavor else return self.flavorBack end; else
     if c == 0 then return self.flavorBack else return self.flavor end; end
   end)
-  fs.write("C:/editoricons.lk12",self.icons:encode())
   self.icons = self.icons:image()
   
   self.iconsBGQuad = self.icons:quad(0,0,self.icons:width(),8)

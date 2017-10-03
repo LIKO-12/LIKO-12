@@ -1,5 +1,46 @@
 --Advanced RAM API
 
+--[[
+
+--RAM PLAN--
+
+- MetaData (1 KB)
+- DiskData (63 KB)
+---
+- Persistant Data (2 KB)
+- GPIO (128 Bytes)
+- Reserved (768 Bytes)
+- Draw State (64 Bytes)
+- Reserved (64 Bytes)
+- Free Space (1 KB)
+- Reserved (4 KB)
+- Label Image (12 KBytes)
+- VRAM (12 KBytes)
+
+--Meta Data--
+
+- Header -> LK12;OSData;DiskOS;GameDisk;Bin; -> 32 byte
+- DiskVersion -> 1 Byte
+- APIVersion -> 1 Byte
+- AuthorName -> 16 Bytes.
+- GameName -> 16 Bytes.
+- DISK META -> 1 Packed Byte.
+
+--Editors Data--
+-- [EDITORID] \0 [DataSize] 2 bytes, [METASIZE] (Tokenized) \0 [THE METADATA]
+
+--Disk META--
+[1] Licensed Under CC0.
+[2] Write Protection.
+[3] Edit Protection.
+[4] Auto Event Loop
+[5] + [6] + [7] -> Language (Lua, Lisp, Moonscript, ASM, MetaLua)
+[6] ^
+[7] ^
+[8] Mobile Friendly
+
+]]
+
 --The RAM table is created by boot.lua, It's the peripheral table.
 if not RAM then return end --Incase if the RAM peripheral is disabled.
 --Make the non-system functions as globals
