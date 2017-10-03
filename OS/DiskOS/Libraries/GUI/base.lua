@@ -135,7 +135,7 @@ function base:setLightColor(lightcol,nodraw)
   return self
 end
 
-function base:setDarkColor(fgcol,nodraw)
+function base:setDarkColor(darkcol,nodraw)
   self.darkcol = darkcol or self.darkcol
   if not nodraw then self:draw() end
   return self
