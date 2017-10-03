@@ -15,6 +15,7 @@ local band, bor, bxor, lshift, rshift = bit.band, bit.bor, bit.bxor, bit.lshift,
 local sw,sh = screenSize()
 
 local MapObj = require("Libraries/map")
+local FreeResources = 1024*63+256
 
 --A function to convert from kilobytes into bytes, a SyntaxSugar.
 local function KB(v) return v*1024 end
@@ -61,6 +62,10 @@ function RAM:initialize()
   for id, data in ipairs(Layout) do
     RAM._newSection(data[1], data[2])
   end
+end
+
+function RAM:newResource(step,steps,name)
+  
 end
 
 --Create a new RAM handler for an imagedata.
