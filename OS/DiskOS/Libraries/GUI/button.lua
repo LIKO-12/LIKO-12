@@ -21,6 +21,12 @@ local button = class("DiskOS.GUI.button",base)
 button.static.text = "Button"   
 button.static.align = "center"
 
+--Create a new button object:
+--<gui> -> The GUI instance that should contain the button.
+--[text] -> The text of the button label.
+--[x],[y] -> The position of the top-left corner of the button.
+--[align] -> The aligning of the button label text.
+--[w],[h] -> The size of the button, automatically calculated by default.
 function button:initialize(gui,text,x,y,align,w,h)
   base.initialize(self,gui,x,y,w,h)
   
@@ -64,19 +70,19 @@ function button:getText() return self.text end
 
 --Draw the button
 function button:draw()
-  local fgcol = self:getFGColor()
-  local bgcol = self:getBGColor()
+  local lightcol = self:getLightColor()
+  local darkcol = self:getDarkColor()
   local x,y = self:getPosition()
   local w,h = self:getSize()
   local text = self:getText()
   local down = self:isDown()
   
   if down then
-    fgcol,bgcol = bgcol,fgcol
+    lightcol,darkcol = darkcol,lightcol
   end
   
-  rect(x,y,w,h,false,fgcol)
-  color(bgcol)
+  rect(x,y,w,h,false,lightcol)
+  color(darkcol)
   print(text,x+1,y+1,w-1,self.align)
 end
 
