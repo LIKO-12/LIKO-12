@@ -13,6 +13,10 @@ end
 --Base object class
 local base = class("DiskOS.GUI.base")
 
+--Create a new object base:
+--<gui>: The GUI instance that should contain the object.
+--[x],[y]: The position of the top-left corner of the object.
+--[w],[h]: The size of the object.
 function base:initialize(gui,x,y,w,h)
   self.gui = gui or error("GUI State has to be passed",2)
   
@@ -26,7 +30,8 @@ function base:initialize(gui,x,y,w,h)
   self:setSize(w,h,true)
   self:setPosition(x,y,true)
   
-  self:setFGColor(self.gui:getFGColor(),true)
+  self:setLightColor(self.gui:getLightColor(),true)
+  self:setDarkColor(self.gui:getDarkColor(),true)
   self:setBGColor(self.gui:getBGColor(),true)
   self:setTColor(self.gui:getTColor(),true)
 end
@@ -124,8 +129,14 @@ function base:getRect()
 end
 
 --Set object colors
-function base:setFGColor(fgcol,nodraw)
-  self.fgcol = fgcol or self.fgcol
+function base:setLightColor(lightcol,nodraw)
+  self.lightcol = lightcol or self.lightcol
+  if not nodraw then self:draw() end
+  return self
+end
+
+function base:setDarkColor(fgcol,nodraw)
+  self.darkcol = darkcol or self.darkcol
   if not nodraw then self:draw() end
   return self
 end
@@ -142,8 +153,9 @@ function base:setTColor(tcol,nodraw)
   return self
 end
 
-function base:setColors(fgcol,bgcol,tcol,nodraw)
- self:setFGColor(fgcol,true)
+function base:setColors(lightcol,darkcol,bgcol,tcol,nodraw)
+ self:setLightColor(lightcol,true)
+ self:setDarkColor(darkcol,true)
  self:setBGColor(bgcol,true)
  self:setTColor(tcol,true)
  
@@ -153,10 +165,11 @@ function base:setColors(fgcol,bgcol,tcol,nodraw)
 end
 
 --Get object colors
-function base:getFGColor() return self.fgcol end
+function base:getLightColor() return self.lightcol end
+function base:getDarkColor() return self.darkcol end
 function base:getBGColor() return self.bgcol end
 function base:getTColor() return self.tcol end
-function base:getColors() return self:getFGColor(), self:getBGColor(), self:getTColor() end
+function base:getColors() return self:getLightColor(), self:getDarkColor(), self:getBGColor(), self:getTColor() end
 
 --Set the object sheet
 function base:setSheet(sheet,nodraw)

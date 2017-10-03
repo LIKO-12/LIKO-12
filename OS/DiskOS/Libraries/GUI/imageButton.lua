@@ -23,15 +23,15 @@ local imgbtn = class("DiskOS.GUI.imageButton",base)
 function imgbtn:initialize(gui,x,y)--,w,h)
   base.initialize(self,gui,x,y,w,h)
   
-  --self.fgimg <- The image when the button is not held
-  --self.bgimg <- The image when the button is held
+  --self.fimg <- The image when the button is not held
+  --self.bimg <- The image when the button is held
   --self.img <- The image when using single-image mode.
   --self.fcol <- The front color in single-image mode.
   --self.bcol <- The back color in singel-image mode.
 end
 
 function imgbtn:setImage(img,fcol,bcol,nodraw)
-  self.fgimg, self.bgimg = nil, nil
+  self.fimg, self.bimg = nil, nil
   self.img, self.fcol, self.bcol = img or self.img, fcol or self.fcol, bcol or self.bcol
   
   if self.img and type(self.img) ~= "number" then
@@ -43,11 +43,11 @@ function imgbtn:setImage(img,fcol,bcol,nodraw)
   return self
 end
 
-function imgbtn:setFGImage(img,nodraw)
+function imgbtn:setFrontImage(img,nodraw)
   self.img, self.fcol, self.bcol = nil,nil,nil
-  self.fgimg = img
+  self.fimg = img
   
-  if self.fgimg and type(self.fgimg) ~= "number" then
+  if self.fimg and type(self.fimg) ~= "number" then
     local imgW, imgH = self.fgimg:size()
     self:setSize(imgW,imgH,true)
   end
@@ -56,11 +56,11 @@ function imgbtn:setFGImage(img,nodraw)
   return self
 end
 
-function imgbtn:setBGImage(img,nodraw)
+function imgbtn:setBackImage(img,nodraw)
   self.img, self.fcol, self.bcol = nil,nil,nil
-  self.bgimg = img
+  self.bimg = img
   
-  if self.bgimg and type(self.bgimg) ~= "number" then
+  if self.bimg and type(self.bimg) ~= "number" then
     local imgW, imgH = self.bgimg:size()
     self:setSize(imgW,imgH,true)
   end
@@ -70,16 +70,16 @@ function imgbtn:setBGImage(img,nodraw)
 end
 
 function imgbtn:getImage() return self.img, self.fcol, self.bcol end
-function imgbtn:getFGImage() return self.fgimg end
-function imgbtn:getBGImage() return self.bgimg end
+function imgbtn:getFrontImage() return self.fimg end
+function imgbtn:getBackImage() return self.bimg end
 
 --Draw the imgbtn
 function imgbtn:draw()
-  local fgcol = self:getFGColor()
-  local bgcol = self:getBGColor()
+  local lightcol = self:getLightColor()
+  local darkcol = self:getDarkColor()
   
-  local fgimg = self:getFGImage()
-  local bgimg = self:getBGImage()
+  local fimg = self:getFrontImage()
+  local bimg = self:getBackImage()
   
   local img, fcol, bcol = self:getImage()
   
@@ -89,13 +89,13 @@ function imgbtn:draw()
   local down = self:isDown()
   
   if down then
-    fgcol, bgcol = bgcol, fgcol
+    lightcol, darkcol = darkcol, lightcol
   end
   
   if img then --Single-image Mode
     pushPalette()
-    pal(fcol,bgcol)
-    pal(bcol,fgcol)
+    pal(fcol,darkcol)
+    pal(bcol,lightcol)
     if type(img) == "number" then --SpriteSheet mode
       sheet:draw(img,x,y)
     else --Normal image
@@ -103,7 +103,7 @@ function imgbtn:draw()
     end
     popPalette()
   else --Multiple images
-    local i = down and bgimg or fgimg
+    local i = down and bimg or fimg
     
     if type(i) == "number" then --SpriteSheet mode
       sheet:draw(i,x,y)

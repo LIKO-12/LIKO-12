@@ -17,16 +17,19 @@ local function wrap(f)
 end
 
 --Default internal values:
-GUI.static.fgcol = 9 --Foreground Color
-GUI.static.bgcol = 4 --Background Color
+GUI.static.lightcol = 9 --The light color
+GUI.static.darkcol = 4 --The dark color
+GUI.static.bgcol = 0 --Background color
 GUI.static.tcol = 7 --Text color
 
 --Create new GUI state:
---fgcol -> The default forground color.
---bgcol -> The default background color.
---tcol -> The defaul text color.
---w,h -> The size of the screen.
-function GUI:initialize(sheet,fgcol,bgcol,tcol,w,h)
+--[bgcol] -> The default background color.
+--[sheet] -> The sprites sheet to use in objects.
+--[lightcol] -> The default light color.
+--[darkcol] -> The default dark color.
+--[tcol] -> The defaul text color.
+--[w],[h] -> The size of the screen.
+function GUI:initialize(bgcol,sheet,lightcol,darkcol,tcol,w,h)
   self._objects = {} --The objects that can be created.
   self.objects = {} --Registered objects
   
@@ -37,9 +40,10 @@ function GUI:initialize(sheet,fgcol,bgcol,tcol,w,h)
   self.fw = fw or fontWidth()
   self.fh = fh or fontHeight()
   
-  self.fgcol = GUI.static.fgcol or fgcol
-  self.bgcol = GUI.static.bgcol or bgcol
-  self.tcol = GUI.static.tcol or tcol
+  self.bgcol = bgcol or GUI.static.bgcol
+  self.lightcol = lightcol or GUI.static.lightcol
+  self.darkcol = darkcol or GUI.static.darkcol
+  self.tcol = tcol or GUI.static.tcol
   
   self:loadDefaultObjects()
 end
@@ -102,21 +106,24 @@ GUI.getFW = wrap("getFontWidth")
 GUI.getFH = wrap("getFontHeight")
 
 --Set default colors.
-function GUI:setFGColor(fgcol) self.fgcol = fgcol or self.fgcol; return self end
+function GUI:setLightColor(lightcol) self.lightcol = lightcol or self.lightcol; return self end
+function GUI:setDarkColor(darkcol) self.darkcol = darkcol or self.darkcol; return self end
 function GUI:setBGColor(bgcol) self.bgcol = bgcol or self.bgcol; return self end
 function GUI:setTColor(tcol) self.tcol = tcol or self.tcol; return self end
-function GUI:setColors(fgcol,bgcol,tcol)
-  self:setFGColor(fgcol)
-  self:setBGColor(bgcol)
+function GUI:setColors(lightcol,darkcol,bgcol,tcol)
+  self:setLightColor(lightcol)
+  self:setDarkColor(darkcol)
+  seff:setBGColor(bgcol)
   self:setTColor(tcol)
   return self
 end
 
 --Get default colors
-function GUI:getFGColor() return self.fgcol end
+function GUI:getLightColor() return self.lightcol end
+function GUI:getDarkColor() return self.darkcol end
 function GUI:getBGColor() return self.bgcol end
 function GUI:getTColor() return self.tcol end
-function GUI:getColors() return self:getFGColor(), self:getBGColor(), self:getTColor() end
+function GUI:getColors() return self:getLightColor(), self:getDarkColor(), self:getBGColor(), self:getTColor() end
 
 --Set the default spritesheet
 function GUI:setSheet(sheet) self.sheet = sheet or self.sheet; return self end
