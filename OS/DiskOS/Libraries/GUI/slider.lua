@@ -57,3 +57,5 @@ end
 function slider:getOrientation()
 
 end
+
+return slider
