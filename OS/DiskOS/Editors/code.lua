@@ -69,6 +69,9 @@ ce.btimer = 0 --The cursor blink timer
 ce.btime = 0.5 --The cursor blink time
 ce.bflag = true --The cursor is blinking atm ?
 
+ce.undoStack={}
+ce.redoStack={}
+
 ce.sw, ce.sh = screenSize()
 local charGrid = {0,8, ce.sw,ce.sh-16, ce.tw, ce.th}
 
@@ -212,11 +215,12 @@ end
 
 function ce:drawLineNum()
   eapi:drawBottomBar()
-  local linestr = "LINE "..tostring(self.cy).."/"..tostring(#buffer).."  CHAR "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len())
+  local linestr = "ZLINE "..tostring(self.cy).."/"..tostring(#buffer).."  CHAR "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len()).."  UNDOS "..tostring(#self.undoStack)
   color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-2)
 end
 
 function ce:textinput(t)
+  self:snapshotUndo()
   local delsel
   if self.sxs then self:deleteSelection(); delsel = true end
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
@@ -243,6 +247,7 @@ function ce:gotoLineEnd()
 end
 
 function ce:insertNewLine()
+  self:snapshotUndo()
   local newLine = buffer[self.cy]:sub(self.cx,-1)
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)
   local snum = string.find(buffer[self.cy].."a","%S") --Number of spaces
@@ -265,6 +270,7 @@ end
 -- Returns the coordinates of the deleted character, adjusted if lines were changed
 -- and a boolean "true" if other lines changed and redrawing the Buffer is needed
 function ce:deleteCharAt(x,y)
+  self:snapshotUndo()
   local lineChange = false
   -- adjust "y" if out of bounds, just as failsafe
   if y < 1 then y = 1 elseif y > #buffer then y = #buffer end
@@ -287,6 +293,7 @@ end
 --Will delete the current selection
 function ce:deleteSelection()
   if not self.sxs then return end --If not selection just return back.
+  self:snapshotUndo()
   local lnum,slength = self.sys, self.sye+1
   while lnum < slength do
     if lnum == self.sys and lnum == self.sye then --Single line selection
@@ -344,6 +351,7 @@ end
 
 -- Paste the text from the clipboard
 function ce:pasteText()
+  self:snapshotUndo()
   if self.sxs then self:deleteSelection() end
   local text = clipboard()
   text = text:gsub("\t"," ") -- tabs mess up the layout, replace them with spaces
@@ -366,6 +374,61 @@ function ce:selectAll()
   self.sye = #buffer
   self.sxe = buffer[self.sye]:len()
   self:drawBuffer()
+end
+
+function ce:snapshotUndo()
+  table.insert(self.undoStack, {
+    self:export(),
+    self:getState()
+  })
+  self.redoStack={}
+end
+
+function ce:undo()
+  if #self.undoStack == 0 then
+    -- beep?
+    return
+  end
+  local data, state = unpack(table.remove(self.undoStack))
+  table.insert(self.redoStack, {data, state})
+  self:import(data)
+  self:setState(state)
+end
+
+function ce:redo()
+  if #self.redoStack == 0 then
+    -- beep?
+    return
+  end
+  local data, state = unpack(table.remove(self.redoStack))
+  table.insert(self.undoStack, {data, state})
+  self:import(data)
+  self:setState(state)
+end
+
+function ce:getState()
+  return {
+    cx=self.cx,
+    cy=self.cy,
+    sxs=self.sxs,
+    sys=self.sys,
+    sxe=self.sxe,
+    sye=self.sye,
+    sdir=self.sdir
+  }
+end
+
+function ce:setState(state)
+  self.cx=state.cx
+  self.cy=state.cy
+  self.sxs=state.sxs
+  self.sys=state.sys
+  self.sxe=state.sxe
+  self.sye=state.sye
+  self.sdir=state.sdir
+  self:checkPos()
+  self:drawBuffer()
+  self:drawLineNum()
 end
 
 -- Last used key, this should be set to the last keymap used from the ce.keymap table
@@ -473,9 +536,12 @@ ce.keymap = {
 
   ["sc_ctrl-v"] = ce.pasteText,
   
-  ["sc_ctrl-a"] = ce.selectAll
-}
+  ["sc_ctrl-a"] = ce.selectAll,
+  
+  ["sc_ctrl-z"] = ce.undo,
 
+  ["sc_shift-ctrl-z"] = ce.redo,
+}
 
 function ce:entered()
   eapi:drawUI()
