@@ -32,9 +32,12 @@ slider.static.max = 1
 --[align] -> The aligning of the button label text.
 --[w],[h] -> The size of the button, automatically calculated by default.
 function slider:initialize(gui,x,y,length,vertical,min,max,w,h)
-  base.initialize(self,gui,x,y,w or slider.static.width,h or slider.static.height)
+  if vertical then
+    base.initialize(self,gui,x,y,h or slider.static.height,length or slider.static.length)
+  else
+    base.initialize(self,gui,x,y,length or slider.static.length,h or slider.static.height)
+  end
   
-  self.sx, self.sy = self.x, self.y --StartX, StartY
   self.length = length or slider.static.length --The length of the slider line
   self.min = min or slider.static.min --The smallest value in the slider
   self.max = max or slider.static.max --The biggest value in the slider
@@ -45,8 +48,8 @@ function slider:initialize(gui,x,y,length,vertical,min,max,w,h)
   
   if self.vertical then
     self.w, self.h = self.h, self.w --Make the slider box vertical
-    self.ex, self.ey = self.sx, self.sy+self.length
-    self.y = self.sy - self.h/2
+    self.ex, self.ey = self.x, self.y+self.length
+    self.sy = self.y - self.h/2
   else
     self.ex, self.ey = self.sx+self.length, self.sy
     self.x = self.sx - self.w/2
