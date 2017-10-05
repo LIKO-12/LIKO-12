@@ -518,7 +518,6 @@ ce.keymap = {
   end,
 
   ["backspace"] = function(self)
-    -- TODO: wrap this in an undo group
     if self.sxs then self:deleteSelection() return end
     if self.cx == 1 and self.cy == 1 then return end
     local lineChange
@@ -529,7 +528,6 @@ ce.keymap = {
   end,
 
   ["delete"] = function(self)
-    -- TODO: wrap this in an undo group
     if self.sxs then self:deleteSelection() return end
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx,self.cy)
