@@ -69,6 +69,9 @@ ce.btimer = 0 --The cursor blink timer
 ce.btime = 0.5 --The cursor blink time
 ce.bflag = true --The cursor is blinking atm ?
 
+ce.undoStack={}
+ce.redoStack={}
+
 ce.sw, ce.sh = screenSize()
 local charGrid = {0,8, ce.sw,ce.sh-16, ce.tw, ce.th}
 
@@ -217,6 +220,7 @@ function ce:drawLineNum()
 end
 
 function ce:textinput(t)
+  self:beginUndoable()
   local delsel
   if self.sxs then self:deleteSelection(); delsel = true end
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
@@ -224,6 +228,7 @@ function ce:textinput(t)
   self:resetCursorBlink()
   if self:checkPos() or delsel then self:drawBuffer() else self:drawLine() end
   self:drawLineNum()
+  self:endUndoable()
 end
 
 function ce:gotoLineStart()
@@ -243,6 +248,7 @@ function ce:gotoLineEnd()
 end
 
 function ce:insertNewLine()
+  self:beginUndoable()
   local newLine = buffer[self.cy]:sub(self.cx,-1)
   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)
   local snum = string.find(buffer[self.cy].."a","%S") --Number of spaces
@@ -258,6 +264,7 @@ function ce:insertNewLine()
   self:checkPos()
   self:drawBuffer()
   self:drawLineNum()
+  self:endUndoable()
 end
 
 -- Delete the char from the given coordinates.
@@ -265,6 +272,7 @@ end
 -- Returns the coordinates of the deleted character, adjusted if lines were changed
 -- and a boolean "true" if other lines changed and redrawing the Buffer is needed
 function ce:deleteCharAt(x,y)
+  self:beginUndoable()
   local lineChange = false
   -- adjust "y" if out of bounds, just as failsafe
   if y < 1 then y = 1 elseif y > #buffer then y = #buffer end
@@ -281,12 +289,14 @@ function ce:deleteCharAt(x,y)
   else
     buffer[y] = buffer[y]:sub(0,x-1) .. buffer[y]:sub(x+1, -1)
   end
+  self:endUndoable()
   return x,y,lineChange
 end
 
 --Will delete the current selection
 function ce:deleteSelection()
   if not self.sxs then return end --If not selection just return back.
+  self:beginUndoable()
   local lnum,slength = self.sys, self.sye+1
   while lnum < slength do
     if lnum == self.sys and lnum == self.sye then --Single line selection
@@ -308,6 +318,7 @@ function ce:deleteSelection()
   self:checkPos()
   self:deselect()
   self:drawLineNum()
+  self:endUndoable()
 end
 
 --Copy selection text (Only if selecting)
@@ -344,6 +355,7 @@ end
 
 -- Paste the text from the clipboard
 function ce:pasteText()
+  self:beginUndoable()
   if self.sxs then self:deleteSelection() end
   local text = clipboard()
   text = text:gsub("\t"," ") -- tabs mess up the layout, replace them with spaces
@@ -358,6 +370,7 @@ function ce:pasteText()
   end
   if self:checkPos() then self:drawBuffer() else self:drawLine() end
   self:drawLineNum()
+  self:endUndoable()
 end
 
 --Select all text
@@ -366,6 +379,86 @@ function ce:selectAll()
   self.sye = #buffer
   self.sxe = buffer[self.sye]:len()
   self:drawBuffer()
+end
+
+function ce:beginUndoable()
+  if self.currentUndo then
+    -- we have already stashed the data & state, just track how deep we are
+    self.currentUndo.count = self.currentUndo.count + 1
+  else
+    self.currentUndo = {
+      count=1,
+      data=self:export(),
+      state=self:getState()
+    }
+  end
+end
+
+function ce:endUndoable()
+  self.currentUndo.count = self.currentUndo.count - 1
+  if self.currentUndo.count == 0 then
+    table.insert(self.undoStack, {
+      self.currentUndo.data,
+      self.currentUndo.state
+    })
+    self.redoStack={}
+    self.currentUndo=nil
+  end
+end
+
+function ce:undo()
+  if #self.undoStack == 0 then
+    -- beep?
+    return
+  end
+  local data, state = unpack(table.remove(self.undoStack))
+  table.insert(self.redoStack, {
+    self:export(),
+    self:getState()
+  })
+  self:import(data)
+  self:setState(state)
+end
+
+function ce:redo()
+  if #self.redoStack == 0 then
+    -- beep?
+    return
+  end
+  local data, state = unpack(table.remove(self.redoStack))
+  table.insert(self.undoStack, {
+    self:export(),
+    self:getState()
+  })
+  self:import(data)
+  self:setState(state)
+end
+
+function ce:getState()
+  -- get the state of the cursor, selection, etc.
+  return {
+    cx=self.cx,
+    cy=self.cy,
+    sxs=self.sxs,
+    sys=self.sys,
+    sxe=self.sxe,
+    sye=self.sye,
+    sdir=self.sdir
+  }
+end
+
+function ce:setState(state)
+  -- set the state of the cursor, selection, etc.
+  self.cx=state.cx
+  self.cy=state.cy
+  self.sxs=state.sxs
+  self.sys=state.sys
+  self.sxe=state.sxe
+  self.sye=state.sye
+  self.sdir=state.sdir
+  self:checkPos()
+  self:drawBuffer()
+  self:drawLineNum()
 end
 
 -- Last used key, this should be set to the last keymap used from the ce.keymap table
@@ -473,9 +566,12 @@ ce.keymap = {
 
   ["sc_ctrl-v"] = ce.pasteText,
   
-  ["sc_ctrl-a"] = ce.selectAll
-}
+  ["sc_ctrl-a"] = ce.selectAll,
+  
+  ["sc_ctrl-z"] = ce.undo,
 
+  ["sc_shift-ctrl-z"] = ce.redo,
+}
 
 function ce:entered()
   eapi:drawUI()
