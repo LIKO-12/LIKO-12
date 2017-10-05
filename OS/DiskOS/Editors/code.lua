@@ -69,8 +69,8 @@ ce.btimer = 0 --The cursor blink timer
 ce.btime = 0.5 --The cursor blink time
 ce.bflag = true --The cursor is blinking atm ?
 
-ce.undoStack={}
-ce.redoStack={}
+ce.undoStack={} -- Keep a stack of undo info, each one is {data, state}
+ce.redoStack={} -- Keep a stack of redo info, each one is {data, state}
 
 ce.sw, ce.sh = screenSize()
 local charGrid = {0,8, ce.sw,ce.sh-16, ce.tw, ce.th}
@@ -381,61 +381,86 @@ function ce:selectAll()
   self:drawBuffer()
 end
 
+-- Call :beginUndoable() right before doing any modification to the
+-- text in the editor. It will capture the current state of the editor's
+-- contents (data) and the state of the cursor, selection, etc. (state)
+-- so it can be restored later.
+-- NOTE: Make sure to balance each call to :beginUndoable() with a call
+-- to :endUndoable(). They can nest fine, just don't forget one.
 function ce:beginUndoable()
   if self.currentUndo then
     -- we have already stashed the data & state, just track how deep we are
     self.currentUndo.count = self.currentUndo.count + 1
   else
+    -- make a new in-progress undo
     self.currentUndo = {
-      count=1,
+      count=1, -- here is where we track nested begin/endUndoable calls
       data=self:export(),
       state=self:getState()
     }
   end
 end
 
+-- Call :endUndoable() after each modification to the text in the editor.
 function ce:endUndoable()
+  -- We might be inside several nested calls to begin/endUndoable
   self.currentUndo.count = self.currentUndo.count - 1
+  -- If this was the last of the nesting
   if self.currentUndo.count == 0 then
+    -- then push the undo onto the undo stack.
     table.insert(self.undoStack, {
       self.currentUndo.data,
       self.currentUndo.state
     })
+    -- clear the redo stack
     self.redoStack={}
     self.currentUndo=nil
   end
 end
 
+-- Perform an undo. This will pop one entry off the undo
+-- stack and restore the editor's contents & cursor state.
 function ce:undo()
   if #self.undoStack == 0 then
     -- beep?
     return
   end
+  -- pull one entry from the undo stack
   local data, state = unpack(table.remove(self.undoStack))
+  -- push a new entry onto the redo stack
   table.insert(self.redoStack, {
     self:export(),
     self:getState()
   })
+  -- restore the editor contents
   self:import(data)
+  -- restore the cursor state
   self:setState(state)
 end
 
+-- Perform a redo. This will pop one entry off the redo
+-- stack and restore the editor's contents & cursor state.
 function ce:redo()
   if #self.redoStack == 0 then
     -- beep?
     return
   end
+  -- pull one entry from the redo stack
   local data, state = unpack(table.remove(self.redoStack))
+  -- push a new entry onto the undo stack
   table.insert(self.undoStack, {
     self:export(),
     self:getState()
   })
+  -- restore the editor contents
   self:import(data)
+  -- restore the cursor state
   self:setState(state)
 end
 
+-- Get the state of the cursor, selection, etc.
+-- This is used for the undo/redo feature.
 function ce:getState()
-  -- get the state of the cursor, selection, etc.
   return {
     cx=self.cx,
     cy=self.cy,
@@ -447,8 +472,9 @@ function ce:getState()
   }
 end
 
+-- Set the state of the cursor, selection, etc.
+-- This is used for the undo/redo feature.
 function ce:setState(state)
-  -- set the state of the cursor, selection, etc.
   self.cx=state.cx
   self.cy=state.cy
   self.sxs=state.sxs
