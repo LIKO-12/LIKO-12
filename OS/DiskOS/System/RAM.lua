@@ -56,7 +56,9 @@ local band, bor, bxor, lshift, rshift = bit.band, bit.bor, bit.bxor, bit.lshift,
 local sw,sh = screenSize()
 
 local MapObj = require("Libraries/map")
-local FreeResources = 1024*63+256
+local UnallocatedRam = 1024*63+256
+
+RAM.Resources = {} --A table of the available resources.
 
 --A function to convert from kilobytes into bytes, a SyntaxSugar.
 local function KB(v) return v*1024 end
@@ -105,7 +107,16 @@ function RAM:initialize()
   end
 end
 
-function RAM:newResource(step,steps,name)
+--[[ Create a new RAM resource type.
+name (string): The name of the resource.
+type (string or nil): The type of the resource, defaults to 'unknown'.
+subtype (sting or nil): The subtype of the resource, defaults to ''.
+steps (number or nil): The number of space steps, nil for infinity.
+calcSize (function or nil): Calculate the required space provided a step number.
+unit (function or nil): Return the name of the mesuring unit, defaults to 'bytes'.
+enable (function): Clame the wanted resources and register some handlers.
+disable (function): Revert changes made by the enable function.]]
+function RAM:newResource(name,type,subtype,steps,calcSize,unit,enable,disable)
   
 end
 
