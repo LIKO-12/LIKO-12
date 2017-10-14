@@ -116,8 +116,43 @@ calcSize (function or nil): Calculate the required space provided a step number.
 unit (function or nil): Return the name of the mesuring unit, defaults to 'bytes'.
 enable (function): Clame the wanted resources and register some handlers.
 disable (function): Revert changes made by the enable function.]]
-function RAM:newResource(name,type,subtype,steps,calcSize,unit,enable,disable)
+function RAM:newResource(name,rtype,subtype,steps,calcSize,unit,enable,disable)
+  local rtype, subtype = rtype or "unknown", subtype or ""
+  local calcSize = calcSize or function(s)
+    if s >= 1024 then
+      return (s-1023)*1024
+    else
+      return s
+    end
+  end
+  local unit = unit or function(st,sz)
+    if s >= 1024 then
+      return "KB", (s-1023)
+    else
+      return "Byte", s
+    end
+  end
+  if type(name) ~= "string" then return error("Resource Name must be a string, provided: "..type(name)) end
+  if type(rtype) ~= "string" then return error("Resource Type must be a string or a nil, provided: "..type(rtype)) end
+  if type(subtype) ~= "string" then return error("Resource SubType must be a string or a nil, provided: "..type(subtype)) end
+  if steps and type(steps) ~= "number" then return error("Resource size steps must be a number or a nil, provided: "..type(steps)) end
+  if type(calcSize) ~= "function" then return error("Resource CalcSize must be a function or a nil, provided: "..type(calcSize)) end
+  if type(unit) ~= "function" then return error("Resource unit must be a function or a nil, provided: "..type(unit)) end
+  if type(enable) ~= "function" then return error("Resource enable must be a function, provided: "..type(enable)) end
+  if type(disable) ~= "function" then return error("Resource disable must be a function, provided: "..type(disable)) end
   
+  if self.Resources[name] then return error("Resource '"..name.."' already exists !") end
+  self.Resources[name] = {
+    name = name,
+    type = rtype,
+    subtype = subtype,
+    steps = steps or false,
+    calcSize = calcSize,
+    unit = unit,
+    enable = enable,
+    disable = disable
+  }
+  return self, self.Resources[name]
 end
 
 --Create a new RAM handler for an imagedata.
