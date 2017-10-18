@@ -54,18 +54,18 @@ Disk META:
 8. Licensed Under CC0.
 ]]
 
-local coreg = require("Engine.coreg")
+local coreg = require("Engine.coreg") --Require the coroutine registry.
 
 return function(config)
-  local ramsize = config.size or 96*1024 --Defaults to 96 KBytes.
-  local lastaddr = string.format("0x%X",ramsize-1)
-  local lastaddr4 = string.format("0x%X",(ramsize-1)*2) --For peek4 and poke4
-  local ram = string.rep("\0",ramsize)
+  local ramsize = config.size or 96*1024 --Ram Size, Defaults to 96 KBytes.
+  local lastaddr = string.format("0x%X",ramsize-1) --The last accessible ram address.
+  local lastaddr4 = string.format("0x%X",(ramsize-1)*2) --The last accessible ram address for peek4 and poke4.
+  local ram = string.rep("\0",ramsize) --The RAM string (Only affected by the default handler)
   
   local eHandlers = config.handlers or {} --The ram handlers provided by the engine peripherals.
   local handlers = {} --The active ran handlers system
   
-  local devkit = {}
+  local devkit = {} --The devkit of the RAM
   
   --function to convert a number into a hex string.
   local function tohex(a) return string.format("0x%X",a or 0) end
@@ -136,7 +136,7 @@ return function(config)
     end
   end
   
-  eHandlers["memory"] = devkit.defaultHandler
+  eHandlers["memory"] = devkit.defaultHandler --Register the default handler under the name 'memory'
   
   local api = {}
   
@@ -144,46 +144,55 @@ return function(config)
     "poke", "poke4", "peek", "peek4", "memset", "memget", "memcpy"
   }
   
-  local sectionEnd = -1
-  function api._newSection(size,hand)
-    local hand = hand or "memory"
+  local sectionEnd = -1 --The last accessible address of the last RAM section.
+  function api._newSection(size,hand) --Create a new RAM section, provided the size and optionally a handler.
+    local hand = hand or "memory" --The handler, defaults to the memory handler.
     
+    --Arguments type verification
     if type(size) ~= "number" then return false, "Section size must be a number, provided: "..type(size) end
     if type(hand) ~= "string" and type(hand) ~= "function" then return false, "Section handler can be a string or a function, provided: "..type(hand) end
     
-    size = math.floor(size)
+    size = math.floor(size) --Get rid of the floating point.
     
+    --Check if we have enough Unallocated space left.
     if sectionEnd + size > ramsize-1 then return false, "No enough unallocated memory left." end
+    --Calculate the start and end addresses of the new section.
     local startAddr = sectionEnd +1
     local endAddr = sectionEnd + size
-    sectionEnd = sectionEnd+size
+    sectionEnd = sectionEnd+size --Update the sectionEnd address
     
+    --Get the engine handler if required.
     if type(hand) == "string" then
       if not eHandlers[hand] then return false, "Engine handler '"..hand.."' not found." end
       hand = eHandlers[hand]
-    else
-      print("Custom Handler #"..(#handlers + 1))
     end
     
-    devkit.addHandler(startAddr,endAddr,hand)
-    return true, #handlers
+    devkit.addHandler(startAddr,endAddr,hand) --Register the new handler.
+    return true, #handlers --Return the id of the created sections.
   end
   
+  --Resize an existing section,
   function api._resizeSection(id,size)
+    --Arguments type verification
     if type(id) ~= "number" then return false, "Section ID must be a number, provided: "..type(id) end
     if type(size) ~= "number" then return false, "Section size must be a number, provided: "..type(size) end
     
+    --Get rid of the floating point.
     id, size = math.floor(id), math.floor(size)
     
+    --Arguments range verification
     if (id < 1) or (id > #handlers) then return false, "Section ID is out of range ("..id..") [1,"..#handlers.."]" end
     if size < 0 then return false, "Section size can't be a negative number ("..size..")" end
     
+    --Get the wanted section handler
     local hand = handlers[id]
+    --Check if there's enough space to resize the handler
     if hand.startAddr+size >= ramsize then return false, "Section size is too big" end
     
-    hand.endAddr = hand.startAddr + size -1
-    local endAddr = hand.endAddr
+    hand.endAddr = hand.startAddr + size -1 --Recalculate the end address.
+    local endAddr = hand.endAddr --Localize it for better performance.
     
+    --Fix the other sections addresses, collapsing any big section.
     for i=id+1,#handlers do
       local h=handlers[id]
       if h.startAddr <= endAddr then
@@ -200,16 +209,20 @@ return function(config)
     return true
   end
   
-  function api._removeSection()
+  --Unallocate the last section.
+  function api._removeLastSection()
+    --Check if we have any handlers/sections registered.
     if #handlers < 1 then return false, "There are no RAM sections to remove" end
     
+    --Unallocate their memory
     sectionEnd = sectionEnd - (handlers[#handlers].endAddr - handlers[#handlers].startAddr +1) --Add the space back into the unallocated one.
     
-    handlers[#handlers] = nil
+    handlers[#handlers] = nil --Remove it
     
     return true
   end
   
+  --Set the handler of a section
   function api._setHandler(id,hand)
     if type(id) ~= "number" then return false, "Section ID must be a number, provided: "..type(id) end
     local id,hand = math.floor(id), hand or "memory"
@@ -227,6 +240,7 @@ return function(config)
     return true
   end
   
+  --Get the sections list.
   function api._getSections()
     local list = {}
     for k,h in pairs(handlers) do
@@ -238,14 +252,17 @@ return function(config)
     return true, list
   end
   
+  --Get the total ram size.
   function api._getRAMSize()
     return true, ramsize
   end
   
+  --Get the size of the unallocated space
   function api._getUnallocatedSpace()
     return true, ramsize-sectionEnd+1
   end
   
+  --API Start
   function api.poke4(...)
     coreg:subCoroutine(devkit.poke4)
     return true, ...
