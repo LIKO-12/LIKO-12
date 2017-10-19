@@ -75,16 +75,15 @@ function RAM:initialize()
   local Layout = {
     {736},    --[1] 0x0000 Meta Data (736 Bytes)
     {KB(64)-736}, --[2]    DiskData
-    {KB(20)}, --[3] 0xB000 Compressed Lua Code (20 KB)
-    {KB(02)}, --[4] 0x10000 Persistant Data (2 KB)
-    {128},    --[5] 0x10800 GPIO (128 Bytes)
-    {768},    --[6] 0x10880 Reserved (768 Bytes)
-    {64},     --[7] 0x10B80 Draw State (64 Bytes)
-    {64},     --[8] 0x10BC0 Reserved (64 Bytes)
-    {KB(01)}, --[9] 0x10C00 Free Space (1 KB)
-    {KB(04)}, --[10] 0x11000 Reserved (4 KB)
-    {KB(12)}, --[11] 0x12000 Label Image (12 KBytes)
-    {KB(12),"VRAM"}  --[12] 0x15000 VRAM (12 KBytes)
+    {KB(02)}, --[3] 0x10000 Persistant Data (2 KB)
+    {128},    --[4] 0x10800 GPIO (128 Bytes)
+    {768},    --[5] 0x10880 Reserved (768 Bytes)
+    {64},     --[6] 0x10B80 Draw State (64 Bytes)
+    {64},     --[7] 0x10BC0 Reserved (64 Bytes)
+    {KB(01)}, --[8] 0x10C00 Free Space (1 KB)
+    {KB(04)}, --[9] 0x11000 Reserved (4 KB)
+    {KB(12)}, --[10] 0x12000 Label Image (12 KBytes)
+    {KB(12),"VRAM"}  --[11] 0x15000 VRAM (12 KBytes)
   }
   
   --Some reference variables for use later when creating Resources.
@@ -92,9 +91,9 @@ function RAM:initialize()
   self.DiskDataSize = KB(64)-736
   
   --LabelImage Handler
-  self.LabelImage = imageData(sw,sh)
-  self.LabelHandler = self.newImageHandler(self.LabelImage)
-  Layout[11] = self.LabelHandler
+  self.LabelImage = imagedata(sw,sh)
+  self.LabelHandler = self:newImageHandler(self.LabelImage)
+  Layout[10][2] = self.LabelHandler
   
   --Create the new sections--
   for id, data in ipairs(Layout) do
