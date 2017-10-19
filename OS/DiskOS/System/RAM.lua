@@ -59,6 +59,9 @@ local MapObj = require("Libraries/map")
 local UnallocatedRam = 1024*63+256
 
 RAM.Resources = {} --A table of the available resources.
+RAM.IResources = {} --A table of initialized resources.
+RAM.DiskDataID = 0
+RAM.DiskDataSize = 1024*64 - 736
 
 --A function to convert from kilobytes into bytes, a SyntaxSugar.
 local function KB(v) return v*1024 end
@@ -66,44 +69,36 @@ local function KB(v) return v*1024 end
 --Initialize the RAM
 function RAM:initialize()
   --Remove any existing sections--
-  local sections = RAM._getSections()
-  for i=1,#sections do RAM._removeSection() end
+  local sections = self._getSections()
+  for i=1,#sections do self._removeSection() end
   
   local Layout = {
     {736},    --[1] 0x0000 Meta Data (736 Bytes)
-    {KB(12)}, --[2] 0x02E0 SpriteMap (12 KB)
-    {288},    --[3] 0x32E0 Flags Data (288 Bytes)
-    {KB(18)}, --[4] 0x3400 MapData (18 KB)
-    {KB(13)}, --[5] 0x7C00 Sound Tracks (13 KB)
-    {KB(20)}, --[6] 0xB000 Compressed Lua Code (20 KB)
-    {KB(02)}, --[7] 0x10000 Persistant Data (2 KB)
-    {128},    --[8] 0x10800 GPIO (128 Bytes)
-    {768},    --[9] 0x10880 Reserved (768 Bytes)
-    {64},     --[10] 0x10B80 Draw State (64 Bytes)
-    {64},     --[11] 0x10BC0 Reserved (64 Bytes)
-    {KB(01)}, --[12] 0x10C00 Free Space (1 KB)
-    {KB(04)}, --[13] 0x11000 Reserved (4 KB)
-    {KB(12)}, --[14] 0x12000 Label Image (12 KBytes)
-    {KB(12),"VRAM"}  --[15] 0x15000 VRAM (12 KBytes)
+    {KB(64)-736}, --[2]    DiskData
+    {KB(20)}, --[3] 0xB000 Compressed Lua Code (20 KB)
+    {KB(02)}, --[4] 0x10000 Persistant Data (2 KB)
+    {128},    --[5] 0x10800 GPIO (128 Bytes)
+    {768},    --[6] 0x10880 Reserved (768 Bytes)
+    {64},     --[7] 0x10B80 Draw State (64 Bytes)
+    {64},     --[8] 0x10BC0 Reserved (64 Bytes)
+    {KB(01)}, --[9] 0x10C00 Free Space (1 KB)
+    {KB(04)}, --[10] 0x11000 Reserved (4 KB)
+    {KB(12)}, --[11] 0x12000 Label Image (12 KBytes)
+    {KB(12),"VRAM"}  --[12] 0x15000 VRAM (12 KBytes)
   }
   
-  --Setup the RAM resources--
+  --Some reference variables for use later when creating Resources.
+  self.DiskDataID = 2
+  self.DiskDataSize = KB(64)-736
   
-  --The Spritesheet
-  self.SheetWidth, self.SheetHeight = 192, 128
-  self.SheetImage = imagedata(self.SheetWidth,self.SheetHeight)
-  self.SheetHandler = self:newImageHandler(self.SheetImage)
-  Layout[2][2] = self.SheetHandler
-  
-  --The Map
-  self.MapWidth, self.MapHeight = 144, 128
-  self.Map = MapObj(self.MapWidth, self.MapHeight)
-  self.MapHandler = self:newMapHandler(self.Map)
-  Layout[4][2] = self.MapHandler
+  --LabelImage Handler
+  self.LabelImage = imageData(sw,sh)
+  self.LabelHandler = self.newImageHandler(self.LabelImage)
+  Layout[11] = self.LabelHandler
   
   --Create the new sections--
   for id, data in ipairs(Layout) do
-    RAM._newSection(data[1], data[2])
+    self._newSection(data[1], data[2])
   end
 end
 
@@ -153,6 +148,12 @@ function RAM:newResource(name,rtype,subtype,steps,calcSize,unit,enable,disable)
     disable = disable
   }
   return self, self.Resources[name]
+end
+
+--Create/Inilialize/Allocate a resource.
+function RAM.createResource(name,steps)
+  if type(name) ~= "string" then return error("Resource Name must be a string, provided: "..type(name)) end
+  if type(steps) ~= "number" then retuen error("Resource Size Steps must be a number, provided: "..type(steps)) end
 end
 
 --Create a new RAM handler for an imagedata.
