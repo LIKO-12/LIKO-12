@@ -110,7 +110,7 @@ local tools = {
 
     for x=-math.floor(s/2),math.ceil(s/2-1) do
       for y=-math.floor(s/2),math.ceil(s/2-1) do
-        if cx-1+x >= 0 and cx-1+x <= 7 and cy-1+y >= 0 and cy-1+y <= 7 then
+        if cx+x >= 1 and cx+x <= 8*zscale and cy+y >= 1 and cy+y <= 8*zscale then
           data:setPixel(qx+cx-1+x,qy+cy-1+y,col)
         end
       end
