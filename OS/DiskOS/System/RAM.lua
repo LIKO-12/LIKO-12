@@ -153,7 +153,7 @@ end
 --Create/Inilialize/Allocate a resource.
 function RAM.createResource(name,steps)
   if type(name) ~= "string" then return error("Resource Name must be a string, provided: "..type(name)) end
-  if type(steps) ~= "number" then retuen error("Resource Size Steps must be a number, provided: "..type(steps)) end
+  if type(steps) ~= "number" then return error("Resource Size Steps must be a number, provided: "..type(steps)) end
 end
 
 --Create a new RAM handler for an imagedata.
