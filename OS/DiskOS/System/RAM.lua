@@ -61,7 +61,7 @@ local UnallocatedRam = 1024*63+256
 RAM.Resources = {} --A table of the available resources.
 RAM.IResources = {} --A table of initialized resources.
 RAM.DiskDataID = 0
-RAM.DiskDataSize = 1024*64 - 736
+RAM.DiskDataSize = 0
 
 --A function to convert from kilobytes into bytes, a SyntaxSugar.
 local function KB(v) return v*1024 end
@@ -150,9 +150,54 @@ function RAM:newResource(name,rtype,subtype,steps,calcSize,unit,enable,disable)
 end
 
 --Create/Inilialize/Allocate a resource.
-function RAM.createResource(name,steps)
+function RAM:createResource(name,steps)
   if type(name) ~= "string" then return error("Resource Name must be a string, provided: "..type(name)) end
   if type(steps) ~= "number" then return error("Resource Size Steps must be a number, provided: "..type(steps)) end
+  if not self.Resources[name] then return error("Resource '"..name.."' Doesn't exist !") end
+  
+  local size = self.Resources[name].calcSize(steps)
+  if self.DiskDataID == 0 then return error("No DiskData left !") end
+  if self.DiskDataSize < size then return error("No enough DiskData left !") end
+  
+  local sections = self._getSections()
+  for i=self.DiskDataID, #sections do
+    self._removeLastSection()
+  end
+  
+  local IR = {}
+  IR.name = name
+  IR.steps = steps
+  IR.size = size
+  IR.firstSectionID = self.DiskDataID
+  IR.handlers = {}
+  
+  local hlist = self.Resources[name].enable(steps)
+  for k,v in ipairs(hlist) do
+    if type(v[1]) ~= "number" then error("Bad Handler #"..k..", Handler Size must be a number, provided: "..type(v[1])) end
+    if type(v[2]) ~= "function" and type(v[2]) ~= "string" then error("Bad Handler #"..k..", Handler must be a function or a string, provided: "..type(v[2])) end
+    
+    if self.DiskDataSize < v[1] then return error("No enough unallocated RAM left for handler #"..k) end
+    self.DiskDataSize = self.DiskDataSize - v[1]
+    
+    table.insert(IR.handlers,v[2])
+    self._newSection(v[1],v[2])
+  end
+  
+  if self.DiskDataSize == 0 then
+    self.DiskDataID = 0
+  else
+    self.DiskDataID = IR.firstSectionID + #hlist -1
+    self._newSection(self.DiskDataSize)
+  end
+  
+  --Restore the ram sections
+  for i=IR.firstSectionID+1, #sections do
+    local h = sections[i]
+    local ssize = h.endAddr-h.startAddr+1
+    self._newSection(ssize,h.handler)
+  end
+  
+  table.insert(self.IResources,IR)
 end
 
 --Create a new RAM handler for an imagedata.
