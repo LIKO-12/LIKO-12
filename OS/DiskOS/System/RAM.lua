@@ -166,12 +166,13 @@ function RAM:createResource(name,steps)
   
   local IR = {}
   IR.name = name
+  IR.resources = self.Resources[name]
   IR.steps = steps
   IR.size = size
   IR.firstSectionID = self.DiskDataID
   IR.handlers = {}
   
-  local hlist = self.Resources[name].enable(steps)
+  local hlist, extData = self.Resources[name].enable(steps)
   for k,v in ipairs(hlist) do
     if type(v[1]) ~= "number" then error("Bad Handler #"..k..", Handler Size must be a number, provided: "..type(v[1])) end
     if type(v[2]) ~= "function" and type(v[2]) ~= "string" then error("Bad Handler #"..k..", Handler must be a function or a string, provided: "..type(v[2])) end
@@ -182,6 +183,7 @@ function RAM:createResource(name,steps)
     table.insert(IR.handlers,v[2])
     self._newSection(v[1],v[2])
   end
+  IR.extData = extData or {}
   
   if self.DiskDataSize == 0 then
     self.DiskDataID = 0
