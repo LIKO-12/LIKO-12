@@ -93,7 +93,8 @@ function edit:initialize()
   end
   
   for k,v in ipairs(self.chunks) do --Execute the chunks
-    table.insert(self.leditors,k,v(self))
+    local editor = v(self)
+    table.insert(self.leditors,k,editor)
   end
   
   self.modeGrid = {swidth-(#self.editors*8),0,#self.editors*8,8,#self.editors,1} --The editor selection grid
