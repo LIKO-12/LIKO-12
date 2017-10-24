@@ -92,10 +92,7 @@ function edit:initialize()
     table.insert(self.chunks,k,chunk)
   end
   
-  for k,v in ipairs(self.chunks) do --Execute the chunks
-    local editor = v(self)
-    table.insert(self.leditors,k,editor)
-  end
+  self:clearData()
   
   self.modeGrid = {swidth-(#self.editors*8),0,#self.editors*8,8,#self.editors,1} --The editor selection grid
   self.modeGridFlag = false
@@ -159,7 +156,8 @@ function edit:clearData()
   --Will restart the editors simply
   self.leditors = {}
   for k,v in ipairs(self.chunks) do
-    table.insert(self.leditors,k,v(self))
+    local editor = v(self)
+    table.insert(self.leditors,k,editor)
   end
 end
 
