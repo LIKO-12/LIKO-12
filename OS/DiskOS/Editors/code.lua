@@ -697,7 +697,7 @@ function ce:wheelmoved(x, y)
   self.vy = math.floor(self.vy-y)
   if self.vy > #buffer then self.vy = #buffer end
   if self.vy < 1 then self.vy = 1 end
-  self.vx = math.floor(self.vx-x)
+  self.vx = math.floor(self.vx+x)
   if self.vx < 1 then self.vx = 1 end
   self:drawBuffer()
 end
@@ -710,7 +710,7 @@ end
 function ce:touchmoved(id,x,y,dx,dy,p)
   if self.touchesNum > 1 then
     textinput(false) self.touchskipinput = true
-    self.touchscrollx = self.touchscrollx + dx
+    self.touchscrollx = self.touchscrollx - dx
     self.touchscrolly = self.touchscrolly + dy
     
     if self.touchscrollx >= 14 or self.touchscrollx <= -14 then
