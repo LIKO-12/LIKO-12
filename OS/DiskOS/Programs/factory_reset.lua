@@ -5,9 +5,8 @@ if select(1,...) == "-?" then
   return
 end
 
-local term = require("terminal")
 fs.remove("C:/boot.lua")
-for addr=0x15000, 0x17FFF do
+for addr=0x0, 0x14FFF do
   poke(addr,0x82)
 end
 flip()
