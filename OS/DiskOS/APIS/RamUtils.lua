@@ -4,7 +4,7 @@
 local sw,sh = screenSize()
 
 --Localized Lua Library
-local floor, min = math.floor, math.min
+local floor, ceil, min = math.floor, math.ceil, math.min
 local strChar, strByte = string.char, string.byte
 local lshift, rshift, bor, band = bit.lshift, bit,rshift, bit.bor, bit.band
 
@@ -77,4 +77,16 @@ function RamUtils.binToMap(map,bin)
     id = id + 1
     return (id <= len and strByte(bin,id) or 0)
   end)
+end
+
+--==Code==--
+
+--Encode code into binary.
+function RamUtils.codeToBin(code)
+  return math.compress(code,"gzip",9)
+end
+
+--Load code from binary.
+function RamUtils.binToCode(bin)
+  return math.decompress(bin,"gzip",9)
 end
