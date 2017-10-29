@@ -772,24 +772,4 @@ se.keymap = {
   ["sc_i"] = function() transform(5) end
 }
 
-return se, "SpritesSheet", {{
-"SpritesSheet Section", function(IResource)
-  if IResource.type == "SpritesSheet" and IResource.subtype == "Banked" then
-    if IResource.extData.imagedata and IResource.extData.imagedata:width() == sw then
-      if IResource.extData.banks and IResource.extData.banks <= 4 then
-        return true
-      else
-        return false, "The spritesheet can be 4 banks maximum"
-      end
-    else
-      return false, "The imagedata should be the width of the screen"
-    end
-  else
-    return false
-  end
-end
-},{
-"SpritesFlags Section", function(IResource)
-  return true
-end
-}}
+return se
