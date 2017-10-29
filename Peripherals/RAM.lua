@@ -57,45 +57,35 @@ Disk META:
 local coreg = require("Engine.coreg") --Require the coroutine registry.
 
 return function(config)
-  local ramsize = config.size or 96*1024 --Ram Size, Defaults to 96 KBytes.
-  local lastaddr = string.format("0x%X",ramsize-1) --The last accessible ram address.
-  local lastaddr4 = string.format("0x%X",(ramsize-1)*2) --The last accessible ram address for peek4 and poke4.
-  local ram = string.rep("\0",ramsize) --The RAM string (Only affected by the default handler)
+  local ramsize = 0 --The current size of the ram
+  local ram = {} --The RAM table (Only affected by the default handler)
   
-  local eHandlers = config.handlers or {} --The ram handlers provided by the engine peripherals.
-  local handlers = {} --The active ran handlers system
+  local handlers = {} --The active ram handlers system
+  local layout = config.layout or {{88*1024}} --Defaults to a 88KB RAM.
   
   local devkit = {} --The devkit of the RAM
   
   --function to convert a number into a hex string.
   local function tohex(a) return string.format("0x%X",a or 0) end
   
-  --Will be removed
   function devkit.addHandler(startAddress, endAddress, handler)
     if type(startAddress) ~= "number" then return error("Start address must be a number, provided: "..type(startAddress)) end
     if type(endAddress) ~= "number" then return error("End address must be a number, provided: "..type(endAddress)) end
     if type(handler) ~= "function" then return error("Handler must be a function, provided: "..type(handler)) end
     
-    if (startAddress < 0) or (startAddress > ramsize-1) then return error("Start Address out of range ("..tohex(startAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
-    if (endAddress < 0) or (endAddress > ramsize-1) then return error("End Address out of range ("..tohex(endAddress)..") Must be [0,"..tohex(ramsize-1).."]") end
-    
     table.insert(handlers,{startAddr = startAddress, endAddr = endAddress, handler = handler})
-    table.sort(handlers, function(t1,t2)
-      return (t1.startAddr < t2.startAddr)
-    end)
   end
   
-  --Writes and reads from the RAM string.
+  --A binary handler.
   function devkit.defaultHandler(mode,startAddress,...)
     local args = {...}
     if mode == "poke" then
       local address, value = unpack(args)
-      ram = ram:sub(0,address) .. string.char(value) .. ram:sub(address+2,-1)
+      ram[address] = value
     elseif mode == "poke4" then
       local address4, value = unpack(args)
       local address = math.floor(address4 / 2)
-      local char = ram:sub(address+1,address+1)
-      local byte = string.byte(char)
+      local byte = ram[address]
       
       if address4 % 2 == 0 then --left nibble
         byte = bit.band(byte,0x0F)
@@ -106,14 +96,14 @@ return function(config)
         byte = bit.bor(byte,value)
       end
       
-      ram = ram:sub(0,address) .. string.char(byte) .. ram:sub(address+2,-1)
+      ram[address] = byte
     elseif mode == "peek" then
       local address = args[1]
-      return string.byte(ram:sub(address+1,address+1))
+      return ram[address]
     elseif mode == "peek4" then-----------
       local address4 = args[1]
       local address = math.floor(address4 / 2)
-      local byte = string.byte(ram:sub(address+1,address+1))
+      local byte = ram[address]
       
       if address4 % 2 == 0 then --left nibble
         byte = bit.lshift(byte,4)
@@ -124,181 +114,52 @@ return function(config)
       return byte
     elseif mode == "memcpy" then
       local from, to, len = unpack(args)
-      local str = ram:sub(from+1,from+len)
-      ram = ram:sub(0,to) .. str .. ram:sub(to+len+1,-1)
+      for i=0,len-1 do
+        ram[to+i] = ram[from+i]
+      end
     elseif mode == "memset" then
       local address, value = unpack(args)
       local len = value:len()
-      ram = ram:sub(0,address) .. value .. ram:sub(address+len+1,-1)
+      for i=0,len-1 do
+        ram[address+i] = string.byte(value,i+1)
+      end
     elseif mode == "memget" then
       local address, len = unpack(args)
-      return ram:sub(address+1,address+len)
+      local subtable,nextid = {}, 0
+      for i=address,address+len-1 do
+        subtable[nextid] = ram[i]
+        nextid = nextid + 1
+      end
+      return string.char(unpack(subtable))
     end
   end
   
-  eHandlers["memory"] = devkit.defaultHandler --Register the default handler under the name 'memory'
+  --Build the layout.
+  for k, section in ipairs(layout) do
+    local size = section[1]
+    local handler = section[2] or devkit.defaultHandler
+    
+    local startAddress = ramsize
+    ramsize = ramsize + size
+    local endAddress = ramsize-1
+    print("Layout ["..k.."]: "..tohex(startAddress).." -> ".. tohex(endAddress))
+    devkit.addHandler(startAddress,endAddress,handler)
+    
+    --Extend the ram table
+    for i=#ram, #ram+size-1 do
+      ram[i] = 0
+    end
+  end
+  
+  local lastaddr = string.format("0x%X",ramsize-1) --The last accessible ram address.
+  local lastaddr4 = string.format("0x%X",(ramsize-1)*2) --The last accessible ram address for peek4 and poke4.
   
   local api = {}
   
-  local indirect = { --The functions that must be called via coroutine.yield
-    "poke", "poke4", "peek", "peek4", "memset", "memget", "memcpy"
-  }
-  
-  local sectionEnd = -1 --The last accessible address of the last RAM section.
-  function api._newSection(size,hand) --Create a new RAM section, provided the size and optionally a handler.
-    local hand = hand or "memory" --The handler, defaults to the memory handler.
-    
-    --Arguments type verification
-    if type(size) ~= "number" then return false, "Section size must be a number, provided: "..type(size) end
-    if type(hand) ~= "string" and type(hand) ~= "function" then return false, "Section handler can be a string or a function, provided: "..type(hand) end
-    
-    size = math.floor(size) --Get rid of the floating point.
-    
-    --Check if we have enough Unallocated space left.
-    if sectionEnd + size > ramsize-1 then return false, "No enough unallocated memory left." end
-    --Calculate the start and end addresses of the new section.
-    local startAddr = sectionEnd +1
-    local endAddr = sectionEnd + size
-    sectionEnd = sectionEnd+size --Update the sectionEnd address
-    
-    --Get the engine handler if required.
-    if type(hand) == "string" then
-      if not eHandlers[hand] then return false, "Engine handler '"..hand.."' not found." end
-      hand = eHandlers[hand]
-    end
-    
-    devkit.addHandler(startAddr,endAddr,hand) --Register the new handler.
-    return true, #handlers --Return the id of the created sections.
-  end
-  
-  --Resize an existing section,
-  function api._resizeSection(id,size)
-    --Arguments type verification
-    if type(id) ~= "number" then return false, "Section ID must be a number, provided: "..type(id) end
-    if type(size) ~= "number" then return false, "Section size must be a number, provided: "..type(size) end
-    
-    --Get rid of the floating point.
-    id, size = math.floor(id), math.floor(size)
-    
-    --Arguments range verification
-    if (id < 1) or (id > #handlers) then return false, "Section ID is out of range ("..id..") [1,"..#handlers.."]" end
-    if size < 0 then return false, "Section size can't be a negative number ("..size..")" end
-    
-    --Get the wanted section handler
-    local hand = handlers[id]
-    --Check if there's enough space to resize the handler
-    if hand.startAddr+size >= ramsize then return false, "Section size is too big" end
-    
-    hand.endAddr = hand.startAddr + size -1 --Recalculate the end address.
-    local endAddr = hand.endAddr --Localize it for better performance.
-    
-    --Fix the other sections addresses, collapsing any big section.
-    for i=id+1,#handlers do
-      local h=handlers[id]
-      if h.startAddr <= endAddr then
-        h.startAddr = endAddr+1
-        
-        if h.endAddr < h.startAddr-1 then
-          h.endAddr = h.startAddr-1
-        end
-      else
-        break
-      end
-    end
-    
-    return true
-  end
-  
-  --Unallocate the last section.
-  function api._removeLastSection()
-    --Check if we have any handlers/sections registered.
-    if #handlers < 1 then return false, "There are no RAM sections to remove" end
-    
-    --Unallocate their memory
-    sectionEnd = sectionEnd - (handlers[#handlers].endAddr - handlers[#handlers].startAddr +1) --Add the space back into the unallocated one.
-    
-    handlers[#handlers] = nil --Remove it
-    
-    return true
-  end
-  
-  --Set the handler of a section
-  function api._setHandler(id,hand)
-    if type(id) ~= "number" then return false, "Section ID must be a number, provided: "..type(id) end
-    local id,hand = math.floor(id), hand or "memory"
-    
-    if (id < 1) or (id > #handlers) then return false, "Section ID is out of range ("..id..") [1,"..#handlers.."]" end
-    if type(hand) ~= "string" and type(hand) ~= "function" then return false, "Section handler can be a string or a function, provided: "..type(hand) end
-    
-    if type(hand) == "string" then
-      if not eHandlers[hand] then return false, "Engine handler '"..hand.."' not found." end
-      hand = eHandlers[hand]
-    end
-    
-    handlers[id].handler = hand
-    
-    return true
-  end
-  
-  --Get the sections list.
-  function api._getSections()
-    local list = {}
-    for k,h in pairs(handlers) do
-      list[k] = {}
-      for k1,v1 in pairs(h) do
-        list[k][k1] = v1
-      end
-    end
-    return true, list
-  end
-  
-  --Get the total ram size.
-  function api._getRAMSize()
-    return true, ramsize
-  end
-  
-  --Get the size of the unallocated space
-  function api._getUnallocatedSpace()
-    return true, ramsize-sectionEnd+1
-  end
+  local indirect = {}
   
   --API Start
-  function api.poke4(...)
-    coreg:subCoroutine(devkit.poke4)
-    return true, ...
-  end
-  
-  function api.poke(...)
-    coreg:subCoroutine(devkit.poke)
-    return true, ...
-  end
-  
-  function api.peek4(...)
-    coreg:subCoroutine(devkit.peek4)
-    return true, ...
-  end
-  
-  function api.peek(...)
-    coreg:subCoroutine(devkit.peek)
-    return true, ...
-  end
-  
-  function api.memget(...)
-    coreg:subCoroutine(devkit.memget)
-    return true, ...
-  end
-  
-  function api.memset(...)
-    coreg:subCoroutine(devkit.memset)
-    return true, ...
-  end
-  
-  function api.memcpy(...)
-    coreg:subCoroutine(devkit.memcpy)
-    return true, ...
-  end
-  
-  function devkit.poke4(_,address,value)
+  function api.poke4(address,value)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(value) ~= "number" then return false, "Value must be a number, provided: "..type(value) end
     address, value = math.floor(address), math.floor(value)
@@ -313,7 +174,7 @@ return function(config)
     end
   end
   
-  function devkit.poke(_,address,value)
+  function api.poke(address,value)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(value) ~= "number" then return false, "Value must be a number, provided: "..type(value) end
     address, value = math.floor(address), math.floor(value)
@@ -328,7 +189,7 @@ return function(config)
     end
   end
   
-  function devkit.peek4(_,address)
+  function api.peek4(address)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     address = math.floor(address)
     if address < 0 or address > (ramsize-1)*2 then return false, "Address out of range ("..tohex(address*2).."), must be in range [0x0,"..lastaddr4.."]" end
@@ -343,7 +204,7 @@ return function(config)
     return true, 0 --No handler is found
   end
   
-  function devkit.peek(_,address)
+  function api.peek(address)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     address = math.floor(address)
     if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
@@ -358,7 +219,7 @@ return function(config)
     return true, 0 --No handler is found
   end
   
-  function devkit.memget(_,address,length)
+  function api.memget(address,length)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(length) ~= "number" then return false, "Length must be a number, provided: "..type(length) end
     address, length = math.floor(address), math.floor(length)
@@ -383,7 +244,7 @@ return function(config)
     return true, str
   end
   
-  function devkit.memset(_,address,data)
+  function api.memset(address,data)
     if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
     if type(data) ~= "string" then return false, "Data must be a string, provided: "..type(data) end
     address = math.floor(address)
@@ -408,7 +269,7 @@ return function(config)
     return true
   end
   
-  function devkit.memcpy(_,from_address,to_address,length)
+  function api.memcpy(_,from_address,to_address,length)
     if type(from_address) ~= "number" then return false, "Source Address must be a number, provided: "..type(from_address) end
     if type(to_address) ~= "number" then return false, "Destination Address must be a number, provided: "..type(to_address) end
     if type(length) ~= "number" then return false,"Length must be a number, provided: "..type(length) end
