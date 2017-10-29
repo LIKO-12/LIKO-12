@@ -2,7 +2,6 @@
 --per ,err = P(peripheral,mountedName,configTable)
 
 _DirectAPI = true --An important feature to speed up Peripherals functions calling, calls them directly instead of yeilding the coroutine.
-local RAMHandlers = {}
 
 --Create a new cpu mounted as "CPU"
 local CPU, CPUKit = assert(P("CPU"))
@@ -30,7 +29,9 @@ local GPU, GPUKit = assert(P("GPU","GPU",{
   _ClearOnRender = true, --Speeds up rendering, but may cause glitches on some devices !
   CPUKit = CPUKit
 }))
-RAMHandlers["VRAM"] = GPUKit.VRAMHandler
+
+local LIKO_W, LIKO_H = GPUKit._LIKO_W, GPUKit._LIKO_H
+local ScreenSize = (LIKO_W/2)*LIKO_H
 
 --Create gamepad contols
 assert(P("Gamepad","Gamepad",{CPUKit = CPUKit}))
@@ -51,28 +52,14 @@ assert(P("Floppy"))
 
 local KB = function(v) return v*1024 end
 
---[[local RAMConfig = {
+local RAMConfig = {
   layout = {
-    {736},    --0x0000 Meta Data (736 Bytes)
-    {KB(12)}, --0x02E0 SpriteMap (12 KB)
-    {288},    --0x32E0 Flags Data (288 Bytes)
-    {KB(18)}, --0x3400 MapData (18 KB)
-    {KB(13)}, --0x7C00 Sound Tracks (13 KB)
-    {KB(20)}, --0xB000 Compressed Lua Code (20 KB)
-    {KB(02)}, --0x10000 Persistant Data (2 KB)
-    {128},    --0x10800 GPIO (128 Bytes)
-    {768},    --0x10880 Reserved (768 Bytes)
-    {64},     --0x10B80 Draw State (64 Bytes)
-    {64},     --0x10BC0 Reserved (64 Bytes)
-    {KB(01)}, --0x10C00 Free Space (1 KB)
-    {KB(04)}, --0x11000 Reserved (4 KB)
-    {KB(12)}, --0x12000 Label Image (12 KBytes)
-    {KB(12),VRAMHandler}  --0x15000 VRAM (12 KBytes)
+    {ScreenSize,GPUKit.VRAMHandler}, --The Video ram
+    {ScreenSize}, --The Label image
+    {KB(64)}  --The floppy RAM
   }
-}]]
+}
 
---local RAM, RAMKit = assert(P("RAM","RAM",RAMConfig))
-
-local RAM, RAMKit = assert(P("RAM","RAM",{handlers=RAMHandlers}))
+local RAM, RAMKit = assert(P("RAM","RAM",RAMConfig))
 
 local _, WEB, WEBKit = P("WEB","WEB",{CPUKit = CPUKit})
