@@ -784,4 +784,4 @@ function ce:export()
 end
 
 
-return ce, "code", {{"Code Section",function(iresource) return true end}}
+return ce
