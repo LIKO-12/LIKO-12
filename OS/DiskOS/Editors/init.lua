@@ -37,7 +37,7 @@ When an event happens editor:"event name" is called with the arguments of the ev
 function editor:mousepressed(x,y, button, is touch) end
 function editor:update(dt) end
 
-* editor.keymap = {} here you can assign you key binds:
+* editor.keymap = {} here you can assign your key binds:
 editor.keymap["backspace"] = function(self,isrepeat) end
 The key name can be any love2d key constant or and scancode
 You can combine it with ctrl, alt or shift, ex: editor.keymap["ctrl-c"]
@@ -251,6 +251,47 @@ function edit:export() --Export editors data
     end
   end
   return save
+end
+
+function edit:encode() --Encode editors data into binary
+  local header, hid = {}, 1
+  local chunks = {}
+  local largest = 0
+  for k = #self.saveid, 1, -1 do
+    local v = self.saveid[k]
+    if v ~= -1 and self.leditors[k].encode then
+      local data = self.leditors[k]:encode()
+      if type(data) ~= "nil" then
+        local size = data:size()
+        table.insert(chunks,{name=v,data=data,size=size})
+        if largest < size then largest = size end
+      end
+    end
+  end
+  local length = 0
+  while largest > 0 do
+    length = length + 1
+    largest = math.floor(largest/2)
+  end
+  length = math.ceil(length/8)
+  header[1] = string.char(length)
+  local null = RamUtils.null
+  for k,e in ipairs(chunks) do
+    header[hid] = e.name
+    header[hid+1] = null
+    header[hid+2] = RamUtils.numToBin(e.size,length)
+    hid = hid + 3
+  end
+  
+  header[hid] = null
+  hid = hid + 1
+  
+  for k,e in ipairs(chunks) do
+    header[hid] = e.data
+    hid = hid + 1
+  end
+  
+  return table.concat(header)
 end
 
 function edit:loop() --Starts the while loop
