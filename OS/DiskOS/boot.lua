@@ -89,6 +89,11 @@ dofile("C:/System/package.lua")
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
+--Load APIS
+for k, file in ipairs(fs.directoryItems("C:/APIS/")) do
+  dofile("C:/APIS/"..file)
+end
+
 dofile("C:/System/api.lua") --Load DiskOS APIs
 dofile("C:/System/osapi.lua") --Load DiskOS OS APIs
 
