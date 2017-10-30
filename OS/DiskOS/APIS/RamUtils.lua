@@ -4,6 +4,7 @@
 local sw,sh = screenSize()
 
 --Localized Lua Library
+local unpack = unpack
 local floor, ceil, min = math.floor, math.ceil, math.min
 local strChar, strByte = string.char, string.byte
 local lshift, rshift, bor, band = bit.lshift, bit,rshift, bit.bor, bit.band
@@ -90,3 +91,33 @@ end
 function RamUtils.binToCode(bin)
   return math.decompress(bin,"gzip",9)
 end
+
+--==Extra==--
+
+--Encode a number into binary
+function RamUtils.numToBin(num,length,getTable)
+  local bytes,bnum = {}, 1
+  while num > 0 do
+    bytes[bnum] = band(num,255)
+    num = rshift(num,8)
+    bnum = bnum + 1
+  end
+  for i=bnum+1, length do
+    bytes[i] = 0
+  end
+  if getTable then return bytes end
+  return strChar(unpack(bytes))
+end
+
+--Load a number from binar
+function RamUtils.binToNum(bin)
+  local number = 0
+  for i=1,bin:len() do
+    number = number + strByte(bin,i)
+    number = lshift(number,8)
+  end
+  return rshift(number,8)
+end
+
+--Make the ramutils a global
+_G["RamUtils"] = RamUtils
