@@ -151,7 +151,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Post initialization (Setup the in liko12 gpu settings)--
   
-  local _DrawPalette = {} --The palette mapping for all drawing opereations expect image:draw (p = 1).
+  local _DrawPalette = {} --The palette mapping for all drawing opereations except image:draw (p = 1).
   local _ImagePalette = {} --The palette mapping for image:draw opereations (p = 2).
   local _ImageTransparent = {} --The transparent colors palette, 1 for solid, 0 for transparent.
   local _DisplayPalette = {} --The final display shader palette, converts the red pixel values to a palette color.
@@ -253,7 +253,7 @@ return function(config) --A function that creates a new GPU peripheral.
     return _GetColorID(r,g,b,a),0,0,255
   end
   
-  --Excute a LIKO12 api function (to handle errors)
+  --Execute a LIKO12 api function (to handle errors)
   local function exe(ok,err,...)
     if ok then
       return err,...
@@ -1489,14 +1489,14 @@ return function(config) --A function that creates a new GPU peripheral.
       
       love.graphics.draw(_ScreenCanvas, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
       
-      love.graphics.setShader() --Deactivate the display shader.
-      
       if _GrappedCursor and _Cursor ~= "none" then --Must draw the cursor using the gpu
         local mx, my = _HostToLiko(love.mouse.getPosition())
         mx,my = _LikoToHost(mx,my)
         local hotx, hoty = _CursorsCache[_Cursor].hx*_LIKOScale, _CursorsCache[_Cursor].hy*_LIKOScale --Converted to host scale
         love.graphics.draw(_CursorsCache[_Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty,0,_LIKOScale,_LIKOScale)
       end
+      
+      love.graphics.setShader() --Deactivate the display shader.
       
       if MSGTimer > 0 then
         love.graphics.setColor(_GetColor(LastMSGColor))
