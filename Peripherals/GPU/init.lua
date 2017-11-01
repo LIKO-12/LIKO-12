@@ -389,18 +389,15 @@ return function(config) --A function that creates a new GPU peripheral.
   local VRAMBound = false
   local VRAMImg
   local VRAMLine = _LIKO_W/2
-  local Scanlines = {} --A table that contains the addresses of screen lines endings.
-  
-  for y=0, _LIKO_H-1 do
-    table.insert(Scanlines,{VRAMLine * y, VRAMLine * (y+1) - 1})
-  end
+  local VRAMLine4 = _LIKO_W
+  local VRAMSize = VRAMLine*_LIKO_H
+  local VRAMSize4 = VRAMLine4*_LIKO_H
   
   local function BindVRAM()
     if VRAMBound then return end
     VRAMImg = _ScreenCanvas:newImageData()
     VRAMBound = true
   end
-  
   
   local function UnbindVRAM(keepbind)
     if not VRAMBound then return end
@@ -427,124 +424,188 @@ return function(config) --A function that creates a new GPU peripheral.
     return x*2, y
   end
   
-  local function VRAMHandler(mode,startAddress,...)
-    args = {...}
+  local function VRAMHandler(mode,startAddress,address,...)
+    address = address - startAddress
     BindVRAM() --Make sure that the VRAM is bound.
     if mode == "poke" then
-      local address, value = unpack(args)
-      address = address - startAddress
-      local x,y = AddressPos(address)
-      local evenPixel = band(value,0x0F)
-      local oddPixel = band(value,0xF0)
-      oddPixel = rshift(oddPixel,4)
-      VRAMImg:setPixel(x,y,evenPixel,0,0,255)
-      VRAMImg:setPixel(x+1,y,oddPixel,0,0,255)
+      
+      local pix = ...
+      
+      --Calculate the position of the left pixel
+      local x = (address % VRAMLine) * 2
+      local y = math.floor(address / VRAMLine)
+      
+      --Separate the 2 pixels from each other
+      local lpix = band(pix,0xF0)
+      local rpix = band(pix,0x0F)
+      
+      --Shift the left pixel
+      lpix = rshift(lpix,4)
+      
+      --Set the pixels
+      VRAMImg:setPixel(x,y,lpix,0,0,255)
+      VRAMImg:setPixel(x+1,y,rpix,0,0,255)
+      
+      --Update ShouldDraw Flag
       _ShouldDraw = true
+      
     elseif mode == "poke4" then
-      local address4, value = unpack(args)
-      address4 = address4 - startAddress
-      local address = math.floor(address4 / 2)
-      local x,y = AddressPos(address)
       
-      if address4 % 2 == 0 then --Left pixel
-        VRAMImg:setPixel(x,y,value,0,0,255)
-      else --Right pixel
-        VRAMImg:setPixel(x+1,y,value,0,0,255)
-      end
-       _ShouldDraw = true
+      local pix = ...
+      
+      --Calculate the position of the left pixel
+      local x = address % VRAMLine4
+      local y = math.floor(address / VRAMLine4)
+      
+      --Set the pixels
+      VRAMImg:setPixel(x,y,pix,0,0,255)
+      
+      --Update Should Draw Flag
+      _ShouldDraw = true
+      
     elseif mode == "peek" then
-      local address = args[1]
-      address = address - startAddress
-      local x,y = AddressPos(address)
-      local evenPixel = VRAMImg:getPixel(x,y)
-      local oddPixel = VRAMImg:getPixel(x+1,y)
-      oddPixel = lshift(oddPixel,4)
       
-      local pixel = bor(evenPixel,oddPixel)
-      return pixel
+      --Calculate the position of the left pixel
+      local x = (address % VRAMLine) * 2
+      local y = math.floor(address / VRAMLine)
+      
+      --Get the colors of the 2 pixels
+      local lpix = VRAMImg:getPixel(x,y)
+      local rpix = VRAMImg:getPixel(x+1,y)
+      
+      --Shift the left pixel.
+      lpix = lshift(lpix,4)
+      
+      --Merge the 2 pixels into 1 byte.
+      local pix = bor(lpix,rpix)
+      
+      --Return the final result
+      return pix
+      
     elseif mode == "peek4" then
-      local address4, value = unpack(args)
-      address4 = address4 - startAddress
-      local address = math.floor(address4 / 2)
-      local x,y = AddressPos(address)
       
-      if address4 % 2 == 0 then --Left pixel
-        return VRAMImg:getPixel(x,y)
-      else --Right pixel
-        return VRAMImg:getPixel(x+1,y)
+      --Calculate the position of the left pixel
+      local x = address % VRAMLine4
+      local y = math.floor(address / VRAMLine4)
+      
+      --Return the pixel color
+      local pix = VRAMImg:getPixel(x,y)
+      return pix
+      
+    elseif mode == "memget" then
+      
+      local length = ...
+      
+      local x = (address % VRAMLine) * 2
+      local y = math.floor(address / VRAMLine)
+      
+      local xStart, data = x, ""
+      
+      for Y = y, imgHeight-1 do
+        for X = xStart, imgWidth-1, 2 do
+          
+          local lpix = VRAMImg:getPixel(X,Y)
+          local rpix = VRAMImg:getPixel(X+1,Y)
+          
+          lpix = lshift(lpix,4)
+          
+          local pix = bor(lpix,rpix)
+          local char = string.char(pix)
+          
+          data = data .. char
+          
+          length = length -1
+          
+          if length == 0 then
+            return data
+          end
+          
+        end
+        xStart = 0 --Trick
       end
+      
+      return data
+      
+    elseif mode == "memset" then
+      
+      local data = ...
+      local length = data:len()
+      
+      local x = (address % VRAMLine) * 2
+      local y = math.floor(address / VRAMLine)
+      
+      local iter = string.gmatch(data,".")
+      
+      for i=1,length do
+        
+        local char = iter()
+        local pix = string.byte(char)
+        
+        local lpix = band(pix,0xF0)
+        local rpix = band(pix,0x0F)
+        
+        lpix = rshift(lpix,4)
+        
+        VRAMImg:setPixel(x,y,lpix,0,0,255)
+        VRAMImg:setPixel(x+1,y,rpix,0,0,255)
+        
+        x = x+2
+        
+        if x >= _LIKO_W then
+          x = x - _LIKO_W
+          y = y+1
+        end
+        
+      end
+      
+      --Update Should Draw Flag
+      _ShouldDraw = true
+      
     elseif mode == "memcpy" then
-      local from, to, len = unpack(args)
-      from = from - startAddress
-      to = to - startAddress
-      local from_end = from + len -1
-      local to_end = to + len -1
-      for k1, line1 in ipairs(Scanlines) do
-        local line1_start, line1_end = unpack(line1)
-        if from <= line1_end and from_end >= line1_start then
-          local saddr, eaddr = from, from_end
-          if saddr < line1_start then saddr = line1_start end
-          if eaddr > line1_end then eaddr = line1_end end
+      
+      local toAddress, length = ...
+      
+      local addressEnd = address+length-1
+      local toAddressEnd = toAddress+length-1
+      
+      for line0=0,VRAMSize,VRAMLine do
+        local line0End = line0+VRAMLine-1
+        
+        if addressEnd >= line0 and address <= line0End then
+          local sa1 = (address < line0) and line0 or address
+          local ea1 = (addressEnd > line0End) and line0End or addressEnd
           
-          local to = to + ( saddr - from )
-          local to_end = to_end + ( eaddr - from_end )
+          local toAddress = toAddress + (sa1 - address)
+          local toAddressEnd = toAddressEnd + (ea1 - addressEnd)
           
-          for k2, line2 in ipairs(Scanlines) do
-            local line2_start, line2_end = unpack(line2)
-            if to <= line2_end and to_end >= line2_start then
-              local sa, ea = to, to_end
-              if sa < line2_start then sa = line2_start end
-              if ea > line2_end then ea = line2_end end
+          for line1=0,VRAMSize,VRAMLine do
+            local line1End = line1+VRAMLine-1
+            
+            if toAddressEnd >= line1 and toAddress <= line1End then
+              local sa2 = (toAddress < line1) and line1 or toAddress
+              local ea2 = (toAddressEnd > line1End) and line1End or toAddressEnd
               
-              local saddr = saddr + (sa-to)
-              local eaddr = eaddr + (ea-to_end) 
+              local address = address + (sa2 - toAddress)
+              local addressEnd = addressEnd + (ea2 - toAddressEnd)
               
-              local len = ea-sa+1
-              local dx,dy = AddressPos(sa)
-              local sx,sy = AddressPos(saddr)
+              local len = addressEnd - address + 1
               
-              VRAMImg:paste( VRAMImg, dx,dy, sx,sy, len*2,1)
+              local fromX = (address % VRAMLine) * 2
+              local fromY = math.floor(address / VRAMLine)
+              
+              local toX = (sa2 % VRAMLine) * 2
+              local toY = math.floor(sa2 / VRAMLine)
+              
+              VRAMImg:paste(VRAMImg,toX,toY,fromX,fromY,len*2,1)
             end
           end
         end
       end
+      
+      --Update Should Draw Flag
       _ShouldDraw = true
-    elseif mode == "memget" then
-      local address, len = unpack(args)
-      address = address - startAddress
-      local data = ""
-      for a=address,address+len-1 do
-        local x,y = AddressPos(a)
-        local evenPixel = VRAMImg:getPixel(x,y)
-        local oddPixel = VRAMImg:getPixel(x+1,y)
-        oddPixel = lshift(oddPixel,4)
-        local pixel = bor(evenPixel,oddPixel)
-        data = data..string.char(pixel)
-      end
       
-      return data
-    elseif mode == "memset" then
-      local address, value = unpack(args)
-      address = address-startAddress
-      local len = value:len()
-      
-      local iter = string.gmatch(value,".")
-      
-      local c=1
-      for a=address, address+len-1 do
-        local char = iter()
-        char = string.byte(char)
-        local x,y = AddressPos(a)
-        local evenPixel = band(char,0x0F)
-        local oddPixel = band(char,0xF0)
-        oddPixel = rshift(oddPixel,4)
-        VRAMImg:setPixel(x,y,evenPixel,0,0,255)
-        VRAMImg:setPixel(x+1,y,oddPixel,0,0,255)
-        
-        c=c+1
-      end
     end
-    _ShouldDraw = true
   end
   
   --The api starts here--
