@@ -1448,6 +1448,7 @@ return function(config) --A function that creates a new GPU peripheral.
       sc = sc:enlarge(_ScreenshotScale)
       local png = sc:exportOpaque()
       love.filesystem.write("/LIKO12-"..os.time()..".png",png)
+      systemMessage("Screenshot has been taken successfully",2)
     end
   end)
   
