@@ -1,6 +1,6 @@
 local destination = select(1,...)
 local flag = select(2,...) or ""
-local ctype = select(3,...) or "gzib"
+local ctype = select(3,...) or "gzip"
 local clvl = tonumber(select(4,...) or "9")
 
 local term = require("terminal")
