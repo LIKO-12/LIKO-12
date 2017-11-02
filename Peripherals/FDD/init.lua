@@ -3,6 +3,14 @@ local perpath = select(1,...) --The path to the FDD folder
 local bit = require("bit")
 local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 
+local function exe(ok,err,...)
+  if ok then
+    return err,...
+  else
+    return error(err or "NULL")
+  end
+end
+
 return function(config)
   
   local GPUKit = config.GPUKit or error("The FDD peripheral requires the GPUKit")
@@ -34,11 +42,11 @@ return function(config)
   --DiskWriteMapper
   local WritePos = 0
   local function _WriteDisk(x,y,r,g,b,a)
-    local byte = select(2,RAM.peek(FRAMAddress+WritePos))
-    r = bor(r, rshift( band(byte,192) ,6) )
-    g = bor(g, rshift( band(byte,48 ) ,4) )
-    b = bor(b, rshift( band(byte,12 ) ,2) )
-    a = bor(a,         band(byte,3  )     )
+    local byte = exe(RAM.peek(FRAMAddress+WritePos))
+    r = bor(r, band( rshift(byte ,6), 3) )
+    g = bor(g, band( rshift(byte ,4), 3) )
+    b = bor(b, band( rshift(byte ,2), 3) )
+    a = bor(a, band(byte,3))
     WritePos = (WritePos + 1) % (DiskSize)
     return r, g, b, a
   end
@@ -46,10 +54,11 @@ return function(config)
   --DiskReadMapper
   local ReadPos = 0
   local function _ReadDisk(x,y,r,g,b,a)
-    r = lshift(r,6)
-    g = lshift(g,4)
-    b = lshift(b,2)
-    local byte = bor(r,g,b,a)
+    local r2 = lshift( band(r, 3), 6)
+    local g2 = lshift( band(g, 3), 4)
+    local b2 = lshift( band(b, 3), 2)
+    local a2 = band(a, 3)
+    local byte = bor(r2,g2,b2,a2)
     RAM.poke(FRAMAddress+ReadPos,byte)
     ReadPos = (ReadPos + 1) % (DiskSize)
     return r, g, b, a
@@ -100,10 +109,12 @@ return function(config)
   function fapi.importDisk(data)
     if type(data) ~= "string" then return false,"Data must be a string, provided: "..type(data) end
     
+    FIMG = love.image.newImageData(love.filesystem.newFileData(data,"image.png"))
+    
     --Scan the label image
     for y=LabelY,LabelY+LabelH-1 do
       for x=LabelX,LabelX+LabelW-1 do
-        _ScanLabel(x-LabelX,y-LabelH,FIMG:getPixel(x,y))
+        _ScanLabel(x-LabelX,y-LabelY,FIMG:getPixel(x,y))
       end
     end
     
