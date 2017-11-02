@@ -48,18 +48,23 @@ assert(P("HDD","HDD",{
   D = 1024*1024 * 25 --Measured in bytes, equals 25 megabytes
 }))
 
-assert(P("Floppy"))
-
 local KB = function(v) return v*1024 end
 
 local RAMConfig = {
   layout = {
-    {ScreenSize,GPUKit.VRAMHandler}, --The Video ram
-    {ScreenSize,GPUKit.LIMGHandler}, --The Label image
-    {KB(64)}  --The floppy RAM
+    {ScreenSize,GPUKit.VRAMHandler}, --0x0 -> 0x2FFF - The Video ram
+    {ScreenSize,GPUKit.LIMGHandler}, --0x3000 -> 0x5FFF - The Label image
+    {KB(64)}  --0x6000 -> 0x15FFF - The floppy RAM
   }
 }
 
 local RAM, RAMKit = assert(P("RAM","RAM",RAMConfig))
+
+assert(P("FDD","FDD",{
+  GPUKit = GPUKit,
+  RAM = RAM,
+  DiskSize = KB(64),
+  FRAMAddress = 0x6000
+}))
 
 local _, WEB, WEBKit = P("WEB","WEB",{CPUKit = CPUKit})
