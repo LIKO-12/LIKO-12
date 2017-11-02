@@ -269,7 +269,7 @@ return function(config)
     return true
   end
   
-  function api.memcpy(_,from_address,to_address,length)
+  function api.memcpy(from_address,to_address,length)
     if type(from_address) ~= "number" then return false, "Source Address must be a number, provided: "..type(from_address) end
     if type(to_address) ~= "number" then return false, "Destination Address must be a number, provided: "..type(to_address) end
     if type(length) ~= "number" then return false,"Length must be a number, provided: "..type(length) end
