@@ -178,7 +178,7 @@ local cpu = BPer.CPU
 local ram = BPer.RAM
 local ramkit = Devkits.RAM
 local keyboard = BPer.Keyboard
-local floppy = BPer.Floppy
+local fdd = BPer.FDD
 
 if not fs then error("No HDD peripheral to boot from !") end
 
@@ -273,7 +273,7 @@ if gpu then
       gpu.print("Copyright (C) Rami Sabbagh",15,13)
       
       gpu.printCursor(0,3,0)
-      gpu.print("NormBIOS Revision 060-011")
+      gpu.print("NormBIOS Revision 060-012")
       if DevMode then gpu.print("-==Devmode Enabled==-") end
       gpu.print("")
       
