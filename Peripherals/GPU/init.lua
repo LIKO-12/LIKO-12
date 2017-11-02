@@ -15,6 +15,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local _PixelPerfect = config._PixelPerfect --If the LIKO-12 screen must be drawn pixel perfect.
   
+  --Gif Variables
   local _GIFScale = math.floor(config._GIFScale or 2) --The gif scale factor (must be int).
   local _GIFStartKey = config._GIFStartKey or "f8"
   local _GIFEndKey = config._GIFEndKey or "f9"
@@ -25,9 +26,11 @@ return function(config) --A function that creates a new GPU peripheral.
   local _GIFPStart --The gif starting palette compairing string.
   local _GIFPal --The gif palette string, should be 16*3 bytes long.
   
-  
-  local _ScreenshotKey = config._ScreenshotKey or "f6"
+  --Screeshot Key
+  local _ScreenshotKey = config._ScreenshotKey or "f5"
   local _ScreenshotScale = config._ScreenshotScale or 3
+  
+  local _LabelCaptureKey = config._LabelCaptureKey or "f6"
   
   local _LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
   
@@ -387,7 +390,9 @@ return function(config) --A function that creates a new GPU peripheral.
   }
   
   local newImageHandler = love.filesystem.load(perpath.."imageHandler.lua")
-
+  
+  --Video-Ram
+  
   local VRAMBound = false
   local VRAMImg
   
@@ -422,6 +427,11 @@ return function(config) --A function that creates a new GPU peripheral.
     BindVRAM()
     VRAMHandler("setImage",0,0,VRAMImg)
   end)
+
+  --LabelImage - Handler
+  local LabelImage = love.image.newImageData(_LIKO_W, _LIKO_H)
+  
+  local LIMGHandler; LIMGHandler = newImageHandler(_LIKO_W,_LIKO_H,function() end,function() end)
   
   --The api starts here--
   
@@ -1220,6 +1230,10 @@ return function(config) --A function that creates a new GPU peripheral.
     return true, exe(GPU.imagedata(_ScreenCanvas:newImageData(x,y,w,h)))
   end
   
+  function GPU.getLabelImage()
+    return GPU.imagedata(LabelImage)
+  end
+  
   --Mouse API--
   
   --Returns the current position of the mouse.
@@ -1318,6 +1332,7 @@ return function(config) --A function that creates a new GPU peripheral.
   exe(GPU.cursor(exe(GPU.imagedata(1,1)):setPixel(0,0,7),"default"))
   exe(GPU.cursor(_Cursor))
   
+  --Screenshot and LabelCapture keys handling.
   events:register("love:keypressed", function(key,sc,isrepeat)
     if key == _ScreenshotKey then
       local sc = exe(GPU.screenshot())
@@ -1325,6 +1340,9 @@ return function(config) --A function that creates a new GPU peripheral.
       local png = sc:exportOpaque()
       love.filesystem.write("/LIKO12-"..os.time()..".png",png)
       systemMessage("Screenshot has been taken successfully",2)
+    elseif key == _LabelCaptureKey then
+      LabelImage:paste(_ScreenCanvas:newImageData(),0,0,0,0,_LIKO_W,_LIKO_H)
+      systemMessage("Captured label image successfully !",2)
     end
   end)
   
@@ -1522,8 +1540,11 @@ return function(config) --A function that creates a new GPU peripheral.
   devkit._CursorsCache = _CursorsCache
   devkit.BindVRAM = BindVRAM
   devkit.UnbindVRAM = UnbindVRAM
-  devkit.AddressPos = AddressPos
+  devkit._ExportImage = _ExportImage
+  devkit._ExportImageOpaque = _ExportImageOpaque
   devkit.VRAMHandler = VRAMHandler
+  devkit.LIMGHandler = LIMGHandler
+  devkit.LabelImage = LabelImage
   devkit.indirect = indirect
   
   function devkit.DevKitDraw(bool)

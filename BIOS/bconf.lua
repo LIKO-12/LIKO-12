@@ -55,7 +55,7 @@ local KB = function(v) return v*1024 end
 local RAMConfig = {
   layout = {
     {ScreenSize,GPUKit.VRAMHandler}, --The Video ram
-    {ScreenSize}, --The Label image
+    {ScreenSize,GPUKit.LIMGHandler}, --The Label image
     {KB(64)}  --The floppy RAM
   }
 }
