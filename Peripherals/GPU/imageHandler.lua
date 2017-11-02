@@ -11,12 +11,16 @@
   
   return function(mode,startAddress,address,...)
     address = address - startAddress
-    if OnCall and mode ~= "setImage" then OnCall() end
+    
     if mode == "setImage" then
       
       IMG = ...
-      
-    elseif mode == "poke" then
+      return
+    end
+    
+    if OnCall then OnCall() end
+    
+    if mode == "poke" then
       
       local pix = ...
       
