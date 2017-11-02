@@ -100,7 +100,7 @@ return function(config)
     elseif mode == "peek" then
       local address = args[1]
       return ram[address]
-    elseif mode == "peek4" then-----------
+    elseif mode == "peek4" then
       local address4 = args[1]
       local address = math.floor(address4 / 2)
       local byte = ram[address]
@@ -146,10 +146,11 @@ return function(config)
     devkit.addHandler(startAddress,endAddress,handler)
     
     --Extend the ram table
-    for i=#ram, #ram+size-1 do
+    for i=#ram, #ram+size do
       ram[i] = 0
     end
   end
+  ram[#ram] = nil --Remove the last address.
   
   local lastaddr = string.format("0x%X",ramsize-1) --The last accessible ram address.
   local lastaddr4 = string.format("0x%X",(ramsize-1)*2) --The last accessible ram address for peek4 and poke4.
@@ -313,11 +314,7 @@ return function(config)
   end
   
   devkit.ramsize = ramsize
-  setmetatable(devkit,{
-    __index = function(t,k)
-      if k == "ram" then return ram end
-    end
-  })
+  devkit.ram = ram
   devkit.tohex = tohex
   devkit.layout = layout
   devkit.handlers = handlers
