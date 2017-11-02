@@ -88,7 +88,7 @@ glob.coroutine.running = function()
 end
 
 --Add peripherals api
-local blocklist = { HDD = true, WEB = true, Floppy = true }
+local blocklist = { HDD = true, WEB = true, FDD = true }
 local perglob = {GPU = true, CPU = true, Keyboard = true, RAM = true} --The perihperals to make global not in a table.
 
 local _,directapi = coroutine.yield("BIOS:DirectAPI"); directapi = directapi or {}
