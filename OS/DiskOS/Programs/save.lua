@@ -6,7 +6,7 @@ local clvl = tonumber(select(4,...) or "9")
 local term = require("terminal")
 local eapi = require("Editors")
 
-if destination = "-?" then destination = nil end
+if destination == "-?" then destination = nil end
 
 if destination and destination ~= "@clip" and destination ~= "-?" then
   destination = term.resolve(destination)
