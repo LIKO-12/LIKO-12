@@ -125,12 +125,19 @@ return function(config)
       end
     elseif mode == "memget" then
       local address, len = unpack(args)
-      local subtable,nextid = {}, 0
+      local subtable,nextid = {}, 1
       for i=address,address+len-1 do
         subtable[nextid] = ram[i]
         nextid = nextid + 1
       end
-      return string.char(unpack(subtable))
+      if len > 255 then
+        for i=1,nextid-1 do
+          subtable[i] = string.char(subtable[i])
+        end
+        return table.concat(subtable)
+      else
+        return string.char(unpack(subtable))
+      end
     end
   end
   
