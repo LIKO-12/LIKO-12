@@ -25,22 +25,26 @@ if fs.isDirectory(source) then print("Source can't be a directory !") return end
 
 source = fs.read(source)
 
+local FRAM = RamUtils.FRAM
+
 if mode == "read" then
   
   FDD.importDisk(source)
-  local fdata = {}
-  for i=0,64*1024-1 do table.insert(fdata,string.char(peek(RamUtils.FRAM+i))) end
-  fdata = table.concat(fdata)
+  if memget(FRAM, diskheader:len()) ~= diskheader then
+    print("Invalid Header !"); return
+  end
+  local fsize = RamUtils.binToNum(memget(FRAM+diskheader:len(),4))
+  local fdata = memget(FRAM+diskheader:len()+4, fsize)
   fs.write(destination,fdata)
   color(11) print("Read disk successfully")
   
 elseif mode == "write" then
   
   if source:len() > 64*1024-(diskheader:len()+4) then print("File too big (Should be almost 64kb or less) !") return end
-  memset(0x6000,string.rep(RamUtils.Null,64*1024))
-  memset(0x6000,diskheader) --Set the disk header
-  memset(0x6000+diskheader:len(), RamUtils.numToBin(source:len(),4)) --Set the file size
-  memset(0x6000+diskheader:len()+4,source) --Set the file data
+  memset(FRAM,string.rep(RamUtils.Null,64*1024))
+  memset(FRAM,diskheader) --Set the disk header
+  memset(FRAM+diskheader:len(), RamUtils.numToBin(source:len(),4)) --Set the file size
+  memset(FRAM+diskheader:len()+4,source) --Set the file data
   local data = FDD.exportDisk()
   fs.write(destination,data)
   color(11) print("Wrote disk successfully")
