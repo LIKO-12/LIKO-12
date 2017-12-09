@@ -112,7 +112,7 @@ function RamUtils.binToNum(bin)
   for i=1,bin:len() do
     local byte = strByte(bin,i)
     byte = lshift(byte,(i-1)*8)
-    number = bor(number,strByte(bin,i))
+    number = bor(number,byte)
   end
   return number
 end
