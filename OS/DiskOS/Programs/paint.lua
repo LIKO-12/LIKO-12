@@ -1,7 +1,9 @@
 --Paint Program--
 local args = {...}
 if #args < 1 or args[1] == "-?" then
-  printUsage("paint <filename>", "Creates or edits an existing image.")
+  printUsage("paint <filename>", "Creates or edits an existing image.",
+             "paint @clip", "Creates or edits an existing image in the clipboard.",
+             "paint @label", "Edits the disk label image (in the RAM).")
   return
 end
 
