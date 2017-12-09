@@ -431,6 +431,8 @@ return function(config) --A function that creates a new GPU peripheral.
   --LabelImage - Handler
   local LabelImage = love.image.newImageData(_LIKO_W, _LIKO_H)
   
+  LabelImage:mapPixel(function() return 0,0,0,255 end)
+  
   local LIMGHandler; LIMGHandler = newImageHandler(_LIKO_W,_LIKO_H,function() end,function() end)
   
   --The api starts here--
