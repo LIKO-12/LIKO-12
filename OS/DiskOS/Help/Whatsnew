@@ -8,7 +8,7 @@ V0.6.0_PRE_07 (WIP):
 - New Simplified RAM Layout.
 - Optamized RAM peripheral binary handler.
 - Reworked parts of the RAM peripheral.
-- New Floppy Peripheral, to encode/decode .png disks while storing 64kb of data inside of them.
+- New FDD Peripheral, to encode/decode .png disks while storing 64kb of data inside of them.
 - The disk label image is readable and writable.
 - F6 Captures the disk label.
 - New 'disk' command, to write and read files in .png disks.
