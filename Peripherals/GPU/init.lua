@@ -1093,6 +1093,12 @@ return function(config) --A function that creates a new GPU peripheral.
       _ShouldDraw = true
       return self
     end
+    
+    function i:refresh()
+      Image:refresh()
+      return self
+    end
+    
     function i:size() return Image:getDimensions() end
     function i:width() return Image:getWidth() end
     function i:height() return Image:getHeight() end
