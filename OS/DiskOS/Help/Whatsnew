@@ -12,6 +12,8 @@ V0.6.0_PRE_07 (WIP):
 - The disk label image is readable and writable.
 - F6 Captures the disk label.
 - New 'disk' command, to write and read files in .png disks.
+- New image:refresh(), to reload it's content from the source imagedata.
+- Paint program now accepts `@clip` and `@label`
 
 V0.6.0_PRE_06 (14/9/2017):
 ================================
