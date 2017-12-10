@@ -66,7 +66,7 @@ function edit:initialize()
   self.active = 4 --Active editor3
   
   self.editors = {"music","sfx","tile","sprite","code","soon"; music=1,sfx=2,tile=3,sprite=4,code=5,config=6}
-  self.saveid = {-1,-1,"tilemap","spritesheet","luacode",-1}
+  self.saveid = {-1,-1,"tilemap","spritesheet","luacode",-1;tilemap=3,spritesheet=4,luacode=5}
   self.chunks = {} --Editors Code Chunks
   self.leditors = {} --Loaded editors (Executed chunks)
   
@@ -145,6 +145,7 @@ function edit:addEditor(code, name, saveid, icon)
   table.insert(self.editors,name)
   self.editors[name] = #self.editors
   table.insert(self.saveid,saveid)
+  self.saveid[saveid] = #self.saveid
   table.insert(self.chunks,chunk)
   table.insert(self.leditors,editor)
   
@@ -254,54 +255,82 @@ function edit:export() --Export editors data
 end
 
 function edit:encode() --Encode editors data into binary
-  local header, hid = {}, 1
-  local chunks = {}
+  local null = RamUtils.null
+  
+  local header, hid = {}, 2
+  local chunks, cid = {}, 1
   local largest = 0
   for k = #self.saveid, 1, -1 do
     local v = self.saveid[k]
     if v ~= -1 and self.leditors[k].encode then
-      local data = self.leditors[k]:encode()
-      if type(data) ~= "nil" then
+      local data = self.leditors:encode()
+      if data then
         local size = data:size()
-        table.insert(chunks,{name=v,data=data,size=size})
-        if largest < size then largest = size end
+        largest = largest > size and largest or size
+        header[hid] = v
+        header[hid+1] = null
+        chunks[cid] = data
+        hid, cid = hid+2, cid+1
       end
     end
   end
-  local length = 0
-  while largest > 0 do
-    length = length + 1
-    largest = math.floor(largest/2)
-  end
-  length = math.ceil(length/8)
-  header[1] = string.char(length)
-  local null = RamUtils.null
-  for k,e in ipairs(chunks) do
-    header[hid] = e.name
-    header[hid+1] = null
-    header[hid+2] = RamUtils.numToBin(e.size,length)
-    hid = hid + 3
-  end
   
+  header[1] = string.char(RamUtils.numLength(largest))
   header[hid] = null
-  hid = hid + 1
   
-  for k,e in ipairs(chunks) do
-    header[hid] = e.data
-    hid = hid + 1
+  return table.concat(header)..table.concat(chunks)
+end
+
+function edit:decode(bindata) --decode editors data from binary
+  local iter, counter = RamUtils.binIter(bindata)
+  
+  local lengthSize = iter()
+  
+  local names, nid = {}, 1
+  local lengths, lid = {}, 1
+  
+  --Read the header
+  while true do
+    local startPos = counter()+1
+    while true do
+      if iter() == 0 then
+        break
+      end
+    end
+    local endPos = counter()
+    
+    local saveid = bindata:sub(startPos, endPos)
+    
+    if saveid == RamUtils.null then break end
+    
+    for i=1,lengthSize do iter() end
+    
+    names[nid] = saveid
+    lengths[lid] = RamUtils.binToNum(bindata:sub(endPos+1,endPos+lengthSize+1))
+    
+    nid, lid = nid+1, lid+1
   end
   
-  return table.concat(header)
+  --Read the chunks
+  local cStart = counter()+1
+  for i, len in ipairs(lengths) do
+    local id = self.saveid[names[i]]
+    if id and self.leditors[id].decode then
+      local data = bindata:sub(cStart, cStart+len-1)
+      self.leditors[id]:decode(data)
+    end
+    cStart = cStart + len
+  end
 end
 
 function edit:loop() --Starts the while loop
   cursor("normal")
-  if edit.leditors[edit.active]["entered"] then edit.leditors[edit.active]:entered() end
+  if self.leditors[self.active]["entered"] then self.leditors[self.active]:entered() end
   while true do
     local event, a, b, c, d, e, f = pullEvent()
     if event == "keypressed" then
       if a == "escape" then --Quit the loop and return to the terminal
-        if edit.leditors[edit.active]["leaved"] then edit.leditors[edit.active]:leaved() end
+        if self.leditors[self.active]["leaved"] then self.leditors[self.active]:leaved() end
         break
       else
         local key, sc = a, b
@@ -360,7 +389,7 @@ function edit:loop() --Starts the while loop
           hotkey = true
         elseif sc == "ctrl-r" then
           term.ecommand("run")
-          if edit.leditors[edit.active]["leaved"] then edit.leditors[edit.active]:leaved() end
+          if self.leditors[self.active]["leaved"] then self.leditors[self.active]:leaved() end
           hotkey = true
           break
         end
