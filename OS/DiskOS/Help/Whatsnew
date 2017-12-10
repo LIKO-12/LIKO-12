@@ -15,6 +15,7 @@ V0.6.0_PRE_07 (WIP):
 - New image:refresh(), to reload it's content from the source imagedata.
 - Paint program now accepts `@clip` and `@label`
 - SpriteEditor brush size slider by @egordorichev
+- The `appdata` and `folder` programs now shows the path on Android.
 
 V0.6.0_PRE_06 (14/9/2017):
 ================================
