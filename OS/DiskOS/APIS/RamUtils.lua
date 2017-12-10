@@ -117,5 +117,26 @@ function RamUtils.binToNum(bin)
   return number
 end
 
+--Calculate the length of the number in bytes
+function RamUtils.numLength(num)
+  local length = 0
+  while num > 0 do
+    num = rshift(num,8)
+    length = length + 1
+  end
+  return length
+end
+
+--Create a binary iterator for a string
+function RamUtils.binIter(bin)
+  local counter = 0
+  return function()
+    counter = counter + 1
+    return strByte(bin,counter)
+  end, function()
+    return counter
+  end
+end
+
 --Make the ramutils a global
 _G["RamUtils"] = RamUtils
