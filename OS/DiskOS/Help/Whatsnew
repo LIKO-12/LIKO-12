@@ -14,6 +14,7 @@ V0.6.0_PRE_07 (WIP):
 - New 'disk' command, to write and read files in .png disks.
 - New image:refresh(), to reload it's content from the source imagedata.
 - Paint program now accepts `@clip` and `@label`
+- SpriteEditor brush size slider by @egordorichev
 
 V0.6.0_PRE_06 (14/9/2017):
 ================================
