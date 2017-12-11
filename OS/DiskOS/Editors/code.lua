@@ -1,5 +1,7 @@
 local eapi = select(1,...) --The editor library is provided as an argument
 
+-- selecting last line of file crashes
+
 --=Contributing Guide=--
 --[[
 Try your best to keep your work light, documented and tidy, since this will be the base of other places where text editors exist.
@@ -220,6 +222,7 @@ function ce:drawLineNum()
 end
 
 function ce:searchTextAndNavigate(from_line)
+ -- cprint("simple test dev mode")
  for i,t in ipairs(buffer)
  do
   if from_line~=nil and i<= from_line then
@@ -556,6 +559,13 @@ ce.keymap = {
 
   ["shift-down"] = function(self)
    cprint(" shift down")
+   
+   --last line check, we do not go further than buffer
+   if #buffer == ce.cy then
+    cprint("sel out of buffer, returning")
+    return;
+   end
+   
    ce.sxs=0
    ce.sxe=0
    if ce.sys==nil then
@@ -573,8 +583,6 @@ ce.keymap = {
    self:checkPos()
    self:drawBuffer()
   end,
-  ["shift-lshift"] = function(self)
-   cprint("left shift")
   ["up"] = function(self)
     self:deselect()
     self.cy = self.cy -1
@@ -583,7 +591,6 @@ ce.keymap = {
     self:drawBuffer()
     self:drawLineNum()
   end,
-
   ["down"] = function(self)
     self:deselect()
     self.cy = self.cy +1
@@ -618,16 +625,21 @@ ce.keymap = {
 
   ["pageup"] = function(self)
     self.vy = self.vy-self.th
-    if self.vy > #buffer then self.vy = #buffer end
+	self.cy = self.cy-self.th
+    -- if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
+    if self.cy < 1 then self.cy = 1 end
     self:resetCursorBlink()
     self:drawBuffer()
   end,
 
   ["pagedown"] = function(self)
     self.vy = self.vy+self.th
+    self.cy = self.cy+self.th
+	
     if self.vy > #buffer then self.vy = #buffer end
-    if self.vy < 1 then self.vy = 1 end
+    if self.cy > #buffer then self.cy = #buffer end
+    -- if self.vy < 1 then self.vy = 1 end
     self:resetCursorBlink()
     self:drawBuffer()
   end,
