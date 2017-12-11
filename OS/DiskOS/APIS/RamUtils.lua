@@ -27,13 +27,13 @@ function RamUtils.imgToBin(img,getTable)
   local flag = true
   img:map(function(x,y,c)
     x = x + y*imgW + 1
-    local byte = bin[floor(x/2)] or 0
+    local byte = bin[ceil(x/2)] or 0
     if flag then
-      byte = byte + lshift(c,4)
+      byte = bor(byte,lshift(c,4))
     else
-      byte = byte + c
+      byte = bor(byte,c)
     end
-    bin[floor(x/2)] = byte
+    bin[ceil(x/2)] = byte
     flag = not flag
   end)
   if getTable then return bin end
@@ -54,7 +54,7 @@ function RamUtils.binToImg(img,bin)
     cid = cid + 2
   end
   cid = 1
-  imgdata:map(function(x,y,c)
+  img:map(function(x,y,old)
     local c = colors[cid] or 0
     cid = cid + 1
     return c
