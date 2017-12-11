@@ -6,21 +6,27 @@ local clvl = tonumber(select(4,...) or "9")
 local term = require("terminal")
 local eapi = require("Editors")
 
-if destination == "-?" then destination = nil end
+local png = false
 
 if destination and destination ~= "@clip" and destination ~= "-?" then
   destination = term.resolve(destination)
-  if destination:sub(-5,-1) ~= ".lk12" then destination = destination..".lk12" end
-elseif destination ~= "@clip" and destination ~= "-?" then
+  if destination:sub(-4,-1) == ".png" then
+    png = true
+  elseif destination:sub(-5,-1) ~= ".lk12" then
+    destination = destination..".lk12"
+  end
+elseif not destination then
   destination = eapi.filePath
 end
 
-if not destination then
+if (not destination) or destination == "-?" then
   printUsage(
     "save <file>","Saves the current loaded game",
-    "save <file> -c","Saves with compression",
-    "save","Saves on the last known file",
+    "save <file>.png","Save in a png disk",
     "save @clip","Saves into the clipboard",
+    "save <file> -c","Saves with compression",
+    "save <file> -b","Saves in binary format",
+    "save","Saves on the last known file",
     "save <image> --sheet","Saves the spritesheet as external .lk12 image",
     "save <filename> --code","Saves the code as a .lua file"
   )
@@ -44,21 +50,31 @@ elseif string.lower(flag) == "--code" then
 end
 
 eapi.filePath = destination
-local data = eapi:export()
 --              LK12;OSData;OSName;DataType;Version;Compression;CompressLevel;data"
-local header = "LK12;OSData;DiskOS;DiskGame;V".._DiskVer..";"..sw.."x"..sh..";C:"
+local header, data, savedata = "LK12;OSData;DiskOS;DiskGame;V".._DiskVer..";"..sw.."x"..sh..";C:"
 
 if string.lower(flag) == "-c" then
+  data = eapi:export()
   data = math.b64enc(math.compress(data, ctype, clvl))
   header = header..ctype..";CLvl:"..tostring(clvl)..";"
+elseif string.lower(flag) == "-b" then
+  data = eapi:encode()
+  header = header.."binary;R:1;"
 else
+  data = eapi:export()
   header = header.."none;CLvl:0;"
 end
 
-if destination == "@clip" then
-  clipboard(header.."\n"..data)
+if string.lower(flag) == "-b" then
+  savedata = header..data
 else
-  fs.write(destination,header.."\n"..data)
+  savedata = header.."\n"..data
+end
+
+if destination == "@clip" then
+  clipboard(savedata)
+else
+  fs.write(destination,savedata)
 end
 
 color(11) print(destination == "@clip" and "Saved to clipboard successfully" or "Saved successfully")
