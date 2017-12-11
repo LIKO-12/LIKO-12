@@ -274,9 +274,10 @@ function se:import(data)
 end
 
 function se:decode(data)
-  local imgbin = data:sub(1,swidth*sheight)
-  flagsData = data:sub(swidth*sheight+1,-1)
+  local imgbin = data:sub(1,(swidth*sheight)/2)
+  flagsData = data:sub((swidth*sheight)/2+1,-1)
   RamUtils.binToImg(self.SpriteMap:data(),imgbin)
+  self.SpriteMap:image():refresh()
 end
 
 function se:copy()
