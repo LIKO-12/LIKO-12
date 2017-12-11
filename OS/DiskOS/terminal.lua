@@ -60,7 +60,12 @@ end
 function term.reload()
   package.loaded = {} --Reset the package system
   package.loaded["C:/terminal.lua"] = term --Restore the current terminal instance
-
+  
+  --Reload the APIS
+  for k, file in ipairs(fs.directoryItems("C:/APIS/")) do
+    dofile("C:/APIS/"..file)
+  end
+  
   editor = require("Editors") --Re initialize the editors
 end
 
