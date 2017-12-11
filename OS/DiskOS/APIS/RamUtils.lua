@@ -21,7 +21,7 @@ RamUtils.Null = strChar(0) --The null character
 
 --Encode an image into binary.
 function RamUtils.imgToBin(img,getTable)
-  if image:typeOf("GPU.image") then image = image:data() end --Convert the image to imagedata.
+  if img:typeOf("GPU.image") then img = img:data() end --Convert the image to imagedata.
   local bin = {}
   local imgW, imgH = img:size()
   local flag = true
@@ -37,7 +37,10 @@ function RamUtils.imgToBin(img,getTable)
     flag = not flag
   end)
   if getTable then return bin end
-  return strChar(unpack(bin))
+  for k,v in pairs(bin) do
+    bin[k] = strChar(v)
+  end
+  return table.concat(bin)
 end
 
 --Load an image from binary.
@@ -69,7 +72,10 @@ function RamUtils.mapToBin(map,getTable)
     tid = tid + 1
   end)
   if getTable then return bin end
-  return strChar(unpack(bin))
+  for k,v in pairs(bin) do
+    bin[k] = strChar(v)
+  end
+  return table.concat(bin)
 end
 
 --Load a map from binary.
