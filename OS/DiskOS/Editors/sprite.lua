@@ -244,6 +244,10 @@ function se:export(imageonly)
   end
 end
 
+function se:encode()
+  return RamUtils.imgToBin(self.SpriteMap:data())..flagsData
+end
+
 function se:import(data)
   if data then
     data = data:gsub("\n","")

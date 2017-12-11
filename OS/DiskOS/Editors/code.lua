@@ -783,5 +783,8 @@ function ce:export()
   return data
 end
 
+function ce:encode()
+  return RamUtils.codeToBin(self:export())
+end
 
 return ce
