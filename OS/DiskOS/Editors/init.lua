@@ -267,6 +267,7 @@ function edit:encode() --Encode editors data into binary
       if data then
         local size = data:len()
         largest = largest > size and largest or size
+        
         header[hid] = v
         header[hid+1] = null
         header[hid+2] = size
@@ -309,16 +310,16 @@ function edit:decode(bindata) --decode editors data from binary
         break
       end
     end
-    local endPos = counter()
+    local endPos = counter()-1
     
     local saveid = bindata:sub(startPos, endPos)
     
-    if saveid == RamUtils.Null then break end
+    if saveid == "" then break end
     
     for i=1,lengthSize do iter() end
     
     names[nid] = saveid
-    lengths[lid] = RamUtils.binToNum(bindata:sub(endPos+1,endPos+lengthSize+1))
+    lengths[lid] = RamUtils.binToNum(bindata:sub(endPos+2,endPos+lengthSize+1))
     
     nid, lid = nid+1, lid+1
   end
