@@ -219,16 +219,45 @@ function ce:drawLineNum()
   color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-2)
 end
 
+function ce:searchTextAndNavigate(from_line)
+ for i,t in ipairs(buffer)
+ do
+  if from_line~=nil and i<= from_line then
+   cprint("we pass ")
+   cprint(i)
+  else
+   if string.find(t,ce.searchtxt) then
+    cprint("txt found at line")
+    cprint(i)
+    self.cy=i
+    ce:checkPos()
+    ce:drawBuffer()
+    break
+   end
+  end
+ end
+
+end
+
 function ce:textinput(t)
-  self:beginUndoable()
-  local delsel
-  if self.sxs then self:deleteSelection(); delsel = true end
-  buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
-  self.cx = self.cx + t:len()
-  self:resetCursorBlink()
-  if self:checkPos() or delsel then self:drawBuffer() else self:drawLine() end
-  self:drawLineNum()
-  self:endUndoable()
+  cprint(t)
+  if ce.incsearch==true then
+   if ce.searchtxt==nil then ce.searchtxt="" end
+   ce.searchtxt=ce.searchtxt..t
+   cprint("new inc search ")
+   cprint(ce.searchtxt)
+   ce:searchTextAndNavigate()
+  else
+   self:beginUndoable()
+   local delsel
+   if self.sxs then self:deleteSelection(); delsel = true end
+   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
+   self.cx = self.cx + t:len()
+   self:resetCursorBlink()
+   if self:checkPos() or delsel then self:drawBuffer() else self:drawLine() end
+   self:drawLineNum()
+   self:endUndoable()
+  end
 end
 
 function ce:gotoLineStart()
@@ -525,6 +554,27 @@ ce.keymap = {
     self:drawLineNum()
   end,
 
+  ["shift-down"] = function(self)
+   cprint(" shift down")
+   ce.sxs=0
+   ce.sxe=0
+   if ce.sys==nil then
+	cprint("ce.sys nil")
+    ce.sys=ce.cy
+    ce.sye=ce.sys+1
+   else 
+	cprint("ce.sys preexists")
+	cprint(ce.sys)
+    ce.sye=ce.sye+1
+   end
+   cprint(ce.sye)
+   cprint("sel updated")
+   ce.cy=ce.cy+1
+   self:checkPos()
+   self:drawBuffer()
+  end,
+  ["shift-lshift"] = function(self)
+   cprint("left shift")
   ["up"] = function(self)
     self:deselect()
     self.cy = self.cy -1
@@ -585,7 +635,25 @@ ce.keymap = {
   ["tab"] = function(self)
     self:textinput(" ")
   end,
-  
+  ["sc_ctrl-i"] = function(self)
+   if ce.incsearch==nil or ce.incsearch==false then 
+    cprint("toggling on incremental search")
+    ce.incsearch=true
+   else    
+    cprint("toggling off incremental search")
+    ce.incsearch=false
+	ce.searchtxt=""
+   end
+  end,
+  ["sc_ctrl-k"] = function(self)
+   if ce.incsearch==true then 
+    cprint("searching next occurence of")
+	cprint(ce.searchtxt)
+	ce:searchTextAndNavigate(self.cy)
+   else    
+    cprint("not in incremental search")
+   end
+  end,
   ["sc_ctrl-x"] = ce.cutText,
   
   ["sc_ctrl-c"] = ce.copyText,
