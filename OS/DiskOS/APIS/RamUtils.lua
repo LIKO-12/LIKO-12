@@ -44,7 +44,7 @@ function RamUtils.imgToBin(img,getTable)
 end
 
 --Load an image from binary.
-function RamUtils.binToImage(img,bin)
+function RamUtils.binToImg(img,bin)
   local colors, cid = {}, 1
   for i=1,bin:len() do
     local byte = strByte(bin,i)
