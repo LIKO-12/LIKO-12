@@ -107,7 +107,7 @@ if compress == "binary" then
   if revision < 1 then color(8) print("Can't load binary saves with revision 0 or lower ("..revision..")") end
   if revision > 1 then color(8) print("Can't load binary saves with revision 2 or higher") end
   
-  local data = saveData:sub(datasum+2,-1)
+  local data = saveData:sub(datasum+1,-1)
 
   eapi.filePath = source
   eapi:decode(data)
