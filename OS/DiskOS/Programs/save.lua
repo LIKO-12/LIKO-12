@@ -59,7 +59,7 @@ if string.lower(flag) == "-c" then
   header = header..ctype..";CLvl:"..tostring(clvl)..";"
 elseif string.lower(flag) == "-b" then
   data = eapi:encode()
-  header = header.."binary;R:1;"
+  header = header.."binary;Rev:1;"
 else
   data = eapi:export()
   header = header.."none;CLvl:0;"
