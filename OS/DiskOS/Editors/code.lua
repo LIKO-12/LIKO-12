@@ -771,6 +771,10 @@ function ce:import(data)
   self:checkPos()
 end
 
+function ce:decode(data)
+  self:import(RamUtils.binToCode(data))
+end
+
 function ce:export()
   local data = ""
   for k, line in ipairs(buffer) do
