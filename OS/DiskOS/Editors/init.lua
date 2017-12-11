@@ -269,14 +269,23 @@ function edit:encode() --Encode editors data into binary
         largest = largest > size and largest or size
         header[hid] = v
         header[hid+1] = null
+        header[hid+2] = size
         chunks[cid] = data
-        hid, cid = hid+2, cid+1
+        hid, cid = hid+3, cid+1
       end
     end
   end
   
-  header[1] = string.char(RamUtils.numLength(largest))
+  largest = RamUtils.numLength(largest)
+  
+  header[1] = string.char(largest)
   header[hid] = null
+  
+  for id, value in pairs(header) do
+    if type(value) == "number" then
+      header[id] = RamUtils.numToBin(value,largest)
+    end
+  end
   
   header = table.concat(header)
   chunks = table.concat(chunks)
