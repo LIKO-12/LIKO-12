@@ -273,6 +273,12 @@ function se:import(data)
   end
 end
 
+function se:decode(data)
+  local imgbin = data:sub(1,swidth*sheight)
+  flagsData = data:sub(swidth*sheight+1,-1)
+  RamUtils.binToImg(self.SpriteMap:data(),imgbin)
+end
+
 function se:copy()
   local headerlen = 15 + (tostring(8*zscale):len()*2)
   clipboard(string.lower(extractSprite():encode():gsub("\n",""):sub(headerlen,-1)))

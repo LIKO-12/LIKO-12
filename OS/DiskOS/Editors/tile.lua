@@ -120,6 +120,10 @@ function t:import(data)
   end
 end
 
+function t:decode(data)
+  RamUtils.binToMap(Map,data)
+end
+
 function t:entered()
   SpriteMap = eapi.leditors[eapi.editors.sprite].SpriteMap
   eapi:drawUI()
