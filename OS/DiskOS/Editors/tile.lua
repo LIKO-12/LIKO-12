@@ -108,6 +108,10 @@ function t:export()
   return Map:export()
 end
 
+function t:encode()
+  return RamUtils.mapToBin(Map)
+end
+
 function t:import(data)
   if data then
     Map:import(data)
