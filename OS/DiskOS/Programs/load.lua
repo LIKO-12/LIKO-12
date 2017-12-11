@@ -28,13 +28,26 @@ saveData = saveData:gsub("\r\n","\n")
 --local header = "LK12;OSData;DiskOS;DiskGame;V"..saveVer..";"..sw.."x"..sh..";C:"
 
 local datasum = 0
-local nextargiter = saveData:gmatch("(.-);")
+local nextargiter = string.gmatch(saveData,".")
 local function nextarg()
-  local n = nextargiter()
-  if n then
-    datasum = datasum + n:len() + 1
-    return n
-  else return n end
+
+  local start = datasum + 1
+  
+  while true do
+    datasum = datasum + 1
+    local char = nextargiter()
+    
+    if not char then
+      datasum = datasum - 1
+      return
+    end
+    
+    if char == ";" then
+      break
+    end
+  end
+  
+  return saveData:sub(start,datasum-1)
 end
 nextarg() --Skip LK12;
 
@@ -82,20 +95,41 @@ if not compress then color(8) print("Invalid Data !") return end
 compress = string.match(compress,"C:(.+)")
 if not compress then color(8) print("Invalid Data !") return end
 
-local clevel = nextarg()
-if not clevel then color(8) print("Invalid Data !") return end
-clevel = string.match(clevel,"CLvl:(.+)")
-if not clevel then color(8) print("Invalid Data !") return end clevel = tonumber(clevel)
+if compress == "binary" then
+  
+  local revision = nextarg()
+  if not revision then color(8) print("Invalid Data !") return end
+  revision = string.match(revision,"Rev:(%d+)")
+  if not revision then color(8) print("Invalid Data !") return end
+  
+  revision = tonumber(revision)
+  
+  if revision < 1 then color(8) print("Can't load binary saves with revision 0 or lower ("..revision..")") end
+  if revision > 1 then color(8) print("Can't load binary saves with revision 2 or higher") end
+  
+  local data = saveData:sub(datasum+2,-1)
 
-local data = saveData:sub(datasum+2,-1)
+  eapi.filePath = source
+  eapi:decode(data)
+  
+else
+  
+  local clevel = nextarg()
+  if not clevel then color(8) print("Invalid Data !") return end
+  clevel = string.match(clevel,"CLvl:(.+)")
+  if not clevel then color(8) print("Invalid Data !") return end clevel = tonumber(clevel)
 
-if compress ~= "none" then --Decompress
-  local b64data, char = math.b64dec(data)
-  if not b64data then cprint(char) cprint(string.byte(char)) error(tostring(char)) end
-  data = math.decompress(b64data,compress,clevel)
+  local data = saveData:sub(datasum+2,-1)
+
+  if compress ~= "none" then --Decompress
+    local b64data, char = math.b64dec(data)
+    if not b64data then cprint(char) cprint(string.byte(char)) error(tostring(char)) end
+    data = math.decompress(b64data,compress,clevel)
+  end
+
+  eapi.filePath = source
+  eapi:import(data)
+  
 end
-
-eapi.filePath = source
-eapi:import(data)
 
 color(11) print("Loaded successfully")
