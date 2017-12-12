@@ -3,9 +3,23 @@ local source = select(1,...)
 local term = require("terminal")
 local eapi = require("Editors")
 
+local png = false
+
 if source and source ~= "@clip" and source ~= "-?" then
   source = term.resolve(source)
-  if source:sub(-5,-1) ~= ".lk12" then source = source..".lk12" end
+  if source:sub(-4,-1) == ".png" then
+    png = true
+  elseif source:sub(-5,-1) ~= ".lk12" then
+    local lksrc = source..".lk12"
+    if fs.exists(lksrc) then
+      source = lksrc
+    elseif fs.exists(source..".png") then
+      source = source..".png"
+      png = true
+    else
+      source = lksrc
+    end
+  end
 elseif source ~= "@clip" and source ~= "-?" then source = eapi.filePath end
 
 if not source or source == "-?" then
@@ -20,6 +34,12 @@ if source ~= "@clip" and not fs.exists(source) then color(8) print("File doesn't
 if source ~= "@clip" and fs.isDirectory(source) then color(8) print("Couldn't load a directory !") return end
 
 local saveData = source == "@clip" and clipboard() or fs.read(source)
+
+if png then
+  FDD.importDisk(saveData)
+  saveData = memget(RamUtils.FRAM,64*1024)
+end
+
 if not saveData:sub(0,5) == "LK12;" then color(8) print("This is not a valid LK12 file !!") return end
 
 saveData = saveData:gsub("\r\n","\n")
