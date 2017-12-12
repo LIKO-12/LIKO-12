@@ -57,7 +57,7 @@ if string.lower(flag) == "-c" then
   data = eapi:export()
   data = math.b64enc(math.compress(data, ctype, clvl))
   header = header..ctype..";CLvl:"..tostring(clvl)..";"
-elseif string.lower(flag) == "-b" then
+elseif string.lower(flag) == "-b" or png then
   data = eapi:encode()
   header = header.."binary;Rev:1;"
 else
@@ -73,6 +73,14 @@ end
 
 if destination == "@clip" then
   clipboard(savedata)
+elseif png then
+  local savesize = savedata:len()
+  if savesize > 64*1024 then
+    color(8) print("Save too big to fit in a floppy disk ("..(math.floor(savesize/102.4)*10).." kb/ 64 kb) !")
+    return
+  end
+  memset(RamUtils.FRAM, savedata)
+  fs.write(destination, FDD.exportDisk())
 else
   fs.write(destination,savedata)
 end
