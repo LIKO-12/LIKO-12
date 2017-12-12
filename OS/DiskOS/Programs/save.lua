@@ -57,17 +57,14 @@ if string.lower(flag) == "-c" then
   data = eapi:export()
   data = math.b64enc(math.compress(data, ctype, clvl))
   header = header..ctype..";CLvl:"..tostring(clvl)..";"
+  savedata = header.."\n"..data
 elseif string.lower(flag) == "-b" or png then
   data = eapi:encode()
   header = header.."binary;Rev:1;"
+  savedata = header..data
 else
   data = eapi:export()
   header = header.."none;CLvl:0;"
-end
-
-if string.lower(flag) == "-b" then
-  savedata = header..data
-else
   savedata = header.."\n"..data
 end
 
