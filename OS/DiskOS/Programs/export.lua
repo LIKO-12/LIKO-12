@@ -3,20 +3,30 @@ local destination = select(1,...)
 local term = require("terminal")
 local eapi = require("Editors")
 
-if not destination then
+if (not destination) or destination == "-?" then
   printUsage(
     "export <sheet>.png","Exports the spritesheet",
     "export <sheet>.png --opaque","Exports the spritesheet with opaque black",
+    "export @label","Exports the spritesheet to the label image",
     "export <luacode>.lua","Exports the game's code"
   )
   return
 end
 
-destination = term.resolve(destination)
+if destination ~= "@label" then
+  destination = term.resolve(destination)
 
-if fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end
+  if fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end
+end
 
-if destination:sub(-4,-1) == ".png" then --Sprite Map Exporting.
+if destination == "@label" then
+  
+  local sprimg = eapi.leditors[eapi.editors.sprite].SpriteMap.img:data()
+  getLabelImage():paste(sprimg)
+  
+  color(11) print("Exported label image successfully")
+  
+elseif destination:sub(-4,-1) == ".png" then --Sprite Map Exporting.
   if select(2,...) == "-opaque" then
     fs.write(destination,eapi.leditors[eapi.editors.sprite].SpriteMap.img:data():exportOpaque())
     color(11) print("Exported Opaque Spritesheet successfully")
