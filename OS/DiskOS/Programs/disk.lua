@@ -3,7 +3,9 @@ local args = {...} --Get the arguments passed to this program
 if #args < 3 or args[1] == "-?" then
   printUsage(
     "disk write <source> <destination>", "Writes a file to a png image",
-    "disk read <source> <destination>", "Reads a png image to a file"
+    "disk read <source> <destination>", "Reads a png image to a file",
+    "disk raw-write <source> <destination>", "Writes a file to a png image without a header",
+    "disk raw-read <source> <destination>", "Reads a png image to a file"
   )
   return
 end
@@ -45,6 +47,21 @@ elseif mode == "write" then
   memset(FRAM,diskheader) --Set the disk header
   memset(FRAM+diskheader:len(), RamUtils.numToBin(source:len(),4)) --Set the file size
   memset(FRAM+diskheader:len()+4,source) --Set the file data
+  local data = FDD.exportDisk()
+  fs.write(destination,data)
+  color(11) print("Wrote disk successfully")
+  
+elseif mode == "raw-read" then
+  
+  FDD.importDisk(source)
+  local fdata = memget(FRAM, 64*1024)
+  fs.write(destination,fdata)
+  color(11) print("Read disk successfully")
+  
+elseif mode == "raw-write" then
+  
+  memset(FRAM,string.rep(RamUtils.Null,64*1024))
+  memset(FRAM,source)
   local data = FDD.exportDisk()
   fs.write(destination,data)
   color(11) print("Wrote disk successfully")
