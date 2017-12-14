@@ -1,21 +1,44 @@
 Changelog:
 
-V0.6.0_PRE_07 (WIP):
+V0.6.0_PRE_07 (14/12/2017):
 ================================
-- New DiskOS System Structure.
-- New APIS system.
-- New RamUtils API, for binary operations.
-- New Simplified RAM Layout.
-- Optamized RAM peripheral binary handler.
-- Reworked parts of the RAM peripheral.
-- New FDD Peripheral, to encode/decode .png disks while storing 64kb of data inside of them.
-- The disk label image is readable and writable.
-- F6 Captures the disk label.
-- New 'disk' command, to write and read files in .png disks.
-- New image:refresh(), to reload it's content from the source imagedata.
-- Paint program now accepts `@clip` and `@label`
-- SpriteEditor brush size slider by @egordorichev
-- The `appdata` and `folder` programs now shows the path on Android.
+New:
+1. New FDD Peripheral, to encode/decode .png disks while storing 64kb of data inside of them.
+2. The disk label image is readable and writable.
+3. F6 Captures the disk label.
+4. New `disk` command, to write and read files in .png disks.
+5. Paint program now accepts `@clip` and `@label`
+6. The `save` and `load` commands now accept .png saving (not compatible with the `disk` command).
+7. The `import` command now accepts `@label` so you can edit the label in the spriteeditor, or save the label as a .lk12 file.
+8. The `export` command now accepts `@label` so you can set the label to your current spritesheet.
+9. The `factory_reset` command now accepts `-wipe` argument, to wipe the C drive before reflashing DiskOS.
+
+Editors:
+9. SpriteEditor brush size slider by @egordorichev
+10. New code-editor undo and redo support by @jminor
+
+API:
+11. New image:refresh(), to reload it's content from the source imagedata.
+12. New RAM functions: `poke4` and `peek4`.
+
+Demos:
+13. Added `BARNES` & `VV16` palettes by gardrek to the palettes demo.
+14. Added 'likocam' library, a 3D camera library + a new demo (cube.lk12).
+
+Bugfixes:
+15. The `appdata` and `folder` programs now shows the path on Android.
+16. Fix horizental scrolling in the code editor is reversed (issue #118).
+17. Fix `save -?` not showing help.
+
+Operating System:
+18. New DiskOS System Structure.
+19. New APIS system.
+20. New RamUtils API, for binary operations.
+
+Engine:
+21. New Simplified RAM Layout.
+22. Optamized RAM peripheral binary handler.
+23. Reworked parts of the RAM peripheral.
 
 V0.6.0_PRE_06 (14/9/2017):
 ================================
