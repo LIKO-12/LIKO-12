@@ -100,7 +100,7 @@ if not dataver then color(8) print("Invalid Data !") return end
 dataver = tonumber(string.match(dataver,"V(%d+)"))
 if not dataver then color(8) print("Invalid Data !") return end
 if dataver > _DiskVer then color(8) print("Can't load disks newer than V".._DiskVer..", provided: V"..dataver) return end
-if dataver < _DiskVer then color(8) print("Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk") return end
+if dataver < _MinDiskVer then color(8) print("Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk") return end
 
 local sw, sh = screenSize()
 
