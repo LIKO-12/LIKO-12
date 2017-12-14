@@ -29,16 +29,18 @@ Bugfixes:
 15. The `appdata` and `folder` programs now shows the path on Android.
 16. Fix horizental scrolling in the code editor is reversed (issue #118).
 17. Fix `save -?` not showing help.
+18. Fix LIKO-12 crashing on Android when connecting/disconnecting a bluetooth keyboard, thanks for @trabitboy
 
 Operating System:
-18. New DiskOS System Structure.
-19. New APIS system.
-20. New RamUtils API, for binary operations.
+19. New DiskOS System Structure.
+20. New APIS system.
+21. New RamUtils API, for binary operations.
+22. DiskVersion 3: Added binary format support.
 
 Engine:
-21. New Simplified RAM Layout.
-22. Optamized RAM peripheral binary handler.
-23. Reworked parts of the RAM peripheral.
+23. New Simplified RAM Layout.
+24. Optamized RAM peripheral binary handler.
+25. Reworked parts of the RAM peripheral.
 
 V0.6.0_PRE_06 (14/9/2017):
 ================================
