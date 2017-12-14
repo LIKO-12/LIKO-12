@@ -42,9 +42,26 @@ function term.init()
   clear() fs.drive("D")
   SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
   printCursor(0,1,0)
-  color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
+  color(9) print("PRE",5*8+1,3) flip() sleep(0.125)
   cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  B07") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
+  
+  if fs.exists("C:/api.lua") and not fs.exists("C:/skipcwipe.txt") then
+    
+    color(9) print("\nThe system structure has been changed.\n\nit's recommended to wipe the C drive,\n\nwould you like to do that ? (Y/n) ",false)
+    color(7)
+    local answer = input()
+    print("\n")
+    if string.lower(answer) == "y" then
+      term.execute("rm","C:/")
+      reboot()
+    else
+      fs.write("C:/skipcwipe.txt","The system structure has been changed.\nit's recommended to wipe the C drive\nType 'factory_reset -wipe' if you want to do that\nor delete this file to show the prompt again.")
+      color(6)
+      print("Type 'factory_reset -wipe' if you changed your mind later\n")
+    end
+  end
+  
   flip() sleep(0.0625)
   if fs.exists("D:/autoexec.lua") then
     term.executeFile("D:/autoexec.lua")
