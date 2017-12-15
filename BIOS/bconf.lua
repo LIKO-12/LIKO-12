@@ -33,6 +33,9 @@ local GPU, GPUKit = assert(P("GPU","GPU",{
 local LIKO_W, LIKO_H = GPUKit._LIKO_W, GPUKit._LIKO_H
 local ScreenSize = (LIKO_W/2)*LIKO_H
 
+--Create Audio peripheral
+assert(P("Audio"))
+
 --Create gamepad contols
 assert(P("Gamepad","Gamepad",{CPUKit = CPUKit}))
 
