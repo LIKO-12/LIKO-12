@@ -222,19 +222,18 @@ function ce:drawLineNum()
 end
 
 function ce:searchTextAndNavigate(from_line)
- -- cprint("simple test dev mode")
  for i,t in ipairs(buffer)
  do
   if from_line~=nil and i<= from_line then
-   cprint("we pass ")
-   cprint(i)
+   -- cprint("we pass ")
+   -- cprint(i)
   else
    if string.find(t,ce.searchtxt) then
-    cprint("txt found at line")
-    cprint(i)
+    -- cprint("txt found at line")
+    -- cprint(i)
     self.cy=i
-    ce:checkPos()
-    ce:drawBuffer()
+    self:checkPos()
+    self:drawBuffer()
     break
    end
   end
@@ -243,13 +242,13 @@ function ce:searchTextAndNavigate(from_line)
 end
 
 function ce:textinput(t)
-  cprint(t)
-  if ce.incsearch==true then
-   if ce.searchtxt==nil then ce.searchtxt="" end
-   ce.searchtxt=ce.searchtxt..t
-   cprint("new inc search ")
-   cprint(ce.searchtxt)
-   ce:searchTextAndNavigate()
+  -- cprint(t)
+  if self.incsearch then
+   if self.searchtxt==nil then self.searchtxt="" end
+   self.searchtxt=self.searchtxt..t
+   -- cprint("new inc search ")
+   -- cprint(self.searchtxt)
+   self:searchTextAndNavigate()
   else
    self:beginUndoable()
    local delsel
@@ -561,25 +560,25 @@ ce.keymap = {
    cprint(" shift down")
    
    --last line check, we do not go further than buffer
-   if #buffer == ce.cy then
+   if #buffer == self.cy then
     cprint("sel out of buffer, returning")
     return;
    end
    
-   ce.sxs=0
-   ce.sxe=0
-   if ce.sys==nil then
-	cprint("ce.sys nil")
-    ce.sys=ce.cy
-    ce.sye=ce.sys+1
+   self.sxs=0
+   self.sxe=0
+   if self.sys==nil then
+	cprint("self.sys nil")
+    self.sys=self.cy
+    self.sye=self.sys+1
    else 
-	cprint("ce.sys preexists")
-	cprint(ce.sys)
-    ce.sye=ce.sye+1
+	cprint("self.sys preexists")
+	cprint(self.sys)
+    self.sye=self.sye+1
    end
-   cprint(ce.sye)
+   cprint(self.sye)
    cprint("sel updated")
-   ce.cy=ce.cy+1
+   self.cy=self.cy+1
    self:checkPos()
    self:drawBuffer()
   end,
@@ -626,7 +625,6 @@ ce.keymap = {
   ["pageup"] = function(self)
     self.vy = self.vy-self.th
 	self.cy = self.cy-self.th
-    -- if self.vy > #buffer then self.vy = #buffer end
     if self.vy < 1 then self.vy = 1 end
     if self.cy < 1 then self.cy = 1 end
     self:resetCursorBlink()
@@ -639,7 +637,6 @@ ce.keymap = {
 	
     if self.vy > #buffer then self.vy = #buffer end
     if self.cy > #buffer then self.cy = #buffer end
-    -- if self.vy < 1 then self.vy = 1 end
     self:resetCursorBlink()
     self:drawBuffer()
   end,
@@ -648,20 +645,20 @@ ce.keymap = {
     self:textinput(" ")
   end,
   ["sc_ctrl-i"] = function(self)
-   if ce.incsearch==nil or ce.incsearch==false then 
-    cprint("toggling on incremental search")
-    ce.incsearch=true
+   if self.incsearch==nil or self.incsearch==false then 
+    -- cprint("toggling on incremental search")
+    self.incsearch=true
    else    
-    cprint("toggling off incremental search")
-    ce.incsearch=false
-	ce.searchtxt=""
+    -- cprint("toggling off incremental search")
+    self.incsearch=false
+	self.searchtxt=""
    end
   end,
   ["sc_ctrl-k"] = function(self)
-   if ce.incsearch==true then 
-    cprint("searching next occurence of")
-	cprint(ce.searchtxt)
-	ce:searchTextAndNavigate(self.cy)
+   if self.incsearch==true then 
+    -- cprint("searching next occurence of")
+	-- cprint(self.searchtxt)
+	self:searchTextAndNavigate(self.cy)
    else    
     cprint("not in incremental search")
    end
