@@ -87,7 +87,6 @@ return function(parent)
       decompress = love.math.decompress,
       isConvex = love.math.isConvex,
       triangulate = love.math.triangulate,
-      noise = love.math.noise,
       randomNormal = love.math.randomNormal
     },
     coroutine={
