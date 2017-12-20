@@ -1,6 +1,5 @@
 local eapi = select(1,...) --The editor library is provided as an argument
 
--- selecting last line of file crashes
 
 --=Contributing Guide=--
 --[[
@@ -33,6 +32,7 @@ Be sure to read the contributing guide in Editors/init.lua
 - Rami Sabbagh (RamiLego4Game)
 - Fernando Carmona Varo (Ferk)
 - Lucas Henrique (lhs_azevedo)
+- trabitboy 
 ]]
 
 local ce = {} --Code editor
@@ -221,16 +221,21 @@ function ce:drawLineNum()
   color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-2)
 end
 
+function ce:drawIncSearchState()
+  eapi:drawBottomBar()
+  local linestr = "ISRCH: "
+  if self.searchtxt then
+   linestr=linestr..self.searchtxt
+  end
+  color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-2)
+end
+
+
 function ce:searchTextAndNavigate(from_line)
  for i,t in ipairs(buffer)
  do
-  if from_line~=nil and i<= from_line then
-   -- cprint("we pass ")
-   -- cprint(i)
-  else
+  if from_line~=nil and i>= from_line then
    if string.find(t,ce.searchtxt) then
-    -- cprint("txt found at line")
-    -- cprint(i)
     self.cy=i
     self:checkPos()
     self:drawBuffer()
@@ -242,13 +247,11 @@ function ce:searchTextAndNavigate(from_line)
 end
 
 function ce:textinput(t)
-  -- cprint(t)
   if self.incsearch then
    if self.searchtxt==nil then self.searchtxt="" end
    self.searchtxt=self.searchtxt..t
-   -- cprint("new inc search ")
-   -- cprint(self.searchtxt)
    self:searchTextAndNavigate()
+   self:drawIncSearchState()
   else
    self:beginUndoable()
    local delsel
@@ -555,29 +558,38 @@ ce.keymap = {
     if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
-
+  ["shift-up"] = function(self)
+	--in case we want to reduce shift selection
+	if self.cy==1 then
+	 --we stay in buffer
+	 return
+	end
+	if self.sys then
+	 --there is an existing selection to update
+      if self.sys<(self.cy-1) then
+	   self.cy=self.cy-1
+	   self.sye=self.cy
+       self:checkPos()
+       self:drawBuffer()
+	  end
+	 
+	end
+  end,
   ["shift-down"] = function(self)
-   cprint(" shift down")
    
    --last line check, we do not go further than buffer
    if #buffer == self.cy then
-    cprint("sel out of buffer, returning")
     return;
    end
    
    self.sxs=0
    self.sxe=0
    if self.sys==nil then
-	cprint("self.sys nil")
     self.sys=self.cy
     self.sye=self.sys+1
    else 
-	cprint("self.sys preexists")
-	cprint(self.sys)
     self.sye=self.sye+1
    end
-   cprint(self.sye)
-   cprint("sel updated")
    self.cy=self.cy+1
    self:checkPos()
    self:drawBuffer()
@@ -646,21 +658,17 @@ ce.keymap = {
   end,
   ["sc_ctrl-i"] = function(self)
    if self.incsearch==nil or self.incsearch==false then 
-    -- cprint("toggling on incremental search")
     self.incsearch=true
+	self:drawIncSearchState()
    else    
-    -- cprint("toggling off incremental search")
     self.incsearch=false
 	self.searchtxt=""
+    self:drawLineNum()
    end
   end,
   ["sc_ctrl-k"] = function(self)
    if self.incsearch==true then 
-    -- cprint("searching next occurence of")
-	-- cprint(self.searchtxt)
 	self:searchTextAndNavigate(self.cy)
-   else    
-    cprint("not in incremental search")
    end
   end,
   ["sc_ctrl-x"] = ce.cutText,
