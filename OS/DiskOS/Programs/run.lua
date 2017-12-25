@@ -278,10 +278,6 @@ setfenv(diskchunk,glob)
 --Create the coroutine
 co = coroutine.create(diskchunk)
 
---Too Long Without Yielding
-local checkclock = true
-local eventclock = os.clock()
-
 if isMobile() then TC.setInput(true) end
 textinput(not isMobile())
 
@@ -296,10 +292,6 @@ local lastArgs = {...}
 while true do
   if coroutine.status(co) == "dead" then break end
   
-  if os.clock() > eventclock + 3.5 then
-    printErr("Too Long Without Pulling Event / Flipping") break
-  end
-  
   local args = {coroutine.resume(co,unpack(lastArgs))}
   if not args[1] then
     local err = tostring(args[2])
@@ -310,7 +302,6 @@ while true do
     if args[2] == "RUN:exit" then break end
     lastArgs = {coroutine.yield(select(2,unpack(args)))}
     if args[2] == "CPU:pullEvent" or args[2] == "CPU:rawPullEvent" or args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
-      eventclock = os.clock()
       if args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
         local name, key = rawPullEvent()
         if name == "keypressed" and key == "escape" then
