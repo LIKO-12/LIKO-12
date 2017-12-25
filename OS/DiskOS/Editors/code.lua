@@ -1,5 +1,6 @@
 local eapi = select(1,...) --The editor library is provided as an argument
 
+
 --=Contributing Guide=--
 --[[
 Try your best to keep your work light, documented and tidy, since this will be the base of other places where text editors exist.
@@ -31,6 +32,7 @@ Be sure to read the contributing guide in Editors/init.lua
 - Rami Sabbagh (RamiLego4Game)
 - Fernando Carmona Varo (Ferk)
 - Lucas Henrique (lhs_azevedo)
+- trabitboy 
 ]]
 
 local ce = {} --Code editor
@@ -219,16 +221,48 @@ function ce:drawLineNum()
   color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-2)
 end
 
+function ce:drawIncSearchState()
+  eapi:drawBottomBar()
+  local linestr = "ISRCH: "
+  if self.searchtxt then
+   linestr=linestr..self.searchtxt
+  end
+  color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-2)
+end
+
+
+function ce:searchTextAndNavigate(from_line)
+ for i,t in ipairs(buffer)
+ do
+  if from_line~=nil and i>= from_line then
+   if string.find(t,ce.searchtxt) then
+    self.cy=i
+    self:checkPos()
+    self:drawBuffer()
+    break
+   end
+  end
+ end
+
+end
+
 function ce:textinput(t)
-  self:beginUndoable()
-  local delsel
-  if self.sxs then self:deleteSelection(); delsel = true end
-  buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
-  self.cx = self.cx + t:len()
-  self:resetCursorBlink()
-  if self:checkPos() or delsel then self:drawBuffer() else self:drawLine() end
-  self:drawLineNum()
-  self:endUndoable()
+  if self.incsearch then
+   if self.searchtxt==nil then self.searchtxt="" end
+   self.searchtxt=self.searchtxt..t
+   self:searchTextAndNavigate()
+   self:drawIncSearchState()
+  else
+   self:beginUndoable()
+   local delsel
+   if self.sxs then self:deleteSelection(); delsel = true end
+   buffer[self.cy] = buffer[self.cy]:sub(0,self.cx-1)..t..buffer[self.cy]:sub(self.cx,-1)
+   self.cx = self.cx + t:len()
+   self:resetCursorBlink()
+   if self:checkPos() or delsel then self:drawBuffer() else self:drawLine() end
+   self:drawLineNum()
+   self:endUndoable()
+  end
 end
 
 function ce:gotoLineStart()
@@ -524,7 +558,42 @@ ce.keymap = {
     if self:checkPos() or flag then self:drawBuffer() else self:drawLine() end
     self:drawLineNum()
   end,
-
+  ["shift-up"] = function(self)
+	--in case we want to reduce shift selection
+	if self.cy==1 then
+	 --we stay in buffer
+	 return
+	end
+	if self.sys then
+	 --there is an existing selection to update
+      if self.sys<(self.cy-1) then
+	   self.cy=self.cy-1
+	   self.sye=self.cy
+       self:checkPos()
+       self:drawBuffer()
+	  end
+	 
+	end
+  end,
+  ["shift-down"] = function(self)
+   
+   --last line check, we do not go further than buffer
+   if #buffer == self.cy then
+    return;
+   end
+   
+   self.sxs=0
+   self.sxe=0
+   if self.sys==nil then
+    self.sys=self.cy
+    self.sye=self.sys+1
+   else 
+    self.sye=self.sye+1
+   end
+   self.cy=self.cy+1
+   self:checkPos()
+   self:drawBuffer()
+  end,
   ["up"] = function(self)
     self:deselect()
     self.cy = self.cy -1
@@ -533,7 +602,6 @@ ce.keymap = {
     self:drawBuffer()
     self:drawLineNum()
   end,
-
   ["down"] = function(self)
     self:deselect()
     self.cy = self.cy +1
@@ -568,16 +636,19 @@ ce.keymap = {
 
   ["pageup"] = function(self)
     self.vy = self.vy-self.th
-    if self.vy > #buffer then self.vy = #buffer end
+	self.cy = self.cy-self.th
     if self.vy < 1 then self.vy = 1 end
+    if self.cy < 1 then self.cy = 1 end
     self:resetCursorBlink()
     self:drawBuffer()
   end,
 
   ["pagedown"] = function(self)
     self.vy = self.vy+self.th
+    self.cy = self.cy+self.th
+	
     if self.vy > #buffer then self.vy = #buffer end
-    if self.vy < 1 then self.vy = 1 end
+    if self.cy > #buffer then self.cy = #buffer end
     self:resetCursorBlink()
     self:drawBuffer()
   end,
@@ -585,7 +656,21 @@ ce.keymap = {
   ["tab"] = function(self)
     self:textinput(" ")
   end,
-  
+  ["sc_ctrl-i"] = function(self)
+   if self.incsearch==nil or self.incsearch==false then 
+    self.incsearch=true
+	self:drawIncSearchState()
+   else    
+    self.incsearch=false
+	self.searchtxt=""
+    self:drawLineNum()
+   end
+  end,
+  ["sc_ctrl-k"] = function(self)
+   if self.incsearch==true then 
+	self:searchTextAndNavigate(self.cy)
+   end
+  end,
   ["sc_ctrl-x"] = ce.cutText,
   
   ["sc_ctrl-c"] = ce.copyText,
