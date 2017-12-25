@@ -139,10 +139,10 @@ return function(parent)
     return chunk
   end
   GLOB.coroutine.sethook = function(co,...)
-    if type(co) ~= "thread" then return error("bad argument #1 (thread expected, got "..type(co)..")") end
+    --[[if type(co) ~= "thread" then return error("bad argument #1 (thread expected, got "..type(co)..")") end
     local ok, err = pcall(debug.sethook,co,...)
     if not ok then return error(err) end
-    return err
+    return err]]
   end
   GLOB.coroutine.running = function()
     local curco = coroutine.running()
