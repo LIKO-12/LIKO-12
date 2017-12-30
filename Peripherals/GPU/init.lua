@@ -94,6 +94,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local _ShouldDraw = false --This flag means that the gpu has to update the screen for the user.
   local _AlwaysDraw = false --This flag means that the gpu has to always update the screen for the user.
   local _DevKitDraw = false --This flag means that the gpu has to always update the screen for the user, set by other peripherals
+  local _AlwaysDrawTimer = 0 --This timer is only used on mobile devices to keep drawing the screen when the user changes the orientation.
   
   --Hook the resize function--
   events:register("love:resize",function(w,h) --Do some calculations
@@ -106,7 +107,9 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     if _PixelPerfect then _LIKOScale = math.floor(_LIKOScale) end
     _LIKO_X, _LIKO_Y = (_HOST_W-_LIKO_W*_LIKOScale)/2, (_HOST_H-_LIKO_H*_LIKOScale)/2
-    if love.system.getOS() == "Android" or config._Android then _LIKO_Y = 0 end
+    if _Mobile or config._Mobile then
+      _LIKO_Y, _AlwaysDrawTimer = 0, 1
+    end
     _ShouldDraw = true
   end)
   
@@ -1378,7 +1381,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Host to love.run when graphics is active--
   events:register("love:graphics",function()
-    if _ShouldDraw or _AlwaysDraw or _DevKitDraw then --When it's required to draw (when changes has been made to the canvas)
+    if _ShouldDraw or _AlwaysDraw or _AlwaysDrawTimer > 0 or _DevKitDraw then --When it's required to draw (when changes has been made to the canvas)
       UnbindVRAM(true) --Make sure that the VRAM changes are applied.
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
       love.graphics.push()
@@ -1441,6 +1444,11 @@ return function(config) --A function that creates a new GPU peripheral.
   end)
   
   events:register("love:update",function(dt)
+    
+    if _AlwaysDrawTimer > 0 then
+      _AlwaysDrawTimer = _AlwaysDrawTimer - dt
+    end
+    
     if not _GIFRec then return end
     _GIFTimer = _GIFTimer + dt
     if _GIFTimer >= _GIFFrameTime then
