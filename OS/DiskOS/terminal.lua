@@ -48,7 +48,7 @@ function term.init()
   
   if fs.exists("C:/api.lua") and not fs.exists("C:/skipcwipe.txt") then
     
-    color(9) print("\nThe system structure has been changed.\n\nit's recommended to wipe the C drive,\n\nwould you like to do that ? (Y/n) ",false)
+    color(9) print("\nThe system structure has been changed.\n\nIt's recommended to wipe the C drive;\n\nwould you like to do that ? (Y/n) ",false)
     color(7)
     local answer = input()
     print("\n")
@@ -56,9 +56,9 @@ function term.init()
       term.execute("rm","C:/")
       reboot()
     else
-      fs.write("C:/skipcwipe.txt","The system structure has been changed.\nit's recommended to wipe the C drive\nType 'factory_reset -wipe' if you want to do that\nor delete this file to show the prompt again.")
+      fs.write("C:/skipcwipe.txt","The system structure has been changed.\nIt's recommended to wipe the C drive.\nType 'factory_reset -wipe' if you want to do that\nor delete this file to show the prompt again.")
       color(6)
-      print("Type 'factory_reset -wipe' if you changed your mind later\n")
+      print("Type 'factory_reset -wipe' if you change your mind later.\n")
     end
   end
   
@@ -88,7 +88,7 @@ end
 
 function term.setdrive(d)
   if type(d) ~= "string" then return error("DriveLetter must be a string, provided: "..type(d)) end
-  if not fs.drives()[d] then return error("Drive '"..d.."' doesn't exists !") end
+  if not fs.drives()[d] then return error("Drive '"..d.."' doesn't exist !") end
   curdrive = d
   curpath = curdrive..":/"..curdir
 end
@@ -96,7 +96,7 @@ end
 function term.setdirectory(d)
   if type(d) ~= "string" then return error("Directory must be a string, provided: "..type(d)) end
   local p = term.resolve(d)
-  if not fs.exists(p) then return error("Directory doesn't exists !") end
+  if not fs.exists(p) then return error("Directory doesn't exist !") end
   if not fs.isDirectory(p) then return error("It must be a directory, not a file") end
   term.setpath(p)
 end
@@ -104,7 +104,7 @@ end
 function term.setpath(p)
   if type(p) ~= "string" then return error("Path must be a string, provided: "..type(p)) end
   p = term.resolve(p)
-  if not fs.exists(p) then return error("Directory doesn't exists !") end
+  if not fs.exists(p) then return error("Directory doesn't exist !") end
   if not fs.isDirectory(p) then return error("It must be a directory, not a file") end
   local drive, path
   if p:sub(-2,-1) == ":/" then
