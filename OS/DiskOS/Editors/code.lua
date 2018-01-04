@@ -231,12 +231,49 @@ function ce:drawIncSearchState()
 end
 
 
+function ce:searchNextFunction()
+ for i,t in ipairs(buffer)
+ do
+  if  i> self.cy then
+   if string.find(t,"function ") then
+    self.cy=i
+    self:checkPos()
+    self:drawBuffer()
+    break
+   end
+  end
+ end
+end
+
+function ce:searchPreviousFunction()
+ highermatch=-1
+ for i,t in ipairs(buffer)
+ do
+  if  i< self.cy then
+   if string.find(t,"function ") then
+    highermatch=i
+   end
+  end
+ end
+
+ if highermatch>-1 then
+  self.cy=highermatch
+  self.vy=highermatch
+  self:checkPos()
+  self:drawBuffer()
+ end
+ 
+end
+
+
+
 function ce:searchTextAndNavigate(from_line)
  for i,t in ipairs(buffer)
  do
-  if from_line~=nil and i>= from_line then
+  if from_line~=nil and i> from_line then
    if string.find(t,ce.searchtxt) then
     self.cy=i
+	self.vy=i
     self:checkPos()
     self:drawBuffer()
     break
@@ -250,7 +287,9 @@ function ce:textinput(t)
   if self.incsearch then
    if self.searchtxt==nil then self.searchtxt="" end
    self.searchtxt=self.searchtxt..t
-   self:searchTextAndNavigate()
+   -- note on -1 : that way if search is on line , still works
+   -- and also ok for ctrl k
+   self:searchTextAndNavigate(self.cy-1)
    self:drawIncSearchState()
   else
    self:beginUndoable()
@@ -574,6 +613,14 @@ ce.keymap = {
 	  end
 	 
 	end
+  end,
+  ["alt-up"] = function(self)
+   cprint("alt down")
+   self:searchPreviousFunction()
+  end,
+  ["alt-down"] = function(self)
+   cprint("alt down")
+   self:searchNextFunction()
   end,
   ["shift-down"] = function(self)
    
