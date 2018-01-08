@@ -51,7 +51,7 @@ function slider:initialize(gui,x,y,length,vertical,min,max,w,h)
     self.ex, self.ey = self.x, self.y+self.length
     self.sy = self.y - self.h/2
   else
-    self.ex, self.ey = self.sx+self.length, self.sy
+    self.ex, self.ey = self.x+self.length, self.y
     self.x = self.sx - self.w/2
   end
 end
