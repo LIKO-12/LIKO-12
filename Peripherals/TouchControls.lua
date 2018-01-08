@@ -220,7 +220,7 @@ return function(config)
   events:register("love:touchpressed",function(id,x,y,dx,dy,p)
     if touchids[1] then return end
     local dist = calcDistance(x,y,dpad_cx,dpad_cy)
-    if dist > dpad_radius/3 and dist < dpad_radius + dpad_extra then
+    if dist < dpad_radius + dpad_extra then
       touchangle = calcAngle(y - dpad_cy, x - dpad_cx)
       touchids[1] = id
     end
@@ -228,12 +228,8 @@ return function(config)
   
   events:register("love:touchmoved",function(id,x,y,dx,dy,p)
     if (not touchids[1]) or touchids[1] ~= id then return end
-    local dist = calcDistance(x,y,dpad_cx,dpad_cy)
-    if dist > dpad_radius/3 then
-      touchangle = calcAngle(y - dpad_cy, x - dpad_cx)
-    else
-      touchangle = false
-    end
+    
+    touchangle = calcAngle(y - dpad_cy, x - dpad_cx)
     updateDpad()
   end)
   
@@ -253,7 +249,6 @@ return function(config)
     love.graphics.setLineWidth(2)
     love.graphics.setColor(255,255,255,bg_alpha)
     love.graphics.circle("fill",dpad_cx, dpad_cy, dpad_radius)
-    love.graphics.circle("fill",dpad_cx, dpad_cy, dpad_radius/3)
     
     if touchangle then
       if devkit.buttons[1] then
