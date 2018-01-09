@@ -3,6 +3,9 @@ ___luacode___
 --Snake Game V1.1 by RamiLego4Game--
 --Map Size = 24x16
 
+--Replace the dark gray with dark green
+colorPalette(5, 0, 108, 61)
+
 local sw, sh = screenSize()
 
 --Creating the background image--
@@ -60,9 +63,6 @@ end
 --Callbacks--
 
 function _init()
- --Define a darker green color
- colorPalette(5, 0, 105, 61)
- 
  --Cut TileMap
  TMap = TileMap:cut(0,0,24,16)
  TMap.sheet = SpriteMap
