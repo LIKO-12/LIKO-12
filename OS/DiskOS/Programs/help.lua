@@ -22,11 +22,11 @@ if type(giveApi) == "boolean" then --Requesting HELP api
   local api = {}
 
   function api.setHelpPATH(p)
-	helpPath = p
+    helpPath = p
   end
 
   function api.getHelpPath()
-	return helpPath
+    return helpPath
   end
 
   return api
