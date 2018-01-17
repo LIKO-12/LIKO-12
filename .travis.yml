@@ -9,7 +9,7 @@ install:
   - echo ----==== Downloading build templates ====----
   - pwd
   - ls
-  - git clone https://github.com/RamiLego4Game/LIKO-12-BuildUtils.git ../RamiLego4Game/LIKO-12-BuildUtils
+  - git clone https://github.com/RamiLego4Game/LIKO-12-BuildUtils.git ../BuildUtils
 
 script:
   - echo ----==== Removing unnecessary files... ====----
