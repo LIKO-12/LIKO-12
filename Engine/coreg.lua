@@ -1,5 +1,6 @@
 --Corouting Registry: this file is responsible for providing LIKO12 it's api--
-local coreg = {reg={},stack={}}
+local coreg = {reg={}}
+local coreg = {reg={}}
 
 local sandbox = require("Engine.sandbox")
 
@@ -15,23 +16,6 @@ function coreg:setCoroutine(co,glob)
   return self
 end
 
---Push the current coroutine to the coroutine stack,
--- and set the current coroutine to nil
-function coreg:pushCoroutine()
-  table.insert(self.stack,self.co)
-  self.co = nil
-end
-
---Pop a coroutine from the coroutine stack.
-function coreg:popCoroutine()
-  if #self.stack < 1 then return error("No coroutines in the stack") end
-  self.co = self.stack[1]
-  for i=2,#self.stack do
-    self.stack[i-1] = self.stack[i]
-  end
-  self.stack[#self.stack] = nil
-end
-
 --Call a function with the coroutine system plugged (A sub-coroutine)
 function coreg:subCoroutine(func)
   self:pushCoroutine()
@@ -42,19 +26,27 @@ end
 function coreg:resumeCoroutine(...)
   local lastargs = {...}
   while true do
-    if not self.co or coroutine.status(self.co) == "dead" then return end
+    if not self.co or coroutine.status(self.co) == "dead" then
+      return error(self.co and "The coroutine is dead" or "No coroutine to execute !")
+    end
+    
     local args = {coroutine.resume(self.co,unpack(lastargs))}
+    
     if not args[1] then error(args[2]) end --Should have a better error handelling
-    if coroutine.status(self.co) == "dead" and #self.stack >= 1 then --Hook system
-      lastargs = {select(2,unpack(args))}
-      self:popCoroutine()
-    else
-      if not args[2] then self.os = nil; return end
+    
+    if coroutine.status(self.co) == "dead" then --The coroutine finished, we hope that a new one has been set.
+      
+      --Do nothing
+      
+    elseif args[2] then --There's a command to process
       args = {self:trigger(select(2,unpack(args)))}
-      if not args[1] then lastargs = args
-      elseif not(type(args[1]) == "number" and args[1] == 2) then
-        lastargs = args
-      else break end
+      if not args[1] then --That's a failure
+        lastargs = args --Let's pass it to the coroutine.
+      elseif not(type(args[1]) == "number" and args[1] == 2) then --Continue with the loop
+        lastargs = args --Let's pass it to the coroutine.
+      else --The registered function will call resumeCoroutine() later some how, exit the loop now.
+        return
+      end
     end
   end
 end
