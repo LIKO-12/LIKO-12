@@ -22,7 +22,6 @@ script:
   - echo ----==== Packing .love file ====----
   - 7z A -r -y -tzip -bd "../LIKO-12.love" .
   - cd ..
-  - mkdir Builds
   - echo ----==== Building Windows 32bit ====----
   - cat Windows_x86/love.exe LIKO-12.love > Windows_x86/LIKO-12.exe
   - rm -v -f Windows_x86/love.exe
