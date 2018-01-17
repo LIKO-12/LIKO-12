@@ -20,7 +20,7 @@ script:
   - rm -v -f -r .git Docs DLL
   - mv -f icon.bk icon.png
   - echo ----==== Packing .love file ====----
-  - 7z A -r -y -tzip -bd "../BuildUtils/LIKO-12.love" .
+  - 7z A -r -y -tzip -bd "../LIKO-12.love" .
   - cd ..
   - mkdir Builds
   - echo ----==== Building Windows 32bit ====----
