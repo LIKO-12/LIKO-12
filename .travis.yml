@@ -15,10 +15,8 @@ script:
   - cp -v -f -r ./* ../BuildUtils/LIKO-12/
   - cd ../BuildUtils/LIKO-12/
   - echo ----==== Removing unnecessary files... ====----
-  - mv -f icon.png icon.bk
-  - rm -v -f *.xcf *.png *.gif *.ico *.md mkdocs.yml .travis.yml .gitattributes .gitignore
-  - rm -v -f -r .git Docs DLL
-  - mv -f icon.bk icon.png
+  - rm -v -f README.md mkdocs.yml .travis.yml .gitattributes .gitignore
+  - rm -v -f -r .git Docs DLL Extra
   - echo ----==== Packing .love file ====----
   - 7z A -r -y -tzip -bd "../LIKO-12.love" .
   - cd ..
