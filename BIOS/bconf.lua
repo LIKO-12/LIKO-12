@@ -1,11 +1,11 @@
---The default configuation
+--The bios configuration file.
 --per ,err = P(peripheral,mountedName,configTable)
 
 --Create a new cpu mounted as "CPU"
-local CPU, CPUKit = assert(P("CPU"))
+local CPU, yCPU, CPUKit = PA("CPU")
 
 --Create a new gpu mounted as "GPU"
-local GPU, GPUKit = assert(P("GPU","GPU",{
+local GPU, yGPU, GPUKit = PA("GPU","GPU",{
   _ColorSet = { --The P8 Pallete
     {0,0,0,255}, --Black 1
     {28,43,83,255}, --Dark Blue 2
@@ -26,28 +26,28 @@ local GPU, GPUKit = assert(P("GPU","GPU",{
   },
   _ClearOnRender = true, --Speeds up rendering, but may cause glitches on some devices !
   CPUKit = CPUKit
-}))
+})
 
 local LIKO_W, LIKO_H = GPUKit._LIKO_W, GPUKit._LIKO_H
 local ScreenSize = (LIKO_W/2)*LIKO_H
 
 --Create Audio peripheral
-assert(P("Audio"))
+PA("Audio")
 
 --Create gamepad contols
-assert(P("Gamepad","Gamepad",{CPUKit = CPUKit}))
+PA("Gamepad","Gamepad",{CPUKit = CPUKit})
 
 --Create Touch Controls
-assert(P("TouchControls","TC",{CPUKit = CPUKit, GPUKit = GPUKit}))
+PA("TouchControls","TC",{CPUKit = CPUKit, GPUKit = GPUKit})
 
 --Create a new keyboard api mounted as "KB"
-assert(P("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "Android"),_EXKB = false}))
+PA("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "Android"),_EXKB = false})
 
 --Create a new virtual hdd system mounted as "HDD"
-assert(P("HDD","HDD",{
+PA("HDD","HDD",{
   C = 1024*1024 * 25, --Measured in bytes, equals 25 megabytes
   D = 1024*1024 * 25 --Measured in bytes, equals 25 megabytes
-}))
+})
 
 local KB = function(v) return v*1024 end
 
@@ -59,13 +59,13 @@ local RAMConfig = {
   }
 }
 
-local RAM, RAMKit = assert(P("RAM","RAM",RAMConfig))
+local RAM, yRAM, RAMKit = PA("RAM","RAM",RAMConfig)
 
-assert(P("FDD","FDD",{
+PA("FDD","FDD",{
   GPUKit = GPUKit,
   RAM = RAM,
   DiskSize = KB(64),
   FRAMAddress = 0x6000
-}))
+})
 
-local _, WEB, WEBKit = P("WEB","WEB",{CPUKit = CPUKit})
+local _, WEB, yWEB, WEBKit = P("WEB","WEB",{CPUKit = CPUKit})
