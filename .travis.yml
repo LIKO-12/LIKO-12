@@ -7,23 +7,22 @@ install:
   - sudo apt-get -qq update
   - sudo apt-get install -y p7zip-full
   - echo ----==== Downloading build templates ====----
-  - pwd
-  - ls
   - git clone https://github.com/RamiLego4Game/LIKO-12-BuildUtils.git ../BuildUtils
 
 script:
+  - echo ----==== Copying files into other directory ====----
+  - mkdir ../BuildUtils/LIKO-12
+  - cp -v -f -r ./* ../BuildUtils/LIKO-12/
+  - cd ../BuildUtils/LIKO-12/
   - echo ----==== Removing unnecessary files... ====----
   - mv -f icon.png icon.bk
   - rm -v -f *.xcf *.png *.gif *.ico *.md mkdocs.yml .travis.yml .gitattributes .gitignore
   - rm -v -f -r .git Docs DLL
   - mv -f icon.bk icon.png
-  - ls
   - echo ----==== Packing .love file ====----
   - 7z A -r -y -tzip -bd "../BuildUtils/LIKO-12.love" .
-  - cd ../BuildUtils/
-  - pwd
+  - cd ..
   - mkdir Builds
-  - ls
   - echo ----==== Building Windows 32bit ====----
   - cat Windows_x86/love.exe LIKO-12.love > Windows_x86/LIKO-12.exe
   - rm -v -f Windows_x86/love.exe
