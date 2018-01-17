@@ -25,7 +25,7 @@ local MPer = {} --Mounted and initialized peripherals.
 local BPer = {} --Peripherals ready for use IN the BIOS only.
 local Devkits = {} --Peripherals Devkits.
 local InDirect = {} --Peripherals indirect list.
-local DirectAPI = false --An important feature to speed up Peripherals functions calling, calls them directly instead of yeilding the coroutine.
+local DirectAPI = {} --The api functions that has to be called directly without a coroutine yield.
 
 --A function to load the peripherals.
 local function indexPeripherals(path)
@@ -59,7 +59,7 @@ local function P(per,m,conf)
   
   local m = m or per
   if type(m) ~= "string" then return false, "Mounting name should be a string, provided "..type(m) end
-  if MPer[m] then return MPer[m] end--return false, "Mounting name '"..m.."' is already taken" end
+  if MPer[m] then return false, "Mounting name '"..m.."' is already taken" end
   
   local conf = conf or {}
   if type(conf) ~= "table" then return false, "Configuration table should be a table, provided "..type(conf) end
@@ -79,16 +79,16 @@ local function P(per,m,conf)
   else
     peripheral = "Init Err: "..tostring(peripheral)
   end
-  return success, peripheral, devkit, nocache
+  return success, peripheral, devkit, indirect
 end
 
 if not love.filesystem.exists("/bconf.lua") or DevMode or true then
   love.filesystem.write("/bconf.lua",love.filesystem.read("/BIOS/bconf.lua"))
 end
 
-local passert = function(ok, per, devkit) --Peripheral assert
+local passert = function(ok, per, devkit, indirect) --Peripheral assert
   if not ok then return error(per) end
-  return per, devkit
+  return per, devkit, indirect
 end
 
 local confSandbox = {P = P,error=error,assert=passert,_OS=love.system.getOS()}
@@ -107,25 +107,21 @@ if not success then error(run_err)
   default_bchunk()
 end --Load the default BConfig
 
-DirectAPI = confSandbox._DirectAPI
-
-if DirectAPI then --Build the cache
-  DirectAPI = {} --Convert it to a table.
-  for per, funcs in pairs(MPer) do
-    DirectAPI[per] = {}
-    for fname, func in pairs(funcs) do
-      if not InDirect[per][fname] then --Cache it
-        DirectAPI[per][fname] = function(...)
-          local result = {func(...)}
-          if result[1] then --It ran successfully
-            local nres = {}
-            for k,v in ipairs(result) do
-              nres[k-1] = v
-            end
-            return unpack(nres)
-          else --Error
-            return error(result[2] or "Unknown")
+DirectAPI = {} --Convert it to a table.
+for per, funcs in pairs(MPer) do
+  DirectAPI[per] = {}
+  for fname, func in pairs(funcs) do
+    if not InDirect[per][fname] then --Cache it
+      DirectAPI[per][fname] = function(...)
+        local result = {func(...)}
+        if result[1] then --It ran successfully
+          local nres = {}
+          for k,v in ipairs(result) do
+            nres[k-1] = v
           end
+          return unpack(nres)
+        else --Error
+          return error(result[2] or "Unknown")
         end
       end
     end
