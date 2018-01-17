@@ -1,8 +1,6 @@
 --The default configuation
 --per ,err = P(peripheral,mountedName,configTable)
 
-_DirectAPI = true --An important feature to speed up Peripherals functions calling, calls them directly instead of yeilding the coroutine.
-
 --Create a new cpu mounted as "CPU"
 local CPU, CPUKit = assert(P("CPU"))
 
