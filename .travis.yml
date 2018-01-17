@@ -7,7 +7,7 @@ install:
   - sudo apt-get -qq update
   - sudo apt-get install -y p7zip-full
   - echo ----==== Downloading build templates ====----
-  - git clone https://github.com/RamiLego4Game/LIKO-12-BuildUtils.git RamiLego4Game/LIKO-12-BuildUtils
+  - git clone https://github.com/RamiLego4Game/LIKO-12-BuildUtils.git ../RamiLego4Game/LIKO-12-BuildUtils
 
 script:
   - echo ----==== Removing unnecessary files... ====----
@@ -30,7 +30,7 @@ script:
   - cp -v -f LIKO-12.love OS_X/LIKO-12.app/Contents/Resources/LIKO-12.love
   - 7z A -r -y -tzip -bd "./Builds/LIKO-12_Nightly_Mac.zip" ./OS_X/*
   - echo ----==== Copying Universal... ====----
-  - cp -v -f LIKO-12.love Builds/LIKO-12_NIghtly_Universal.love
+  - cp -v -f LIKO-12.love Builds/LIKO-12_Nightly_Universal.love
 
 deploy:
   provider: pages
