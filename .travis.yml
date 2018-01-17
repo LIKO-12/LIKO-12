@@ -42,6 +42,5 @@ deploy:
   github-token: $GITHUB_TOKEN
   keep-history: true
   on:
-    branch: gh-pages
+    branch: master
   local-dir: Builds/
-  verbose: true
