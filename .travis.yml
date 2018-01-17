@@ -1,6 +1,6 @@
 language: cpp
 
 install:
-  - wget -O ./LIKO-12-BuildsUtils.zip "https://github.com/RamiLego4Game/LIKO-12-BuildUtils/archive/1.0.0_PRE.zip"
-  - mkdir ./BuildUtils
-  - unzip ./LIKO-12-BuildUtils.zip -d ./BuildUtils/
+  - git clone https://github.com/RamiLego4Game/LIKO-12-BuildUtils.git RamiLego4Game/LIKO-12-BuildUtils
+  - pwd
+  - ls
