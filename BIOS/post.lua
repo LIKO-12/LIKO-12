@@ -36,7 +36,7 @@ GPU.print("LIKO-12 - Fantasy Computer",15,6)
 GPU.print("Copyright (C) Rami Sabbagh",15,13)
 GPU.printCursor(0,3,0)
 GPU.print("NormBIOS Revision 060-013")
-if DevMode then GPU.print("-==Devmode Enabled==-") end
+if DevMode then GPU.color(6) GPU.print("# Devmode Enabled #") GPU.color(7) end
 GPU.print("")
 
 GPU.print("Press DEL to enter setup",2,sh-7)
