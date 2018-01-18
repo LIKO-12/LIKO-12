@@ -44,33 +44,41 @@ return function(config) --A function that creates a new Keyboard peripheral.
   function KB.textinput(state)
     if type(state) ~= "nil" then
       love.keyboard.setTextInput(state or config._EXKB)
-      return true
     else
-      return true, love.keyboard.getTextInput()
+      returnlove.keyboard.getTextInput()
     end
   end
   
   function KB.keyrepeat(state)
     if type(state) ~= "nil" then
       love.keyboard.setKeyRepeat(state)
-      return true
     else
-      return true, love.keyboard.getKeyRepeat()
+      return love.keyboard.getKeyRepeat()
     end
   end
   
   function KB.keytoscancode(key)
     if type(key) ~= "string" then return false, "Key must be a string, provided: "..type(key) end --Error
-    return pcall(love.keyboard.getScancodeFromKey, key)
+    local ok, err = pcall(love.keyboard.getScancodeFromKey, key)
+    if ok then
+      return err
+    else
+      return error(err)
+    end
   end
   
   function KB.scancodetokey(scancode)
     if type(scancode) ~= "string" then return false, "Scancode must be a string, provided: "..type(scancode) end --Error
-    return pcall(love.keyboard.getKeyFromScancode, key)
+    local ok, err = pcall(love.keyboard.getKeyFromScancode, key)
+    if ok then
+      return err
+    else
+      return error(err)
+    end
   end
   
   function KB.isKDown(...)
-    return true, love.keyboard.isDown(...)
+    return love.keyboard.isDown(...)
   end
   
   return KB
