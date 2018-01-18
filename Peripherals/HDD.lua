@@ -135,7 +135,7 @@ return function(Config)
   end
   
   local function findIn( startDrive, startDir, matches, wildPattern )
-    local list = fs.directoryItems(startDrive..":/"..startDir)
+    local list = fs.getDirectoryItems(startDrive..":/"..startDir)
     for k, entry in ipairs(list) do
       local entryPath = (startDir:len() == 0) and entry or startDir.."/"..entry
       if string.match(entryPath, wildPattern) then
@@ -261,7 +261,7 @@ return function(Config)
   function fs.drives()
     local dlist = {}
     for k,v in pairs(Drives) do
-      dlist[k] = {size=drives[k].Size,usage=drives[k].Usage}
+      dlist[k] = {size=Drives[k].Size,usage=Drives[k].Usage}
     end
     return dlist
   end
@@ -271,9 +271,9 @@ return function(Config)
     if name then
       Verify(name,"string","Drive Name")
       
-      if not drives[letter] then return error("Drive '"..letter.."' doesn't exist !") end
+      if not Drives[name] then return error("Drive '"..name.."' doesn't exist !") end
       
-      ActiveDrive = letter
+      ActiveDrive = name
     else
       return ActiveDrive
     end
@@ -399,8 +399,6 @@ return function(Config)
     Verify(path,"string","Path")
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
-    
-    if love.filesystem.exists(RootDir..path) then return error("Path already exists 1") end
     
     createPath(path)
   end
@@ -548,7 +546,7 @@ return function(Config)
   function fs.write(path,data,size)
     Verify(path,"string","Path")
     Verify(data,"string","Data")
-    if size then Verify(size,"string","Size") end
+    if size then Verify(size,"number","Size") end
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
@@ -562,7 +560,7 @@ return function(Config)
     
     if Drives[drive].Usage + fsize > Drives[drive].Size then error("No enough space.") end
     
-    createPath(fs.getDir(path))
+    createPath(fs.getDirectory(path))
     love.filesystem.write(RootDir..path,data,size)
     
     Drives[drive].Usage = Drives[drive].Usage + fsize
@@ -581,7 +579,7 @@ return function(Config)
     local asize = size or data:len()
     if Drives[drive].Usage + asize > Drives[drive].Size then error("No enough space.") end
     
-    createPath(fs.getDir(path))
+    createPath(fs.getDirectory(path))
     
     if love.filesystem.exists(RootDir..path) then
       love.filesystem.append(RootDir..path,data,size)
