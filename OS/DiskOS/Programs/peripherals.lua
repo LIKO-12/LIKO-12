@@ -6,9 +6,14 @@ if select(1,...) == "-?" then
   return
 end
 
-local _,perlist = coroutine.yield("BIOS:listPeripherals")
+local perlist = BIOS.Peripherals()
 
-for per, functions in pairs(perlist) do
- print(per.." ", false)
+for per, type in pairs(perlist) do
+  if type == per then
+    print(per.." ", false)
+  else
+    print(per.."_("..type..") ", false)
+  end
 end
+
 print("") --New line
