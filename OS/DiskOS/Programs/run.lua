@@ -43,17 +43,6 @@ if not diskchunk then
   return
 end
 
---Upload the data to the ram
---[[local SpriteSheetAddr = binToNum(memget(0x0054, 4))
-local MapDataAddr = binToNum(memget(0x0058, 4))
-local LuaCodeAddr = binToNum(memget(0x0068, 4))
-local SpriteFlagsAddr = SpriteSheetAddr + 12*1024
-
-memset(SpriteSheetAddr, imgToBin(sheetImage))
-memset(SpriteFlagsAddr, FlagsData)
-memset(MapDataAddr, mapToBin(TileMap))
-memset(LuaCodeAddr, codeToBin(luacode:sub(1,20*1024)))
-]]
 --Create the sandboxed global variables
 local glob = _FreshGlobals()
 glob._G = glob --Magic ;)
@@ -88,32 +77,22 @@ glob.coroutine.running = function()
 end
 
 --Add peripherals api
-local blocklist = { HDD = true, WEB = true, FDD = true }
+local blocklist = { HDD = true, WEB = true, FDD = true, BIOS = true }
 local perglob = {GPU = true, CPU = true, Keyboard = true, RAM = true} --The perihperals to make global not in a table.
 
-local _,directapi = coroutine.yield("BIOS:DirectAPI"); directapi = directapi or {}
-local _,perlist = coroutine.yield("BIOS:listPeripherals")
-for k, v in pairs(blocklist) do perlist[k] = nil end
-for peripheral,funcs in pairs(perlist) do
- local holder = glob; if not perglob[peripheral] then glob[peripheral] = {}; holder = glob[peripheral] end
- for _,func in ipairs(funcs) do
-  if func:sub(1,1) ~= "_" then
-   if directapi[peripheral] and directapi[peripheral][func] then
-    holder[func] = directapi[peripheral][func]
-   else
-    local command = peripheral..":"..func
-    holder[func] = function(...)
-     local args = {coroutine.yield(command,...)}
-     if not args[1] then return error(args[2]) end
-     local nargs = {}
-     for k,v in ipairs(args) do
-      if k >1 then table.insert(nargs,k-1,v) end
-     end
-     return unpack(nargs)
+local handledapis = BIOS.HandledAPIS()
+for peripheral, funcList in pairs(handledapis) do
+  if not blocklist[peripheral] then
+    for funcName, func in pairs(funcList) do
+      if funcName:sub(1,1) == "_" then
+        funcList[funcName] = nil
+      elseif perglob[peripheral] then
+        glob[funcName] = func
+      end
     end
-   end
+    
+    glob[peripheral] = funcList
   end
- end
 end
 
 local apiloader = loadstring(fs.read("C:/System/api.lua"))
