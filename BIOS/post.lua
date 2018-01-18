@@ -76,7 +76,8 @@ local function InstallOS(update)
   love.filesystem.load("BIOS/installer.lua")(Handled,"DiskOS",update)
 end
 
-if not fs.exists("/boot.lua") or DevMode then _LIKO_Old = false; InstallOS(DevMode) end
+if not fs.exists("/boot.lua") then _LIKO_Old = false; InstallOS()
+elseif DevMode then _LIKO_Old = false; InstallOS(true) end
 
 --Update the operating system
 if _LIKO_Old then

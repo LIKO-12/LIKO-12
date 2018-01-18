@@ -9,6 +9,7 @@ if update then
   Title = "=--------< Updating "..osName.." >--------="
 else
   Title = "=-------< Installing "..osName.." >-------="
+  devmode = false
 end
 
 local GPU = HandledAPIS.GPU
