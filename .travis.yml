@@ -17,6 +17,7 @@ script:
   - echo ----==== Removing unnecessary files... ====----
   - rm -v -f README.md mkdocs.yml .travis.yml .gitattributes .gitignore
   - rm -v -f -r .git Docs DLL Extra
+  - touch devmode.txt
   - echo ----==== Packing .love file ====----
   - 7z A -r -y -tzip -bd "../LIKO-12.love" .
   - cd ..
