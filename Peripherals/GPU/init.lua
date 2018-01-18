@@ -1039,12 +1039,12 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.image(data)
     local Image
     if type(data) == "string" then --Load liko12 specialized image format
-      local ok, imageData = GPU.imagedata(data)
-      if not ok then return ok, imageData end
+      local ok, imageData = pcall(GPU.imagedata,data)
+      if not ok then return error(imageData) end
       return imageData:image()
     elseif type(data) == "userdata" and data.typeOf and data:typeOf("ImageData") then
       local ok, err = pcall(love.graphics.newImage,data)
-      if not ok then return false, "Invalid image data" end
+      if not ok then return error("Invalid image data") end
       Image = err
       Image:setWrap("repeat")
     end
