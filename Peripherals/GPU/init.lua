@@ -749,7 +749,7 @@ return function(config) --A function that creates a new GPU peripheral.
     --Args types verification
     x = Verify(x,"X pos","number")
     y = Verify(y,"Y pos","number")
-    r = Verify(r,"Radius","number")
+    Verify(r,"Radius","number")
     if c then c = Verify(c,"The color id","number",true) end
     if s then s = Verify(s,"Segments","number",true) end
     
@@ -825,8 +825,8 @@ return function(config) --A function that creates a new GPU peripheral.
     --Args types verification
     x = Verify(x,"X coord","number")
     y = Verify(y,"Y coord","number")
-    rx = Verify(rx,"X radius","number")
-    ry = Verify(ry, "Y radius","number")
+    Verify(rx,"X radius","number")
+    Verify(ry, "Y radius","number")
     if c then c = Verify(c,"The color id","number",true) end
     if s then s = Verify(s,"Segments","number",true) end
     
