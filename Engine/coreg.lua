@@ -34,9 +34,13 @@ function coreg:resumeCoroutine(...)
     
     if not args[1] then error(args[2]) end --Should have a better error handelling
     
-    if coroutine.status(self.co) == "dead" then --The coroutine finished, we hope that a new one has been set.
+    if coroutine.status(self.co) == "dead" then 
       
-      --Do nothing
+      --The coroutine finished, we hope that a new one has been set.
+      
+    elseif tostring(args[2]) == "echo" then
+      
+      lastargs = {select(3,unpack(args))}
       
     elseif args[2] then --There's a command to process
       args = {self:trigger(select(2,unpack(args)))}
