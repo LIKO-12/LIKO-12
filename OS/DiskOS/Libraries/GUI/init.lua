@@ -51,7 +51,7 @@ end
 --Load default objects
 function GUI:loadDefaultObjects()
   --Load default objects
-  local files = fs.directoryItems(objectsPath)
+  local files = fs.getDirectoryItems(objectsPath)
   for k, objfile in ipairs(files) do
     if objfile ~= "init.lua" then
       local objname = objfile:sub(1,-5)
