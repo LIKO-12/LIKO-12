@@ -45,8 +45,10 @@ PA("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "A
 
 --Create a new virtual hdd system mounted as "HDD"
 PA("HDD","HDD",{
-  C = 1024*1024 * 25, --Measured in bytes, equals 25 megabytes
-  D = 1024*1024 * 25 --Measured in bytes, equals 25 megabytes
+  Drives = {
+    C = 1024*1024 * 25, --Measured in bytes, equals 25 megabytes
+    D = 1024*1024 * 25 --Measured in bytes, equals 25 megabytes
+  }
 })
 
 local KB = function(v) return v*1024 end
