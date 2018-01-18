@@ -23,9 +23,9 @@ return function(config)
     thread:wait()
   end)
   
-  local au, devkit, indirect = {}, {}, {"newGenerator"}
+  local au, yAU, devkit = {}, {}, {}
   
-  function au.newGenerator(p)
+  function yAU.newGenerator(p)
     
     if type(p) ~= "table" then return false, "Parameters should be a table, provided: "..type(p) end
     
@@ -246,10 +246,8 @@ return function(config)
     local source = love.audio.newSource(sounddata)
     source:play()
     
-    return true
-    
   end
   
-  return au, devkit, indirect
+  return au, yAU, devkit
   
 end

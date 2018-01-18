@@ -79,18 +79,16 @@ return function(config)
   end
   
   --The API starts here--
-  local fapi = {}
+  local fapi, yfapi = {}, {}
   
   --Create a new floppy disk and mount it
   --tname -> template name, without the .png extension
   function fapi.newDisk(tname)
     local tname = tname or "Disk"
-    if type(tname) ~= "string" then return false, "Disk template name must be a string or a nil, provided: "..type(tname) end
-    if not love.filesystem.exists(perpath..tname..".png") then return false, "Disk template '"..tname.."' doesn't exist !" end
+    if type(tname) ~= "string" then return error("Disk template name must be a string or a nil, provided: "..type(tname)) end
+    if not love.filesystem.exists(perpath..tname..".png") then return error("Disk template '"..tname.."' doesn't exist !") end
     
     FIMG = love.image.newImageData(perpath..tname..".png")
-    
-    return true --Done Successfully
   end
   
   function fapi.exportDisk()
@@ -103,11 +101,11 @@ return function(config)
     --Write new data
     FIMG:mapPixel(_WriteDisk)
     
-    return true, FIMG:encode("png"):getString()
+    return FIMG:encode("png"):getString()
   end
   
   function fapi.importDisk(data)
-    if type(data) ~= "string" then return false,"Data must be a string, provided: "..type(data) end
+    if type(data) ~= "string" then return error("Data must be a string, provided: "..type(data)) end
     
     FIMG = love.image.newImageData(love.filesystem.newFileData(data,"image.png"))
     
@@ -120,8 +118,6 @@ return function(config)
     
     --Read the data
     FIMG:mapPixel(_ReadDisk)
-    
-    return true --Done successfully
   end
   
   --Initialize with the default disk

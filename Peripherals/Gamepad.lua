@@ -2,7 +2,7 @@ local events = require("Engine.events")
 local coreg = require("Engine.coreg")
 
 return function(config) --A function that creates a new Gamepad peripheral.
-  local GP, devkit, indirect = {}, {}, {}
+  local GP, yGP, devkit = {}, {}
   
   local CPUKit = config.CPUKit
   if not CPUKit then error("The gamepad peripheral can't work without the CPUKit passed !") end
@@ -95,7 +95,6 @@ return function(config) --A function that creates a new Gamepad peripheral.
   
   function GP._GetGUID()
     mappingState = {mode="getGUID"}
-    return true
   end
   
   function GP._MapButton(guid,bid)
@@ -105,16 +104,14 @@ return function(config) --A function that creates a new Gamepad peripheral.
     else
       mappingState = {mode="MapButton",guid=guid,id=buttonsids[bid]}
     end
-    return true
   end
   
   function GP._CancelMapping()
     mappingState = false
-    return true
   end
   
   function GP._SaveMap()
-    return true, love.joystick.saveGamepadMappings("GamepadMapping.txt")
+    return love.joystick.saveGamepadMappings("GamepadMapping.txt")
   end
   
   events:register("love:joystickpressed",function(joystick,button)
@@ -165,5 +162,5 @@ return function(config) --A function that creates a new Gamepad peripheral.
     end
   end)
   
-  return GP, devkit, indirect
+  return GP, yGP, devkit
 end

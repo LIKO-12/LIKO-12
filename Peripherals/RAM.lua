@@ -162,78 +162,90 @@ return function(config)
   local lastaddr = string.format("0x%X",ramsize-1) --The last accessible ram address.
   local lastaddr4 = string.format("0x%X",(ramsize-1)*2) --The last accessible ram address for peek4 and poke4.
   
-  local api = {}
+  local function Verify(value,name,etype,allowNil)
+    if type(value) ~= etype then
+      if allowNil then
+        error(name.." should be a "..etype.." or a nil, provided: "..type(value),3)
+      else
+        error(name.." should be a "..etype..", provided: "..type(value),3)
+      end
+    end
+    
+    if etype == "number" then
+      return math.floor(value)
+    end
+  end
   
-  local indirect = {}
+  local api, yapi = {}, {}
   
   --API Start
   function api.poke4(address,value)
-    if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
-    if type(value) ~= "number" then return false, "Value must be a number, provided: "..type(value) end
-    address, value = math.floor(address), math.floor(value)
-    if address < 0 or address > (ramsize-1)*2 then return false, "Address out of range ("..tohex(address*2).."), must be in range [0x0,"..lastaddr4.."]" end
-    if value < 0 or value > 15 then return false, "Value out of range ("..value..") must be in range [0,15]" end
+    address = Verify(address,"Address","number")
+    value = Verify(value,"Value","number")
+    
+    if address < 0 or address > (ramsize-1)*2 then return error("Address out of range ("..tohex(address*2).."), must be in range [0x0,"..lastaddr4.."]") end
+    if value < 0 or value > 15 then return error("Value out of range ("..value..") must be in range [0,15]") end
     
     for k,h in ipairs(handlers) do
       if address <= h.endAddr*2+1 then
         h.handler("poke4",h.startAddr*2,address,value)
-        return true --It ran successfully.
+        return
       end
     end
   end
   
   function api.poke(address,value)
-    if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
-    if type(value) ~= "number" then return false, "Value must be a number, provided: "..type(value) end
-    address, value = math.floor(address), math.floor(value)
-    if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
-    if value < 0 or value > 255 then return false, "Value out of range ("..value..") must be in range [0,255]" end
+    address = Verify(address,"Address","number")
+    value = Verify(value,"Value","number")
+    
+    if address < 0 or address > ramsize-1 then return error("Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]") end
+    if value < 0 or value > 255 then return error("Value out of range ("..value..") must be in range [0,255]") end
     
     for k,h in ipairs(handlers) do
       if address <= h.endAddr then
         h.handler("poke",h.startAddr,address,value)
-        return true --It ran successfully.
+        return
       end
     end
   end
   
   function api.peek4(address)
-    if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
-    address = math.floor(address)
-    if address < 0 or address > (ramsize-1)*2 then return false, "Address out of range ("..tohex(address*2).."), must be in range [0x0,"..lastaddr4.."]" end
+    address = Verify(address,"Address","number")
+    
+    if address < 0 or address > (ramsize-1)*2 then return error("Address out of range ("..tohex(address*2).."), must be in range [0x0,"..lastaddr4.."]") end
     
     for k,h in ipairs(handlers) do
       if address <= h.endAddr*2+1 then
         local v = h.handler("peek4",h.startAddr*2,address)
-        return true, v --It ran successfully
+        return v --It ran successfully
       end
     end
     
-    return true, 0 --No handler is found
+    return 0 --No handler is found
   end
   
   function api.peek(address)
-    if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
-    address = math.floor(address)
-    if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
+    address = Verify(address,"Address","number")
+    
+    if address < 0 or address > ramsize-1 then return error("Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]") end
     
     for k,h in ipairs(handlers) do
       if address <= h.endAddr then
         local v = h.handler("peek",h.startAddr,address)
-        return true, v --It ran successfully
+        return v --It ran successfully
       end
     end
     
-    return true, 0 --No handler is found
+    return 0 --No handler is found
   end
   
   function api.memget(address,length)
-    if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
-    if type(length) ~= "number" then return false, "Length must be a number, provided: "..type(length) end
-    address, length = math.floor(address), math.floor(length)
-    if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
-    if length <= 0 then return false, "Length must be bigger than 0" end
-    if address+length > ramsize then return false, "Length out of range ("..length..")" end
+    address = Verify(address,"Address","number")
+    length = Verify(length,"Length","number")
+    
+    if address < 0 or address > ramsize-1 then return error("Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]") end
+    if length <= 0 then return error("Length must be bigger than 0") end
+    if address+length > ramsize then return error("Length out of range ("..length..")") end
     local endAddress = address+length-1
     
     local str = ""
@@ -249,17 +261,17 @@ return function(config)
       end
     end
     
-    return true, str
+    return str
   end
   
   function api.memset(address,data)
-    if type(address) ~= "number" then return false, "Address must be a number, provided: "..type(address) end
-    if type(data) ~= "string" then return false, "Data must be a string, provided: "..type(data) end
-    address = math.floor(address)
-    if address < 0 or address > ramsize-1 then return false, "Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]" end
+    address = Verify(address,"Address","number")
+    Verify(data,"Data","string")
+    
+    if address < 0 or address > ramsize-1 then return error("Address out of range ("..tohex(address).."), must be in range [0x0,"..lastaddr.."]") end
     local length = data:len()
-    if length == 0 then return false, "Cannot set empty string" end
-    if address+length > ramsize then return false, "Data too long to fit in the memory ("..length.." character)" end
+    if length == 0 then return error("Cannot set empty string") end
+    if address+length > ramsize then return error("Data too long to fit in the memory ("..length.." character)") end
     local endAddress = address+length-1
     
     for k,h in ipairs(handlers) do
@@ -273,19 +285,17 @@ return function(config)
         end
       end
     end
-    
-    return true
   end
   
   function api.memcpy(from_address,to_address,length)
-    if type(from_address) ~= "number" then return false, "Source Address must be a number, provided: "..type(from_address) end
-    if type(to_address) ~= "number" then return false, "Destination Address must be a number, provided: "..type(to_address) end
-    if type(length) ~= "number" then return false,"Length must be a number, provided: "..type(length) end
-    from_address, to_address, length = math.floor(from_address), math.floor(to_address), math.floor(length)
-    if from_address < 0 or from_address > ramsize-1 then return false, "Source Address out of range ("..tohex(from_address).."), must be in range [0x0,"..tohex(ramsize-2).."]" end
-    if to_address < 0 or to_address > ramsize then return false, "Destination Address out of range ("..tohex(to_address).."), must be in range [0x0,"..lastaddr.."]" end
-    if length <= 0 then return false, "Length should be bigger than 0" end
-    if from_address+length > ramsize then return false, "Length out of range ("..length..")" end
+    from_address = Verify(from_address,"Source Address","number")
+    to_address = Verify(to_address,"Destination Address","number")
+    length = Verify(length,"Length","number")
+    
+    if from_address < 0 or from_address > ramsize-1 then return error("Source Address out of range ("..tohex(from_address).."), must be in range [0x0,"..tohex(ramsize-2).."]") end
+    if to_address < 0 or to_address > ramsize then return error("Destination Address out of range ("..tohex(to_address).."), must be in range [0x0,"..lastaddr.."]") end
+    if length <= 0 then return error("Length should be bigger than 0") end
+    if from_address+length > ramsize then return error("Length out of range ("..length..")") end
     if to_address+length > ramsize then length = ramsize-to_address end
     local from_end = from_address+length-1
     local to_end = to_address+length-1
@@ -316,8 +326,6 @@ return function(config)
         end
       end
     end
-    
-    return true
   end
   
   devkit.ramsize = ramsize
@@ -327,5 +335,5 @@ return function(config)
   devkit.handlers = handlers
   devkit.api = api
   
-  return api, devkit, indirect
+  return api, yapi, devkit
 end

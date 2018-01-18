@@ -201,14 +201,12 @@ return function(config)
     end
   end
   
-  local indirect = {}
-  local TC = {}
+  local TC, yTC = {}, {}
   
   --Toggle the touch controls
   function TC.setInput(bool)
     ControlsEnabled = bool
     if onMobile then GPUKit.DevKitDraw(ControlsEnabled) end
-    return true
   end
   
   --Buttons Touch
@@ -282,5 +280,5 @@ return function(config)
                        dpad_cx+dpad_line, dpad_cy+dpad_line)
   end)
   
-  return TC, devkit, indirect
+  return TC, yTC, devkit
 end

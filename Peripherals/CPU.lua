@@ -34,15 +34,25 @@ return function(config) --A function that creates a new CPU peripheral.
       end
     end
   end)
+
+  local function Verify(value,name,etype,allowNil)
+    if type(value) ~= etype then
+      if allowNil then
+        error(name.." should be a "..etype.." or a nil, provided: "..type(value),3)
+      else
+        error(name.." should be a "..etype..", provided: "..type(value),3)
+      end
+    end
+    
+    if etype == "number" then
+      return math.floor(value)
+    end
+  end
   
   --The api starts here--
-  local CPU = {}
+  local CPU, yCPU = {}, {}
   
-  local indirect = { --The functions that must be called via coroutine.yield
-    "pullEvent", "rawPullEvent", "shutdown", "reboot", "sleep"
-  }
-  
-  function CPU.pullEvent()
+  function yCPU.pullEvent()
     if #EventStack == 0 then
       Instant = true
       return 2 --To quit the coroutine resuming loop
@@ -57,64 +67,53 @@ return function(config) --A function that creates a new CPU peripheral.
     end
   end
   
-  function CPU.rawPullEvent()
+  function yCPU.rawPullEvent()
     RawPull = true
     return 2
   end
   
   function CPU.triggerEvent(name,...)
-    if type(name) ~= "string" then
-      return false, "The event name must be a string, got a "..type(name)
-    end
-    
+    Verify(name,"The event name","string")
     table.insert(EventStack,{name,...})
-    return true
   end
   
   function CPU.clearEStack()
     EventStack = {}
-    return true
   end
   
   function CPU.getHostOS()
-    return true, love.system.getOS()
+    return love.system.getOS()
   end
   
   function CPU.isMobile()
-    if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
-      return true, true
-    else
-      return true, false
-    end
+    return (love.system.getOS() == "Android" or love.system.getOS() == "iOS")
   end
   
   function CPU.clipboard(text)
     if text then
       love.system.setClipboardText(tostring(text))
-      return true
     else
-      return true, love.system.getClipboardText()
+      return love.system.getClipboardText()
     end
   end
   
   function CPU.clearClipboard()
     love.system.setClipboardText()
-    return true
   end
   
-  function CPU.sleep(t)
+  function yCPU.sleep(t)
     if type(t) ~= "number" then return false, "Time must be a number, provided: "..t end
     if t < 0 then return false, "Time must be a positive number" end
     sleepTimer = t
     return 2
   end
   
-  function CPU.shutdown()
+  function yCPU.shutdown()
     love.event.quit()
     return 2 --I don't want the coroutine to resume while rebooting
   end
   
-  function CPU.reboot(hard)
+  function yCPU.reboot(hard)
     if hard then
       love.event.quit( "restart" )
     else
@@ -127,25 +126,21 @@ return function(config) --A function that creates a new CPU peripheral.
     local tar = tar or "/"
     if tar:sub(0,1) ~= "/" then tar = "/"..tar end
     love.system.openURL("file://"..love.filesystem.getSaveDirectory()..tar)
-    return true --It ran successfully
   end
   
   function CPU.getSaveDirectory()
-    return true, love.filesystem.getSaveDirectory()
+    return love.filesystem.getSaveDirectory()
   end
   
   --Prints to developer console.
   function CPU.cprint(...)
     print(...)
-    return true --It ran successfully
   end
   
-  function CPU.getFPS()
-    return true, love.timer.getFPS()
-  end
+  CPU.getFPS = love.timer.getFPS()
   
   devkit.CPU = CPU
-  devkit.indirect = indirect
+  devkit.yCPU = yCPU
   
-  return CPU, devkit, indirect
+  return CPU, yCPU, devkit
 end
