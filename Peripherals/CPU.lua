@@ -137,7 +137,7 @@ return function(config) --A function that creates a new CPU peripheral.
     print(...)
   end
   
-  CPU.getFPS = love.timer.getFPS()
+  CPU.getFPS = love.timer.getFPS
   
   devkit.CPU = CPU
   devkit.yCPU = yCPU
