@@ -365,7 +365,7 @@ return function(Config)
     
     if not love.filesystem.exists(RootDir..path) then return error("File doesn't exists !") end
     
-    return getLastModifiedRecursive(RootDir..path)
+    return getLastModifiedRecursive(path)
   end
   
   --Check if a file exists or not.
