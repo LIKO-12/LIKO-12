@@ -2,8 +2,6 @@
 --For now it's just a simple BIOS to get LIKO-12 working.
 local DevMode = love.filesystem.exists("devmode.txt")
 
-local FThread --File tracking thread
-
 local _LIKO_Version, _LIKO_Old = _LVer.magor..".".._LVer.minor..".".._LVer.patch..".".._LVer.build
 if love.filesystem.exists(".version") then
   _LIKO_Old = love.filesystem.read(".version")
@@ -140,7 +138,12 @@ do
     
     return true, funcList
   end
-
+  
+  --Returns LIKO-12 Version
+  function yAPIS.BIOS.getVersion()
+    return true, _LIKO_Version, _LIKO_Old
+  end
+  
 end
 
 --The BIOS config sandbox
@@ -185,5 +188,5 @@ end
 local POST = love.filesystem.load("/BIOS/post.lua")
 local POSTCo = coroutine.create(POST)
 
-coreg:setCoroutine(POSTCo, _G)
-coreg:resumeCoroutine(Handled)
+coreg:setCoroutine(POSTCo)
+coreg:resumeCoroutine(Handled,Devkits)
