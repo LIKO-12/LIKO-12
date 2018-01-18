@@ -44,7 +44,12 @@ GPU.print("Press DEL to enter setup",2,sh-7)
 GPU.flip()
 CPU.sleep(0.3)
 
-GPU.print("Main CPU: LuaJIT 5.1")
+if CPU.isMobile() then
+  GPU.print("Main CPU: Lua 5.1")
+else
+  GPU.print("Main CPU: LuaJIT 5.1")
+end
+
 if ram then GPU.print("RAM: "..(ramkit.ramsize/1024).." Kilo-Bytes ("..ramkit.ramsize.." Bytes)") end
 GPU.print("GPU: "..sw.."x"..sh.." 4-Bit (16 Color Palette)")
 GPU.print("")
