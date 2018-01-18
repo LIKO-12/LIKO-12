@@ -11,19 +11,19 @@ local term = require("terminal")
 
 local function index(path,notfirst)
   color(9)
-  if fs.isFile(path) then print("Deleted "..path) fs.remove(path) return end
-  local items = fs.directoryItems(path)
+  if fs.isFile(path) then print("Deleted "..path) fs.delete(path) return end
+  local items = fs.getDirectoryItems(path)
   for k, item in ipairs(items) do
     if fs.isDirectory(path..item) then
       print("Entering directory "..path..item.."/") pullEvent()
       index(path..item.."/",true)
     else
       print("Deleted "..path..item) pullEvent()
-      fs.remove(path..item)
+      fs.delete(path..item)
     end
   end
   local isDir = fs.isDirectory(path)
-  fs.remove(path)
+  fs.delete(path)
   if not notfirst then color(11) print("Deleted "..(isDir and "Directory" or "File").." successfully") end
   return true
 end

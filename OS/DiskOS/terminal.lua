@@ -79,7 +79,7 @@ function term.reload()
   package.loaded["C:/terminal.lua"] = term --Restore the current terminal instance
   
   --Reload the APIS
-  for k, file in ipairs(fs.directoryItems("C:/APIS/")) do
+  for k, file in ipairs(fs.getDirectoryItems("C:/APIS/")) do
     dofile("C:/APIS/"..file)
   end
   
@@ -190,7 +190,7 @@ function term.execute(command,...)
   end
   for path in nextPath(PATH) do
     if fs.exists(path) then
-      local files = fs.directoryItems(path)
+      local files = fs.getDirectoryItems(path)
       for _,file in ipairs(files) do
         if file == command..".lua" then
           term.executeFile(path..file,...)
