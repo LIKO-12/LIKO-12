@@ -72,25 +72,11 @@ CPU.sleep(0.2)
 
 fs.drive("C") --Switch to the C drive.
 
-local function FlashOS(os,path)
-  local path = path or "/"
-  fs.drive("C") --Opereating systems are installed on C drive
-  local files = love.filesystem.getDirectoryItems("/OS/"..os..path)
-  for k,v in pairs(files) do
-    if love.filesystem.isDirectory("/OS/"..os..path..v) then
-      fs.newDirectory(path..v)
-      FlashOS(os,path..v.."/")
-    else
-      fs.write(path..v,love.filesystem.read("/OS/"..os..path..v))
-    end
-  end
-end
-
 local function InstallOS(update)
-  FlashOS("DiskOS")
+  love.filesystem.load("BIOS/installer.lua")(Handled,"DiskOS",update)
 end
 
-if not fs.exists("/boot.lua") or DevMode then _LIKO_Old = false; InstallOS() end
+if not fs.exists("/boot.lua") or DevMode then _LIKO_Old = false; InstallOS(DevMode) end
 
 --Update the operating system
 if _LIKO_Old then
