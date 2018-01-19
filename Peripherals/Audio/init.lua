@@ -7,21 +7,32 @@ local events = require("Engine.events")
 return function(config)
   
   local sfxr = love.filesystem.load(perpath.."sfxr.lua")()
-  local thread = love.thread.newThread(perpath.."sfxrthread.lua")
-  local chIn = love.thread.newChannel()
+  local sfxrthread = love.thread.newThread(perpath.."sfxrthread.lua")
+  local chsfxr = love.thread.newChannel()
   
-  thread:start(chIn)
+  local ctunethread = love.thread.newThread(perpath.."ctunethread.lua")
+  local chctune = love.thread.newChannel()
+  
+  sfxrthread:start(chsfxr)
+  ctunethread:start(chctune)
   
   events:register("love:reboot", function()
-    chIn:push("stop")
+    chsfxr:push("stop")
+    chctune:push("stop")
   end)
   
   events:register("love:quit", function()
-    chIn:supply("stop")
-    thread:wait()
+    chsfxr:push("stop")
+    chctune:push("stop")
+    sfxrthread:wait()
+    ctunethread:wait()
   end)
   
   local AU, yAU, devkit = {}, {}, {}
+  
+  function AU.generate(wave,freq,amp)
+    chctune:push({wave,freq,amp})
+  end
   
   function AU.play(chn,p)
     
@@ -45,13 +56,18 @@ return function(config)
     
     local job = json:encode(params)
     
-    chIn:push({channel=chn or 1,params=job})
+    chsfxr:push({channel=chn or 1,params=job})
     
   end
   
   events:register("love:update", function(dt)
     
-    local terr = thread:getError()
+    local terr = sfxrthread:getError()
+    if terr then
+      error("Thread: "..terr)
+    end
+    
+    local terr = ctunethread:getError()
     if terr then
       error("Thread: "..terr)
     end
