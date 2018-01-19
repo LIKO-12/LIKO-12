@@ -275,6 +275,7 @@ while true do
   if not args[1] then
     local err = tostring(args[2])
     local pos = string.find(err,":") or 0
+    pal() palt() cam() clip() colorPalette()
     err = err:sub(pos+1,-1); printErr("ERR: "..err ); break
   end
   if args[2] then
