@@ -52,6 +52,27 @@ waves[2] = function(samples)
   end
 end
 
+waves[3] = function(samples)
+  local c = samples/2
+  local v = math.random()
+  local flag = flag
+  
+  return function()
+    --[[c = c -1
+    if c == 0 then
+      c = samples/2
+      flag = not flag
+      v = math.random()*2
+      if flag then v = -v end
+    end
+    
+    return v*amp
+    ]]
+  
+    return math.random()*2-1
+  end
+end
+
 
 local function pullParams()
   return chIn:pop()
