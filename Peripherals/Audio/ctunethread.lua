@@ -14,7 +14,7 @@ local rate = 44100
 local buffer_size = rate/4
 local sleeptime = 0.9/(rate/buffer_size)
 
-local wave, freq, amp
+local wave, freq, amp, gen
 
 local waves = {}
 
@@ -22,8 +22,12 @@ local waves = {}
 waves[0] = function(samples)
   local r = 0
   
+  local hs = samples/2
+  local pi = math.pi
+  local dpi = pi*1
+  
   return function()
-    r = r + math.pi/(samples/2)
+    r = (r + pi/hs)%dpi
     
     return math.sin(r)*amp
   end
@@ -32,13 +36,16 @@ end
 --Square
 waves[1] = function(samples)
   local c = 0
-  local flag = false
+  local hs = samples/2
   
   return function()
-    c = (c+1)%(samples/2)
-    if c == 0 then flag = not flag end
-    
-    return (flag and amp or -amp)
+    c = c + 1
+    if c == samples then c = 0 end
+    if c < hs then
+      return amp
+    else
+      return -amp
+    end
   end
 end
 
@@ -49,27 +56,17 @@ waves[2] = function(samples)
   
   return function()
     c = (c+inc)%2 -1
-    return c
+    return c*amp
   end
 end
 
+--Noise
 waves[3] = function(samples)
   local c = samples/2
   local v = math.random()
   local flag = flag
   
   return function()
-    --[[c = c -1
-    if c == 0 then
-      c = samples/2
-      flag = not flag
-      v = math.random()*2
-      if flag then v = -v end
-    end
-    
-    return v*amp
-    ]]
-  
     return math.random()*2-1
   end
 end
@@ -91,15 +88,11 @@ while true do
       local ofreq = freq
       wave, freq, amp = unpack(params)
       
-      if ofreq then
-        --error(ofreq.." -> "..freq)
+      if wave and freq then
+        gen = waves[wave](math.floor(rate/freq))
       end
-      --error(tostring(wave).."_"..tostring(freq).."_"..tostring(amp))
-      
-      --amp = amp or 1
       
       qs:clear()
-      
       qs = QSource:new()
       
       chIn:clear()
@@ -112,7 +105,6 @@ while true do
     
     if qs:getFreeBufferCount() > 0 then
       local sd = love.sound.newSoundData(buffer_size, rate, 16, 1)
-      local gen = waves[wave](rate/freq)
       for i=0,buffer_size-1 do
         sd:setSample(i,gen())
       end
