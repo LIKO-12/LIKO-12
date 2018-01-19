@@ -12,6 +12,7 @@ local qs = QSource:new()
 
 local rate = 44100
 local buffer_size = rate/4
+local sleeptime = 0.9/(rate/buffer_size)
 
 local wave, freq, amp
 
@@ -75,7 +76,11 @@ end
 
 
 local function pullParams()
-  return chIn:pop()
+  if wave then
+    return chIn:pop()
+  else
+    return chIn:demand()
+  end
 end
 
 while true do
@@ -116,4 +121,6 @@ while true do
       qs:play()
     end
   end
+  
+  love.timer.sleep(sleeptime)
 end
