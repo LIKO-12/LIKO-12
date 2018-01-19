@@ -178,6 +178,7 @@ function term.executeFile(file,...)
   local chunk, err = fs.load(file)
   if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
   local ok, err = pcall(chunk,...)
+  color(7) pal() palt() cam() clip()
   if not ok then color(8) print("\nERR: "..tostring(err)) color(7) return false, tostring(err) end
   if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":/" end
 end
@@ -186,7 +187,7 @@ function term.execute(command,...)
   if not command then return false, "No command" end
   if fs.exists(curpath..command..".lua") then
     term.executeFile(curpath..command..".lua",...)
-    color(8) pal() palt() cam() clip() return true
+    return true
   end
   for path in nextPath(PATH) do
     if fs.exists(path) then
@@ -195,7 +196,7 @@ function term.execute(command,...)
         if file == command..".lua" then
           term.executeFile(path..file,...)
           textinput(true)
-          color(7) pal() palt() cam() clip() return true
+          return true
         end
       end
     end
