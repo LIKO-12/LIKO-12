@@ -45,4 +45,4 @@ deploy:
   on:
     branch: master
   local-dir: Builds/
-  repo: LIKO-12-Nightly
+  repo: RamiLego4Game/LIKO-12-Nightly
