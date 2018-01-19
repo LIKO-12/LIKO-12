@@ -2,12 +2,15 @@ language: cpp
 
 sudo: required
 
+git:
+  depth: false
+
 install:
   - echo ----==== Installing 7zip ====----
   - sudo apt-get -qq update
   - sudo apt-get install -y p7zip-full
   - echo ----==== Downloading build templates ====----
-  - git clone https://github.com/RamiLego4Game/LIKO-12-BuildUtils.git ../BuildUtils
+  - git clone https://github.com/RamiLego4Game/LIKO-12-Nightly.git ../BuildUtils
 
 script:
   - echo ----==== Copying files into other directory ====----
@@ -42,3 +45,4 @@ deploy:
   on:
     branch: master
   local-dir: Builds/
+  repo: LIKO-12-Nightly
