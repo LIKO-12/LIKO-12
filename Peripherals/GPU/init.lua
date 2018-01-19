@@ -1057,9 +1057,9 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setShader(_ImageShader)
       love.graphics.setColor(255,255,255,255)
       if quad then
-        love.graphics.draw(Image,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,math.floor(sx),math.floor(sy))
+        love.graphics.draw(Image,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,sx,sy)
       else
-        love.graphics.draw(Image,math.floor(x+ofs.image[1]),math.floor(y+ofs.image[2]),r,math.floor(sx),math.floor(sy))
+        love.graphics.draw(Image,math.floor(x+ofs.image[1]),math.floor(y+ofs.image[2]),r,sx,sy)
       end
       love.graphics.setShader(_DrawShader)
       GPU.popColor()
