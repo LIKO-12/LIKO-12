@@ -5,6 +5,10 @@ sudo: required
 git:
   depth: false
 
+branches:
+  only:
+  - master
+
 install:
   - echo ----==== Installing 7zip ====----
   - sudo apt-get -qq update
