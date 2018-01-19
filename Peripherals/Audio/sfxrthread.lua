@@ -23,10 +23,16 @@ local sfx1_iter = false
 local sfx2_iter = false
 
 local buffer_size = 44100/4
-local sleep_time = 0.25/2.1
+local buffer_time = 0.25
 
 local function popJob()
-  return chIn:pop()
+  if sfx1_count or sfx2_count then
+    return chIn:pop()
+  else
+    local arg = chIn:demand()
+    love.timer.step()
+    return arg
+  end
 end
 
 while true do
@@ -115,5 +121,12 @@ while true do
     end
   end
   
-  love.timer.sleep(sleep_time)
+  love.timer.step()
+  local dt = love.timer.getDelta()
+  local st = (buffer_time - dt)*0.9
+  
+  if st > 0.01 then
+    love.timer.sleep(st)
+    love.timer.step()
+  end
 end
