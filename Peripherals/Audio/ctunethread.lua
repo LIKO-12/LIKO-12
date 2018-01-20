@@ -185,12 +185,12 @@ while true do
         tamp = namp --The target amplitude
         
         amp_slide = tamp/amp_slide_samples --Calculate the amplitude increase/decrease amount each sample.
+        generated_time = 0
       end
       
       --If the waveform changed, or the frequency changed we will have to create a new generator.
       if owave ~= wave or ofreq ~= freq then
         gen = waveforms[wave](floor(rate/freq)) --The new generator.
-        generated_time = 0
       end
       
       --We have to recalculate the buffer size inorder to make sure that each buffer ends with a cycle end.
@@ -212,7 +212,7 @@ while true do
       
       local sounddata --The sounddata to work on.
       
-      local skip_generation = (amp == tamp) and (#buffers_cache == 2) and (generated_time > max(buffer_time,amp_slide_time)*4)
+      local skip_generation = (tamp > 0) and (#buffers_cache == 2) and (generated_time > max(buffer_time,amp_slide_time)*8)
       
       --Get the sounddata out from the buffers cache.
       if #buffers_cache == 2 then
