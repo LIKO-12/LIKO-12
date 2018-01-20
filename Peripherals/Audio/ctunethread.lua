@@ -11,6 +11,10 @@ require("love.audio")
 require("love.sound")
 require("love.timer")
 require("love.math")
+require("love.system")
+
+--Are we running on mobile ?
+local onMobile = (love.system.getOS() == "Android")
 
 --The QueueableSource
 local QSource = require("Peripherals.Audio.QueueableSource")
@@ -31,10 +35,13 @@ local amp = 0 --The soundwave cycle amplitude.
 local tamp = 0 --The target amplitude.
 local amp_slide = 0 --How much to increase/decrease the amplitude to reach the target amplitude.
 local amp_slide_samples = floor(rate*0.02) --How many samples to reach the wanted amp.
+local amp_slide_time = amp_slide_samples/rate --How much time does it take to slide the amp
 
 local wave = 0 --The wave to generate.
 local freq = 440 --The frequency to generate the sound at.
 local generator --An iterator which generates samples.
+
+local generated_time = 0 --How long the sound has been generated for.
 
 --The waveforms generators list.
 local waveforms = {}
@@ -183,8 +190,7 @@ while true do
       --If the waveform changed, or the frequency changed we will have to create a new generator.
       if owave ~= wave or ofreq ~= freq then
         gen = waveforms[wave](floor(rate/freq)) --The new generator.
-        --qs:clear() --Clear the old QueueableSource
-        --qs = QSource:new(2) --Create a new one.
+        generated_time = 0
       end
       
       --We have to recalculate the buffer size inorder to make sure that each buffer ends with a cycle end.
@@ -206,6 +212,8 @@ while true do
       
       local sounddata --The sounddata to work on.
       
+      local skip_generation = (amp == tamp) and (#buffers_cache == 2) and (generated_time > amp_slide_time*3)
+      
       --Get the sounddata out from the buffers cache.
       if #buffers_cache == 2 then
         sounddata = buffers_cache[ buffers_cache_flag and 2 or 1 ]
@@ -216,16 +224,20 @@ while true do
       
       buffers_cache_flag = not buffers_cache_flag --Invert the flag
       
-      local setSample = sounddata.setSample
+      if not skip_generation then
       
-      for i=0,buffer_size-1 do
-        setSample(sounddata,i,gen())
+        local setSample = sounddata.setSample
         
-        if tamp > amp then --We have to increase the amplitude.
-          amp = min(amp + amp_slide,1)
-        elseif tamp < amp then --We have to decrease the amplitude
-          amp = max(amp - amp_slide,0)
+        for i=0,buffer_size-1 do
+          setSample(sounddata,i,gen())
+          
+          if tamp > amp then --We have to increase the amplitude.
+            amp = min(amp + amp_slide,1)
+          elseif tamp < amp then --We have to decrease the amplitude
+            amp = max(amp - amp_slide,0)
+          end
         end
+      
       end
       
       qs:queue(sounddata) --Insert the new sounddata into the queue.
@@ -237,7 +249,7 @@ while true do
   
   local dt = love.timer.getDelta()
   
-  local sleeptime = (buffer_time - dt)*0.8 --Calculate the remaining time that we can sleep.
+  local sleeptime = (buffer_time - dt)*(onMobile and 0.4 or 0.8) --Calculate the remaining time that we can sleep.
   
   --There's time to sleep
   if sleeptime > 0 then
