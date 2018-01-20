@@ -19,9 +19,6 @@ local onMobile = (love.system.getOS() == "Android")
 --The QueueableSource
 local QSource = require("Peripherals.Audio.QueueableSource")
 
---Create a new QueueableSource, with 2 buffer slots.
-local qs = QSource:new(2)
-
 local rate = onMobile and 22050 or 44100 --The samples rate.
 local buffers_rate = onMobile and 10 or 20 --The number of buffers created each second.
 
@@ -29,7 +26,11 @@ local buffer_size = rate/buffers_rate --The size of sounddatas generated and ins
 local buffer_time = buffer_size/rate --The time of the buffer in seconds, used when putting the thread into sleep.
 
 local buffers_cache = {} --Put in the sounddatas
-local buffers_cache_flag = false --The first or second sounddata.
+local buffers_cache_id = 1 --The current active sounddata from the cache
+local buffers_cache_amount = 4 --The number of sounddatas to create
+
+--Create a new QueueableSource, with 2 buffer slots.
+local qs = QSource:new(buffers_cache_amount)
 
 local amp = 0 --The soundwave cycle amplitude.
 local tamp = 0 --The target amplitude.
@@ -198,12 +199,12 @@ while true do
         buffer_size = floor(rate/freq) * floor(freq/buffers_rate)
         buffer_time = buffer_size/rate
         buffers_cache = {} --Clear the buffers cache
-        buffers_cache_flag = false --Reset the buffers cache flag
+        buffers_cache_id = 1  --Reset the buffers cache id
       end
     end
   end
   
-  local skip_generation = (tamp > 0) and (#buffers_cache == 2) and (generated_time > max(buffer_time,amp_slide_time)*8) and (wave ~= 5)
+  local skip_generation = (tamp > 0) and (#buffers_cache == 2) and (generated_time > max(buffer_time,amp_slide_time)*buffers_cache_amount) and (wave ~= 5)
   
   --Generate audio.
   if amp > 0 or tamp > 0 then
@@ -215,14 +216,15 @@ while true do
       local sounddata --The sounddata to work on.
       
       --Get the sounddata out from the buffers cache.
-      if #buffers_cache == 2 then
-        sounddata = buffers_cache[ buffers_cache_flag and 2 or 1 ]
+      if #buffers_cache == buffers_cache_amount then
+        sounddata = buffers_cache[ buffers_cache_id ]
       else
         sounddata = love.sound.newSoundData(buffer_size, rate, 16, 1)
-        buffers_cache[ buffers_cache_flag and 2 or 1 ] = sounddata
+        buffers_cache[ buffers_cache_id ] = sounddata
       end
       
-      buffers_cache_flag = not buffers_cache_flag --Invert the flag
+      buffers_cache_id = buffers_cache_id + 1 --Increase the id
+      if buffers_cache_id > buffers_cache_amount then buffers_cache_id = 1 end
       
       if not skip_generation then
       
