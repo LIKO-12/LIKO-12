@@ -212,7 +212,7 @@ while true do
       
       local sounddata --The sounddata to work on.
       
-      local skip_generation = (amp == tamp) and (#buffers_cache == 2) and (generated_time > amp_slide_time*3)
+      local skip_generation = (amp == tamp) and (#buffers_cache == 2) and (generated_time > max(buffer_time,amp_slide_time)*4)
       
       --Get the sounddata out from the buffers cache.
       if #buffers_cache == 2 then
