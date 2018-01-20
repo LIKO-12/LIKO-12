@@ -27,7 +27,7 @@ local buffer_time = buffer_size/rate --The time of the buffer in seconds, used w
 
 local buffers_cache = {} --Put in the sounddatas
 local buffers_cache_id = 1 --The current active sounddata from the cache
-local buffers_cache_amount = 4 --The number of sounddatas to create
+local buffers_cache_amount = onMobile and 4 or 2 --The number of sounddatas to create
 
 --Create a new QueueableSource, with 2 buffer slots.
 local qs = QSource:new(buffers_cache_amount)
@@ -211,7 +211,7 @@ while true do
     qs:step() --Make the QueueableSource check for empty buffer slots.
     
     --If there're any free buffer slots, then we have to fill it.
-    if qs:getFreeBufferCount() > 0 then
+    for i=1, qs:getFreeBufferCount() do
       
       local sounddata --The sounddata to work on.
       
