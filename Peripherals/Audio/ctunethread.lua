@@ -23,7 +23,7 @@ local QSource = require("Peripherals.Audio.QueueableSource")
 local qs = QSource:new(2)
 
 local rate = 44100 --The samples rate.
-local buffers_rate = 20 --The number of buffers created each second.
+local buffers_rate = onMobile and 10 or 20 --The number of buffers created each second.
 
 local buffer_size = rate/buffers_rate --The size of sounddatas generated and inserted to the QueueableSource
 local buffer_time = buffer_size/rate --The time of the buffer in seconds, used when putting the thread into sleep.
@@ -203,6 +203,8 @@ while true do
     end
   end
   
+  local skip_generation = (tamp > 0) and (#buffers_cache == 2) and (generated_time > max(buffer_time,amp_slide_time)*8) and (wave ~= 5)
+  
   --Generate audio.
   if amp > 0 or tamp > 0 then
     qs:step() --Make the QueueableSource check for empty buffer slots.
@@ -211,8 +213,6 @@ while true do
     if qs:getFreeBufferCount() > 0 then
       
       local sounddata --The sounddata to work on.
-      
-      local skip_generation = (tamp > 0) and (#buffers_cache == 2) and (generated_time > max(buffer_time,amp_slide_time)*8) and (wave ~= 5)
       
       --Get the sounddata out from the buffers cache.
       if #buffers_cache == 2 then
@@ -251,10 +251,10 @@ while true do
   
   local dt = love.timer.getDelta()
   
-  local sleeptime = (buffer_time - dt*2)*0.8 --Calculate the remaining time that we can sleep.
+  local sleeptime = (buffer_time - dt*2)*0.6 --Calculate the remaining time that we can sleep.
   
   --There's time to sleep
-  if sleeptime > 0 then
+  if (sleeptime > 0) and (skip_generation or not onMobile) then
     love.timer.sleep(sleeptime) --ZzZzZzZzZzZzZzZzZzzzz.
     love.timer.step() --Skip the time spent while sleeping..
   else --Well, we're not generating enough
