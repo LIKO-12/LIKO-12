@@ -39,6 +39,11 @@ return function(config)
     chctune:push({wave,freq,amp})
   end
   
+  function AU.stop()
+    chctune:clear()
+    chctune:push({})
+  end
+  
   function AU.play(chn,p)
     
     if type(p) ~= "table" then return error("Parameters should be a table, provided: "..type(p)) end
