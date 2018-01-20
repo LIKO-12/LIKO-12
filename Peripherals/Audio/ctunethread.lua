@@ -251,7 +251,7 @@ while true do
   
   local dt = love.timer.getDelta()
   
-  local sleeptime = (buffer_time - dt)*(onMobile and 0.4 or 0.8) --Calculate the remaining time that we can sleep.
+  local sleeptime = (buffer_time - dt*2)*0.8 --Calculate the remaining time that we can sleep.
   
   --There's time to sleep
   if sleeptime > 0 then
