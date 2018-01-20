@@ -22,7 +22,7 @@ local QSource = require("Peripherals.Audio.QueueableSource")
 --Create a new QueueableSource, with 2 buffer slots.
 local qs = QSource:new(2)
 
-local rate = 44100 --The samples rate.
+local rate = onMobile and 22050 or 44100 --The samples rate.
 local buffers_rate = onMobile and 10 or 20 --The number of buffers created each second.
 
 local buffer_size = rate/buffers_rate --The size of sounddatas generated and inserted to the QueueableSource
@@ -254,7 +254,7 @@ while true do
   local sleeptime = (buffer_time - dt*2)*0.6 --Calculate the remaining time that we can sleep.
   
   --There's time to sleep
-  if (sleeptime > 0) and (skip_generation or not onMobile) then
+  if sleeptime > 0 then
     love.timer.sleep(sleeptime) --ZzZzZzZzZzZzZzZzZzzzz.
     love.timer.step() --Skip the time spent while sleeping..
   else --Well, we're not generating enough
