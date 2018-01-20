@@ -204,7 +204,7 @@ while true do
     end
   end
   
-  local skip_generation = (tamp > 0) and (#buffers_cache == 2) and (generated_time > max(buffer_time,amp_slide_time)*buffers_cache_amount) and (wave ~= 5)
+  local skip_generation = (tamp > 0) and (#buffers_cache == buffers_cache_amount) and (generated_time > max(buffer_time,amp_slide_time)*buffers_cache_amount) and (wave ~= 5)
   
   --Generate audio.
   if amp > 0 or tamp > 0 then
