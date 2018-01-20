@@ -17,12 +17,16 @@ return function(config)
   ctunethread:start(chctune)
   
   events:register("love:reboot", function()
+    chsfxr:clear()
     chsfxr:push("stop")
+    chctune:clear()
     chctune:push("stop")
   end)
   
   events:register("love:quit", function()
+    chsfxr:clear()
     chsfxr:push("stop")
+    chctune:clear()
     chctune:push("stop")
     sfxrthread:wait()
     ctunethread:wait()
@@ -31,6 +35,7 @@ return function(config)
   local AU, yAU, devkit = {}, {}, {}
   
   function AU.generate(wave,freq,amp)
+    chctune:clear()
     chctune:push({wave,freq,amp})
   end
   
