@@ -140,7 +140,7 @@ end
 
 --Pull a new command from the channel
 local function pullParams()
-  if wave then
+  if amp > 0 then
     return chIn:pop()
   else
     local arg = chIn:demand()
