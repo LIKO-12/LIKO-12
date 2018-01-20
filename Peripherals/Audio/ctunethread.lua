@@ -9,7 +9,8 @@ require("love.math")
 
 local QSource = require("Peripherals.Audio.QueueableSource")
 
-local qs = QSource:new()
+local qs = QSource:new(2)
+
 
 local rate = 44100
 local buffer_size = rate/4
@@ -141,9 +142,7 @@ while true do
       end
       
       qs:clear()
-      qs = QSource:new()
-      
-      chIn:clear()
+      qs = QSource:new(2)
     end
   end
   
