@@ -1,7 +1,7 @@
 --Chiptune Thread
 
 --Store math functions in locals to optamize speed.
-local min, max, floor, sin, abs = math.min, math.max, math.floor, math.sin, math.abs
+local min, max, floor, sin, abs, random = math.min, math.max, math.floor, math.sin, math.abs, math.random
 
 --The chunnel to recieve orders from
 local chIn = ...
@@ -58,7 +58,7 @@ waveforms[0] = function(samples)
   return function()
     r = (r + pi/hs)%dpi
     
-    return math.sin(r)*amp
+    return sin(r)*amp
   end
 end
 
@@ -89,7 +89,7 @@ waveforms[2] = function(samples)
   return function()
     r = (r + pi/hs)%dpi
     
-    if math.sin(r) > 0.5 then
+    if sin(r) > 0.5 then
       return amp
     else
       return -amp
@@ -110,7 +110,6 @@ end
 
 --Triangle
 waveforms[4] = function(samples)
-  local abs = math.abs
   local c = 0
   local inc = 4/samples
   
@@ -122,8 +121,8 @@ end
 
 --Noise
 waveforms[5] = function(samples)
-  local v = math.random()
-  local hs = math.floor(samples/2)
+  local v = random()
+  local hs = floor(samples/2)
   local c = hs
   
   local mn = love.math.noise
@@ -131,7 +130,7 @@ waveforms[5] = function(samples)
   return function()
     c = c - 1
     if c == 0 then
-      v = math.random()
+      v = random()
       c = hs
     end
     
