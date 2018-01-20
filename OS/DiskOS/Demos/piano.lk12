@@ -39,7 +39,7 @@ local function calcHz(note,oct)
  return notehz
 end
 
-local oct = 0
+local oct = 4
 local hz = 0
 local note
 
