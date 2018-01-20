@@ -17,6 +17,12 @@ local notes = {
  "G","G#","A","A#","B"
 }
 
+local waves = 5
+local wname = {
+ "Sin", "Square", "Pulse","Sawtooth",
+ "Triangle", "Noise"
+}  
+
 --Notes go from 1 to 12
 --Oct goes from 0 to 8
 local function calcHz(note,oct)
@@ -42,13 +48,15 @@ end
 local oct = 4
 local hz = 0
 local note
+local wave = 0
 
 function _draw()
  clear(5)
  color(7)
  print("OCT: "..oct,5,5)
- print("NOTE: "..(note and notes[note] or "None"),5,15)
+ print("NOTE: "..(note and notes[note]..oct or "None"),5,15)
  print("HZ: "..hz,5,25)
+ print("Wave: "..wname[wave+1],5,35)
 end
 
 local notekeys = {
@@ -63,13 +71,35 @@ function _keypressed(key, sc, isr)
   notekey = key
   note = notekeys[key]
   hz = calcHz(note,oct)
-  Audio.generate(0,hz,1)
+  Audio.generate(wave,hz,1)
+ end
+ 
+ if key == "r" then
+  wave = math.max(wave-1,0)
+  if note then
+   hz = calcHz(note,oct)
+   Audio.generate(wave,hz,1)
+  end        
+ elseif key == "t" then
+  wave = math.min(wave+1,waves)
+  if note then
+   hz = calcHz(note,oct)
+   Audio.generate(wave,hz,1)
+  end        
  end
  
  if key == "q" then
   oct = math.max(oct-1,0)
+  if note then
+   hz = calcHz(note,oct)
+   Audio.generate(wave,hz,1)
+  end
  elseif key == "w" then
   oct = math.min(oct+1,8)
+  if note then
+   hz = calcHz(note,oct)
+   Audio.generate(wave,hz,1)
+  end        
  end
 end
 
