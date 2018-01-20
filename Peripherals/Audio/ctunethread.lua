@@ -110,8 +110,8 @@ end
 
 --Triangle
 waveforms[4] = function(samples)
-  local c = 0
   local inc = 4/samples
+  local c = 3
   
   return function()
     c = (c+inc)%4
