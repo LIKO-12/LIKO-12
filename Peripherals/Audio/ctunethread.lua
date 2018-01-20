@@ -237,7 +237,9 @@ while true do
             amp = max(amp - amp_slide,0)
           end
         end
-      
+        
+        generated_time = generated_time + buffer_time
+        
       end
       
       qs:queue(sounddata) --Insert the new sounddata into the queue.
