@@ -5,6 +5,8 @@ local coreg = require("Engine.coreg")
 local bit = require("bit") --Require the bit operations library for use in VRAM
 local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 
+local strformat = string.format
+
 local json = require("Engine.JSON") --Used to save the calibrarion values.
 
 return function(config) --A function that creates a new GPU peripheral.
@@ -1189,9 +1191,17 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     
     function id:encode() --Export to liko12 format
-      local data = "LK12;GPUIMG;"..self:width().."x"..self.height()..";"
-      self:map(function(x,y,c) if x == 0 then data = data.."\n" end data = data..string.format("%X",c) end)
-      return data
+      local data = {strformat("LK12;GPUIMG;%dx%d;",self:width(),self:height())}
+      local datalen = 2
+      self:map(function(x,y,c)
+        if x == 0 then
+          data[datalen] = "\n"
+          datalen = datalen + 1
+        end
+        data[datalen] = strformat("%X",c)
+        datalen = datalen + 1
+      end)
+      return table.concat(data)
     end
     
     function id.type() return "GPU.imageData" end
