@@ -20,7 +20,7 @@ local onMobile = (love.system.getOS() == "Android")
 local QSource = require("Peripherals.Audio.QueueableSource")
 
 local rate = onMobile and 22050 or 44100 --The samples rate.
-local buffers_rate = onMobile and 10 or 20 --The number of buffers created each second.
+local buffers_rate = 20 --The number of buffers created each second.
 
 local buffer_size = rate/buffers_rate --The size of sounddatas generated and inserted to the QueueableSource
 local buffer_time = buffer_size/rate --The time of the buffer in seconds, used when putting the thread into sleep.
