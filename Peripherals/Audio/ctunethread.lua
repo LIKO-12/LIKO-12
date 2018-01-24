@@ -1,7 +1,7 @@
 --Chiptune Thread
 
 --Store math functions in locals to optamize speed.
-local min, max, floor, sin, abs = math.min, math.max, math.floor, math.sin, math.abs
+local min, max, floor, sin, abs, random = math.min, math.max, math.floor, math.sin, math.abs, math.random
 
 --The chunnel to recieve orders from
 local chIn = ...
@@ -58,7 +58,7 @@ waveforms[0] = function(samples)
   return function()
     r = (r + pi/hs)%dpi
     
-    return math.sin(r)*amp
+    return sin(r)*amp
   end
 end
 
@@ -89,7 +89,7 @@ waveforms[2] = function(samples)
   return function()
     r = (r + pi/hs)%dpi
     
-    if math.sin(r) > 0.5 then
+    if sin(r) > 0.5 then
       return amp
     else
       return -amp
@@ -110,9 +110,8 @@ end
 
 --Triangle
 waveforms[4] = function(samples)
-  local abs = math.abs
-  local c = 0
   local inc = 4/samples
+  local c = 3
   
   return function()
     c = (c+inc)%4
@@ -122,8 +121,8 @@ end
 
 --Noise
 waveforms[5] = function(samples)
-  local v = math.random()
-  local hs = math.floor(samples/2)
+  local v = random()
+  local hs = floor(samples/2)
   local c = hs
   
   local mn = love.math.noise
@@ -131,7 +130,7 @@ waveforms[5] = function(samples)
   return function()
     c = c - 1
     if c == 0 then
-      v = math.random()
+      v = random()
       c = hs
     end
     
@@ -204,7 +203,7 @@ while true do
     end
   end
   
-  local skip_generation = (tamp > 0) and (#buffers_cache == 2) and (generated_time > max(buffer_time,amp_slide_time)*buffers_cache_amount) and (wave ~= 5)
+  local skip_generation = (tamp > 0) and (#buffers_cache == buffers_cache_amount) and (generated_time > max(buffer_time,amp_slide_time)*buffers_cache_amount) and (wave ~= 5)
   
   --Generate audio.
   if amp > 0 or tamp > 0 then

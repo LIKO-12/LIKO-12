@@ -301,3 +301,4 @@ colorPalette() --Reset the color palette.
 print("")
 
 TC.setInput(false)
+Audio.stop()
