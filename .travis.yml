@@ -39,6 +39,8 @@ script:
   - 7z A -r -y -tzip -bd Builds/LIKO-12_Nightly_Mac.zip OS_X/*
   - echo ----==== Copying Universal... ====----
   - cp -v -f LIKO-12.love Builds/LIKO-12_Nightly_Universal.love
+  - echo ----==== Done ====----
+  - cd ../LIKO-12/
 
 deploy:
   provider: pages
@@ -47,5 +49,5 @@ deploy:
   keep-history: true
   on:
     branch: master
-  local-dir: Builds/
+  local-dir: ../BuildUtils/Builds/
   repo: RamiLego4Game/LIKO-12-Nightly
