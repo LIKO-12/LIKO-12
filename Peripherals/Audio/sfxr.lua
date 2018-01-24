@@ -772,7 +772,7 @@ function sfxr.Sound:getEnvelopeLimit(rate)
     }
     local limit = trunc(env_length[1] + env_length[2] + env_length[3] + 2)
 
-    return math.ceil(limit / (rate / 44100))
+    return math.ceil(limit * (rate / 44100))
 end
 
 --- Generate the sound into a table.
