@@ -34,7 +34,7 @@ if address ~= nil then
 		  printErr("Request error, HTTP Error code: " .. data.code)
 		  return
 	       else
-		  if filename == nil then
+		  if not filename then
 		     local tokens = split(address, '/')
 		     filename = tokens[#tokens]
 		  end
