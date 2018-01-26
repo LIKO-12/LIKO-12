@@ -25,13 +25,13 @@ function shaders.newShader(precode,postcode,transcode,vec4)
       for i=1, 14 do
         data = data .. "\n  else if(index == "..i..") col = palette["..i.."] / 255.0;"
       end
-      data = data .. "\n  else col = palette[1] / 255.0;\n  float coltrans;\n  " 
+      data = data .. "\n  else col = palette[15] / 255.0;\n  float coltrans;\n  " 
       
       data = data.. "if(index == 0) coltrans = transparent[0]*ta;"
       for i=1, 14 do
         data = data .. "\n  else if(index == "..i..") coltrans = transparent["..i.."]*ta;"
       end
-      data = data .. "\n  else coltrans = transparent[1]*ta;\n" .. postcode
+      data = data .. "\n  else coltrans = transparent[15]*ta;\n" .. postcode
       
       return love.graphics.newShader(data)
     end
@@ -57,7 +57,7 @@ function shaders.newShader(precode,postcode,transcode,vec4)
       for i=1, 14 do
         data = data .. "\n  else if(index == "..i..") col = palette["..i.."] / 255.0;"
       end
-      data = data .. "\n  else col = palette[1] / 255.0;\n" .. postcode
+      data = data .. "\n  else col = palette[15] / 255.0;\n" .. postcode
       
       return love.graphics.newShader(data)
     end
