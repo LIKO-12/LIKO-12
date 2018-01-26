@@ -976,9 +976,9 @@ return function(config) --A function that creates a new GPU peripheral.
     
     --A function to draw the background rectangle
     local function drawbackground(gx,gy,gw)
-      if printCursor.bgc == -1 or gw < 1 then return end --No need to draw the background
+      if c == -1 or gw < 1 then return end --No need to draw the background
       gx,gy = togrid(gx,gy)
-      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, printCursor.bgc)
+      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, c)
     end
       
     if printCursor.x > 0 then
