@@ -76,7 +76,7 @@ return function(config)
   --Create a new floppy disk and mount it
   --tname -> template name, without the .png extension
   function fapi.newDisk(tname)
-    local tname = tname or "Disk"
+    local tname = tname or "Blue"
     if type(tname) ~= "string" then return error("Disk template name must be a string or a nil, provided: "..type(tname)) end
     if not love.filesystem.exists(perpath..tname..".png") then return error("Disk template '"..tname.."' doesn't exist !") end
     
