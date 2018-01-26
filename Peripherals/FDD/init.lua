@@ -3,14 +3,6 @@ local perpath = select(1,...) --The path to the FDD folder
 local bit = require("bit")
 local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 
-local function exe(ok,err,...)
-  if ok then
-    return err,...
-  else
-    return error(err or "NULL")
-  end
-end
-
 return function(config)
   
   local GPUKit = config.GPUKit or error("The FDD peripheral requires the GPUKit")
@@ -42,7 +34,7 @@ return function(config)
   --DiskWriteMapper
   local WritePos = 0
   local function _WriteDisk(x,y,r,g,b,a)
-    local byte = exe(RAM.peek(FRAMAddress+WritePos))
+    local byte = RAM.peek(FRAMAddress+WritePos)
     r = bor(r, band( rshift(byte ,6), 3) )
     g = bor(g, band( rshift(byte ,4), 3) )
     b = bor(b, band( rshift(byte ,2), 3) )
