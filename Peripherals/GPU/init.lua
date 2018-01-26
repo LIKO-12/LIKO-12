@@ -427,6 +427,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local LIMGHandler; LIMGHandler = newImageHandler(_LIKO_W,_LIKO_H,function() end,function() end)
   
+  LIMGHandler("setImage",0,0,LabelImage)
+  
   --The api starts here--
   
   local flip = false --Is the code waiting for the screen to draw, used to resume the coroutine.

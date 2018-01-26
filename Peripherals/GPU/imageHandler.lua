@@ -144,8 +144,8 @@
         
         x = x+2
         
-        if x >= _LIKO_W then
-          x = x - _LIKO_W
+        if x >= IMGWidth then
+          x = x - IMGWidth
           y = y+1
         end
         
