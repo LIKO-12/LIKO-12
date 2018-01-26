@@ -260,6 +260,7 @@ function term.loop() --Enter the while loop of the terminal
         if hispos > 1 then
           hispos = hispos-1
           blink = false; checkCursor()
+          print(buffer:sub(inputPos,-1),false)
           for i=1,buffer:len() do
             printBackspace()
           end
@@ -274,6 +275,7 @@ function term.loop() --Enter the while loop of the terminal
         if hispos and hispos < #history then
           hispos = hispos+1
           blink = false; checkCursor()
+          print(buffer:sub(inputPos,-1),false)
           for i=1,buffer:len() do
             printBackspace()
           end
