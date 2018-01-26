@@ -16,6 +16,29 @@ local RAMKit = Devkits.RAM
 
 local _LIKO_Version, _LIKO_Old = BIOS.getVersion()
 
+local Mobile = CPU.isMobile()
+
+local function wait(timeout) --Wait for 'delete' or 'escape' keypress.
+  local timer = timeout
+  local setupkey = Mobile and "escape" or "delete"
+  for event, a,b,c,d,e,f in CPU.pullEvent do
+    if event == "update" then
+      timer = timer - a
+      if timer <= 0 then return end
+    elseif event == "keypressed" then
+      if a == setupkey then
+        coroutine.yield("echo",Handled,Devkits)
+        
+        local setup = love.filesystem.load("/BIOS/setup.lua")
+        local setupCo = coroutine.create(setup)
+        coreg:setCoroutine(setupCo)
+        
+        return true
+      end
+    end
+  end
+end
+
 --POST Screen--
 GPU.clear() --Fill with black.
 GPU.color(7) --Set the color to white.
@@ -27,7 +50,7 @@ local likologo = GPU.image(love.filesystem.read("/BIOS/likologo.lk12"))
 local sw,sh = GPU.screenSize()
 
 GPU.flip()
-CPU.sleep(0.5)
+if wait(0.5) then return end
 
 lualogo:draw(sw-lualogo:width()-6,5)
 likologo:draw(2,7)
@@ -39,10 +62,14 @@ GPU.print("NormBIOS Revision 060-013")
 if DevMode then GPU.color(6) GPU.print("# Devmode Enabled #") GPU.color(7) end
 GPU.print("")
 
-GPU.print("Press DEL to enter setup",2,sh-7)
+if Mobile then
+  GPU.print("Press BACK to enter setup",2,sh-7)
+else
+  GPU.print("Press DEL to enter setup",2,sh-7)
+end
 
 GPU.flip()
-CPU.sleep(0.3)
+if wait(0.3) then return end
 
 if CPU.isMobile() then
   GPU.print("Main CPU: Lua 5.1")
@@ -56,7 +83,7 @@ GPU.print("")
 GPU.print("Harddisks: ")
 
 GPU.flip()
-CPU.sleep(0.3)
+if wait(0.3) then return end
 
 Devkits["HDD"].calcUsage()
 for letter,drive in pairs(fs.drives()) do
@@ -67,13 +94,13 @@ for letter,drive in pairs(fs.drives()) do
 end
 
 GPU.flip()
-CPU.sleep(1.5)
+if wait(1.5) then return end
 
 GPU.clear()
 GPU.printCursor(0,0,0)
 
 GPU.flip()
-CPU.sleep(0.2)
+if wait(0.2) then return end
 
 fs.drive("C") --Switch to the C drive.
 
