@@ -23,6 +23,7 @@ if (not destination) or destination == "-?" then
   printUsage(
     "save <file>","Saves the current loaded game",
     "save <file>.png","Save in a png disk",
+    "save <file>.png -color [color]","Specify the color of the png disk",
     "save @clip","Saves into the clipboard",
     "save <file> -c","Saves with compression",
     "save <file> -b","Saves in binary format",
@@ -66,6 +67,10 @@ else
   data = eapi:export()
   header = header.."none;CLvl:0;"
   savedata = header.."\n"..data
+end
+
+if string.lower(flag) == "-color" and png then
+  FDD.newDisk(select(3,...))
 end
 
 if destination == "@clip" then
