@@ -95,7 +95,7 @@ for peripheral, funcList in pairs(handledapis) do
   end
 end
 
-local apiloader = loadstring(fs.read("C:/System/api.lua"))
+local apiloader = fs.load("C:/System/api.lua")
 setfenv(apiloader,glob) apiloader()
 
 local function autoEventLoop()
@@ -235,7 +235,7 @@ glob["__".."_".."autoEventLoop"] = autoEventLoop --Because trible _ are not allo
 
 --Libraries
 local function addLibrary(path,name)
-  local lib, err = loadstring(fs.read(path))
+  local lib, err = fs.load(path)
   if not lib then error("Failed to load library ("..name.."): "..err) end
   setfenv(lib,glob) 
   glob[name] = lib()
@@ -247,7 +247,7 @@ addLibrary("C:/Libraries/bump.lua","bump")
 addLibrary("C:/Libraries/likocam.lua","likocam")
 addLibrary("C:/Libraries/JSON.lua","json")
 
-local helpersloader, err = loadstring(fs.read("C:/Libraries/diskHelpers.lua"))
+local helpersloader, err = fs.load("C:/Libraries/diskHelpers.lua")
 if not helpersloader then error(err) end
 setfenv(helpersloader,glob) helpersloader()
 
