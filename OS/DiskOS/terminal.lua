@@ -16,6 +16,8 @@ local history = {} --The history of commands.
 local hispos --The current item in the history.
 local btimer, btime, blink = 0, 0.5, true  --The terminal cursor blink timer.
 local ecommand --The editor command, used by the Ctrl-R hotkey to execute the 'run' program.
+local buffer = "" --The terminal input buffer
+local inputPos = 1 --The next input character position in the terminal buffer.
 
 --Checks if the cursor is in the bounds of the screen.
 local function checkCursor()
@@ -27,6 +29,11 @@ local function checkCursor()
   if cy < 0 then cy = 0 end
   printCursor(cx,cy,0)
   rect(cx*(fw+1)+1,blink and cy*(fh+2)+1 or cy*(fh+2),fw+1,blink and fh or fh+3,false,blink and 4 or 0) --The blink
+  if inputPos <= buffer:len() then
+    printCursor(cx,cy,-1)
+    print(buffer:sub(inputPos,inputPos),false)
+    printCursor(cx,cy,0)
+  end
 end
 
 --Splits a string at each white space.
@@ -195,29 +202,34 @@ function term.ecommand(command) --Editor post command
 	ecommand = command
 end
 
+--abc
+
 function term.loop() --Enter the while loop of the terminal
   cursor("none")
   clearEStack()
   checkCursor() term.prompt()
-  local buffer = ""
+  buffer, inputPos = "", 1
   for event, a,b,c,d,e,f in pullEvent do
     checkCursor() --Which also draws the cursor blink
     
     if event == "textinput" then
-      buffer = buffer..a
-      print(a,false)
+      print(a..buffer:sub(inputPos,-1),false)
+      for i=inputPos,buffer:len() do printBackspace(-1) end
+      buffer = buffer:sub(1,inputPos-1)..a..buffer:sub(inputPos,-1)
+      inputPos = inputPos + a:len()
     elseif event == "keypressed" then
       if a == "return" then
         if hispos then table.remove(history,#history) hispos = false end
         table.insert(history, buffer)
         blink = false; checkCursor()
         print("") -- insert newline after Enter
-        term.execute(split(buffer)) buffer = ""
+        term.execute(split(buffer)) buffer, inputPos = "", 1
         checkCursor() term.prompt() blink = true cursor("none")
       elseif a == "backspace" then
         blink = false; checkCursor()
         if buffer:len() > 0 then
-          buffer = buffer:sub(0,-2)
+          buffer = buffer:sub(1,-2)
+          inputPos = inputPos - 1
           printBackspace()
         end
         blink = true; checkCursor()
@@ -226,7 +238,7 @@ function term.loop() --Enter the while loop of the terminal
         for i=1,buffer:len() do
           printBackspace()
         end
-        buffer = ""
+        buffer, inputPos = "", 1
         blink = true; checkCursor()
       elseif a == "escape" then
         local screenbk = screenshot()
@@ -252,6 +264,7 @@ function term.loop() --Enter the while loop of the terminal
             printBackspace()
           end
           buffer = history[hispos]
+          inputPos = buffer:len() + 1
           for char in string.gmatch(buffer,".") do
             print(char,false)
           end
@@ -265,12 +278,27 @@ function term.loop() --Enter the while loop of the terminal
             printBackspace()
           end
           buffer = history[hispos]
+          inputPos = buffer:len() + 1
           for char in string.gmatch(buffer,".") do
             print(char,false)
           end
           if hispos == #history then table.remove(history,#history) hispos = false end
           blink = true; checkCursor()
         end
+      elseif a == "left" then
+        blink = false; checkCursor()
+        if inputPos > 1 then
+          inputPos = inputPos - 1
+          printBackspace(-1)
+        end
+        blink = true; checkCursor()
+      elseif a == "right" then
+        blink = false; checkCursor()
+        if inputPos <= buffer:len() then
+          print(buffer:sub(inputPos,inputPos),false)
+          inputPos = inputPos + 1
+        end
+        blink = true; checkCursor()
       elseif a == "c" then
         if isKDown("lctrl","rctrl") then
           clipboard(buffer)
@@ -278,10 +306,15 @@ function term.loop() --Enter the while loop of the terminal
       elseif a == "v" then
         if isKDown("lctrl","rctrl") then
           local paste = clipboard() or ""
-          buffer = buffer..paste
-          for char in string.gmatch(paste,".") do
+          
+          for char in string.gmatch(paste..buffer:sub(inputPos,-1),".") do
             print(char,false)
           end
+          
+          for i=inputPos,buffer:len() do printBackspace(-1) end
+          
+          buffer = buffer:sub(1,inputPos-1)..paste..buffer:sub(inputPos,-1)
+          inputPos = inputPos + paste:len()
         end
       end
     elseif event == "touchpressed" then
