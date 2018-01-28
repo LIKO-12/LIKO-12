@@ -43,7 +43,7 @@ The key name can be any love2d key constant or and scancode
 You can combine it with ctrl, alt or shift, ex: editor.keymap["ctrl-c"]
 
 * Note when reading existing editors:
-The may use some api functions defined at DiskOS/api.lua
+The may use some api functions defined at DiskOS/System/api.lua
 
 Good luck !
 
@@ -85,7 +85,7 @@ function edit:initialize()
     table.insert(self.iconsQuads,self.icons:quad(self.icons:width()-i*8,8, 8,8))
   end
   
-  local editors = {"soon","soon","tile","sprite","code","soon"} --List of built-in editors to create chunks of
+  local editors = {"soon","sfx","tile","sprite","code","soon"} --List of built-in editors to create chunks of
   for k, v in ipairs(editors) do --Load chunks
     local chunk, err = fs.load("C:/Editors/"..v..".lua")
     if not chunk then error(err or "Error loading: "..tostring(v)) end
