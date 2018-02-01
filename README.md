@@ -16,7 +16,7 @@ Games are stored as disk files that can be saved, shared and uploaded to pastebi
 
 When you start LIKO-12, the BIOS POST screen will showup displaying LIKO-12 specs and the virtual harddisks usage.
 
-![BIOS_POST](https://github.com/RamiLego4Game/LIKO-12/raw/master/Extra/Readme-Screenshots/BIOST_POST.png)
+![BIOS_POST](https://github.com/RamiLego4Game/LIKO-12/raw/master/Extra/Readme-Screenshots/BIOS_POST.png)
 
 You can also access the setup screen by pressing delete on desktop, or back on android, but currently it displays a "Comming Soon" message.
 
