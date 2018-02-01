@@ -65,12 +65,12 @@ function edit:initialize()
   
   self.active = 4 --Active editor3
   
-  self.editors = {"music","sfx","tile","sprite","code","soon"; music=1,sfx=2,tile=3,sprite=4,code=5,config=6}
-  self.saveid = {-1,-1,"tilemap","spritesheet","luacode",-1;tilemap=3,spritesheet=4,luacode=5}
+  self.editors = {"music","sfx","tile","sprite","code"; music=1,sfx=2,tile=3,sprite=4,code=5}
+  self.saveid = {-1,-1,"tilemap","spritesheet","luacode";tilemap=3,spritesheet=4,luacode=5}
   self.chunks = {} --Editors Code Chunks
   self.leditors = {} --Loaded editors (Executed chunks)
   
-  self.icons = imagedata(6*8,2*8)
+  self.icons = imagedata(5*8,2*8)
   self.icons:paste(self.editorsheet.img:data(),0,0, (24-#self.editors)*8,0, #self.editors*8,8)
   self.icons:paste(self.editorsheet.img:data(),0,8, (24-#self.editors)*8,0, #self.editors*8,8)
   self.icons:map(function(x,y,c)
