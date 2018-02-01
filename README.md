@@ -1,6 +1,6 @@
-# LIKO-12
+![LIKO-12](https://github.com/RamiLego4Game/LIKO-12/raw/master/Extra/Readme-Screenshots/Header_Logo.png)
 
-LIKO-12
+---
 
 ## About:
 
@@ -66,6 +66,8 @@ Here you can edit the map of your game, I know the editor is very hard to use, b
 
 Those editors hasn't been made yet, but they are really comming soon (they are currently under work)
 
+---
+
 ## The Fantasy Computer Specifications:
 
 | Spec  | Info                                |
@@ -75,6 +77,8 @@ Those editors hasn't been made yet, but they are really comming soon (they are c
 | Map   | 144x128 Cell (255 Tile)             |
 | HDD   | 144x128 Cell (255 Tile)             |
 | Input | Keyboard, Mouse, Touch, and Gamepad |
+
+---
 
 ## Social links:
 
@@ -88,10 +92,15 @@ Those editors hasn't been made yet, but they are really comming soon (they are c
 | Github         | [LIKO-12](https://github.com/RamiLego4Game/LIKO-12)       |
 | Email          | [ramilego4game@gmail.com](emailto:ramilego4game@gmail.com)|
 
+---
+
 ## Releases/Downloads Page: 
 
 * **Itch.io:** https://ramilego4game.itch.io/liko12
 * **Github:** https://github.com/RamiLego4Game/LIKO-12/releases/
+* **Nightly-Builds:** https://ramilego4game.github.io/LIKO-12-Nightly/
+
+---
 
 ## Guides:
 
