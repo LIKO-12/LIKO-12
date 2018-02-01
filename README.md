@@ -1,6 +1,6 @@
 # LIKO-12
 
-![The Terminal](http://liko-12.readthedocs.io/en/latest/Terminal.gif)
+LIKO-12
 
 ## About:
 
@@ -16,17 +16,23 @@ Games are stored as disk files that can be saved, shared and uploaded to pastebi
 
 When you start LIKO-12, the BIOS POST screen will showup displaying LIKO-12 specs and the virtual harddisks usage.
 
+![BIOS_POST](Extra/Readme-Screenshots/BIOST_POST.png)
+
 You can also access the setup screen by pressing delete on desktop, or back on android, but currently it displays a "Comming Soon" message.
 
 ### DiskOS Installer:
 
 When you boot LIKO-12 for the first time, an scrolling display would be shown installing DiskOS, the default LIKO-12 operating system.
 
+![DiskOS_Installer](Extra/Readme-Screenshots/DiskOS_Installer.png)
+
 It will only run a single time, and wont run again at next boots, except when an update happens, where a 'DiskOS Updater' would be shown, and the process would be much faster in this case, as it only updates the necessary files.
 
 ### DiskOS Greeting and Terminal:
 
 Once the Installation Completes, DiskOS will boot up, the LIKO-12 opereating system.
+
+![DiskOS_Prompt](Extra/Readme-Screenshots/DiskOS_Prompt.gif)
 
 Here you can type common commands to do common tasks, like `cd` (Change Directory), `ls` (List files), `load` (Load a Game/Demo), `run` (Run the loaded Game/Demo), `reboot` (Reboot LIKO-12), `shutdown`/`exit` (Exit LIKO-12), And more in the documentation....
 
@@ -38,17 +44,25 @@ LIKO-12 comes with it's own editors for making games, already setup for you, you
 
 #### Code editor:
 
+![Code_Editor](Extra/Readme-Screenshots/Code_Editor.png)
+
 Here you write the code for your game, LIKO-12 uses Lua for everything, for DiskOS, for the Engine, and for Games !
 
 #### Sprites editor:
 
 Here you can edit your game sprites, 8x8 each sprite, 384 sprites total.
 
+![Sprite_Editor](Extra/Readme-Screenshots/Sprite_Editor.png)
+
 #### Map editor:
 
 Here you can edit the map of your game, I know the editor is very hard to use, but I'm going to provide an update with a completely redesigned map editor.
 
+![Map_Editor](Extra/Readme-Screenshots/Map_Editor.png)
+
 #### SFX editor % Music editor:
+
+![WIP_Editor](Extra/Readme-Screenshots/WIP_Editor.png)
 
 Those editors hasn't been made yet, but they are really comming soon (they are currently under work)
 
