@@ -53,4 +53,5 @@ Games are stored as disk files that can be saved, shared and uploaded to pastebi
 
 * [Installation Guide](Installation Guide.md)
 * [Getting Started](Getting Started.md)
+* [Keyboard Shortcuts](Keyboard Shortcuts.md)
 * [Using external code editor](Using external code editor.md)
