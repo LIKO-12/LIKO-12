@@ -263,48 +263,61 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --GifRecorder
   local _GIF = love.filesystem.load(perpath.."gif.lua")( _GIFScale, _LIKO_W, _LIKO_H ) --Load the gif library
+  
+  local function startGifRecording()
+    if _GIFRec then return end --If there is an already in progress gif
+    if love.filesystem.exists("/~gifrec.gif") then
+      _GIFRec = _GIF.continue("/~gifrec.gif")
+      _GIFPStart = love.filesystem.read("/~gifrec.pal")
+      _GIFPChanged = true --To check if it's the same palette
+      _GIFPal = false
+      systemMessage("Resumed gif recording",1,false,false,true)
+      return
+    end
+    _GIFRec = _GIF.new("/~gifrec.gif",_ColorSet)
+    _GIFPChanged = false
+    _GIFPStart = ""
+    for i=0,15 do
+      local p = _ColorSet[i]
+      _GIFPStart = _GIFPStart .. string.char(p[1],p[2],p[3])
+    end
+    _GIFPal = false
+    love.filesystem.write("/~gifrec.pal",_GIFPStart)
+    systemMessage("Started gif recording",1,false,false,true)
+  end
+  
+  local function pauseGifRecording()
+    if not _GIFRec then return end
+    _GIFRec.file:flush()
+    _GIFRec.file:close()
+    _GIFRec = nil
+    systemMessage("Paused gif recording",1,false,false,true)
+  end
+  
+  local function endGifRecording()
+    if not _GIFRec then
+      if love.filesystem.exists("/~gifrec.gif") then
+        _GIFRec = _GIF.continue("/~gifrec.gif")
+      else return end
+      systemMessage("Saved old gif recording successfully",2,false,false,true)
+    else
+      systemMessage("Saved gif recording successfully",2,false,false,true)
+    end
+    _GIFRec:close()
+    _GIFRec = nil
+    love.filesystem.write("/LIKO12-"..os.time()..".gif",love.filesystem.read("/~gifrec.gif"))
+    love.filesystem.remove("/~gifrec.gif")
+    love.filesystem.remove("/~gifrec.pal")
+  end
+  
   --To handle gif control buttons
   events:register("love:keypressed", function(key,sc,isrepeat)
     if key == _GIFStartKey then
-      if _GIFRec then return end --If there is an already in progress gif
-      if love.filesystem.exists("/~gifrec.gif") then
-        _GIFRec = _GIF.continue("/~gifrec.gif")
-        _GIFPStart = love.filesystem.read("/~gifrec.pal")
-        _GIFPChanged = true --To check if it's the same palette
-        _GIFPal = false
-        systemMessage("Resumed gif recording",1,false,false,true)
-        return
-      end
-      _GIFRec = _GIF.new("/~gifrec.gif",_ColorSet)
-      _GIFPChanged = false
-      _GIFPStart = ""
-      for i=0,15 do
-        local p = _ColorSet[i]
-        _GIFPStart = _GIFPStart .. string.char(p[1],p[2],p[3])
-      end
-      _GIFPal = false
-      love.filesystem.write("/~gifrec.pal",_GIFPStart)
-      systemMessage("Started gif recording",1,false,false,true)
+      startGifRecording()
     elseif key == _GIFEndKey then
-      if not _GIFRec then
-        if love.filesystem.exists("/~gifrec.gif") then
-          _GIFRec = _GIF.continue("/~gifrec.gif")
-        else return end
-        systemMessage("Saved old gif recording successfully",2,false,false,true)
-      else
-        systemMessage("Saved gif recording successfully",2,false,false,true)
-      end
-      _GIFRec:close()
-      _GIFRec = nil
-      love.filesystem.write("/LIKO12-"..os.time()..".gif",love.filesystem.read("/~gifrec.gif"))
-      love.filesystem.remove("/~gifrec.gif")
-      love.filesystem.remove("/~gifrec.pal")
+      endGifRecording()
     elseif key == _GIFPauseKey then
-      if not _GIFRec then return end
-      _GIFRec.file:flush()
-      _GIFRec.file:close()
-      _GIFRec = nil
-      systemMessage("Paused gif recording",1,false,false,true)
+      pauseGifRecording()
     end
   end)
   --To save the gif before rebooting.
@@ -1254,6 +1267,15 @@ return function(config) --A function that creates a new GPU peripheral.
   function GPU.isMDown(b)
     b = Verify(b,"Button","number")
     return love.mouse.isDown(b)
+  end
+  
+  --Gif Recording Controlling API--
+  GPU.startGifRecording = startGifRecording
+  GPU.pauseGifRecording = pauseGifRecording
+  GPU.endGifRecording = endGifRecording
+  
+  function GPU.isGifRecording()
+    return _GIFRec and true or false
   end
   
   --Cursor API--
