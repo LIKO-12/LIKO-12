@@ -688,6 +688,7 @@ ce.keymap = {
     if self.cy < 1 then self.cy = 1 end
     self:resetCursorBlink()
     self:drawBuffer()
+    self:drawLineNum()
   end,
 
   ["pagedown"] = function(self)
@@ -698,6 +699,7 @@ ce.keymap = {
     if self.cy > #buffer then self.cy = #buffer end
     self:resetCursorBlink()
     self:drawBuffer()
+    self:drawLineNum()
   end,
 
   ["tab"] = function(self)
