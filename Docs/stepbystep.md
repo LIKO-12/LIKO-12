@@ -21,6 +21,9 @@ run
 
 result:
 
+![](2_cleardisp.gif)
+
+
 step 2: variables and the _draw() function
 
 to store player state, we need to define variables
@@ -30,6 +33,8 @@ open the code editor and add
 
 px=0
 py=0
+
+
 
 the 
 
