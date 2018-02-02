@@ -34,6 +34,7 @@ open the code editor and add
 px=0
 py=0
 
+![](3_variables.png)
 
 
 the 
