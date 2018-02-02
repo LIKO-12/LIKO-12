@@ -4,7 +4,7 @@ Reloads the Image's contents from the ImageData used to create the image.
 
 #### Syntax:
 ```lua
-imgdata:refresh() --Don't forget the ':'
+img:refresh() --Don't forget the ':'
 ```
 ---
 
