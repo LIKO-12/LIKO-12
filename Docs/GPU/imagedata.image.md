@@ -14,3 +14,9 @@ img = imgdata:image() --Don't forget the ':'
 #### Returns:
 
 * **img ([GPUImage](image.md))**: The created image object.
+
+---
+
+##### See also:
+
+* [imagedata:refresh()](imagedata.refresh.md)
