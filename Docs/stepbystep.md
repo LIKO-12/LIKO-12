@@ -36,8 +36,10 @@ py=0
 
 ![](3_variables.png)
 
+go to the prompt and type run:
 
-the 
+![](4_result.png)
+ 
 
 the _update() function and btn()
 
