@@ -381,7 +381,7 @@ return function(config) --A function that creates a new GPU peripheral.
         
         if _ActiveShader then
           local warnings = _ActiveShader:getWarnings()
-          if warnings then
+          if warnings ~= "vertex shader:\npixel shader:\n" then
             print("Shader Warnings:")
             print(warnings)
           end
@@ -392,7 +392,8 @@ return function(config) --A function that creates a new GPU peripheral.
         _ActiveShader = nil
       end
     elseif key == _GIFStartKey then --Prev Shader
-      local nextShader = shaderslist[_ActiveShaderID - 1]
+      local nextID = _ActiveShaderID - 1; if nextID < 0 then nextID = #shaderslist end
+      local nextShader = shaderslist[nextID]
       if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
         local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
         if not ok then
@@ -401,13 +402,13 @@ return function(config) --A function that creates a new GPU peripheral.
           shader = nil
         end
         
-        _ActiveShaderID = _ActiveShaderID - 1
+        _ActiveShaderID = nextID
         _ActiveShaderName = nextShader
         _ActiveShader = shader
         
         if _ActiveShader then
           local warnings = _ActiveShader:getWarnings()
-          if warnings then
+          if warnings ~= "vertex shader:\npixel shader:\n" then
             print("Shader Warnings:")
             print(warnings)
           end
