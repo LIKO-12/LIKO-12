@@ -120,9 +120,18 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
   
   --Initialize the gpu--
+  if not love.filesystem.exists("Shaders") then
+    love.filesystem.createDirectory("Shaders")
+  end
+  
+  local _ActiveShaderID = 0
+  local _ActiveShaderName = "None"
+  local _ActiveShader
+  
   love.graphics.setDefaultFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
   local _CanvasFormats = love.graphics.getCanvasFormats()
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H,_CanvasFormats.r8 and "r8" or "normal") --Create the screen canvas.
+  local _BackBuffer = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --BackBuffer for post shaders.
   local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale) --Create the gif canvas, used to apply the gif scale factor.
   local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
   
@@ -312,6 +321,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --To handle gif control buttons
   events:register("love:keypressed", function(key,sc,isrepeat)
+    if love.keyboard.isDown("lshift","rshift") then return end
     if key == _GIFStartKey then
       startGifRecording()
     elseif key == _GIFEndKey then
@@ -349,6 +359,72 @@ return function(config) --A function that creates a new GPU peripheral.
       _GIFRec = _GIF.continue("/~gifrec.gif")
     end
   end
+  
+  --Handle post-shader switching
+  events:register("love:keypressed", function(key,sc,isrepeat)
+    if not love.keyboard.isDown("lshift","rshift") then return end
+    if key ~= _GIFStartKey and key ~= _GIFEndKey and key ~= _GIFPauseKey then return end
+    local shaderslist = love.filesystem.getDirectoryItems("/Shaders/")
+    if key == _GIFStartKey then --Next Shader
+      local nextShader = shaderslist[_ActiveShaderID + 1]
+      if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
+        local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
+        if not ok then
+          print("Failed to load shader",nextShader)
+          print(shader)
+          shader = nil
+        end
+        
+        _ActiveShaderID = _ActiveShaderID + 1
+        _ActiveShaderName = nextShader
+        _ActiveShader = shader
+        
+        if _ActiveShader then
+          local warnings = _ActiveShader:getWarnings()
+          if warnings then
+            print("Shader Warnings:")
+            print(warnings)
+          end
+        end
+      else
+        _ActiveShaderID = 0
+        _ActiveShaderName = "None"
+        _ActiveShader = nil
+      end
+    elseif key == _GIFEndKey then --Prev Shader
+      local nextShader = shaderslist[_ActiveShaderID - 1]
+      if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
+        local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
+        if not ok then
+          print("Failed to load shader",nextShader)
+          print(shader)
+          shader = nil
+        end
+        
+        _ActiveShaderID = _ActiveShaderID - 1
+        _ActiveShaderName = nextShader
+        _ActiveShader = shader
+        
+        if _ActiveShader then
+          local warnings = _ActiveShader:getWarnings()
+          if warnings then
+            print("Shader Warnings:")
+            print(warnings)
+          end
+        end
+      else
+        _ActiveShaderID = 0
+        _ActiveShaderName = "None"
+        _ActiveShader = nil
+      end
+    elseif key == _GIFPauseKey then --None Shader
+      _ActiveShaderID = 0
+      _ActiveShaderName = "None"
+      _ActiveShader = nil
+    end
+    
+    systemMessage("Shader: ".._ActiveShaderName,2,false,false,true)
+  end)
   
   --Mouse Hooks (To translate them to LIKO12 screen)--
   events:register("love:mousepressed",function(x,y,b,istouch)
@@ -1396,7 +1472,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Host to love.run when graphics is active--
   events:register("love:graphics",function()
-    if _ShouldDraw or _AlwaysDraw or _AlwaysDrawTimer > 0 or _DevKitDraw then --When it's required to draw (when changes has been made to the canvas)
+    if _ShouldDraw or _AlwaysDraw or _AlwaysDrawTimer > 0 or _DevKitDraw or _ActiveShader then --When it's required to draw (when changes has been made to the canvas)
       UnbindVRAM(true) --Make sure that the VRAM changes are applied.
       
       for i=1, MatrixStack do
@@ -1413,7 +1489,17 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setColor(255,255,255,255) --I don't want to tint the canvas :P
       if _ClearOnRender then love.graphics.clear((_HOST_H > _HOST_W) and {25,25,25,255} or {0,0,0,255}) end --Clear the screen (Some platforms are glitching without this).
       
-      love.graphics.draw(_ScreenCanvas, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
+      if _ActiveShader then
+        love.graphics.setCanvas(_BackBuffer)
+        love.graphics.clear(0,0,0,0)
+        love.graphics.setShader(_ActiveShader)
+        love.graphics.draw(_ScreenCanvas) --Draw the canvas.
+        love.graphics.setShader()
+        love.graphics.draw(_BackBuffer, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
+        love.graphics.setShader(_DisplayShader)
+      else
+        love.graphics.draw(_ScreenCanvas, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
+      end
       
       if _GrappedCursor and _Cursor ~= "none" then --Must draw the cursor using the gpu
         local mx, my = _HostToLiko(love.mouse.getPosition())
