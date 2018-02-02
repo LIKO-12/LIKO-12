@@ -672,12 +672,30 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end
   
+  local MatrixStack = 0
+  
+  function GPU.clearMatrixStack()
+    for i=1, MatrixStack do
+      love.graphics.pop()
+    end
+    
+    MatrixStack = 0
+  end
+  
   function GPU.pushMatrix()
+    if MatrixStack == 256 then
+      return error("Maximum stack depth reached, More pushes than pops ?")
+    end
+    MatrixStack = MatrixStack + 1
     local ok, err = pcall(love.graphics.push)
     if not ok then return error(err) end
   end
   
   function GPU.popMatrix()
+    if MatrixStack == 0 then
+      return error("The stack is empty, More pops than pushes ?")
+    end
+    MatrixStack = MatrixStack - 1
     local ok, err = pcall(love.graphics.pop)
     if not ok then return error(err) end
   end
@@ -1358,6 +1376,11 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:graphics",function()
     if _ShouldDraw or _AlwaysDraw or _AlwaysDrawTimer > 0 or _DevKitDraw then --When it's required to draw (when changes has been made to the canvas)
       UnbindVRAM(true) --Make sure that the VRAM changes are applied.
+      
+      for i=1, MatrixStack do
+        love.graphics.pop()
+      end
+      
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
       love.graphics.push()
       love.graphics.setShader(_DisplayShader) --Activate the display shader.
@@ -1408,6 +1431,11 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setShader(_DrawShader) --Reactivate the draw shader.
       love.graphics.pop()
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
+      
+      for i=1, MatrixStack do
+        love.graphics.push()
+      end
+      
       if Clip then love.graphics.setScissor(unpack(Clip)) end
       _ShouldDraw = false --Reset the flag.
       GPU.popColor() --Restore the active color.
