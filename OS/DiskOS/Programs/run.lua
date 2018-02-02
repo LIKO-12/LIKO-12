@@ -264,6 +264,7 @@ textinput(not isMobile())
 local function printErr(msg)
   colorPalette() --Reset the palette
   color(8) --Red
+  clearMatrixStack()
   print(msg)
 end
 
@@ -297,6 +298,7 @@ while true do
 end
 
 clearEStack()
+clearMatrixStack()
 colorPalette() --Reset the color palette.
 print("")
 
