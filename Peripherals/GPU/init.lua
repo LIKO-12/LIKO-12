@@ -365,7 +365,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if not love.keyboard.isDown("lshift","rshift") then return end
     if key ~= _GIFStartKey and key ~= _GIFEndKey and key ~= _GIFPauseKey then return end
     local shaderslist = love.filesystem.getDirectoryItems("/Shaders/")
-    if key == _GIFStartKey then --Next Shader
+    if key == _GIFEndKey then --Next Shader
       local nextShader = shaderslist[_ActiveShaderID + 1]
       if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
         local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
@@ -391,7 +391,7 @@ return function(config) --A function that creates a new GPU peripheral.
         _ActiveShaderName = "None"
         _ActiveShader = nil
       end
-    elseif key == _GIFEndKey then --Prev Shader
+    elseif key == _GIFStartKey then --Prev Shader
       local nextShader = shaderslist[_ActiveShaderID - 1]
       if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
         local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
