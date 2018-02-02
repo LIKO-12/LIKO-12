@@ -1492,9 +1492,8 @@ return function(config) --A function that creates a new GPU peripheral.
       if _ActiveShader then
         love.graphics.setCanvas(_BackBuffer)
         love.graphics.clear(0,0,0,0)
-        love.graphics.setShader(_ActiveShader)
         love.graphics.draw(_ScreenCanvas) --Draw the canvas.
-        love.graphics.setShader()
+        love.graphics.setShader(_ActiveShader)
         love.graphics.setCanvas()
         love.graphics.draw(_BackBuffer, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
         love.graphics.setShader(_DisplayShader)
