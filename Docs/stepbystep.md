@@ -6,7 +6,7 @@ player in sprite editor
 
 press esc, back on android , to open editors and click on the tile editor:
 paint youself a nice simple player sprite
-
+![](1_paint_ply.gif)
 
 step 1: display your sprite 
 
