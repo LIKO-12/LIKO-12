@@ -127,6 +127,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local _ActiveShaderID = 0
   local _ActiveShaderName = "None"
   local _ActiveShader
+  local _PostShaderTimer
   
   love.graphics.setDefaultFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
   local _CanvasFormats = love.graphics.getCanvasFormats()
@@ -371,13 +372,13 @@ return function(config) --A function that creates a new GPU peripheral.
         local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
         if not ok then
           print("Failed to load shader",nextShader)
-          print(shader)
           shader = nil
         end
         
         _ActiveShaderID = _ActiveShaderID + 1
         _ActiveShaderName = nextShader
         _ActiveShader = shader
+        _PostShaderTimer = nil
         
         if _ActiveShader then
           local warnings = _ActiveShader:getWarnings()
@@ -385,11 +386,16 @@ return function(config) --A function that creates a new GPU peripheral.
             print("Shader Warnings:")
             print(warnings)
           end
+          
+          if _ActiveShader:getExternVariable("time") then
+            _PostShaderTimer = 0
+          end
         end
       else
         _ActiveShaderID = 0
         _ActiveShaderName = "None"
         _ActiveShader = nil
+        _PostShaderTimer = nil
       end
     elseif key == _GIFStartKey then --Prev Shader
       local nextID = _ActiveShaderID - 1; if nextID < 0 then nextID = #shaderslist end
@@ -405,6 +411,7 @@ return function(config) --A function that creates a new GPU peripheral.
         _ActiveShaderID = nextID
         _ActiveShaderName = nextShader
         _ActiveShader = shader
+        _PostShaderTimer = nil
         
         if _ActiveShader then
           local warnings = _ActiveShader:getWarnings()
@@ -412,19 +419,32 @@ return function(config) --A function that creates a new GPU peripheral.
             print("Shader Warnings:")
             print(warnings)
           end
+          
+          if _ActiveShader:getExternVariable("time") then
+            _PostShaderTimer = 0
+          end
         end
       else
         _ActiveShaderID = 0
         _ActiveShaderName = "None"
         _ActiveShader = nil
+        _PostShaderTimer = nil
       end
     elseif key == _GIFPauseKey then --None Shader
       _ActiveShaderID = 0
       _ActiveShaderName = "None"
       _ActiveShader = nil
+      _PostShaderTimer = nil
     end
     
     systemMessage("Shader: ".._ActiveShaderName,2,false,false,true)
+  end)
+
+  --Post-Shader Time value
+  events:register("love:update",function(dt)
+    if _PostShaderTimer then
+      _PostShaderTimer = (_PostShaderTimer + dt)%10
+    end
   end)
   
   --Mouse Hooks (To translate them to LIKO12 screen)--
@@ -1494,6 +1514,7 @@ return function(config) --A function that creates a new GPU peripheral.
         love.graphics.setCanvas(_BackBuffer)
         love.graphics.clear(0,0,0,0)
         love.graphics.draw(_ScreenCanvas) --Draw the canvas.
+        if _PostShaderTimer then _ActiveShader:send("time",math.floor(_PostShaderTimer*1000)) end
         love.graphics.setShader(_ActiveShader)
         love.graphics.setCanvas()
         love.graphics.draw(_BackBuffer, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
