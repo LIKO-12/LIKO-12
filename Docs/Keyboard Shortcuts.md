@@ -8,6 +8,9 @@
 * **F7**: Pause gif recording.
 * **F8**: Start gif recording.
 * **F9**: End gif recording or finish the paused recording, you can find the recordings by typing `appdata` into the terminal.
+* **Shift-F7**: Disable Post-Shaders.
+* **Shift-F8**: Previous Post-Shader.
+* **Shift-F9**: Next Post-Shader.
 
 ### In the terminal:
 
