@@ -361,6 +361,10 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end
   
+  local _GrappedCursor = false --If the cursor must be drawed by the GPU (not using a system cursor)
+  local _Cursor = "none"
+  local _CursorsCache = {}
+  
   --Handle post-shader switching
   events:register("love:keypressed", function(key,sc,isrepeat)
     if not love.keyboard.isDown("lshift","rshift") then return end
@@ -390,12 +394,15 @@ return function(config) --A function that creates a new GPU peripheral.
           if _ActiveShader:getExternVariable("time") then
             _PostShaderTimer = 0
           end
+        else
+          love.mouse.setVisible(not _GrappedCursor)
         end
       else
         _ActiveShaderID = 0
         _ActiveShaderName = "None"
         _ActiveShader = nil
         _PostShaderTimer = nil
+        love.mouse.setVisible(not _GrappedCursor)
       end
     elseif key == _GIFStartKey then --Prev Shader
       local nextID = _ActiveShaderID - 1; if nextID < 0 then nextID = #shaderslist end
@@ -423,18 +430,22 @@ return function(config) --A function that creates a new GPU peripheral.
           if _ActiveShader:getExternVariable("time") then
             _PostShaderTimer = 0
           end
+        else
+          love.mouse.setVisible(not _GrappedCursor)
         end
       else
         _ActiveShaderID = 0
         _ActiveShaderName = "None"
         _ActiveShader = nil
         _PostShaderTimer = nil
+        love.mouse.setVisible(not _GrappedCursor)
       end
     elseif key == _GIFPauseKey then --None Shader
       _ActiveShaderID = 0
       _ActiveShaderName = "None"
       _ActiveShader = nil
       _PostShaderTimer = nil
+      love.mouse.setVisible(not _GrappedCursor)
     end
     
     systemMessage("Shader: ".._ActiveShaderName,2,false,false,true)
@@ -1376,10 +1387,6 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Cursor API--
-  local _GrappedCursor = false --If the cursor must be drawed by the GPU (not using a system cursor)
-  local _Cursor = "none"
-  local _CursorsCache = {}
-  
   function GPU.cursor(imgdata,name,hx,hy)
     if type(imgdata) == "string" then --Set the current cursor
       if _GrappedCursor then if not name then _AlwaysDraw = false; _ShouldDraw = true end elseif name then _AlwaysDraw = true end
@@ -1511,9 +1518,15 @@ return function(config) --A function that creates a new GPU peripheral.
       if _ClearOnRender then love.graphics.clear((_HOST_H > _HOST_W) and {25,25,25,255} or {0,0,0,255}) end --Clear the screen (Some platforms are glitching without this).
       
       if _ActiveShader then
+        if not _Mobile then love.mouse.setVisible(false) end
         love.graphics.setCanvas(_BackBuffer)
         love.graphics.clear(0,0,0,0)
         love.graphics.draw(_ScreenCanvas) --Draw the canvas.
+        if _Cursor ~= "none" then
+          local mx, my = _HostToLiko(love.mouse.getPosition())
+          local hotx, hoty = _CursorsCache[_Cursor].hx, _CursorsCache[_Cursor].hy
+          love.graphics.draw(_CursorsCache[_Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty)
+        end
         if _PostShaderTimer then _ActiveShader:send("time",math.floor(_PostShaderTimer*1000)) end
         love.graphics.setShader(_ActiveShader)
         love.graphics.setCanvas()
@@ -1523,7 +1536,7 @@ return function(config) --A function that creates a new GPU peripheral.
         love.graphics.draw(_ScreenCanvas, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
       end
       
-      if _GrappedCursor and _Cursor ~= "none" then --Must draw the cursor using the gpu
+      if _GrappedCursor and _Cursor ~= "none" and not _ActiveShader then --Must draw the cursor using the gpu
         local mx, my = _HostToLiko(love.mouse.getPosition())
         mx,my = _LikoToHost(mx,my)
         local hotx, hoty = _CursorsCache[_Cursor].hx*_LIKOScale, _CursorsCache[_Cursor].hy*_LIKOScale --Converted to host scale
