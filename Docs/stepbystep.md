@@ -1,13 +1,12 @@
-WIP
-tuto on doing your first game in liko
+##tuto on doing your first game in liko
 
-step 0 : draw player in sprite editor
+#step 0 : draw player in sprite editor
 
 press esc, back on android , to open editors and click on the tile editor:
 paint youself a nice simple player sprite
 ![](1_paint_ply.gif)
 
-step 1: display your sprite 
+#step 1: display your sprite 
 
 navigate to the code editor and type
 
@@ -23,7 +22,7 @@ result:
 ![](2_cleardisp.gif)
 
 
-step 2: variables and the _draw() function
+#step 2: variables and the _draw() function
 
 to store player state, we need to define variables
 to be able to access it from everywhere in the program
@@ -43,7 +42,7 @@ go to the prompt and type `run` :
 ![](4_result.png)
  
 
-step 3 : the _update() function and btn()
+#step 3 : the _update() function and btn()
 
 you will most probably always run your game logic in the `_update()` function,
 liko calls it normally 60 times by second
@@ -67,6 +66,7 @@ create an update function with the following code :
 
 using the btn in update to move player
 
+step 4: ennemies , working on a list of unkown size
 adding ennemies using a table and a factory method
 maybe on scanning content of the map?
 
