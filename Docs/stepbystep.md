@@ -22,7 +22,7 @@ result:
 ![](2_cleardisp.gif)
 
 
-## step 2: variables and the _draw() function
+## step 2: variables 
 
 to store player state, we need to define variables
 to be able to access it from everywhere in the program
@@ -32,17 +32,32 @@ open the code editor and add
 `px=0
 py=0`
 
-the `_draw()` function is called whenever LIKO 12 draws the screen,
-you don't need to call it yourself
-
 ![](3_variables.png)
 
 go to the prompt and type `run` :
 
 ![](4_result.png)
  
+## step 3 : moving your display code to the _draw() function
 
-## step 3 : the _update() function and btn()
+the `_draw()` function is called whenever LIKO 12 draws the screen,
+you don't need to call it yourself
+
+up to this point our script was executed just one time ( clear the screen, display the player )
+in the context of an arcade game to move everything fluidly , you the program never stops running,
+_draw() is called up to 60 times a second
+
+update your code snippet like such
+
+`px=0
+py=0
+
+_draw()
+ Sprite(1,px,py)
+end`
+ 
+
+## step 4 : the _update() function and btn()
 
 you will most probably always run your game logic in the `_update()` function,
 liko calls it normally 60 times by second
@@ -61,13 +76,21 @@ create an update function with the following code :
 `_update()
  if btn(1) then --checking if left is pressed
   px=px-1 -- this block is executed if the condition is met
- end
+ end`
 
-
-using the btn in update to move player
+if you `run` your cartridge from the prompt,
+you will see you can move your player smoothly wih arrow keys
 
 ## step 4: ennemies , working on a list of unkown size
 adding ennemies using a table and a factory method
 maybe on scanning content of the map?
 
 move ennemies from update function
+
+## step 5: simple collision
+
+## step 6: colliding with ennemies
+
+## step 7 : firing a bullet
+
+## step 8: victory condition, function pointers in _update() and _draw() !
