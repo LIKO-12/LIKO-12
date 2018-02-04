@@ -172,7 +172,7 @@ function term.executeFile(file,...)
   local chunk, err = fs.load(file)
   if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
   local ok, err = pcall(chunk,...)
-  color(7) pal() palt() cam() clip()
+  color(7) pal() palt() cam() clip() patternFill()
   if not ok then color(8) print("\nERR: "..tostring(err)) color(7) return false, tostring(err) end
   if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":/" end
 end
