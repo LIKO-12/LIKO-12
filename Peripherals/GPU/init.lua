@@ -202,6 +202,9 @@ return function(config) --A function that creates a new GPU peripheral.
   local _DisplayShader = _Shaders.displayShader
   _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the colorset.
   
+  --The pattern fill shader
+  local _StencilShader = _Shaders.stencilShader
+  
   love.graphics.setShader(_DrawShader) --Activate the drawing shader.
   
   --Internal Functions--
@@ -558,6 +561,9 @@ return function(config) --A function that creates a new GPU peripheral.
   local PaletteStack = {} --The palette stack (pushPalette,popPalette)
   local printCursor = {x=0,y=0,bgc=0} --The print grid cursor pos.
   local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2)) --The size of characters that the screen can fit.
+  local PatternFill --The pattern stencil function
+  
+  local _PasteImage --A walkthrough to avoide exporting the image to png and reloading it.
   
   local function Verify(value,name,etype,allowNil)
     if type(value) ~= etype then
@@ -819,6 +825,36 @@ return function(config) --A function that creates a new GPU peripheral.
     MatrixStack = MatrixStack - 1
     local ok, err = pcall(love.graphics.pop)
     if not ok then return error(err) end
+  end
+  
+  function GPU.patternFill(img)
+    if img then
+      Verify(img,"Pattern ImageData","table")
+      if not img.typeOf or not img.typeOf("GPU.imageData") then return error("Invalid ImageData") end
+      
+      local IMG = love.image.newImageData(img:size())
+      img:___pushimgdata()
+      IMG:paste(_PasteImage,0,0)
+      _PasteImage = nil
+      
+      IMG = love.graphics.newImage(IMG)
+      
+      local QUAD = img:quad(0,0,_LIKO_W,_LIKO_H)
+      
+      PatternFill = function()
+        love.graphics.setShader(_StencilShader)
+        
+        love.graphics.draw(IMG, QUAD, 0,0)
+        
+        love.graphics.setShader(_DrawShader)
+      end
+      
+      love.graphics.stencil(PatternFill, "replace", 1)
+      love.graphics.setStencilTest("greater",0)
+    else
+      PatternFill = nil
+      love.graphics.setStencilTest()
+    end
   end
   
   function GPU.clip(x,y,w,h)
@@ -1227,8 +1263,6 @@ return function(config) --A function that creates a new GPU peripheral.
     return i
   end
   
-  local _PasteImage --A walkthrough to avoide exporting the image to png and reloading it.
-  
   function GPU.imagedata(w,h)
     local imageData
     if h then
@@ -1501,10 +1535,10 @@ return function(config) --A function that creates a new GPU peripheral.
   --Host to love.run when graphics is active--
   events:register("love:graphics",function()
     if _ShouldDraw or _AlwaysDraw or _AlwaysDrawTimer > 0 or _DevKitDraw or _ActiveShader then --When it's required to draw (when changes has been made to the canvas)
-      UnbindVRAM(true) --Make sure that the VRAM changes are applied.
+      UnbindVRAM(true) --Make sure that the VRAM changes are applied
       
-      for i=1, MatrixStack do
-        love.graphics.pop()
+      if PatternFill then
+        love.graphics.setStencilTest()
       end
       
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
@@ -1575,8 +1609,9 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.pop()
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
       
-      for i=1, MatrixStack do
-        love.graphics.push()
+      if PatternFill then
+        love.graphics.stencil(PatternFill, "replace", 1)
+        love.graphics.setStencilTest("greater",0)
       end
       
       if Clip then love.graphics.setScissor(unpack(Clip)) end
@@ -1600,6 +1635,11 @@ return function(config) --A function that creates a new GPU peripheral.
     if _GIFTimer >= _GIFFrameTime then
       _GIFTimer = _GIFTimer % _GIFFrameTime
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
+      
+      if PatternFill then
+         love.graphics.setStencilTest()
+      end
+      
       love.graphics.push()
       love.graphics.origin() --Reset all transformations.
       if Clip then love.graphics.setScissor() end
@@ -1640,6 +1680,12 @@ return function(config) --A function that creates a new GPU peripheral.
       
       love.graphics.pop() --Reapply the offset.
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
+      
+      if PatternFill then
+        love.graphics.stencil(PatternFill, "replace", 1)
+        love.graphics.setStencilTest("greater",0)
+      end
+      
       if Clip then love.graphics.setScissor(unpack(Clip)) end
       GPU.popColor() --Restore the active color.
       

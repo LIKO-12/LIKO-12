@@ -265,6 +265,8 @@ local function printErr(msg)
   colorPalette() --Reset the palette
   color(8) --Red
   clearMatrixStack()
+  clip()
+  patternFill()
   print(msg)
 end
 
@@ -300,6 +302,9 @@ end
 clearEStack()
 clearMatrixStack()
 colorPalette() --Reset the color palette.
+clip()
+patternFill()
+
 print("")
 
 TC.setInput(false)
