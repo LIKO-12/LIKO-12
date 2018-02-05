@@ -21,6 +21,8 @@ result:
 
 ![](2_cleardisp.gif)
 
+you will notice that the draw operation is executed one time,
+then you are returned to the prompt 
 
 ## step 2: variables 
 
@@ -56,6 +58,8 @@ _draw()
  Sprite(1,px,py)
 end`
  
+if you type esc and run it, the result will be the same, but you will not be returned to the prompt,
+only if you type esc you will interrupt the program !
 
 ## step 4 : the _update() function and btn()
 
