@@ -22,7 +22,8 @@ obj.x=1
 ```
 
 tables:
-```mylist = {}
+```
+mylist = {}
 table.insert(mylist,myobj)
 for idx_in_table,obj in ipairs(mylist)
 do
@@ -32,24 +33,31 @@ table.remove(mylist,idx_in_table)
 ```
 
 draw screen callback :
-```function _draw()
+```
+function _draw()
  --do your drawing business here 
 end
 ```
 
 update your logic very nth ms:
-```function _update()
+```
+function _update()
  -- check user interaction and update all of the game world 
  end
  ```
 
 function pointers 
-```function myfunc()
+```
+function myfunc()
  --bla bla
  end
  
  ptr=myfunc -- pointer definition / update
  ptr() -- actually calls function myfunc() ! 
  ```
- 
+blit sprite
+
+blit tilemap
+
+play note
 
