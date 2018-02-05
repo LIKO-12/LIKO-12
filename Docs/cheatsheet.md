@@ -10,23 +10,25 @@ loading and saving disks, running the programs
 `
 
 variables:
-`px=2
+```
+px=2
 msg=" u win "
-`
+```
 
 objects:
-`obj = {}
+```
+obj = {}
 obj.x=1
-`
+```
 
 tables:
-`mylist = {}
+```mylist = {}
 table.insert(mylist,myobj)
 for idx_in_table,obj in ipairs(mylist)
 do
 ...
 end
-table.remove(mylist,idx_in_table)`
+table.remove(mylist,idx_in_table)```
 
 draw screen callback :
 `function _draw()
