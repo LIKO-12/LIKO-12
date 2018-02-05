@@ -7,7 +7,7 @@ if select(1,...) == "-?" then
 end
 
 --Print the list of functions for a peripheral, or all peripherals
-local _,perlist = coroutine.yield("BIOS:listPeripherals")
+local perlist = BIOS.HandledAPIS()
 
 palt(0,false) --Make black opaque
 
@@ -56,13 +56,13 @@ if peri then
    color(8) print("Peripheral '"..peri.."' doesn't exists") return
  end
  color(11) if sprint(peri..":") then return end color(7)
- for k, name in pairs(perlist[peri]) do
+ for name, f in pairs(perlist[peri]) do
    if sprint(name) then return end
  end
 else
  for per, funcs in pairs(perlist) do
    color(11) print("---"..per.."---") color(7)
-   for k, name in pairs(funcs) do
+   for name,f in pairs(funcs) do
      if sprint(name) then return end
    end
    print("") print("")

@@ -2,9 +2,9 @@
 local args = {...} --Get the arguments passed to this program
 if #args < 3 or args[1] == "-?" then
   printUsage(
-    "disk write <source> <destination>", "Writes a file to a png image",
+    "disk write <source> <destination> [color]", "Writes a file to a png image",
     "disk read <source> <destination>", "Reads a png image to a file",
-    "disk raw-write <source> <destination>", "Writes a file to a png image without a header",
+    "disk raw-write <source> <destination> [color]", "Writes a file to a png image without a header",
     "disk raw-read <source> <destination>", "Reads a png image to a file"
   )
   return
@@ -18,6 +18,7 @@ if mode ~= "write" and mode ~= "read" then print("Invalid disk task '"..mode.."'
 local term = require("terminal")
 local source = term.resolve(args[2])
 local destination = term.resolve(args[3])
+local diskColor = args[4]
 
 local diskheader = "LK12;FileDisk;DiskOS;" --The header of each file disk.
 
@@ -47,7 +48,7 @@ elseif mode == "write" then
   memset(FRAM,diskheader) --Set the disk header
   memset(FRAM+diskheader:len(), RamUtils.numToBin(source:len(),4)) --Set the file size
   memset(FRAM+diskheader:len()+4,source) --Set the file data
-  local data = FDD.exportDisk()
+  local data = FDD.exportDisk(diskColor)
   fs.write(destination,data)
   color(11) print("Wrote disk successfully")
   
@@ -62,7 +63,7 @@ elseif mode == "raw-write" then
   
   memset(FRAM,string.rep(RamUtils.Null,64*1024))
   memset(FRAM,source)
-  local data = FDD.exportDisk()
+  local data = FDD.exportDisk(diskColor)
   fs.write(destination,data)
   color(11) print("Wrote disk successfully")
   

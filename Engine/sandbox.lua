@@ -131,14 +131,35 @@ return function(parent)
     local ok, err = pcall(setfenv,f,env)
     if not ok then return error(err) end
   end
-  GLOB.loadstring = function(data)
+  GLOB.loadstring = function(data,chunkname)
     if data:sub(1,3) == _LuaBCHeader then return error("LOADING BYTECODE IS NOT ALLOWED, YOU HACKER !") end
-    local chunk, err = loadstring(data)
+    if chunkname and type(chunkname) ~= "string" then return error("Chunk name must be a string or a nil, provided: "..type(chunkname)) end
+    local chunk, err = loadstring(data,chunkname)
     if not chunk then return nil, err end
     setfenv(chunk,GLOB)
     return chunk
   end
+  GLOB.load = function(iter,chunkname)
+    if type(iter) ~= "string" then return error("Iterator must be a function, provided: "..type(iter)) end
+    if chunkname and type(chunkname) ~= "string" then return error("Chunk name must be a string or a nil, provided: "..type(chunkname)) end
+    local firstline = iter()
+    if firstline:sub(1,3) == _LuaBCHeader then return error("LOADING BYTECODE IS NOT ALLOWED, YOU HACKER !") end
+    local newiter = function()
+      if firstline then
+        local l = firstline
+        firstline = nil
+        return l
+      end
+      return iter()
+    end
+    
+    return load(newiter,chunkname)
+  end
   GLOB.coroutine.sethook = function(co,...)
+    --DEPRICATED--
+    
+    --Coroutine hooks are useless because of LuaJIT
+    
     --[[if type(co) ~= "thread" then return error("bad argument #1 (thread expected, got "..type(co)..")") end
     local ok, err = pcall(debug.sethook,co,...)
     if not ok then return error(err) end

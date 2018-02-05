@@ -3,14 +3,6 @@ local perpath = select(1,...) --The path to the FDD folder
 local bit = require("bit")
 local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 
-local function exe(ok,err,...)
-  if ok then
-    return err,...
-  else
-    return error(err or "NULL")
-  end
-end
-
 return function(config)
   
   local GPUKit = config.GPUKit or error("The FDD peripheral requires the GPUKit")
@@ -42,7 +34,7 @@ return function(config)
   --DiskWriteMapper
   local WritePos = 0
   local function _WriteDisk(x,y,r,g,b,a)
-    local byte = exe(RAM.peek(FRAMAddress+WritePos))
+    local byte = RAM.peek(FRAMAddress+WritePos)
     r = bor(r, band( rshift(byte ,6), 3) )
     g = bor(g, band( rshift(byte ,4), 3) )
     b = bor(b, band( rshift(byte ,2), 3) )
@@ -79,18 +71,16 @@ return function(config)
   end
   
   --The API starts here--
-  local fapi = {}
+  local fapi, yfapi = {}, {}
   
   --Create a new floppy disk and mount it
   --tname -> template name, without the .png extension
   function fapi.newDisk(tname)
-    local tname = tname or "Disk"
-    if type(tname) ~= "string" then return false, "Disk template name must be a string or a nil, provided: "..type(tname) end
-    if not love.filesystem.exists(perpath..tname..".png") then return false, "Disk template '"..tname.."' doesn't exist !" end
+    local tname = tname or "Blue"
+    if type(tname) ~= "string" then return error("Disk template name must be a string or a nil, provided: "..type(tname)) end
+    if not love.filesystem.exists(perpath..tname..".png") then return error("Disk template '"..tname.."' doesn't exist !") end
     
     FIMG = love.image.newImageData(perpath..tname..".png")
-    
-    return true --Done Successfully
   end
   
   function fapi.exportDisk()
@@ -103,11 +93,11 @@ return function(config)
     --Write new data
     FIMG:mapPixel(_WriteDisk)
     
-    return true, FIMG:encode("png"):getString()
+    return FIMG:encode("png"):getString()
   end
   
   function fapi.importDisk(data)
-    if type(data) ~= "string" then return false,"Data must be a string, provided: "..type(data) end
+    if type(data) ~= "string" then return error("Data must be a string, provided: "..type(data)) end
     
     FIMG = love.image.newImageData(love.filesystem.newFileData(data,"image.png"))
     
@@ -120,8 +110,6 @@ return function(config)
     
     --Read the data
     FIMG:mapPixel(_ReadDisk)
-    
-    return true --Done successfully
   end
   
   --Initialize with the default disk

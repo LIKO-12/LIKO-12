@@ -6,7 +6,7 @@ if select(1,...) == "-?" then
   return
 end
 
-fs.remove("C:/boot.lua")
+fs.delete("C:/boot.lua")
 
 if select(1,...) == "-wipe" then
   local term = require("C:/terminal.lua")

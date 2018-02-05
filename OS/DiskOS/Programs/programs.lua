@@ -8,7 +8,7 @@ local PATH = term.getPATH()
 local programs = {}
 for path in string.gmatch(PATH,"(.-);") do
   if fs.exists(path) then
-    local files = fs.directoryItems(path)
+    local files = fs.getDirectoryItems(path)
     for _,file in ipairs(files) do
       if file:sub(-4,-1) == ".lua" then
         programs[file:sub(1,-5)] = true

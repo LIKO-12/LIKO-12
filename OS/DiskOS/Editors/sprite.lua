@@ -769,18 +769,18 @@ local bank = function(bank)
 end
 
 se.keymap = {
-  ["sc_ctrl-c"] = se.copy,
-  ["sc_ctrl-v"] = se.paste,
-  ["sc_1"] = bank(1), ["2"] = bank(2), ["3"] = bank(3), ["4"] = bank(4),
-  ["sc_z"] = function() stool=1 se:redrawTOOLS() end,
-  ["sc_x"] = function() stool=2 se:redrawTOOLS() end,
-  ["sc_delete"] = function() tools[5](se) se:redrawSPRS() se:redrawSPR() end,
+  ["ctrl-c"] = se.copy,
+  ["ctrl-v"] = se.paste,
+  ["1"] = bank(1), ["2"] = bank(2), ["3"] = bank(3), ["4"] = bank(4),
+  ["z"] = function() stool=1 se:redrawTOOLS() end,
+  ["x"] = function() stool=2 se:redrawTOOLS() end,
+  ["delete"] = function() tools[5](se) se:redrawSPRS() se:redrawSPR() end,
   --Transformations
-  ["sc_r"] = function() transform(1) end,
-  ["sc_shift-r"] = function() transform(2) end,
-  ["sc_f"] = function() transform(3) end,
-  ["sc_shift-f"] = function() transform(4) end,
-  ["sc_i"] = function() transform(5) end
+  ["r"] = function() transform(1) end,
+  ["shift-r"] = function() transform(2) end,
+  ["f"] = function() transform(3) end,
+  ["shift-f"] = function() transform(4) end,
+  ["i"] = function() transform(5) end
 }
 
 return se

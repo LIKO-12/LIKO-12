@@ -688,6 +688,7 @@ ce.keymap = {
     if self.cy < 1 then self.cy = 1 end
     self:resetCursorBlink()
     self:drawBuffer()
+    self:drawLineNum()
   end,
 
   ["pagedown"] = function(self)
@@ -698,12 +699,13 @@ ce.keymap = {
     if self.cy > #buffer then self.cy = #buffer end
     self:resetCursorBlink()
     self:drawBuffer()
+    self:drawLineNum()
   end,
 
   ["tab"] = function(self)
     self:textinput(" ")
   end,
-  ["sc_ctrl-i"] = function(self)
+  ["ctrl-i"] = function(self)
    if self.incsearch==nil or self.incsearch==false then 
     self.incsearch=true
 	self:drawIncSearchState()
@@ -713,22 +715,22 @@ ce.keymap = {
     self:drawLineNum()
    end
   end,
-  ["sc_ctrl-k"] = function(self)
+  ["ctrl-k"] = function(self)
    if self.incsearch==true then 
 	self:searchTextAndNavigate(self.cy)
    end
   end,
-  ["sc_ctrl-x"] = ce.cutText,
+  ["ctrl-x"] = ce.cutText,
   
-  ["sc_ctrl-c"] = ce.copyText,
+  ["ctrl-c"] = ce.copyText,
 
-  ["sc_ctrl-v"] = ce.pasteText,
+  ["ctrl-v"] = ce.pasteText,
   
-  ["sc_ctrl-a"] = ce.selectAll,
+  ["ctrl-a"] = ce.selectAll,
   
-  ["sc_ctrl-z"] = ce.undo,
+  ["ctrl-z"] = ce.undo,
 
-  ["sc_shift-ctrl-z"] = ce.redo,
+  ["shift-ctrl-z"] = ce.redo,
 }
 
 function ce:entered()

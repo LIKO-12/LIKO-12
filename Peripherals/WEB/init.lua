@@ -38,12 +38,12 @@ return function(config) --A function that creates a new WEB peripheral.
   
   local devkit = {}
   
-  local WEB = {}
+  local WEB, yWEB = {}, {}
   
   function WEB.send(url,args)
-    if type(url) ~= "string" then return false, "URL must be a string, provided: "..type(url) end
+    if type(url) ~= "string" then return error("URL must be a string, provided: "..type(url)) end
     local args = args or {}
-    if type(args) ~= "table" then return false, "Args Must be a table or nil, provided: "..type(args) end
+    if type(args) ~= "table" then return error("Args Must be a table or nil, provided: "..type(args)) end
     
     clearFuncsFromTable(args) --Since JSON can't encode functions !
     args.timeout = timeout
@@ -53,11 +53,11 @@ return function(config) --A function that creates a new WEB peripheral.
     to_channel:push({url,args})
     to_counter = to_counter + 1
     
-    return true, to_counter --Return the request ID
+    return to_counter --Return the request ID
   end
   
   function WEB.urlEncode(str)
-    if type(str) ~= "string" then return false, "STR must be a string, provided: "..type(str) end
+    if type(str) ~= "string" then return error("STR must be a string, provided: "..type(str)) end
     str = str:gsub("\n", "\r\n")
     str = str:gsub("\r\r\n", "\r\n")
     tr = str:gsub("([^A-Za-z0-9 %-%_%.])", function(c)
@@ -75,7 +75,7 @@ return function(config) --A function that creates a new WEB peripheral.
     str = str:gsub("%+", "%%2b")
     str = str:gsub(" ", "+")
     
-    return true,str
+    return str
   end
   
   events:register("love:update",function(dt)
@@ -99,5 +99,5 @@ return function(config) --A function that creates a new WEB peripheral.
     thread:wait()
   end)
   
-  return WEB, devkit, indirect
+  return WEB, yWEB, devkit
 end
