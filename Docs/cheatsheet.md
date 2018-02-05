@@ -1,10 +1,13 @@
 loading and saving disks, running the programs
 
-`save yourgame`
+`save yourgame
+`
 
-`load yourgame`
+`load yourgame
+`
 
-`run`
+`run
+`
 
 variables:
 `px=2
