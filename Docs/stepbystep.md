@@ -10,8 +10,10 @@ paint youself a nice simple player sprite
 
 navigate to the code editor and type
 
-`clear()
-Sprite(1,0,0)`
+```
+clear()
+Sprite(1,0,0)
+```
 
 to clear console and display player
 press esc/back to go to prompt and type
@@ -31,8 +33,10 @@ to be able to access it from everywhere in the program
 
 open the code editor and add 
 
-`px=0
-py=0`
+```
+px=0
+py=0
+```
 
 ![](3_variables.png)
 
@@ -51,15 +55,19 @@ _draw() is called up to 60 times a second
 
 update your code snippet like such
 
-`px=0
+```
+px=0
 py=0
 
 _draw()
  Sprite(1,px,py)
-end`
+end
+```
  
 if you type esc and run it, the result will be the same, but you will not be returned to the prompt,
 only if you type esc you will interrupt the program !
+
+TODO gif of heli without prompt
 
 ## step 4 : the _update() function and btn()
 
@@ -77,15 +85,39 @@ we will use an ` if then end ` statement to do something when the button is pres
 
 
 create an update function with the following code :
-`_update()
+```
+_update()
  if btn(1) then --checking if left is pressed
   px=px-1 -- this block is executed if the condition is met
- end`
+ end
+```
+TODO png of program
+
 
 if you `run` your cartridge from the prompt,
 you will see you can move your player smoothly wih arrow keys
 
+TODO gif of heli moving
+
 ## step 4: ennemies , working on a list of unkown size
+
+we will add ennemies to a table,
+so that we can have an unspecified amout depending on the level
+
+let us declare a table to store ennemies:
+```
+ennemies = {}
+```
+
+then we will write a function to abstract the task of adding an ennemy 
+```
+function addennemy(ex,ey)
+ ennemy={}
+ ennemy.x=ex
+ ennemy.y=ey
+ table.insert(ennemies,ennemy)
+end
+```
 adding ennemies using a table and a factory method
 maybe on scanning content of the map?
 
