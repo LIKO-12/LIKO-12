@@ -3,6 +3,9 @@ loading and saving disks, running the programs
 `save yourgame
 `
 
+do a disk pretty disk
+`save yourgame.png`
+
 `load yourgame
 `
 
@@ -56,8 +59,22 @@ function myfunc()
  ptr() -- actually calls function myfunc() ! 
  ```
 blit sprite
+```
+Sprite(picnum,x,y)
+```
 
 blit tilemap
+```
+    map(x_were_you_blit,y_where_you_blit,x_in_map_editor,y_in_map_editor,width_in_tiles,height_in_tiles)    
+```
 
 play note
+```
+Audio.generate(1,250,1)
+```
+stop note 
+```
+Audio.generate()
+```
 
+sfx TODO
