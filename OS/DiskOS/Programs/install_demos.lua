@@ -6,7 +6,7 @@ if select(1,...) == "-?" then
 end
 
 fs.newDirectory("D://Demos/")
-for k,v in ipairs(fs.directoryItems("C:/Demos/")) do
+for k,v in ipairs(fs.getDirectoryItems("C:/Demos/")) do
   local data = fs.read("C:/Demos/"..v)
   fs.write("D://Demos/"..v, data)
 end

@@ -115,13 +115,13 @@ function utils:newTool()
           
           local ishotkey --Was it an hotkey ?
           
-          if sc == "ctrl-s" then
+          if key == "ctrl-s" then
             if controls[2]() then break end
             pushMatrix() cam() self:drawTopBar() popMatrix()
-          elseif sc == "ctrl-l" then
+          elseif key == "ctrl-l" then
             if controls[1]() then break end
             pushMatrix() cam() self:drawTopBar() popMatrix()
-          elseif sc == "ctrl-q" then
+          elseif key == "ctrl-q" then
             if controls[3]() then break end
             pushMatrix() cam() self:drawTopBar() popMatrix()
           elseif hotkey then

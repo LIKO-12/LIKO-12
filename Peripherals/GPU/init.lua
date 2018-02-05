@@ -5,6 +5,8 @@ local coreg = require("Engine.coreg")
 local bit = require("bit") --Require the bit operations library for use in VRAM
 local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 
+local strformat = string.format
+
 local json = require("Engine.JSON") --Used to save the calibrarion values.
 
 return function(config) --A function that creates a new GPU peripheral.
@@ -118,9 +120,19 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
   
   --Initialize the gpu--
+  if not love.filesystem.exists("Shaders") then
+    love.filesystem.createDirectory("Shaders")
+  end
+  
+  local _ActiveShaderID = 0
+  local _ActiveShaderName = "None"
+  local _ActiveShader
+  local _PostShaderTimer
+  
   love.graphics.setDefaultFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
   local _CanvasFormats = love.graphics.getCanvasFormats()
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H,_CanvasFormats.r8 and "r8" or "normal") --Create the screen canvas.
+  local _BackBuffer = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --BackBuffer for post shaders.
   local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale) --Create the gif canvas, used to apply the gif scale factor.
   local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
   
@@ -189,6 +201,9 @@ return function(config) --A function that creates a new GPU peripheral.
   --The final display shader.
   local _DisplayShader = _Shaders.displayShader
   _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the colorset.
+  
+  --The pattern fill shader
+  local _StencilShader = _Shaders.stencilShader
   
   love.graphics.setShader(_DrawShader) --Activate the drawing shader.
   
@@ -259,59 +274,64 @@ return function(config) --A function that creates a new GPU peripheral.
     return _GetColorID(r,g,b,a),0,0,255
   end
   
-  --Execute a LIKO12 api function (to handle errors)
-  local function exe(ok,err,...)
-    if ok then
-      return err,...
-    else
-      return error(err)
-    end
-  end
-  
   --GifRecorder
   local _GIF = love.filesystem.load(perpath.."gif.lua")( _GIFScale, _LIKO_W, _LIKO_H ) --Load the gif library
-  --To handle gif control buttons
-  events:register("love:keypressed", function(key,sc,isrepeat)
-    if key == _GIFStartKey then
-      if _GIFRec then return end --If there is an already in progress gif
+  
+  local function startGifRecording()
+    if _GIFRec then return end --If there is an already in progress gif
+    if love.filesystem.exists("/~gifrec.gif") then
+      _GIFRec = _GIF.continue("/~gifrec.gif")
+      _GIFPStart = love.filesystem.read("/~gifrec.pal")
+      _GIFPChanged = true --To check if it's the same palette
+      _GIFPal = false
+      systemMessage("Resumed gif recording",1,false,false,true)
+      return
+    end
+    _GIFRec = _GIF.new("/~gifrec.gif",_ColorSet)
+    _GIFPChanged = false
+    _GIFPStart = ""
+    for i=0,15 do
+      local p = _ColorSet[i]
+      _GIFPStart = _GIFPStart .. string.char(p[1],p[2],p[3])
+    end
+    _GIFPal = false
+    love.filesystem.write("/~gifrec.pal",_GIFPStart)
+    systemMessage("Started gif recording",1,false,false,true)
+  end
+  
+  local function pauseGifRecording()
+    if not _GIFRec then return end
+    _GIFRec.file:flush()
+    _GIFRec.file:close()
+    _GIFRec = nil
+    systemMessage("Paused gif recording",1,false,false,true)
+  end
+  
+  local function endGifRecording()
+    if not _GIFRec then
       if love.filesystem.exists("/~gifrec.gif") then
         _GIFRec = _GIF.continue("/~gifrec.gif")
-        _GIFPStart = love.filesystem.read("/~gifrec.pal")
-        _GIFPChanged = true --To check if it's the same palette
-        _GIFPal = false
-        systemMessage("Resumed gif recording",1,false,false,true)
-        return
-      end
-      _GIFRec = _GIF.new("/~gifrec.gif",_ColorSet)
-      _GIFPChanged = false
-      _GIFPStart = ""
-      for i=0,15 do
-        local p = _ColorSet[i]
-        _GIFPStart = _GIFPStart .. string.char(p[1],p[2],p[3])
-      end
-      _GIFPal = false
-      love.filesystem.write("/~gifrec.pal",_GIFPStart)
-      systemMessage("Started gif recording",1,false,false,true)
+      else return end
+      systemMessage("Saved old gif recording successfully",2,false,false,true)
+    else
+      systemMessage("Saved gif recording successfully",2,false,false,true)
+    end
+    _GIFRec:close()
+    _GIFRec = nil
+    love.filesystem.write("/LIKO12-"..os.time()..".gif",love.filesystem.read("/~gifrec.gif"))
+    love.filesystem.remove("/~gifrec.gif")
+    love.filesystem.remove("/~gifrec.pal")
+  end
+  
+  --To handle gif control buttons
+  events:register("love:keypressed", function(key,sc,isrepeat)
+    if love.keyboard.isDown("lshift","rshift") then return end
+    if key == _GIFStartKey then
+      startGifRecording()
     elseif key == _GIFEndKey then
-      if not _GIFRec then
-        if love.filesystem.exists("/~gifrec.gif") then
-          _GIFRec = _GIF.continue("/~gifrec.gif")
-        else return end
-        systemMessage("Saved old gif recording successfully",2,false,false,true)
-      else
-        systemMessage("Saved gif recording successfully",2,false,false,true)
-      end
-      _GIFRec:close()
-      _GIFRec = nil
-      love.filesystem.write("/LIKO12-"..os.time()..".gif",love.filesystem.read("/~gifrec.gif"))
-      love.filesystem.remove("/~gifrec.gif")
-      love.filesystem.remove("/~gifrec.pal")
+      endGifRecording()
     elseif key == _GIFPauseKey then
-      if not _GIFRec then return end
-      _GIFRec.file:flush()
-      _GIFRec.file:close()
-      _GIFRec = nil
-      systemMessage("Paused gif recording",1,false,false,true)
+      pauseGifRecording()
     end
   end)
   --To save the gif before rebooting.
@@ -343,6 +363,103 @@ return function(config) --A function that creates a new GPU peripheral.
       _GIFRec = _GIF.continue("/~gifrec.gif")
     end
   end
+  
+  local _GrappedCursor = false --If the cursor must be drawed by the GPU (not using a system cursor)
+  local _Cursor = "none"
+  local _CursorsCache = {}
+  
+  --Handle post-shader switching
+  events:register("love:keypressed", function(key,sc,isrepeat)
+    if not love.keyboard.isDown("lshift","rshift") then return end
+    if key ~= _GIFStartKey and key ~= _GIFEndKey and key ~= _GIFPauseKey then return end
+    local shaderslist = love.filesystem.getDirectoryItems("/Shaders/")
+    if key == _GIFEndKey then --Next Shader
+      local nextShader = shaderslist[_ActiveShaderID + 1]
+      if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
+        local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
+        if not ok then
+          print("Failed to load shader",nextShader)
+          shader = nil
+        end
+        
+        _ActiveShaderID = _ActiveShaderID + 1
+        _ActiveShaderName = nextShader
+        _ActiveShader = shader
+        _PostShaderTimer = nil
+        
+        if _ActiveShader then
+          local warnings = _ActiveShader:getWarnings()
+          if warnings ~= "vertex shader:\npixel shader:\n" then
+            print("Shader Warnings:")
+            print(warnings)
+          end
+          
+          if _ActiveShader:getExternVariable("time") then
+            _PostShaderTimer = 0
+          end
+        else
+          love.mouse.setVisible(not _GrappedCursor)
+        end
+      else
+        _ActiveShaderID = 0
+        _ActiveShaderName = "None"
+        _ActiveShader = nil
+        _PostShaderTimer = nil
+        love.mouse.setVisible(not _GrappedCursor)
+      end
+    elseif key == _GIFStartKey then --Prev Shader
+      local nextID = _ActiveShaderID - 1; if nextID < 0 then nextID = #shaderslist end
+      local nextShader = shaderslist[nextID]
+      if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
+        local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
+        if not ok then
+          print("Failed to load shader",nextShader)
+          print(shader)
+          shader = nil
+        end
+        
+        _ActiveShaderID = nextID
+        _ActiveShaderName = nextShader
+        _ActiveShader = shader
+        _PostShaderTimer = nil
+        
+        if _ActiveShader then
+          local warnings = _ActiveShader:getWarnings()
+          if warnings ~= "vertex shader:\npixel shader:\n" then
+            print("Shader Warnings:")
+            print(warnings)
+          end
+          
+          if _ActiveShader:getExternVariable("time") then
+            _PostShaderTimer = 0
+          end
+        else
+          love.mouse.setVisible(not _GrappedCursor)
+        end
+      else
+        _ActiveShaderID = 0
+        _ActiveShaderName = "None"
+        _ActiveShader = nil
+        _PostShaderTimer = nil
+        love.mouse.setVisible(not _GrappedCursor)
+      end
+    elseif key == _GIFPauseKey then --None Shader
+      _ActiveShaderID = 0
+      _ActiveShaderName = "None"
+      _ActiveShader = nil
+      _PostShaderTimer = nil
+      love.mouse.setVisible(not _GrappedCursor)
+    end
+    
+    systemMessage("Shader: ".._ActiveShaderName,2,false,false,true)
+  end)
+
+  --Post-Shader Time value
+  events:register("love:update",function(dt)
+    if _PostShaderTimer then
+      _PostShaderTimer = (_PostShaderTimer + dt)%10
+    end
+  end)
   
   --Mouse Hooks (To translate them to LIKO12 screen)--
   events:register("love:mousepressed",function(x,y,b,istouch)
@@ -386,11 +503,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if cpukit then cpukit.triggerEvent("touchreleased",id,x,y,dx,dy,p) end
   end)
 
-  local GPU = {}
-  
-  local indirect = { --The functions that must be called via coroutine.yield
-    "flip"
-  }
+  local GPU, yGPU = {}, {}
   
   local newImageHandler = love.filesystem.load(perpath.."imageHandler.lua")
   
@@ -438,6 +551,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local LIMGHandler; LIMGHandler = newImageHandler(_LIKO_W,_LIKO_H,function() end,function() end)
   
+  LIMGHandler("setImage",0,0,LabelImage)
+  
   --The api starts here--
   
   local flip = false --Is the code waiting for the screen to draw, used to resume the coroutine.
@@ -446,17 +561,34 @@ return function(config) --A function that creates a new GPU peripheral.
   local PaletteStack = {} --The palette stack (pushPalette,popPalette)
   local printCursor = {x=0,y=0,bgc=0} --The print grid cursor pos.
   local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2)) --The size of characters that the screen can fit.
+  local PatternFill --The pattern stencil function
+  
+  local _PasteImage --A walkthrough to avoide exporting the image to png and reloading it.
+  
+  local function Verify(value,name,etype,allowNil)
+    if type(value) ~= etype then
+      if allowNil then
+        error(name.." should be a "..etype.." or a nil, provided: "..type(value),3)
+      else
+        error(name.." should be a "..etype..", provided: "..type(value),3)
+      end
+    end
+    
+    if etype == "number" then
+      return math.floor(value)
+    end
+  end
   
   --Those explains themselves.
-  function GPU.screenSize() return true, _LIKO_W, _LIKO_H end
-  function GPU.screenWidth() return true, _LIKO_W end
-  function GPU.screenHeight() return true, _LIKO_H end
-  function GPU.termSize() return true, TERM_W, TERM_H end
-  function GPU.termWidth() return true, TERM_W end
-  function GPU.termHeight() return true, TERM_H end
-  function GPU.fontSize() return true, _FontW, _FontH end
-  function GPU.fontWidth() return true, _FontW end
-  function GPU.fontHeight() return true, _FontH end
+  function GPU.screenSize() return _LIKO_W, _LIKO_H end
+  function GPU.screenWidth() return _LIKO_W end
+  function GPU.screenHeight() return _LIKO_H end
+  function GPU.termSize() return TERM_W, TERM_H end
+  function GPU.termWidth() return TERM_W end
+  function GPU.termHeight() return TERM_H end
+  function GPU.fontSize() return _FontW, _FontH end
+  function GPU.fontWidth() return _FontW end
+  function GPU.fontHeight() return _FontH end
   
   function GPU.colorPalette(id,r,g,b)
     if not (id or r or g or b) then --Reset
@@ -468,30 +600,27 @@ return function(config) --A function that creates a new GPU peripheral.
       _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
       _ShouldDraw = true
       _GIFPChanged = true
-      return true
+      return
     end
     
-    if type(id) ~= "number" then return false, "Color ID must be a number, provided: "..type(id) end
-    id = math.floor(id)
-    if not _ColorSet[id] then return false, "Color ID out of range ("..id..") Must be [0,15]" end
+    id = Verify(id,"Color ID","number")
+    if not _ColorSet[id] then return error("Color ID out of range ("..id..") Must be [0,15]") end
+    
     if r or g or b then
       local r,g,b = r or _ColorSet[id][1], g or _ColorSet[id][2], b or _ColorSet[id][3]
-      if type(r) ~= "number" then return false, "Red value must be a number, provided: "..tonumber(r) end
-      if type(g) ~= "number" then return false, "Green value must be a number, provided: "..tonumber(g) end
-      if type(b) ~= "number" then return false, "Blue value must be a number, provided: "..tonumber(b) end
-      r,g,b = math.floor(r), math.floor(g), math.floor(b)
-      if r < 0 or r > 255 then return false, "Red value out of range ("..r..") Must be [0,255]" end
-      if g < 0 or g > 255 then return false, "Green value out of range ("..g..") Must be [0,255]" end
-      if b < 0 or b > 255 then return false, "Blue value out of range ("..b..") Must be [0,255]" end
+      r = Verify(r,"Red value","number")
+      g = Verify(g,"Green value","number")
+      b = Verify(b,"Blue value","number")
+      if r < 0 or r > 255 then return error("Red value out of range ("..r..") Must be [0,255]") end
+      if g < 0 or g > 255 then return error("Green value out of range ("..g..") Must be [0,255]") end
+      if b < 0 or b > 255 then return error("Blue value out of range ("..b..") Must be [0,255]") end
       _ColorSet[id] = {r,g,b,255}
       _DisplayPalette[id+1] = _ColorSet[id]
       _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
       _ShouldDraw = true
       _GIFPChanged = true
-      return true
     else
-      local r,g,b,a = unpack(_ColorSet[id])
-      return true, r,g,b,a
+      return unpack(_ColorSet[id])
     end
   end
   
@@ -499,29 +628,25 @@ return function(config) --A function that creates a new GPU peripheral.
   --Call with no args to get the current acive color id.
   function GPU.color(id)
     if id then
-      if type(id) ~= "number" then return false, "The color id must be a number, provided: "..type(id) end --Error
-      if id > 15 or id < 0 then return false, "The color id is out of range ("..id..") Must be [0,15]" end --Error
-      id = math.floor(id) --Remove the float digits.
+      id = Verify(id,"The color id","number")
+      if id > 15 or id < 0 then return error("The color id is out of range ("..id..") Must be [0,15]") end --Error
       love.graphics.setColor(id,0,0,255) --Set the active color.
-      return true --It ran successfuly.
     else
       local r,g,b,a = love.graphics.getColor()
-      return true, r --Return the current color.
+      return r --Return the current color.
     end
   end
   
   --Push the current active color to the ColorStack.
   function GPU.pushColor()
-    table.insert(ColorStack,exe(GPU.color())) --Add the active color id to the stack.
-    return true --It ran successfully.
+    table.insert(ColorStack,GPU.color()) --Add the active color id to the stack.
   end
   
   --Pop the last color from the ColorStack and set it to the active color.
   function GPU.popColor()
-    if #ColorStack == 0 then return false, "No more colors to pop." end --Error
-    exe(GPU.color(ColorStack[#ColorStack])) --Set the last color in the stack to be the active color.
+    if #ColorStack == 0 then return error("No more colors to pop.") end --Error
+    GPU.color(ColorStack[#ColorStack]) --Set the last color in the stack to be the active color.
     table.remove(ColorStack,#ColorStack) --Remove the last color in the stack.
-    return true --It ran successfully
   end
   
   --Map pallete colors
@@ -530,15 +655,12 @@ return function(config) --A function that creates a new GPU peripheral.
     local imagechange = false  --Has any changes been made to the image:draw palette (p=2).
     
     --Error check all the arguments.
-    if c0 and type(c0) ~= "number" then return false, "C0 must be a number, provided: "..type(c0) end
-    if c1 and type(c1) ~= "number" then return false, "C1 must be a number, provided: "..type(c1) end
-    if p and type(p) ~= "number" then return false, "P must be a number, provided: "..type(p) end
-    if c0 then c0 = math.floor(c0) end
-    if c1 then c1 = math.floor(c1) end
-    if p then p = math.floor(p) end
-    if c0 and (c0 < 0 or c0 > 15) then return false, "C0 is out of range ("..c0..") expected [0,15]" end
-    if c1 and (c1 < 0 or c1 > 15) then return false, "C1 is out of range ("..c1..") expected [0,15]" end
-    if p and (p < 0 or p > 1) then return false, "P is out of range ("..p..") expected [0,1]" end
+    if c0 then c0 = Verify(c0, "C0","number",true) end
+    if c1 then c1 = Verify(c1, "C1","number",true) end
+    if p then p = Verify(p, "P","number",true) end
+    if c0 and (c0 < 0 or c0 > 15) then return error("C0 is out of range ("..c0..") expected [0,15]") end
+    if c1 and (c1 < 0 or c1 > 15) then return error("C1 is out of range ("..c1..") expected [0,15]") end
+    if p and (p < 0 or p > 1) then return error("P is out of range ("..p..") expected [0,1]") end
     
     --Reset the palettes.
     if (not c0) and (not c1) then
@@ -579,15 +701,13 @@ return function(config) --A function that creates a new GPU peripheral.
     --If changes has been made then upload the data to the shaders.
     if drawchange then _DrawShader:send('palette',unpack(_DrawPalette)) end
     if imagechange then _ImageShader:send('palette',unpack(_ImagePalette)) end
-    return true --It ran successfully.
   end
   
   function GPU.palt(c,t)
     local changed = false
     if c then
-      if type(c) ~= "number" then return false, "Color must be a number, provided: "..type(c) end
-      c = math.floor(c)
-      if (c < 0 or c > 15) then return false, "Color out of range ("..c..") expected [0,15]" end
+      c = Verify(c,"Color","number")
+      if (c < 0 or c > 15) then return error("Color out of range ("..c..") expected [0,15]") end
       
       if _ImageTransparent[c+1] == (t and 1 or 0) then
         _ImageTransparent[c+1] = (t and 0 or 1)
@@ -606,7 +726,6 @@ return function(config) --A function that creates a new GPU peripheral.
       end
     end
     if changed then _ImageShader:send('transparent', unpack(_ImageTransparent)) end
-    return true
   end
   
   function GPU.pushPalette()
@@ -620,11 +739,10 @@ return function(config) --A function that creates a new GPU peripheral.
       table.insert(pal.trans,_ImageTransparent[i])
     end
     table.insert(PaletteStack,pal)
-    return true
   end
   
   function GPU.popPalette()
-    if #PaletteStack == 0 then return false, "No more palettes to pop." end --Error
+    if #PaletteStack == 0 then return error("No more palettes to pop.") end --Error
     local pal = PaletteStack[#PaletteStack]
     local drawchange, imgchange, transchange = false,false,false
     for i=1,16 do
@@ -647,11 +765,10 @@ return function(config) --A function that creates a new GPU peripheral.
     if imgchange then _ImageShader:send('palette',unpack(_ImagePalette)) end
     if transchange then _ImageShader:send('transparent', unpack(_ImageTransparent)) end
     table.remove(PaletteStack,#PaletteStack)
-    return true
   end
   
   --Suspend the coroutine till the screen is updated
-  function GPU.flip()
+  function yGPU.flip()
     UnbindVRAM() _ShouldDraw = true -- Incase if no changes are made so doesn't suspend forever
     flip = true
     return 2 --Do not resume automatically
@@ -659,9 +776,9 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Camera Functions
   function GPU.cam(mode,a,b)
-    if mode and type(mode) ~= "string" then return false, "Mode must be a string, providied: "..type(mode) end
-    if a and type(a) ~= "number" then return false, "a must be a number, providied: "..type(a) end
-    if b and type(b) ~= "number" then return false, "b must be a number, providied: "..type(b) end
+    if mode then Verify(mode,"Mode","string") end
+    if a then Verify(a,"a","number",true) end
+    if b then Verify(b,"b","number",true) end
     
     if mode then
       if mode == "translate" then
@@ -673,22 +790,71 @@ return function(config) --A function that creates a new GPU peripheral.
       elseif mode == "shear" then
         love.graphics.shear(a or 0, b or 0)
       else
-        return false, "Unknown mode: "..mode
+        return error("Unknown mode: "..mode)
       end
     else
-      exe(GPU.pushColor())
+      GPU.pushColor()
       love.graphics.origin()
-      exe(GPU.popColor())
+      GPU.popColor()
     end
-    return true
+  end
+  
+  local MatrixStack = 0
+  
+  function GPU.clearMatrixStack()
+    for i=1, MatrixStack do
+      love.graphics.pop()
+    end
+    
+    MatrixStack = 0
   end
   
   function GPU.pushMatrix()
-    return pcall(love.graphics.push)
+    if MatrixStack == 256 then
+      return error("Maximum stack depth reached, More pushes than pops ?")
+    end
+    MatrixStack = MatrixStack + 1
+    local ok, err = pcall(love.graphics.push)
+    if not ok then return error(err) end
   end
   
   function GPU.popMatrix()
-    return pcall(love.graphics.pop)
+    if MatrixStack == 0 then
+      return error("The stack is empty, More pops than pushes ?")
+    end
+    MatrixStack = MatrixStack - 1
+    local ok, err = pcall(love.graphics.pop)
+    if not ok then return error(err) end
+  end
+  
+  function GPU.patternFill(img)
+    if img then
+      Verify(img,"Pattern ImageData","table")
+      if not img.typeOf or not img.typeOf("GPU.imageData") then return error("Invalid ImageData") end
+      
+      local IMG = love.image.newImageData(img:size())
+      img:___pushimgdata()
+      IMG:paste(_PasteImage,0,0)
+      _PasteImage = nil
+      
+      IMG = love.graphics.newImage(IMG)
+      
+      local QUAD = img:quad(0,0,_LIKO_W,_LIKO_H)
+      
+      PatternFill = function()
+        love.graphics.setShader(_StencilShader)
+        
+        love.graphics.draw(IMG, QUAD, 0,0)
+        
+        love.graphics.setShader(_DrawShader)
+      end
+      
+      love.graphics.stencil(PatternFill, "replace", 1)
+      love.graphics.setStencilTest("greater",0)
+    else
+      PatternFill = nil
+      love.graphics.setStencilTest()
+    end
   end
   
   function GPU.clip(x,y,w,h)
@@ -698,10 +864,11 @@ return function(config) --A function that creates a new GPU peripheral.
         x,y,w,h = unpack(x)
       end
       
-      if type(x) ~= "number" then return false, "X must be a number, provided: "..type(x) end
-      if type(y) ~= "number" then return false, "Y must be a number, provided: "..type(y) end
-      if type(w) ~= "number" then return false, "W must be a number, provided: "..type(w) end
-      if type(h) ~= "number" then return false, "H must be a number, provided: "..type(h) end
+      Verify(x,"X","number")
+      Verify(y,"Y","number")
+      Verify(w,"W","number")
+      Verify(h,"H","number")
+      
       Clip = {x,y,w,h}
       love.graphics.setScissor(unpack(Clip))
     else
@@ -723,19 +890,15 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     
     --Args types verification
-    if type(x) ~= "number" then return false, "X pos must be a number." end --Error
-    if type(y) ~= "number" then return false, "Y pos must be a number." end --Error
-    if type(w) ~= "number" then return false, "W width must be a number." end --Error
-    if type(h) ~= "number" then return false, "H height must be a number." end --Error
-    if type(l) ~= "boolean" then return false, "L linerect must be a number or nil." end --Error
-    if c and type(c) ~= "number" then return false, "The color id must be a number or nil." end --Error
-    
-    --Remove float digits
-    x,y,w,h,c = math.floor(x), math.floor(y), math.floor(w), math.floor(h), c and math.floor(c) or c
+    x = Verify(x,"X pos","number")
+    y = Verify(y,"Y pos","number")
+    w = Verify(w,"Width","number")
+    h = Verify(h,"Height","number")
+    if c then c = Verify(c,"The color id","number",true) end
     
     if c then --If the colorid is provided, pushColor then set the color.
-      exe(GPU.pushColor())
-      exe(GPU.color(c))
+      GPU.pushColor()
+      GPU.color(c)
     end
     
     --Apply the offset.
@@ -749,9 +912,7 @@ return function(config) --A function that creates a new GPU peripheral.
     
     love.graphics.rectangle(l and "line" or "fill",x,y,w,h) _ShouldDraw = true --Draw and tell that changes has been made.
     
-    if c then exe(GPU.popColor()) end --Restore the color from the stack.
-    
-    return true --It ran successfully
+    if c then GPU.popColor() end --Restore the color from the stack.
   end
   
   --Draws a circle filled, or lines only.
@@ -765,19 +926,15 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     
     --Args types verification
-    if type(x) ~= "number" then return false, "X pos must be a number." end --Error
-    if type(y) ~= "number" then return false, "Y pos must be a number." end --Error
-    if type(r) ~= "number" then return false, "R radius must be a number." end --Error
-    if type(l) ~= "boolean" then return false, "L linecircle must be a number or nil." end --Error
-    if c and type(c) ~= "number" then return false, "The color id must be a number or nil." end --Error
-    if s and type(s) ~= "number" then return false, "Segments must be a number or nil." end --Error
-    
-    --Remove float digits
-    x,y,r,c,s = math.floor(x), math.floor(y), math.floor(r), c and math.floor(c) or c, s and math.floor(s) or s
+    x = Verify(x,"X pos","number")
+    y = Verify(y,"Y pos","number")
+    Verify(r,"Radius","number")
+    if c then c = Verify(c,"The color id","number",true) end
+    if s then s = Verify(s,"Segments","number",true) end
     
     if c then --If the colorid is provided, pushColor then set the color.
-      exe(GPU.pushColor())
-      exe(GPU.color(c))
+      GPU.pushColor()
+      GPU.color(c)
     end
     
     --Apply the offset.
@@ -789,9 +946,7 @@ return function(config) --A function that creates a new GPU peripheral.
     
     love.graphics.circle(l and "line" or "fill",x,y,r,s) _ShouldDraw = true --Draw and tell that changes has been made.
     
-    if c then exe(GPU.popColor()) end --Restore the color from the stack.
-    
-    return true --It ran successfully
+    if c then GPU.popColor() end --Restore the color from the stack.
   end
   
   --Draws a triangle
@@ -802,20 +957,16 @@ return function(config) --A function that creates a new GPU peripheral.
       x1,y1,x2,y2,x3,y3,l,col = unpack(x1)
     end
     
-    if type(x1) ~= "number" then return false, "x1 must be a number, provided: "..type(x1) end
-    if type(y1) ~= "number" then return false, "y1 must be a number, provided: "..type(y1) end
-    if type(x2) ~= "number" then return false, "x2 must be a number, provided: "..type(x2) end
-    if type(y2) ~= "number" then return false, "y2 must be a number, provided: "..type(y2) end
-    if type(x3) ~= "number" then return false, "x3 must be a number, provided: "..type(x3) end
-    if type(y3) ~= "number" then return false, "y3 must be a number, provided: "..type(y3) end
-    if col and type(col) ~= "number" then return false, "color must be a number, provided: "..type(col) end
+    x1 = Verify(x1,"x1","number")
+    y1 = Verify(y1,"y1","number")
+    x2 = Verify(x2,"x2","number")
+    y2 = Verify(y2,"y2","number")
+    x3 = Verify(x3,"x3","number")
+    y3 = Verify(y3,"y3","number")
+    if col then col = Verify(col,"Color","number",true) end
     
-    x1,y1,x2,y2,x3,y3 = math.floor(x1),math.floor(y1),math.floor(x2),math.floor(y2),math.floor(x3),math.floor(y3)
-    
-    if col then col = math.floor(col) end
-    if col and (col < 0 or col > 15) then return false, "color is out of range ("..col..") expected [0,15]" end
-    
-    if col then exe(GPU.pushColor()) exe(GPU.color(col)) end
+    if col and (col < 0 or col > 15) then return error("color is out of range ("..col..") expected [0,15]") end
+    if col then GPU.pushColor() GPU.color(col) end
     
     --Apply the offset
     if l then
@@ -826,22 +977,19 @@ return function(config) --A function that creates a new GPU peripheral.
     
     love.graphics.polygon(l and "line" or "fill", x1,y1,x2,y2,x3,y3)
     
-    if col then exe(GPU.popColor()) end
-    
-    return true --It ran successfully
+    if col then GPU.popColor() end
   end
   
   --Draw a polygon
   function GPU.polygon(...) UnbindVRAM()
     local args = {...} --The table of args
-    exe(GPU.pushColor()) --Push the current color.
-    if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
-    for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
-    if #args < 6 then return false, "Need at least three vertices to draw a polygon." end --Error
+    GPU.pushColor() --Push the current color.
+    if not (#args % 2 == 0) then GPU.color(args[#args]) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
+    for k,v in ipairs(args) do Verify(v,"Arg #"..k,"number") end --Error
+    if #args < 6 then return error("Need at least three vertices to draw a polygon.") end --Error
     for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.polygon[2] else args[k] = v + ofs.polygon[1] end end --Apply the offset.
     love.graphics.polygon("fill",unpack(args)) _ShouldDraw = true --Draw the lines and tell that changes has been made.
-    exe(GPU.popColor()) --Pop the last color in the stack.
-    return true --It ran successfully.
+    GPU.popColor() --Pop the last color in the stack.
   end
   
   --Draws a ellipse filled, or lines only.
@@ -854,17 +1002,16 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     
     --Args types verification
-    if type(x) ~= "number" then return false, "X pos must be a number." end --Error
-    if type(y) ~= "number" then return false, "Y pos must be a number." end --Error
-    if type(rx) ~= "number" then return false, "R x radius must be a number." end --Error
-    if type(ry) ~= "number" then return false, "R y radius must be a number." end --Error
-    if type(l) ~= "boolean" then return false, "L linecircle must be a number or nil." end --Error
-    if c and type(c) ~= "number" then return false, "The color id must be a number or nil." end --Error
-    if s and type(s) ~= "number" then return false, "Segments must be a number or nil." end --Error
+    x = Verify(x,"X coord","number")
+    y = Verify(y,"Y coord","number")
+    Verify(rx,"X radius","number")
+    Verify(ry, "Y radius","number")
+    if c then c = Verify(c,"The color id","number",true) end
+    if s then s = Verify(s,"Segments","number",true) end
     
     if c then --If the colorid is provided, pushColor then set the color.
-      exe(GPU.pushColor())
-      exe(GPU.color(c))
+      GPU.pushColor()
+      GPU.color(c)
     end
     
     --Apply the offset.
@@ -876,9 +1023,7 @@ return function(config) --A function that creates a new GPU peripheral.
     
     love.graphics.ellipse(l and "line" or "fill",x,y,rx,ry,s) _ShouldDraw = true --Draw and tell that changes has been made.
     
-    if c then exe(GPU.popColor()) end --Restore the color from the stack.
-    
-    return true --It ran successfully
+    if c then GPU.popColor() end --Restore the color from the stack.
   end
   
   --Sets the position of the printing corsor when x,y are supplied
@@ -887,14 +1032,15 @@ return function(config) --A function that creates a new GPU peripheral.
     if x or y or bgc then
       local x, y = x or printCursor.x, y or printCursor.y
       local bgc = bgc or printCursor.bgc
-      if type(x) ~= "number" then return false, "X pos must be a number or nil." end --Error
-      if type(y) ~= "number" then return false, "Y pos must be a number or nil." end --Error
-      if type(bgc) ~= "number" then return false, "Background Color must be a number or nil." end --Error
+      
+      x = Verify(x,"X coord","number",true)
+      y = Verify(y,"Y coord","number",true)
+      bgc = Verify(bgc,"Background Color","number",true)
+      
       printCursor.x, printCursor.y = x, y --Set the cursor pos
       printCursor.bgc = bgc
-      return true --It ran successfully.
     else
-      return true, printCursor.x, printCursor.y, printCursor.bgc --Return the current cursor pos
+      return printCursor.x, printCursor.y, printCursor.bgc --Return the current cursor pos
     end
   end
   
@@ -905,24 +1051,22 @@ return function(config) --A function that creates a new GPU peripheral.
     local t = tostring(t) --Make sure it's a string
     if x and y then --Print at a specific position on the screen
       --Error handelling
-      if type(x) ~= "number" then return false, "X position must be a number, provided: "..type(x) end
-      if type(y) ~= "number" then return false, "Y position must be a number, provided: "..type(y) end
-      if limit and type(limit) ~= "number" then return false, "Line limit be a number or a nil, provided: "..type(x) end
+      x = Verify(x,"X coord","number")
+      y = Verify(y,"Y coord","number")
+      if limit then limit = Verify(limit,"Line limit","number",true) end
       if align then
-        if type(align) ~= "string" then return false," Line align must be a string or a nil, provided: "..type(align) end
+        Verify(align,"Align","string",true)
         if align ~= "left" and align ~= "center" and align ~= "right" and align ~= "justify" then
-          return false, "Invalid line alignment '"..align.."' !"
+          return error("Invalid line alignment '"..align.."' !")
         end
       end
-      if r and type(r) ~= "number" then return false, "Rotation must be a number, provided: "..type(r) end
-      if sx and type(sx) ~= "number" then return false, "X Scale factor must be a number, provided: "..type(sx) end
-      if sy and type(sy) ~= "number" then return false, "Y Scale factor must be a number, provided: "..type(sy) end
-      if ox and type(ox) ~= "number" then return false, "X Origin offset must be a number, provided: "..type(ox) end
-      if oy and type(oy) ~= "number" then return false, "Y Origin offset must be a number, provided: "..type(oy) end
-      if kx and type(kx) ~= "number" then return false, "X Shearing factor must be a number, provided: "..type(kx) end
-      if ky and type(ky) ~= "number" then return false, "Y Shearing factor must be a number, provided: "..type(ky) end
-      
-      x,y = math.floor(x), math.floor(y)
+      if r then Verify(r,"Rotation","number",true) end
+      if sx then Verify(sx,"X Scale factor","number",true) end
+      if sy then Verify(sy,"Y Scale factor","number",true) end
+      if ox then Verify(ox,"X Origin offset","number",true) end
+      if oy then Verify(oy,"Y Origin offset","number",true) end
+      if kx then Verify(kx,"X Shearing factor","number",true) end
+      if ky then Verify(ky,"Y Shearing factor","number",true) end
       
       --Print to the screen
       if limit then --Wrapped
@@ -930,8 +1074,6 @@ return function(config) --A function that creates a new GPU peripheral.
       else
         love.graphics.print(t,x+ofs.print[1],y+ofs.print[2],r,sx,sy,ox,oy,kx,ky) _ShouldDraw = true
       end
-      
-      return true --It ran successfully.
     else --Print to terminal pos
       local pc = printCursor --Shortcut
       
@@ -964,7 +1106,7 @@ return function(config) --A function that creates a new GPU peripheral.
       if linesNum > TERM_H-pc.y then --It will go down of the screen, so shift the screen up.
         GPU.pushPalette() GPU.palt() GPU.pal() --Backup the palette and reset the palette.
         local extra = linesNum - (TERM_H-pc.y) --The extra lines that will draw out of the screen.
-        local sc = exe(GPU.screenshot()) --Take a screenshot
+        local sc = GPU.screenshot() --Take a screenshot
         GPU.clear(0) --Clear the screen
         sc:image():draw(0, -extra*(_FontH+2)) --Draw the screen shifted up
         pc.y = pc.y-extra --Update the cursor pos.
@@ -986,19 +1128,22 @@ return function(config) --A function that creates a new GPU peripheral.
       end
       
       love.graphics.printf(pre_spaces..t,1+ofs.print_grid[1],drawY*(_FontH+2)+1+ofs.print_grid[2],sw) _ShouldDraw = true --Print the text
-      
-      return true --It ran successfully.
     end
   end
   
   function GPU.wrapText(text,sw)
-    return pcall(_Font.getWrap,_Font,text, sw)
+    local args = {pcall(_Font.getWrap,_Font,text, sw)}
+    if args[1] then
+      return select(2,unpack(args))
+    else
+      return error(tostring(args[2]))
+    end
   end
   
   function GPU.printBackspace(c,skpCr) UnbindVRAM()
     local c = c or printCursor.bgc
-    if type(c) ~= "number" then return false, "Color must be a number value, provided: "..type(c) end
-    local function cr() local s = exe(GPU.screenshot()):image() GPU.clear() s:draw(1,_FontH+2) end
+    c = Verify(c,"Color","number",true)
+    local function cr() local s = GPU.screenshot():image() GPU.clear() s:draw(1,_FontH+2) end
     
     local function togrid(gx,gy) --Covert to grid cordinates
       return math.floor(gx*(_FontW+1)), math.floor(gy*(_FontH+2))
@@ -1006,9 +1151,9 @@ return function(config) --A function that creates a new GPU peripheral.
     
     --A function to draw the background rectangle
     local function drawbackground(gx,gy,gw)
-      if printCursor.bgc == -1 or gw < 1 then return end --No need to draw the background
+      if c == -1 or gw < 1 then return end --No need to draw the background
       gx,gy = togrid(gx,gy)
-      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, printCursor.bgc)
+      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, c)
     end
       
     if printCursor.x > 0 then
@@ -1024,59 +1169,61 @@ return function(config) --A function that creates a new GPU peripheral.
       end
       drawbackground(printCursor.x,printCursor.y,1)
     end
-    return true
   end
   
   --Clears the whole screen with black or the given color id.
   function GPU.clear(c) UnbindVRAM()
-    local c = math.floor(c or 0)
-    if type(c) ~= "number" then return false, "The color id must be a number." end --Error
-    if c > 15 or c < 0 then return false, "The color id is out of range." end --Error
+    local c = c or 0
+    c = Verify(c,"The color id","number",true)
+    if c > 15 or c < 0 then return error("The color id is out of range.") end --Error
     love.graphics.clear(c,0,0,255) _ShouldDraw = true
-    return true --It ran successfully.
   end
   
   --Draws a point/s at specific location/s, accepts the colorid as the last args, x and y of points must be provided before the colorid.
   function GPU.points(...) UnbindVRAM()
     local args = {...} --The table of args
-    exe(GPU.pushColor()) --Push the current color.
-    if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
-    for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
+    GPU.pushColor() --Push the current color.
+    if not (#args % 2 == 0) then GPU.color(args[#args]) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
+    for k,v in ipairs(args) do Verify(v,"Arg #"..k,"number") end --Error
     for k,v in ipairs(args) do if (k % 2 == 1) then args[k] = v + ofs.point[1] else args[k] = v + ofs.point[2] end end --Apply the offset.
     love.graphics.points(unpack(args)) _ShouldDraw = true --Draw the points and tell that changes has been made.
-    exe(GPU.popColor()) --Pop the last color in the stack.
-    return true --It ran successfully.
+    GPU.popColor() --Pop the last color in the stack.
   end
   GPU.point = GPU.points --Just an alt name :P.
   
   --Draws a line/s at specific location/s, accepts the colorid as the last args, x1,y1,x2 and y2 of points must be provided before the colorid.
   function GPU.lines(...) UnbindVRAM()
     local args = {...} --The table of args
-    exe(GPU.pushColor()) --Push the current color.
-    if not (#args % 2 == 0) then exe(GPU.color(args[#args])) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
+    GPU.pushColor() --Push the current color.
+    if not (#args % 2 == 0) then GPU.color(args[#args]) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
     for k,v in ipairs(args) do if type(v) ~= "number" then return false, "Arg #"..k.." must be a number." end end --Error
     if #args < 4 then return false, "Need at least two vertices to draw a line." end --Error
     args[1], args[2] = args[1] + ofs.line_start[1], args[2] + ofs.line_start[2]
     for k=3, #args do if (k % 2 == 1) then args[k] = args[k] + ofs.line[1] else args[k] = args[k] + ofs.line[2] end end --Apply the offset.
     love.graphics.line(unpack(args)) _ShouldDraw = true --Draw the lines and tell that changes has been made.
-    exe(GPU.popColor()) --Pop the last color in the stack.
-    return true --It ran successfully.
+    GPU.popColor() --Pop the last color in the stack.
   end
   GPU.line = GPU.lines --Just an alt name :P.
+  
   --Image API--
   function GPU.quad(x,y,w,h,sw,sh)
-    return pcall(love.graphics.newQuad,x,y,w,h,sw,sh)
+    local ok, err = pcall(love.graphics.newQuad,x,y,w,h,sw,sh)
+    if ok then
+      return err
+    else
+      return error(err)
+    end
   end
   
   function GPU.image(data)
     local Image
     if type(data) == "string" then --Load liko12 specialized image format
-      local ok, imageData = GPU.imagedata(data)
-      if not ok then return ok, imageData end
-      return true, imageData:image()
+      local ok, imageData = pcall(GPU.imagedata,data)
+      if not ok then return error(imageData) end
+      return imageData:image()
     elseif type(data) == "userdata" and data.typeOf and data:typeOf("ImageData") then
       local ok, err = pcall(love.graphics.newImage,data)
-      if not ok then return false, "Invalid image data" end
+      if not ok then return error("Invalid image data") end
       Image = err
       Image:setWrap("repeat")
     end
@@ -1089,9 +1236,9 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setShader(_ImageShader)
       love.graphics.setColor(255,255,255,255)
       if quad then
-        love.graphics.draw(Image,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,math.floor(sx),math.floor(sy))
+        love.graphics.draw(Image,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,sx,sy)
       else
-        love.graphics.draw(Image,math.floor(x+ofs.image[1]),math.floor(y+ofs.image[2]),r,math.floor(sx),math.floor(sy))
+        love.graphics.draw(Image,math.floor(x+ofs.image[1]),math.floor(y+ofs.image[2]),r,sx,sy)
       end
       love.graphics.setShader(_DrawShader)
       GPU.popColor()
@@ -1107,16 +1254,14 @@ return function(config) --A function that creates a new GPU peripheral.
     function i:size() return Image:getDimensions() end
     function i:width() return Image:getWidth() end
     function i:height() return Image:getHeight() end
-    function i:data() return exe(GPU.imagedata(Image:getData())) end
+    function i:data() return GPU.imagedata(Image:getData()) end
     function i:quad(x,y,w,h) return love.graphics.newQuad(x,y,w or self:width(),h or self:height(),self:width(),self:height()) end
     
     function i:type() return "GPU.image" end
     function i:typeOf(t) if t == "GPU" or t == "image" or t == "GPU.image" or t == "LK12" then return true end end
     
-    return true, i
+    return i
   end
-  
-  local _PasteImage --A walkthrough to avoide exporting the image to png and reloading it.
   
   function GPU.imagedata(w,h)
     local imageData
@@ -1193,7 +1338,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     
     function id:quad(x,y,w,h) return love.graphics.newQuad(x,y,w or self:width(),h or self:height(),self:width(),self:height()) end
-    function id:image() return exe(GPU.image(imageData)) end
+    function id:image() return GPU.image(imageData) end
     
     function id:export()
       local expData = love.image.newImageData(self:width(),self:height())
@@ -1211,7 +1356,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local scale = math.floor(scale or 1)
       if scale <= 0 then scale = 1 end --Protection
       if scale == 1 then return self end
-      local newData = exe(GPU.imagedata(self:width()*scale,self:height()*scale))
+      local newData = GPU.imagedata(self:width()*scale,self:height()*scale)
       self:map(function(x,y,c)
         for iy=0, scale-1 do for ix=0, scale-1 do
           newData:setPixel(x*scale + ix,y*scale + iy,c)
@@ -1221,24 +1366,32 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     
     function id:encode() --Export to liko12 format
-      local data = "LK12;GPUIMG;"..self:width().."x"..self.height()..";"
-      self:map(function(x,y,c) if x == 0 then data = data.."\n" end data = data..string.format("%X",c) end)
-      return data
+      local data = {strformat("LK12;GPUIMG;%dx%d;",self:width(),self:height())}
+      local datalen = 2
+      self:map(function(x,y,c)
+        if x == 0 then
+          data[datalen] = "\n"
+          datalen = datalen + 1
+        end
+        data[datalen] = strformat("%X",c)
+        datalen = datalen + 1
+      end)
+      return table.concat(data)
     end
     
     function id.type() return "GPU.imageData" end
     function id.typeOf(t) if t == "GPU" or t == "imageData" or t == "GPU.imageData" or t == "LK12" then return true end end
     
-    return true, id
+    return id
   end
   
   function GPU.screenshot(x,y,w,h)
     local x, y, w, h = x or 0, y or 0, w or _LIKO_W, h or _LIKO_H
-    if x and type(x) ~= "number" then return false, "X must be a number, provided: "..type(x) end
-    if y and type(y) ~= "number" then return false, "Y must be a number, provided: "..type(y) end
-    if w and type(w) ~= "number" then return false, "W must be a number, provided: "..type(w) end
-    if h and type(h) ~= "number" then return false, "H must be a number, provided: "..type(h) end
-    return true, exe(GPU.imagedata(_ScreenCanvas:newImageData(x,y,w,h)))
+    x = Verify(x,"X","number",true)
+    y = Verify(y,"Y","number",true)
+    w = Verify(w,"W","number",true)
+    h = Verify(h,"H","number",true)
+    return GPU.imagedata(_ScreenCanvas:newImageData(x,y,w,h))
   end
   
   function GPU.getLabelImage()
@@ -1249,28 +1402,31 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Returns the current position of the mouse.
   function GPU.getMPos()
-    local x,y = _HostToLiko(love.mouse.getPosition()) --Convert the mouse position
-    return true, x, y --And return it
+    return _HostToLiko(love.mouse.getPosition()) --Convert the mouse position
   end
   
   --Returns if the given mouse button is down
   function GPU.isMDown(b)
-    if type(b) ~= "number" then return false, "Button must be a number, provided: "..type(b) end --Error
-    local b = math.floor(b)
-    return true, love.mouse.isDown(b)
+    b = Verify(b,"Button","number")
+    return love.mouse.isDown(b)
+  end
+  
+  --Gif Recording Controlling API--
+  GPU.startGifRecording = startGifRecording
+  GPU.pauseGifRecording = pauseGifRecording
+  GPU.endGifRecording = endGifRecording
+  
+  function GPU.isGifRecording()
+    return _GIFRec and true or false
   end
   
   --Cursor API--
-  local _GrappedCursor = false --If the cursor must be drawed by the GPU (not using a system cursor)
-  local _Cursor = "none"
-  local _CursorsCache = {}
-  
   function GPU.cursor(imgdata,name,hx,hy)
     if type(imgdata) == "string" then --Set the current cursor
       if _GrappedCursor then if not name then _AlwaysDraw = false; _ShouldDraw = true end elseif name then _AlwaysDraw = true end
-      if _Cursor == imgdata and not ((_GrappedCursor and not name) or (name and not _GrappedCursor)) then return true end
+      if _Cursor == imgdata and not ((_GrappedCursor and not name) or (name and not _GrappedCursor)) then return end
       _GrappedCursor = name
-      if (not _CursorsCache[imgdata]) and (imgdata ~= "none") then return false, "Cursor doesn't exists: "..imgdata end
+      if (not _CursorsCache[imgdata]) and (imgdata ~= "none") then return error("Cursor doesn't exists: "..imgdata) end
       _Cursor = imgdata
       if _Cursor == "none" or _GrappedCursor then
         love.mouse.setVisible(false)
@@ -1278,18 +1434,16 @@ return function(config) --A function that creates a new GPU peripheral.
         love.mouse.setVisible(true)
         love.mouse.setCursor(_CursorsCache[_Cursor].cursor)
       end
-      return true --It ran successfully
     elseif type(imgdata) == "table" then --Create a new cursor from an image.
-      if not( imgdata.enlarge and imgdata.export and imgdata.type ) then return false, "Invalied image" end
-      if imgdata:type() ~= "GPU.imageData" then return false, "Invalied image object" end
+      if not( imgdata.enlarge and imgdata.export and imgdata.type ) then return error("Invalied image") end
+      if imgdata:type() ~= "GPU.imageData" then return error("Invalied image object") end
       
       local name = name or "default"
-      if type(name) ~= "string" then return false, "Name must be a string, provided: "..type(name) end
+      Verify(name,"Name","string")
       
       local hx, hy = hx or 0, hy or 0
-      if type(hx) ~= "number" then return false, "Hot X must be a number or a nil, provided: "..type(hx) end
-      if type(hy) ~= "number" then return false, "Hot Y must be a number or a nil, provided: "..type(hy) end
-      hx, hy = math.floor(hx), math.floor(hy)
+      hx = Verify(hx,"Hot X","number",true)
+      hy = Verify(hy,"Hot Y","number",true)
       
       local enimg = imgdata:enlarge(_LIKOScale)
       local img = love.graphics.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
@@ -1306,15 +1460,14 @@ return function(config) --A function that creates a new GPU peripheral.
         table.insert(palt,_ImageTransparent[i])
       end
       _CursorsCache[name] = {cursor=cur,imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy,palt=palt}
-      return true --It ran successfully
     elseif type(imgdata) == "nil" then
       if _Cursor == "none" then
-        return true, _Cursor
+        return _Cursor
       else
-        return true, _Cursor, _CursorsCache[_Cursor].imgdata, _CursorsCache[_Cursor].hx+1, _CursorsCache[_Cursor].hy+1
+        return _Cursor, _CursorsCache[_Cursor].imgdata, _CursorsCache[_Cursor].hx+1, _CursorsCache[_Cursor].hy+1
       end
     else --Invalied
-      return false, "The first argument must be a string, image or nil"
+      return error("The first argument must be a string, image or nil")
     end
   end
   
@@ -1337,16 +1490,16 @@ return function(config) --A function that creates a new GPU peripheral.
       GPU.popPalette()
     end
     local cursor = _Cursor; _Cursor = "none" --Force the cursor to update.
-    exe(GPU.cursor(cursor,_GrappedCursor))
+    GPU.cursor(cursor,_GrappedCursor)
   end)
   
-  exe(GPU.cursor(exe(GPU.imagedata(1,1)):setPixel(0,0,7),"default"))
-  exe(GPU.cursor(_Cursor))
+  GPU.cursor(GPU.imagedata(1,1):setPixel(0,0,7),"default")
+  GPU.cursor(_Cursor)
   
   --Screenshot and LabelCapture keys handling.
   events:register("love:keypressed", function(key,sc,isrepeat)
     if key == _ScreenshotKey then
-      local sc = exe(GPU.screenshot())
+      local sc = GPU.screenshot()
       sc = sc:enlarge(_ScreenshotScale)
       local png = sc:exportOpaque()
       love.filesystem.write("/LIKO12-"..os.time()..".png",png)
@@ -1377,12 +1530,17 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setColor(_GetColor(0)) --Set the active color to black.
   love.mouse.setVisible(false)
   
-  exe(GPU.clear()) --Clear the canvas for the first time.
+  GPU.clear() --Clear the canvas for the first time.
   
   --Host to love.run when graphics is active--
   events:register("love:graphics",function()
-    if _ShouldDraw or _AlwaysDraw or _AlwaysDrawTimer > 0 or _DevKitDraw then --When it's required to draw (when changes has been made to the canvas)
-      UnbindVRAM(true) --Make sure that the VRAM changes are applied.
+    if _ShouldDraw or _AlwaysDraw or _AlwaysDrawTimer > 0 or _DevKitDraw or _ActiveShader then --When it's required to draw (when changes has been made to the canvas)
+      UnbindVRAM(true) --Make sure that the VRAM changes are applied
+      
+      if PatternFill then
+        love.graphics.setStencilTest()
+      end
+      
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
       love.graphics.push()
       love.graphics.setShader(_DisplayShader) --Activate the display shader.
@@ -1393,9 +1551,26 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setColor(255,255,255,255) --I don't want to tint the canvas :P
       if _ClearOnRender then love.graphics.clear((_HOST_H > _HOST_W) and {25,25,25,255} or {0,0,0,255}) end --Clear the screen (Some platforms are glitching without this).
       
-      love.graphics.draw(_ScreenCanvas, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
+      if _ActiveShader then
+        if not _Mobile then love.mouse.setVisible(false) end
+        love.graphics.setCanvas(_BackBuffer)
+        love.graphics.clear(0,0,0,0)
+        love.graphics.draw(_ScreenCanvas) --Draw the canvas.
+        if _Cursor ~= "none" then
+          local mx, my = _HostToLiko(love.mouse.getPosition())
+          local hotx, hoty = _CursorsCache[_Cursor].hx, _CursorsCache[_Cursor].hy
+          love.graphics.draw(_CursorsCache[_Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty)
+        end
+        if _PostShaderTimer then _ActiveShader:send("time",math.floor(_PostShaderTimer*1000)) end
+        love.graphics.setShader(_ActiveShader)
+        love.graphics.setCanvas()
+        love.graphics.draw(_BackBuffer, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
+        love.graphics.setShader(_DisplayShader)
+      else
+        love.graphics.draw(_ScreenCanvas, _LIKO_X+ofs.screen[1], _LIKO_Y+ofs.screen[2], 0, _LIKOScale, _LIKOScale) --Draw the canvas.
+      end
       
-      if _GrappedCursor and _Cursor ~= "none" then --Must draw the cursor using the gpu
+      if _GrappedCursor and _Cursor ~= "none" and not _ActiveShader then --Must draw the cursor using the gpu
         local mx, my = _HostToLiko(love.mouse.getPosition())
         mx,my = _LikoToHost(mx,my)
         local hotx, hoty = _CursorsCache[_Cursor].hx*_LIKOScale, _CursorsCache[_Cursor].hy*_LIKOScale --Converted to host scale
@@ -1433,6 +1608,12 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setShader(_DrawShader) --Reactivate the draw shader.
       love.graphics.pop()
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
+      
+      if PatternFill then
+        love.graphics.stencil(PatternFill, "replace", 1)
+        love.graphics.setStencilTest("greater",0)
+      end
+      
       if Clip then love.graphics.setScissor(unpack(Clip)) end
       _ShouldDraw = false --Reset the flag.
       GPU.popColor() --Restore the active color.
@@ -1454,6 +1635,11 @@ return function(config) --A function that creates a new GPU peripheral.
     if _GIFTimer >= _GIFFrameTime then
       _GIFTimer = _GIFTimer % _GIFFrameTime
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
+      
+      if PatternFill then
+         love.graphics.setStencilTest()
+      end
+      
       love.graphics.push()
       love.graphics.origin() --Reset all transformations.
       if Clip then love.graphics.setScissor() end
@@ -1472,7 +1658,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.draw(_ScreenCanvas, ofs.screen[1], ofs.screen[2], 0, _GIFScale, _GIFScale) --Draw the canvas.
       
       if _Cursor ~= "none" then --Draw the cursor
-        local cx, cy = exe(GPU.getMPos())
+        local cx, cy = GPU.getMPos()
         love.graphics.draw(_CursorsCache[_Cursor].gifimg,(cx-_CursorsCache[_Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[_Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
       end
       
@@ -1494,6 +1680,12 @@ return function(config) --A function that creates a new GPU peripheral.
       
       love.graphics.pop() --Reapply the offset.
       love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
+      
+      if PatternFill then
+        love.graphics.stencil(PatternFill, "replace", 1)
+        love.graphics.setStencilTest("greater",0)
+      end
+      
       if Clip then love.graphics.setScissor(unpack(Clip)) end
       GPU.popColor() --Restore the active color.
       
@@ -1567,5 +1759,5 @@ return function(config) --A function that creates a new GPU peripheral.
     _DevKitDraw = bool
   end
   
-  return GPU, devkit, indirect --Return the table containing all of the api functions.
+  return GPU, yGPU, devkit --Return the table containing all of the api functions.
 end

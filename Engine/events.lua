@@ -20,7 +20,7 @@ events.reg:
 - It's a table that contains table, the keys of this table is the name of register function, and the value is a table containing all the registered function with the same name.
 
 events.groups:
-- It's a table, where the index is the group name, and the value is another group:
+- It's a table, where the index is the group name, and the value is the group table:
 - Each group table contains tables, where each index is the function name, and the value is a table which contains the ids of each registered function.
 - Inorder to find a function in the events.reg, you may do: events.reg[funcname][id]()
 

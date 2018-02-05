@@ -1,4 +1,7 @@
 local path = select(1,...)
+
+local strformat = string.format
+
 local function newMap(w,h,sheet)
   local Map = {}
   
@@ -66,12 +69,18 @@ local function newMap(w,h,sheet)
   end
   
   function Map:export()
-    local data = "LK12;TILEMAP;"..self.w.."x"..self.h..";"
+    local data = {strformat("LK12;TILEMAP;%dx%d;",self.w,self.h)}
+    local datalen = 2
     self:map(function(x,y,sprid)
-      if x == 0 then data = data.."\n" end
-      data = data..sprid..";"
+      if x == 0 then
+        data[datalen] = "\n"
+        datalen = datalen + 1
+      end
+      data[datalen] = sprid
+      data[datalen+1] = ";"
+      datalen = datalen+2
     end)
-    return data
+    return table.concat(data)
   end
   
   function Map:import(data)

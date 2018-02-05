@@ -1,21 +1,25 @@
 --The terminal !--
-local PATH = "D:/Programs/;C:/Programs/;"
-local curdrive, curdir, curpath = "D", "/", "D:/"
+local PATH = "D:/Programs/;C:/Programs/;" --The system PATH variable, used by the terminal to search for programs.
+local curdrive, curdir, curpath = "D", "/", "D:/" --The current active path in the terminal.
 
-local editor
+local editor --The editors api, will be loaded later in term.init()
 
+--Creates an iterator which returns each path in the PATH provided.
 local function nextPath(p)
   if p:sub(-1)~=";" then p=p..";" end
   return p:gmatch("(.-);")
 end
 
-local fw, fh = fontSize()
+local fw, fh = fontSize() --The LIKO-12 GPU Font size.
 
-local history = {}
-local hispos
-local btimer, btime, blink = 0, 0.5, true
-local ecommand
+local history = {} --The history of commands.
+local hispos --The current item in the history.
+local btimer, btime, blink = 0, 0.5, true  --The terminal cursor blink timer.
+local ecommand --The editor command, used by the Ctrl-R hotkey to execute the 'run' program.
+local buffer = "" --The terminal input buffer
+local inputPos = 1 --The next input character position in the terminal buffer.
 
+--Checks if the cursor is in the bounds of the screen.
 local function checkCursor()
   local cx, cy = printCursor()
   local tw, th = termSize()
@@ -25,8 +29,14 @@ local function checkCursor()
   if cy < 0 then cy = 0 end
   printCursor(cx,cy,0)
   rect(cx*(fw+1)+1,blink and cy*(fh+2)+1 or cy*(fh+2),fw+1,blink and fh or fh+3,false,blink and 4 or 0) --The blink
+  if inputPos <= buffer:len() then
+    printCursor(cx,cy,-1)
+    print(buffer:sub(inputPos,inputPos),false)
+    printCursor(cx,cy,0)
+  end
 end
 
+--Splits a string at each white space.
 local function split(str)
   local t = {}
   for val in str:gmatch("%S+") do
@@ -35,32 +45,16 @@ local function split(str)
   return unpack(t)
 end
 
-local term = {}
+local term = {} --The terminal API
 
 function term.init()
   editor = require("Editors") --Load the editors
-  clear() fs.drive("D")
+  clear() fs.drive("D") --Set the HDD api active drive to D
   SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
   printCursor(0,1,0)
   color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
   cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  B08") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
-  
-  if fs.exists("C:/api.lua") and not fs.exists("C:/skipcwipe.txt") then
-    
-    color(9) print("\nThe system structure has been changed.\n\nIt's recommended to wipe the C drive;\n\nwould you like to do that ? (Y/n) ",false)
-    color(7)
-    local answer = input()
-    print("\n")
-    if string.lower(answer) == "y" then
-      term.execute("rm","C:/")
-      reboot()
-    else
-      fs.write("C:/skipcwipe.txt","The system structure has been changed.\nIt's recommended to wipe the C drive.\nType 'factory_reset -wipe' if you want to do that\nor delete this file to show the prompt again.")
-      color(6)
-      print("Type 'factory_reset -wipe' if you change your mind later.\n")
-    end
-  end
   
   flip() sleep(0.0625)
   if fs.exists("D:/autoexec.lua") then
@@ -79,7 +73,7 @@ function term.reload()
   package.loaded["C:/terminal.lua"] = term --Restore the current terminal instance
   
   --Reload the APIS
-  for k, file in ipairs(fs.directoryItems("C:/APIS/")) do
+  for k, file in ipairs(fs.getDirectoryItems("C:/APIS/")) do
     dofile("C:/APIS/"..file)
   end
   
@@ -178,6 +172,7 @@ function term.executeFile(file,...)
   local chunk, err = fs.load(file)
   if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
   local ok, err = pcall(chunk,...)
+  color(7) pal() palt() cam() clip() patternFill()
   if not ok then color(8) print("\nERR: "..tostring(err)) color(7) return false, tostring(err) end
   if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":/" end
 end
@@ -186,16 +181,16 @@ function term.execute(command,...)
   if not command then return false, "No command" end
   if fs.exists(curpath..command..".lua") then
     term.executeFile(curpath..command..".lua",...)
-    color(8) pal() palt() cam() clip() return true
+    return true
   end
   for path in nextPath(PATH) do
     if fs.exists(path) then
-      local files = fs.directoryItems(path)
+      local files = fs.getDirectoryItems(path)
       for _,file in ipairs(files) do
         if file == command..".lua" then
           term.executeFile(path..file,...)
           textinput(true)
-          color(7) pal() palt() cam() clip() return true
+          return true
         end
       end
     end
@@ -207,29 +202,34 @@ function term.ecommand(command) --Editor post command
 	ecommand = command
 end
 
+--abc
+
 function term.loop() --Enter the while loop of the terminal
   cursor("none")
   clearEStack()
   checkCursor() term.prompt()
-  local buffer = ""
-  while true do
-    checkCursor()
-    local event, a, b, c, d, e, f = pullEvent()
+  buffer, inputPos = "", 1
+  for event, a,b,c,d,e,f in pullEvent do
+    checkCursor() --Which also draws the cursor blink
+    
     if event == "textinput" then
-      buffer = buffer..a
-      print(a,false)
+      print(a..buffer:sub(inputPos,-1),false)
+      for i=inputPos,buffer:len() do printBackspace(-1) end
+      buffer = buffer:sub(1,inputPos-1)..a..buffer:sub(inputPos,-1)
+      inputPos = inputPos + a:len()
     elseif event == "keypressed" then
       if a == "return" then
         if hispos then table.remove(history,#history) hispos = false end
         table.insert(history, buffer)
         blink = false; checkCursor()
         print("") -- insert newline after Enter
-        term.execute(split(buffer)) buffer = ""
+        term.execute(split(buffer)) buffer, inputPos = "", 1
         checkCursor() term.prompt() blink = true cursor("none")
       elseif a == "backspace" then
         blink = false; checkCursor()
         if buffer:len() > 0 then
-          buffer = buffer:sub(0,-2)
+          buffer = buffer:sub(1,-2)
+          inputPos = inputPos - 1
           printBackspace()
         end
         blink = true; checkCursor()
@@ -238,7 +238,7 @@ function term.loop() --Enter the while loop of the terminal
         for i=1,buffer:len() do
           printBackspace()
         end
-        buffer = ""
+        buffer, inputPos = "", 1
         blink = true; checkCursor()
       elseif a == "escape" then
         local screenbk = screenshot()
@@ -247,9 +247,9 @@ function term.loop() --Enter the while loop of the terminal
         printCursor(oldx,oldy,oldbk)
         palt(0,false) screenbk:image():draw(0,0) color(7) palt(0,true) flip()
         if ecommand then
-		  term.execute(split(ecommand))
-		  checkCursor() term.prompt() blink = true cursor("none")
-		  ecommand = false
+          term.execute(split(ecommand))
+          checkCursor() term.prompt() blink = true cursor("none")
+          ecommand = false
         end
       elseif a == "up" then
         if not hispos then
@@ -260,10 +260,12 @@ function term.loop() --Enter the while loop of the terminal
         if hispos > 1 then
           hispos = hispos-1
           blink = false; checkCursor()
+          print(buffer:sub(inputPos,-1),false)
           for i=1,buffer:len() do
             printBackspace()
           end
           buffer = history[hispos]
+          inputPos = buffer:len() + 1
           for char in string.gmatch(buffer,".") do
             print(char,false)
           end
@@ -273,15 +275,48 @@ function term.loop() --Enter the while loop of the terminal
         if hispos and hispos < #history then
           hispos = hispos+1
           blink = false; checkCursor()
+          print(buffer:sub(inputPos,-1),false)
           for i=1,buffer:len() do
             printBackspace()
           end
           buffer = history[hispos]
+          inputPos = buffer:len() + 1
           for char in string.gmatch(buffer,".") do
             print(char,false)
           end
           if hispos == #history then table.remove(history,#history) hispos = false end
           blink = true; checkCursor()
+        end
+      elseif a == "left" then
+        blink = false; checkCursor()
+        if inputPos > 1 then
+          inputPos = inputPos - 1
+          printBackspace(-1)
+        end
+        blink = true; checkCursor()
+      elseif a == "right" then
+        blink = false; checkCursor()
+        if inputPos <= buffer:len() then
+          print(buffer:sub(inputPos,inputPos),false)
+          inputPos = inputPos + 1
+        end
+        blink = true; checkCursor()
+      elseif a == "c" then
+        if isKDown("lctrl","rctrl") then
+          clipboard(buffer)
+        end
+      elseif a == "v" then
+        if isKDown("lctrl","rctrl") then
+          local paste = clipboard() or ""
+          
+          for char in string.gmatch(paste..buffer:sub(inputPos,-1),".") do
+            print(char,false)
+          end
+          
+          for i=inputPos,buffer:len() do printBackspace(-1) end
+          
+          buffer = buffer:sub(1,inputPos-1)..paste..buffer:sub(inputPos,-1)
+          inputPos = inputPos + paste:len()
         end
       end
     elseif event == "touchpressed" then

@@ -43,7 +43,7 @@ The key name can be any love2d key constant or and scancode
 You can combine it with ctrl, alt or shift, ex: editor.keymap["ctrl-c"]
 
 * Note when reading existing editors:
-The may use some api functions defined at DiskOS/api.lua
+The may use some api functions defined at DiskOS/System/api.lua
 
 Good luck !
 
@@ -65,12 +65,12 @@ function edit:initialize()
   
   self.active = 4 --Active editor3
   
-  self.editors = {"music","sfx","tile","sprite","code","soon"; music=1,sfx=2,tile=3,sprite=4,code=5,config=6}
-  self.saveid = {-1,-1,"tilemap","spritesheet","luacode",-1;tilemap=3,spritesheet=4,luacode=5}
+  self.editors = {"music","sfx","tile","sprite","code"; music=1,sfx=2,tile=3,sprite=4,code=5}
+  self.saveid = {-1,-1,"tilemap","spritesheet","luacode";tilemap=3,spritesheet=4,luacode=5}
   self.chunks = {} --Editors Code Chunks
   self.leditors = {} --Loaded editors (Executed chunks)
   
-  self.icons = imagedata(6*8,2*8)
+  self.icons = imagedata(5*8,2*8)
   self.icons:paste(self.editorsheet.img:data(),0,0, (24-#self.editors)*8,0, #self.editors*8,8)
   self.icons:paste(self.editorsheet.img:data(),0,8, (24-#self.editors)*8,0, #self.editors*8,8)
   self.icons:map(function(x,y,c)
@@ -85,7 +85,7 @@ function edit:initialize()
     table.insert(self.iconsQuads,self.icons:quad(self.icons:width()-i*8,8, 8,8))
   end
   
-  local editors = {"soon","soon","tile","sprite","code","soon"} --List of built-in editors to create chunks of
+  local editors = {"soon","sfx","tile","sprite","code","soon"} --List of built-in editors to create chunks of
   for k, v in ipairs(editors) do --Load chunks
     local chunk, err = fs.load("C:/Editors/"..v..".lua")
     if not chunk then error(err or "Error loading: "..tostring(v)) end
@@ -364,7 +364,7 @@ function edit:loop() --Starts the while loop
         local hotkey --Was it an hotkey ?
         
         pushMatrix() pushPalette() pushColor()
-        if sc == "ctrl-s" then
+        if key == "ctrl-s" then
           local oldprint = print
           local err
           print = function(msg) if color() == 9 and not err then err = msg end end
@@ -382,7 +382,7 @@ function edit:loop() --Starts the while loop
           end
           print = oldprint
           hotkey = true
-        elseif sc == "ctrl-l" then
+        elseif key == "ctrl-l" then
           local oldprint = print
           local err
           print = function(msg) if color() == 9 and not err then err = msg end end
@@ -400,7 +400,7 @@ function edit:loop() --Starts the while loop
           end
           print = oldprint
           hotkey = true
-        elseif sc == "ctrl-r" then
+        elseif key == "ctrl-r" then
           term.ecommand("run")
           if self.leditors[self.active]["leaved"] then self.leditors[self.active]:leaved() end
           hotkey = true
@@ -408,14 +408,14 @@ function edit:loop() --Starts the while loop
         end
         popMatrix() popPalette() popColor()
         
-        if sc == "alt-left" then
+        if key == "alt-left" then
           if self.active == #self.editors then
             self:switchEditor(1)
           else
             self:switchEditor(self.active+1)
           end
           hotkey = true
-        elseif sc == "alt-right" then
+        elseif key == "alt-right" then
           if self.active == 1 then
             self:switchEditor(#self.editors)
           else

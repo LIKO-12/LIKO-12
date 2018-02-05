@@ -25,13 +25,13 @@ function shaders.newShader(precode,postcode,transcode,vec4)
       for i=1, 14 do
         data = data .. "\n  else if(index == "..i..") col = palette["..i.."] / 255.0;"
       end
-      data = data .. "\n  else col = palette[1] / 255.0;\n  float coltrans;\n  " 
+      data = data .. "\n  else col = palette[15] / 255.0;\n  float coltrans;\n  " 
       
       data = data.. "if(index == 0) coltrans = transparent[0]*ta;"
       for i=1, 14 do
         data = data .. "\n  else if(index == "..i..") coltrans = transparent["..i.."]*ta;"
       end
-      data = data .. "\n  else coltrans = transparent[1]*ta;\n" .. postcode
+      data = data .. "\n  else coltrans = transparent[15]*ta;\n" .. postcode
       
       return love.graphics.newShader(data)
     end
@@ -57,7 +57,7 @@ function shaders.newShader(precode,postcode,transcode,vec4)
       for i=1, 14 do
         data = data .. "\n  else if(index == "..i..") col = palette["..i.."] / 255.0;"
       end
-      data = data .. "\n  else col = palette[1] / 255.0;\n" .. postcode
+      data = data .. "\n  else col = palette[15] / 255.0;\n" .. postcode
       
       return love.graphics.newShader(data)
     end
@@ -103,5 +103,16 @@ shaders.displayShader = shaders.newShader([[
     col.a = col.a*color.a*ta;
     return col;
 }]],false,true)
+
+shaders.stencilShader = love.graphics.newShader([[
+   vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+      texture_coords.xy = mod(texture_coords.xy,1.0);
+      if (Texel(texture, texture_coords).r == 0.0) {
+         // a discarded pixel wont be applied as the stencil.
+         discard;
+      }
+      return vec4(1.0);
+   }
+]])
 
 return shaders
