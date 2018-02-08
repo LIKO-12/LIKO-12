@@ -60,7 +60,7 @@ return function(config) --A function that creates a new WEB peripheral.
     if type(str) ~= "string" then return error("STR must be a string, provided: "..type(str)) end
     str = str:gsub("\n", "\r\n")
     str = str:gsub("\r\r\n", "\r\n")
-    tr = str:gsub("([^A-Za-z0-9 %-%_%.])", function(c)
+    str = str:gsub("([^A-Za-z0-9 %-%_%.])", function(c)
       local n = string.byte(c)
       if n < 128 then
         -- ASCII
@@ -72,7 +72,6 @@ return function(config) --A function that creates a new WEB peripheral.
       end
     end)
     
-    str = str:gsub("%+", "%%2b")
     str = str:gsub(" ", "+")
     
     return str
