@@ -92,16 +92,17 @@ _update()
  if btn(1) then --checking if left is pressed
   px=px-1 -- this block is executed if the condition is met
  end
+end
 ```
-TODO png of program
+![](s4code.png)
 
 
 if you `run` your cartridge from the prompt,
 you will see you can move your player smoothly wih arrow keys
 
-TODO gif of heli moving
+![](s4result.png)
 
-## step 4: ennemies , working on a list of unkown size
+## step 5: ennemies , working on a list of unkown size
 
 we will add ennemies to a table,
 so that we can have an unspecified amout depending on the level
@@ -125,10 +126,10 @@ maybe on scanning content of the map?
 
 move ennemies from update function
 
-## step 5: simple collision
+## step 6: simple collision
 
-## step 6: colliding with ennemies
+## step 7: colliding with ennemies
 
-## step 7 : firing a bullet
+## step 8 : firing a bullet
 
-## step 8: victory condition, function pointers in _update() and _draw() !
+## step 9: victory condition, function pointers in _update() and _draw() !
