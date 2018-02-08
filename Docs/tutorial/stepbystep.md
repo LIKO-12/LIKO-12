@@ -60,15 +60,17 @@ px=0
 py=0
 
 _draw()
+ clear()
  Sprite(1,px,py)
 end
 ```
+ ![](s3_code.png)
  
 if you type esc and run it, the result will be the same, but you will not be returned to the prompt,
 only if you type esc you will interrupt the program !
 
-TODO gif of heli without prompt
-
+![](s3_result.png)
+ 
 ## step 4 : the _update() function and btn()
 
 you will most probably always run your game logic in the `_update()` function,
