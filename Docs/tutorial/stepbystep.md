@@ -100,7 +100,7 @@ end
 if you `run` your cartridge from the prompt,
 you will see you can move your player smoothly wih arrow keys
 
-![](s4result.png)
+![](s4result.gif)
 
 ## step 5: ennemies , working on a list of unkown size
 
