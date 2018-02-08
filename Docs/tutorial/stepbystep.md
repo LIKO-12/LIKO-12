@@ -64,12 +64,12 @@ _draw()
  Sprite(1,px,py)
 end
 ```
- ![](s3_code.png)
+ ![](s3code.png)
  
 if you type esc and run it, the result will be the same, but you will not be returned to the prompt,
 only if you type esc you will interrupt the program !
 
-![](s3_result.png)
+![](s3result.png)
  
 ## step 4 : the _update() function and btn()
 
