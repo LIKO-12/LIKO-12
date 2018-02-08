@@ -70,9 +70,19 @@ function http.post(url, postData, headers)
   return http.request(url, headers)
 end
 
-function http.urlEncode(str)
+function http.urlEscape(str)
   if not web then return url end
   return web.urlEncode(str)
+end
+
+function http.urlEncode(data)
+  local encode = {}
+  
+  for k,v in pairs(data) do
+    encode[#encode + 1] = k.."="..v
+  end
+  
+  return table.concat(encode,"&")
 end
 
 --Make the http API a global
