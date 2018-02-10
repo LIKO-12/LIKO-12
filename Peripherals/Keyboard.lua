@@ -45,7 +45,7 @@ return function(config) --A function that creates a new Keyboard peripheral.
     if type(state) ~= "nil" then
       love.keyboard.setTextInput(state or config._EXKB)
     else
-      returnlove.keyboard.getTextInput()
+      return love.keyboard.getTextInput()
     end
   end
   
