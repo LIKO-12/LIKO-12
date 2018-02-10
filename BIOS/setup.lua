@@ -1,6 +1,6 @@
 --BIOS Setup Screen
 
-local Handled, Devkits = ... --It has been passed by the BIOS POST Screen :)
+local Handled, love = ... --Handled is passed by BIOS POST, love is available too.
 
 local BIOS = Handled.BIOS
 local GPU = Handled.GPU
@@ -9,6 +9,7 @@ local fs = Handled.HDD
 local KB = Handled.Keyboard
 local coreg = require("Engine.coreg")
 local stopWhile = false
+local wipingMode = false
 GPU.clear(0)
 
 GPU.color(7)
@@ -23,25 +24,19 @@ local function drawInfo()
 end
 local function attemptBootFromD()
   fs.drive("D")
-  if not fs.exists("/boot.lua") then
-    GPU.print("Could not find boot.lua")
-    CPU.sleep(1)
-    drawInfo()
-    return
-  end
   local bootchunk, err = fs.load("/boot.lua")
   if not bootchunk then error(err or "") end
   local coglob = coreg:sandbox(bootchunk)
   local co = coroutine.create(bootchunk)
-  
+
   local HandledAPIS = BIOS.HandledAPIS()
-  
+
   coroutine.yield("echo",HandledAPIS)
   coreg:setCoroutine(co,coglob) --Switch to boot.lua coroutine
 end
 drawInfo()
 while not stopWhile do
-  for event, a, b, c, d, e, f in CPU.pullEvent do
+  for event, a, _, c, _, _, _ in CPU.pullEvent do
     if event == "keypressed" and c == false then
       if a == "o" then
         GPU.print("Flashing in 5 seconds...")
@@ -58,8 +53,14 @@ while not stopWhile do
         GPU.flip()
       end
       if a == "b" then
-        stopWhile = true
-        break
+        if not fs.exists("/boot.lua") then
+          GPU.print("Could not find boot.lua")
+          CPU.sleep(1)
+          drawInfo()
+        else
+          stopWhile = true
+          break
+        end
       end
       if wipingMode then
         if a == "c" then
