@@ -2,6 +2,10 @@
 
 ---
 
+[![Build Status](https://travis-ci.org/RamiLego4Game/LIKO-12.svg?branch=master)](https://travis-ci.org/RamiLego4Game/LIKO-12)
+
+---
+
 ## About:
 
 LIKO-12 is an _open source_ **fantasy computer** completely written in the Lua programming language where you can make, play and share tiny retro-looking games and programs.
