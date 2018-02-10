@@ -9,6 +9,10 @@ local json = require("Engine.JSON")
 
 local hasLuaSec = pcall(require,"ssl")
 
+if hasLuaSec then
+  require("ssl"); require("https")
+end
+
 local thread = love.thread.newThread(perpath.."webthread.lua")
 local to_channel = love.thread.newChannel()
 local from_channel = love.thread.newChannel()
@@ -80,9 +84,10 @@ return function(config) --A function that creates a new WEB peripheral.
   end
   
   local luasocket_modules = {
-    "http", "ltn12", "mime", "smtp", "socket", "tcp", "udp", "url"
+    "socket.http", "ltn12", "mime", "socket.smtp", "socket", "socket.url"
   }
   
+  for k,v in pairs(luasocket_modules) do require(v) end
   for k,v in pairs(luasocket_modules) do luasocket_modules[v] = k end
   
   function WEB.luasocket(submodule)
