@@ -121,12 +121,44 @@ function addennemy(ex,ey)
  table.insert(ennemies,ennemy)
 end
 ```
-adding ennemies using a table and a factory method
-maybe on scanning content of the map?
 
-move ennemies from update function
+adding ennemies (before update )
+```
+addennemy(40,40)
+addennemy(80,80)
+```
 
-## step 6: simple collision
+display ennemies 
+```
+for i,e in ipairs(ennemies)
+do
+ Sprite(2,e.x,e.y)
+end
+```
+
+result
+
+## step 6: fire and simple collision
+
+bullets={}
+
+function createbullet(bx,by)
+ b={}
+ b.x=x
+ b.y=y
+ table.insert(bullets,b)
+end
+
+function movebullets()
+ for i,b in ipairs(bullets)
+ do
+  b.x=b.x+1
+ end
+end
+
+if btn(6) then
+ createbullet(px,py)
+end
 
 ## step 7: colliding with ennemies
 
