@@ -1,6 +1,6 @@
 --BIOS Setup Screen
 
-local Handled, love = ... --Handled is passed by BIOS POST, love is available too.
+local Handled = ... --Handled is passed by BIOS POST, love is available too.
 
 local BIOS = Handled.BIOS
 local GPU = Handled.GPU
