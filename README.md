@@ -30,7 +30,7 @@ It will only run a single time, and wont run again at next boots, except when an
 
 ### DiskOS Greeting and Terminal:
 
-Once the Installation Completes, DiskOS will boot up, the LIKO-12 opereating system.
+Once the Installation Completes, DiskOS will boot up, the LIKO-12 operating system.
 
 ![DiskOS_Prompt](https://github.com/RamiLego4Game/LIKO-12/raw/master/Extra/Readme-Screenshots/DiskOS_Prompt.gif)
 
