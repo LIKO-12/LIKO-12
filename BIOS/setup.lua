@@ -1,6 +1,6 @@
 --BIOS Setup Screen
 
-local Handled = ... --Handled is passed by BIOS POST, love is available too.
+local Handled = ... --Handled is passed by BIOS POST
 
 local BIOS = Handled.BIOS
 local GPU = Handled.GPU
@@ -21,9 +21,13 @@ local function drawInfo()
   GPU.print("Press O to reflash DiskOS")
   GPU.print("Press B to boot from D:")
   GPU.print("Press W then C or D to wipe a disk")
+  if CPU.isMobile() then
+    GPU.print("Press F to show LIKO-12 folder")
+  else
+    GPU.print("Press F to open LIKO-12 folder")
+  end
 end
 local function attemptBootFromD()
-  fs.drive("D")
   local bootchunk, err = fs.load("/boot.lua")
   if not bootchunk then error(err or "") end
   local coglob = coreg:sandbox(bootchunk)
@@ -53,6 +57,7 @@ while not stopWhile do
         GPU.flip()
       end
       if a == "b" then
+        fs.drive("D")
         if not fs.exists("/boot.lua") then
           GPU.print("Could not find boot.lua")
           CPU.sleep(1)
@@ -60,6 +65,14 @@ while not stopWhile do
         else
           stopWhile = true
           break
+        end
+      end
+      if a == "f" then
+        if CPU.isMobile() then
+          drawInfo()
+          GPU.print(CPU.getSaveDirectory())
+        else
+          CPU.openAppData("/")
         end
       end
       if wipingMode then
