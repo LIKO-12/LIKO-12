@@ -181,7 +181,7 @@ end
 function term.execute(command,...)
   if not command then return false, "No command" end
   if fs.exists(curpath..command..".lua") then
-    ok = term.executeFile(curpath..command..".lua",...)
+    local ok = term.executeFile(curpath..command..".lua",...)
     return ok
   end
   for path in nextPath(PATH) do
@@ -189,7 +189,7 @@ function term.execute(command,...)
       local files = fs.getDirectoryItems(path)
       for _,file in ipairs(files) do
         if file == command..".lua" then
-          ok = term.executeFile(path..file,...)
+          local ok = term.executeFile(path..file,...)
           textinput(true)
           return ok
         end
