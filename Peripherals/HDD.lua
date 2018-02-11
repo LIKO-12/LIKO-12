@@ -452,6 +452,10 @@ return function(Config)
     Drives[drive].Usage = Drives[drive].Usage - dsize
     
     deleteRecursive(path)
+    
+    if not love.filesystem.exists(RootDir..drive) then
+      love.filesystem.createDirectory(RootDir..drive)
+    end
   end
   
   --Return the remaining free space

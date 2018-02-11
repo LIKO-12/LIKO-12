@@ -7,6 +7,12 @@ local bit = require("bit")
 local events = require("Engine.events")
 local json = require("Engine.JSON")
 
+local hasLuaSec = pcall(require,"ssl")
+
+if hasLuaSec then
+  require("ssl"); require("https")
+end
+
 local thread = love.thread.newThread(perpath.."webthread.lua")
 local to_channel = love.thread.newChannel()
 local from_channel = love.thread.newChannel()
@@ -75,6 +81,35 @@ return function(config) --A function that creates a new WEB peripheral.
     str = str:gsub(" ", "+")
     
     return str
+  end
+  
+  local luasocket_modules = {
+    "socket.http", "ltn12", "mime", "socket.smtp", "socket", "socket.url"
+  }
+  
+  for k,v in pairs(luasocket_modules) do require(v) end
+  for k,v in pairs(luasocket_modules) do luasocket_modules[v] = k end
+  
+  function WEB.luasocket(submodule)
+    if type(submodule) ~= "string" then return error("Submodule should be a string, provided: "..submodule) end
+    submodule = string.lower(submodule)
+    if not luasocket_modules[submodule] then return error("Invalid submodule: "..submodule) end
+    
+    return require(submodule)
+  end
+  
+  function WEB.hasLuaSec()
+    return hasLuaSec and true or false
+  end
+  
+  function WEB.luasec(submodule)
+    if not hasLuaSec then return error("LuaSec is not supported at the current platform") end
+    
+    if type(submodule) ~= "string" then return error("Submodule should be a string, provided: "..submodule) end
+    submodule = string.lower(submodule)
+    if submodule ~= "ssl" and submodule ~= "https" then return error("Invalid submodule: "..submodule) end
+    
+    return require(submodule)
   end
   
   events:register("love:update",function(dt)
