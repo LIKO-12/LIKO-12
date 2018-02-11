@@ -61,13 +61,13 @@ end
 function http.get(url, headers)
   if not web then return false, "HTTP API Requires WEB Peripheral" end
   
-  return http.request(url, headers)
+  return http.request(url, false, headers)
 end
 
 function http.post(url, postData, headers)
   if not web then return false, "HTTP API Requires WEB Peripheral" end
   
-  return http.request(url, headers)
+  return http.request(url, postData, headers)
 end
 
 function http.urlEscape(str)
