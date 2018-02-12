@@ -14,7 +14,7 @@ You can simply do this by typing:
 save mygame --code
 ```
 
-In the terminal, .lua extension will be automaticall added.
+In the terminal, .lua extension will be automatically added.
 
 ---
 

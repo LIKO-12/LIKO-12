@@ -55,7 +55,7 @@ function term.init()
   color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
   cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  B08") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
-  
+
   flip() sleep(0.0625)
   if fs.exists("D:/autoexec.lua") then
     term.executeFile("D:/autoexec.lua")
@@ -71,12 +71,12 @@ end
 function term.reload()
   package.loaded = {} --Reset the package system
   package.loaded["C:/terminal.lua"] = term --Restore the current terminal instance
-  
+
   --Reload the APIS
   for k, file in ipairs(fs.getDirectoryItems("C:/APIS/")) do
     dofile("C:/APIS/"..file)
   end
-  
+
   editor = require("Editors") --Re initialize the editors
 end
 
@@ -108,7 +108,7 @@ function term.setpath(p)
     drive,path = p:match("(.+):/(.+)")
   end
   if p:sub(-1,-1) ~= "/" then p = p.."/" end
-  
+
   curdrive, curdir, curpath = drive, "/"..path, p
 end
 
@@ -125,16 +125,16 @@ end
 
 function term.resolve(path)
   path = path:gsub("\\","/") --Windows users :P
-  
+
   if path:sub(-1,-1) == ":" then -- C:
     path = path.."/"
     return path, fs.exists(path)
   end
-  
+
   if path:sub(-2,-1) == ":/" then -- C:/
     return path, fs.exists(path)
   end
-  
+
   if not path:match("(.+):/(.+)") then
     if path:sub(1,1) == "/" then -- /Programs
       path = curdrive..":"..path
@@ -146,7 +146,7 @@ function term.resolve(path)
       end
     end
   end
-  
+
   local d, p = path:match("(.+):/(.+)") --C:/./Programs/../Editors
   if d and p then
     p = "/"..p.."/"; local dirs = {}
@@ -162,7 +162,7 @@ function term.resolve(path)
         table.insert(dirs,dir)
       end
     end
-    
+
     path = d..":/"..table.concat(dirs,"/")
     return path, fs.exists(path)
   end
@@ -175,22 +175,23 @@ function term.executeFile(file,...)
   color(7) pal() palt() cam() clip() patternFill()
   if not ok then color(8) print("\nERR: "..tostring(err)) color(7) cprint("Program Error:",err) return false, tostring(err) end
   if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":/" end
+  return ok
 end
 
 function term.execute(command,...)
   if not command then return false, "No command" end
   if fs.exists(curpath..command..".lua") then
-    term.executeFile(curpath..command..".lua",...)
-    return true
+    local ok = term.executeFile(curpath..command..".lua",...)
+    return ok
   end
   for path in nextPath(PATH) do
     if fs.exists(path) then
       local files = fs.getDirectoryItems(path)
       for _,file in ipairs(files) do
         if file == command..".lua" then
-          term.executeFile(path..file,...)
+          local ok = term.executeFile(path..file,...)
           textinput(true)
-          return true
+          return ok
         end
       end
     end
@@ -211,7 +212,7 @@ function term.loop() --Enter the while loop of the terminal
   buffer, inputPos = "", 1
   for event, a,b,c,d,e,f in pullEvent do
     checkCursor() --Which also draws the cursor blink
-    
+
     if event == "textinput" then
       print(a..buffer:sub(inputPos,-1),false)
       for i=inputPos,buffer:len() do printBackspace(-1) end
@@ -308,13 +309,13 @@ function term.loop() --Enter the while loop of the terminal
       elseif a == "v" then
         if isKDown("lctrl","rctrl") then
           local paste = clipboard() or ""
-          
+
           for char in string.gmatch(paste..buffer:sub(inputPos,-1),".") do
             print(char,false)
           end
-          
+
           for i=inputPos,buffer:len() do printBackspace(-1) end
-          
+
           buffer = buffer:sub(1,inputPos-1)..paste..buffer:sub(inputPos,-1)
           inputPos = inputPos + paste:len()
         end
