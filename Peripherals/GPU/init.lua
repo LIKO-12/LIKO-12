@@ -1265,7 +1265,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   function GPU.imagedata(w,h)
     local imageData
-    if h then
+    if h and tonumber(w) then
       imageData = love.image.newImageData(w,h)
       imageData:mapPixel(function() return 0,0,0,255 end)
     elseif type(w) == "string" then --Load specialized liko12 image format
@@ -1279,15 +1279,17 @@ return function(config) --A function that creates a new GPU peripheral.
         end)
       else
         local ok, fdata = pcall(love.filesystem.newFileData,w,"image.png")
-        if not ok then return false, "Invalid image data" end
+        if not ok then return error("Invalid image data") end
         local ok, img = pcall(love.image.newImageData,fdata)
-        if not ok then return false, "Invalid image data" end
+        if not ok then return error("Invalid image data") end
         local ok, err = pcall(img.mapPixel,img,_ImportImage)
-        if not ok then return false, "Invalid image data" end
+        if not ok then return error("Invalid image data") end
         imageData = img
       end
     elseif type(w) == "userdata" and w.typeOf and w:typeOf("ImageData") then
       imageData = w
+    else
+      return error("Invalid arguments")
     end
     
     local id = {}
