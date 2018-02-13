@@ -151,9 +151,26 @@ function movebullets()
 end
 ```
 
+by really pushing it you should notice that it starts to slow down after a while :
+at the moment, we do not remove bullets that go off screen so the ```bullets``` table 
+just keeps getting bigger and bigger !!!
+modify move bullets :
+```
+function movebullets()
+ for i,b in ipairs(bullets)
+ do
+  b.x=b.x+1
+  if b.x>160 then
+   table.remove(bullets,i)
+  end
+ end
+end
+```
 
+note that when using remove, you actually pass the index of the thing you want to remove in the table !
+know you should see bullets disappearing before reaching the end of the screen
 
-## step 5: ennemies , working on a list of unkown size
+## step 6: ennemies , working on a list of unkown size
 
 we will add ennemies to a table,
 so that we can have an unspecified amout depending on the level
