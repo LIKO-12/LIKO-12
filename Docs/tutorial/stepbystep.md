@@ -62,7 +62,7 @@ update your code snippet like such
 px=0
 py=0
 
-_draw()
+function _draw()
  clear()
  Sprite(1,px,py)
 end
