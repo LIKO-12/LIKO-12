@@ -1,4 +1,7 @@
-# tuto on doing your first game in liko
+# tutorial: your first game in lua/liko-12
+
+from 0 to an arena shooter,
+no prerequisite necessary
 
 ## step 0 : draw player in sprite editor
 
@@ -102,6 +105,54 @@ you will see you can move your player smoothly wih arrow keys
 
 ![](s4result.gif)
 
+## step 5: fire , arbitrary amout of bullets
+
+let us declare a table to put all the bullets we will fire
+```
+bullets={}
+```
+
+
+we will declare a function to call when we need to create one,
+it will add it to our "bullets" table
+```
+function createbullet(bx,by)
+ b={}
+ b.x=x
+ b.y=y
+ table.insert(bullets,b)
+end
+```
+
+add this in ```_update()``` to actually add bullets !!
+```
+if btn(6) then
+ createbullet(px,py)
+end
+```
+
+now we need to display them , add this in ```_draw() ```
+```
+for i,b in ipairs(bullets)
+do
+ Sprite(2,b.x,b.y)
+end
+```
+
+
+by adding this function in ```_update()``` 
+all bullets will be moved
+```
+function movebullets()
+ for i,b in ipairs(bullets)
+ do
+  b.x=b.x+1
+ end
+end
+```
+
+
+
 ## step 5: ennemies , working on a list of unkown size
 
 we will add ennemies to a table,
@@ -138,30 +189,9 @@ end
 
 result
 
-## step 6: fire and simple collision
 
-bullets={}
 
-function createbullet(bx,by)
- b={}
- b.x=x
- b.y=y
- table.insert(bullets,b)
-end
-
-function movebullets()
- for i,b in ipairs(bullets)
- do
-  b.x=b.x+1
- end
-end
-
-if btn(6) then
- createbullet(px,py)
-end
-
-## step 7: colliding with ennemies
-
-## step 8 : firing a bullet
+## step 7 : bullet collision
+## step 8: player colliding with ennemies
 
 ## step 9: victory condition, function pointers in _update() and _draw() !
