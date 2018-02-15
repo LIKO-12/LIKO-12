@@ -8,7 +8,7 @@ local web = WEB
 --The API
 local http = {}
 
-function http.request(url, postData, headers)
+function http.request(url, postData, headers, method)
   if not web then return false, "HTTP API Requires WEB Peripheral" end
   
   --The request arguments.
@@ -22,6 +22,9 @@ function http.request(url, postData, headers)
     args.method = "POST"
     args.data = tostring(postData)
   end
+  
+  --Set method
+  args.method = method or args.method
   
   --Send the web request
   local ticket = WEB.send(url,args)
