@@ -60,9 +60,12 @@ local function newMap(w,h,sheet)
   
   function Map:draw(dx,dy,x,y,w,h,sx,sy,sheet)
     local dx,dy,x,y,w,h,sx,sy = dx or 0, dy or 0, x or 0, y or 0, w or self.w, h or self.h, sx or 1, sy or 1
-    local cm = self:cut(x,y,w,h)
-    cm:map(function(spx,spy,sprid)
+    self:map(function(spx,spy,sprid)
       if sprid < 1 then return end
+      
+      if spx < x or spy < y or spx > x+w-1 or spy > y+h-1 then return end
+      spx, spy = spx-x, spy-y
+      
       (self.sheet or sheet):draw(sprid,dx + spx*8*sx, dy + spy*8*sy, 0, sx, sy)
     end)
     return self
