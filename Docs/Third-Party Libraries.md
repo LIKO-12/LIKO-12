@@ -2,7 +2,7 @@ DiskOS provides games with a set of useful third-party lua librarys.
 
 ---
 
-### Middleclass:
+## Middleclass:
 
 ---
 
@@ -48,7 +48,7 @@ print(lemon:isSweet()) -- false
 
 ---
 
-### Bump:
+## Bump:
 
 ---
 
@@ -112,7 +112,7 @@ world:remove(B)
 
 ---
 
-### JSON:
+## JSON:
 
 ---
 
@@ -137,7 +137,7 @@ local pretty_json_text = JSON:encode_pretty(lua_table_or_value) -- "pretty print
 
 ---
 
-### Lume:
+## Lume:
 
 ---
 
