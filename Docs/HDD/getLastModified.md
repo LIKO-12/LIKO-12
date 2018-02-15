@@ -1,4 +1,6 @@
-Returns the unix timestamp of a file.
+Returns the Unix timestamp of a file.
+
+**Important: This function is only available in the operating system programs!**
 
 ---
 
