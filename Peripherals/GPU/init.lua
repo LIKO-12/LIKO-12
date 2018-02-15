@@ -461,6 +461,14 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end)
   
+  --File drop hook
+  events:register("love:filedropped", function(file)
+    file:open("r")
+    local data = file:read()
+    file:close()
+    if cpukit then cpukit.triggerEvent("filedropped",file:getFilename(),data) end
+  end)
+  
   --Mouse Hooks (To translate them to LIKO12 screen)--
   events:register("love:mousepressed",function(x,y,b,istouch)
     local x,y = _HostToLiko(x,y)
