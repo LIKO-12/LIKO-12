@@ -63,8 +63,8 @@ local function newMap(w,h,sheet)
     self:map(function(spx,spy,sprid)
       if sprid < 1 then return end
       
-      if spx < x or spy < y or spx > x+w-1 or spy > y+h-1 then return end
-      spx, spy = spx-x, spy-y
+      if (spx) < x or (spy < y) or (spx > x+w-1) or (spy > y+h-1) then return end
+      spx, spy = spx-x, spy-y;
       
       (self.sheet or sheet):draw(sprid,dx + spx*8*sx, dy + spy*8*sy, 0, sx, sy)
     end)
