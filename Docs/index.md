@@ -14,6 +14,8 @@
 * [Getting Started](Getting Started.md)
 * [Keyboard Shortcuts](Keyboard Shortcuts.md)
 * [Using external code editor](Using external code editor.md)
+* [Third-Party Libraries](Third-Party Libraries.md)
+* [The MAP API](The MAP API.md)
 
 ---
 
