@@ -118,8 +118,8 @@ it will add it to our "bullets" table
 ```
 function createbullet(bx,by)
  b={}
- b.x=x
- b.y=y
+ b.x=bx
+ b.y=by
  table.insert(bullets,b)
 end
 ```
@@ -169,6 +169,18 @@ end
 
 note that when using remove, you actually pass the index of the thing you want to remove in the table !
 know you should see bullets disappearing before reaching the end of the screen
+
+add a call to ```movebaddies()``` in ```_update()```
+
+do not forget to draw a nice bullet on the second image ( 002 )
+![](s5draw.gif)
+
+here is the resulting listing 
+![](s5scrollcode.gif)
+
+here is what should happen when you press q fire button
+![](s5result.gif)
+
 
 ## step 6: ennemies , working on a list of unkown size
 
