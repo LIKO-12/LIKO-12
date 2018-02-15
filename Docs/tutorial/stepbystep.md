@@ -173,12 +173,15 @@ know you should see bullets disappearing before reaching the end of the screen
 add a call to ```movebaddies()``` in ```_update()```
 
 do not forget to draw a nice bullet on the second image ( 002 )
-![](s5draw.gif)
+
+![](s5draw.png)
 
 here is the resulting listing 
+
 ![](s5scrollcode.gif)
 
-here is what should happen when you press q fire button
+here is what should happen when you press a fire button
+
 ![](s5result.gif)
 
 
