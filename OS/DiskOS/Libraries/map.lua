@@ -42,7 +42,7 @@ local function newMap(w,h,sheet)
   
   function Map:cut(x,y,w,h)
     local x,y,w,h = math.floor(x or 0), math.floor(y or 0), math.floor(w or self.w), math.floor(h or self.h)
-    local nMap = newMap(w,h)
+    local nMap = newMap(w,h,self.sheet)
     local m = nMap:map()
     for my=y, y+h-1 do
       for mx=x, x+w-1 do
