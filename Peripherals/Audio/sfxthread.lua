@@ -1,7 +1,7 @@
 --Chiptune SFX Thread
 
 --Store math functions in locals to optamize speed.
-local min, max, floor, sin, abs, random = math.min, math.max, math.floor, math.sin, math.abs, math.random
+local min, max, floor, ceil, sin, abs, random = math.min, math.max, math.floor, math.ceil, math.sin, math.abs, math.random
 
 --The chunnel to recieve orders from
 local chIn = ...
@@ -195,7 +195,7 @@ while true do
     if type(params) == "string" and params == "stop" then
       return --It's time to shutdown the thread.
     else
-      --Convert the frequency from Hz to samples per cycles.
+      --Convert the frequency from Hz to samples per cycle.
       for i=3,#params,4 do
         if params[i-1] == -1 then
           params[i] = 1
@@ -208,7 +208,7 @@ while true do
       for i=1,#params,4 do
         local samples = floor(params[i]*rate)
         local freq = params[i+2]
-        params[i] = floor(samples/freq)*freq
+        params[i] = max(floor(samples/freq+0.5)*freq,1)
       end
       
       sfxdata = params

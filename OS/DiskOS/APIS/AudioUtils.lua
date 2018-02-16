@@ -29,8 +29,8 @@ for i=1,12 do
 end
 
 --Convert from note+oct to frequency.
---note can be the note name or note number (1,12), oct can be from 0 to 8.
-local noteFreqConst = 2^(1/12)
+--note can be the note name or note number (1,12), oct can be from 0 to 7.
+local noteFreqConst, noteFreqCache = 2^(1/12), {}
 function AudioUtils.noteFrequency(note,oct)
   
   if type(note) == "string" then
@@ -38,6 +38,8 @@ function AudioUtils.noteFrequency(note,oct)
   end
   
   note,oct = floor(note), floor(oct)
+  
+  if noteFreqCache[note.."x"..oct] then return noteFreqCache[note.."x"..oct] end
  
   local notepos = (oct)*12+note
   local notedist = notepos - 58
@@ -53,7 +55,25 @@ function AudioUtils.noteFrequency(note,oct)
     end
   end
   
+  noteFreqCache[note.."x"..oct] = notehz
+  
   return notehz
+  
+end
+
+function AudioUtils.frequencyNote(freq)
+  
+  for oct=0,7 do
+    for note=1,12 do
+      local nfreq = AudioUtils.noteFrequency(note,oct)
+      
+      if nfreq >= freq then
+        return note, oct
+      end
+    end
+  end
+  
+  return 12, 7
   
 end
 
