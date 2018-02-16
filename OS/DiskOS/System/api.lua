@@ -93,9 +93,9 @@ function whereInGrid(x,y, grid) --Grid X, Grid Y, Grid Width, Grid Height, NumOf
     local hy = math.floor(y/clh)+1 hy = hy <= ch and hy or hy-1
     if debugGrids then
       for x=1,cw do for y=1,ch do
-        rect(gx+(x*clw-clw)-1,gy+(y*clh-clh)-1,clw,clh,true,8)
+        rect(gx+(x*clw-clw),gy+(y*clh-clh),clw,clh,true,8)
       end end
-      rect(gx+(hx*clw-clw)-1,gy+(hy*clh-clh)-1,clw,clh,true,7)
+      rect(gx+(hx*clw-clw),gy+(hy*clh-clh),clw,clh,true,7)
     end
     return hx,hy
   end
