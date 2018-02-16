@@ -82,7 +82,7 @@ return function(config)
     
     if type(sfx) ~= "table" then return error("SFX data should be a table, provided: "..type(sfx)) end
     if #sfx % 4 > 0 then return error("The SFX data is missing some values.") end
-    for k,v in pairs(sfx) do
+    for k,v in ipairs(sfx) do
       if type(k) ~= "number" then
         return error("SFX Data shouldn't contain any non-number indexes ["..tostring(k).."]")
       end
