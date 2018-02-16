@@ -190,6 +190,9 @@ here is what should happen when you press a fire button
 we will add ennemies to a table,
 so that we can have an unspecified amout depending on the level
 
+first go and draw a nice ennemy in picture 3:
+
+
 let us declare a table to store ennemies:
 ```
 ennemies = {}
@@ -205,21 +208,22 @@ function addennemy(ex,ey)
 end
 ```
 
-adding ennemies (before update )
+lets add ennemies right after in the global context (before update )
 ```
+--to test
 addennemy(40,40)
 addennemy(80,80)
 ```
 
-display ennemies 
+append this to ```draw()``` to display ennemies 
 ```
 for i,e in ipairs(ennemies)
 do
- Sprite(2,e.x,e.y)
+ Sprite(3,e.x,e.y)
 end
 ```
 
-result
+this is the result you should have, starting to look like a game !!!!
 
 
 
