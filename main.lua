@@ -24,6 +24,12 @@ I don't think anyone would want to edit anything in this file.
 - Rami Sabbagh (RamiLego4Game)
 ]]
 
+local package_exceptions = {
+  "bit", "ffi", "ssl.core", "ssl.context", "ssl.x209", "ssl", "https", "socket.http", "ltn12", "mime", "socket.smtp", "socket", "socket.url"
+}
+
+for k,v in ipairs(package_exceptions) do package_exceptions[v] = k end
+
 love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
 
 --Internal Callbacks--
@@ -85,7 +91,7 @@ function love.run(arg)
       
       if reboot then
         for k,v in pairs(package.loaded) do
-          if k ~= "bit" and k ~= "ffi" then package.loaded[k] = nil end
+          if not package_exceptions[k] then package.loaded[k] = nil end
         end--Reset the required packages
         
         love.graphics.reset() --Reset the GPU
