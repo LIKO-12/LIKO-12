@@ -191,6 +191,7 @@ we will add ennemies to a table,
 so that we can have an unspecified amout depending on the level
 
 first go and draw a nice ennemy in picture 3:
+![](s6draw.png)
 
 
 let us declare a table to store ennemies:
@@ -223,7 +224,11 @@ do
 end
 ```
 
+![](s6code.gif)
+
+
 this is the result you should have, starting to look like a game !!!!
+![](s6result.gif)
 
 
 
