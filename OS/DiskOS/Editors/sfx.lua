@@ -21,7 +21,7 @@ end
 
 local selectedSlot = 0
 
-local pitchGrid = {2,sh-13*8-5+1, sfxNotes*2,12*8, sfxNotes,12*8}
+local pitchGrid = {0,9, sfxNotes*2,12*8, sfxNotes,12*8}
 
 local function drawPitch()
   local x,y = pitchGrid[1], pitchGrid[2]-1
