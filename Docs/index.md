@@ -104,7 +104,7 @@ Those editors hasn't been made yet, but they are really comming soon (they are c
 | Itch.io        | [LIKO-12](https://ramilego4game.itch.io/liko12)           |
 | Documentation  | [ReadTheDocs](http://liko-12.readthedocs.io)              |
 | Twitter        | [@RamiLego4Game](https://twitter.com/ramilego4game)       |
-| Discord (Chat) | [Fantasy Consoles Server](https://discord.gg/H48rBJy)     |
+| Discord (Chat) | [LIKO-12](https://discord.gg/GDtHrsJ)                     |
 | Trello Board   | [LIKO-12](https://trello.com/b/bHo8Y9sx/liko-12)          |
 | Github         | [LIKO-12](https://github.com/RamiLego4Game/LIKO-12)       |
 | Email          | [ramilego4game@gmail.com](emailto:ramilego4game@gmail.com)|
