@@ -4,7 +4,7 @@ local function newSFX(notes,speed)
   
   local sfx = {}
   
-  sfx.notes = notes or 48
+  sfx.notes = notes or 32
   sfx.speed = speed or 1
   sfx.notetime = sfx.speed/sfx.notes
   
@@ -73,6 +73,50 @@ local function newSFX(notes,speed)
     Audio.play(self,chn or 0)
     
     return self
+  end
+  
+  local notesL = {
+    "C ","C#","D ","D#","E ","F ","F#","G ","G#","A ","A#","B "
+  }
+  
+  for k,v in ipairs(notesL) do
+    notesL[v] = k
+  end
+  
+  local toFreq = AudioUtils.frequencyNote
+  local toNote = AudioUtils.noteFrequency
+  local floor = math.floor
+  
+  function sfx:export()
+    local data, dpos = {floor(self.speed/0.25),":"}, 3
+    for i=1, self.notes*4, 4 do
+      local n,o = toFreq(self[i+2])
+      data[dpos] = notesL[n]
+      data[dpos+1] = o
+      data[dpos+2] = self[i+1]
+      data[dpos+3] = floor(self[i+3]*7)
+      data[dpos+4] = ","
+      dpos = dpos+5
+    end
+    return table.concat(data)
+  end
+  
+  function sfx:import(data)
+    
+    local speed, notes = data:match("(%d*):(.*)")
+    
+    self.speed = tonumber(speed)*0.25
+    local nt = self.speed/self.notes
+    self.notetime = nt
+    
+    local id = -3
+    for note in notes:gmatch("(.-),") do
+      id = id + 4
+      self[id] = nt
+      self[id+1] = tonumber(note:sub(4,4))
+      self[id+2] = toNote(notesL[note:sub(1,2)], tonumber(note:sub(3,3)))
+      self[id+3] = tonumber(note:sub(5,5))/7
+    end
   end
   
   return sfx

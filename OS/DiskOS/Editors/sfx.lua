@@ -345,4 +345,23 @@ function se:mousereleased(x,y,button,istouch)
   self:waveMouse("released",x,y,button,istouch)
 end
 
+function se:export()
+  local data, dpos = {}, 1
+  for i=0,sfxSlots-1 do
+    data[dpos] = sfxdata[i]:export()
+    data[dpos+1] = ";\n"
+    dpos = dpos +2
+  end
+  return table.concat(data)
+end
+
+function se:import(data)
+  data = data:gsub("\n","")
+  local id = 0
+  for sfxd in data:gmatch("(.-);") do
+    sfxdata[id]:import(sfxd)
+    id = id + 1
+  end
+end
+
 return se
