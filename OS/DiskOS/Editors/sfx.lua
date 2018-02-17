@@ -118,12 +118,29 @@ function se:drawPlay()
   eapi.editorsheet:draw(playDown and 40 or 16,playRect[1],playRect[2])
 end
 
+local waveGrid,waveHover,waveDown = {sw-56,40,9*6,7,6,1}, false, false
+
+function se:drawWave()
+  for i=0,5 do
+    local colorize = (waveHover and waveHover == i+1) or (selectedWave == i)
+    local down = (waveDown) or (selectedWave == i)
+    
+    if colorize then pal(6,8+i) end
+    if down then palt(13,true) end
+    
+    eapi.editorsheet:draw(173+i,waveGrid[1]+i*9,down and waveGrid[2]+1 or waveGrid[2])
+    
+    pal() palt()
+  end
+end
+
 function se:entered()
   eapi:drawUI()
   drawGraph()
   self:drawSlot()
   self:drawSpeed()
   self:drawPlay()
+  self:drawWave()
 end
 
 function se:leaved()
@@ -254,6 +271,33 @@ function se:playMouse(state,x,y,button,istouch)
   end
 end
 
+function se:waveMouse(state,x,y,button,istouch)
+  local cx,cy = whereInGrid(x,y,waveGrid)
+  
+  if state == "pressed" then
+    if cx then
+      waveHover = cx
+      waveDown = true
+      self:drawWave()
+    end
+  elseif state == "moved" then
+    if waveHover and cx and waveHover ~= cx then
+      waveHover = cx
+      self:drawWave()
+    elseif waveHover and not cx then
+      waveHover = false
+      waveDown = false
+      self:drawWave()
+    end
+  elseif state == "released" then
+    if waveDown and cx then
+      selectedWave = cx-1
+      self:drawWave()
+    end
+    waveDown = false
+  end
+end
+
 se.keymap = {
   ["space"] = function()
     sfxdata[selectedSlot]:play()
@@ -277,6 +321,7 @@ function se:mousepressed(x,y,button,istouch)
   self:slotMouse("pressed",x,y,button,istouch)
   self:speedMouse("pressed",x,y,button,istouch)
   self:playMouse("pressed",x,y,button,istouch)
+  self:waveMouse("pressed",x,y,button,istouch)
 end
 
 function se:mousemoved(x,y,button,istouch)
@@ -285,6 +330,7 @@ function se:mousemoved(x,y,button,istouch)
   self:slotMouse("moved",x,y,dx,dy,istouch)
   self:speedMouse("moved",x,y,dx,dy,istouch)
   self:playMouse("moved",x,y,dx,dy,istouch)
+  self:waveMouse("moved",x,y,dx,dy,istouch)
 end
 
 function se:mousereleased(x,y,button,istouch)
@@ -293,6 +339,7 @@ function se:mousereleased(x,y,button,istouch)
   self:slotMouse("released",x,y,button,istouch)
   self:speedMouse("released",x,y,button,istouch)
   self:playMouse("released",x,y,button,istouch)
+  self:waveMouse("released",x,y,button,istouch)
 end
 
 return se
