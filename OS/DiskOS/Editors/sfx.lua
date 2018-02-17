@@ -19,7 +19,7 @@ local sfxdata = {}
 for i=0,sfxSlots-1 do
   local sfx = sfxobj(sfxNotes, defaultSpeed)
   for i=0,sfxNotes-1 do
-    sfx:setNote(i,1,1,1) --Octave 0 is hidden...
+    sfx:setNote(i,1,1,-1,0) --Octave 0 is hidden...
   end
   sfxdata[i] = sfx
 end
@@ -41,8 +41,10 @@ local function drawPitch()
   --Notes lines
   for i=0, sfxNotes-1 do
     local note,oct,wave = sfx:getNote(i); note = note-1
-    rect(x+1+i*4, y+12*8-(note+oct*12), 2, note+oct*12-9, false, (playingNote == i and 6 or 1))
-    rect(x+1+i*4, y+12*8-(note+oct*12), 2, 2, false, 8+wave)
+    if wave >= 0 then
+      rect(x+1+i*4, y+12*8-(note+oct*12), 2, note+oct*12-9, false, (playingNote == i and 6 or 1))
+      rect(x+1+i*4, y+12*8-(note+oct*12), 2, 2, false, 8+wave)
+    end
   end
 end
 
@@ -62,7 +64,7 @@ function se:pitchMouse(state,x,y,button,istouch)
     cx, cy = cx-1, 12*8-cy+1
     local note = cy%12
     local oct = math.floor(cy/12)
-    sfx:setNote(cx,note,oct)
+    sfx:setNote(cx,note,oct,0,1)
     drawPitch()
   end
 end
