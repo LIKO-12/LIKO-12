@@ -102,7 +102,6 @@ function se:volumeMouse(state,x,y,button,istouch)
     local sfx = sfxdata[selectedSlot]
     local note, oct, wave = sfx:getNote(cx-1)
     if wave < 0 and cy < 8 then wave = selectedWave end
-    if cy == 8 then wave = -1 end
     sfx:setNote(cx-1,false,false,wave,(8-cy)/7)
     drawGraph()
   end
