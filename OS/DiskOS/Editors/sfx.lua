@@ -1,51 +1,54 @@
 --SFX Editor
 
-local sfxobj = require("Libraries.sfx")
+local sfxobj = require("Libraries.sfx") --The sfx object
 
-local eapi = select(1,...)
+local eapi = select(1,...) --The editors api
 
-local sw, sh = screenSize()
+local sw, sh = screenSize() --The screensize
 
 local se = {} --sfx editor
 
-local sfxSlots = 64
-local sfxNotes = 64
+local sfxSlots = 64 --The amount of sfx slots
+local sfxNotes = 32 --The number of notes in each sfx
 
-local defaultSpeed = 1
-local speed = defaultSpeed
+local defaultSpeed = 0.25 --The default speed
+local speed = defaultSpeed --The current sfx speed
 
+--The SFXes datas.
 local sfxdata = {}
 for i=0,sfxSlots-1 do
-  sfxdata[i] = sfxobj(sfxNotes, defaultSpeed)
+  local sfx = sfxobj(sfxNotes, defaultSpeed)
+  for i=0,sfxNotes-1 do
+    sfx:setNote(i,1,1,1) --Octave 0 is hidden...
+  end
+  sfxdata[i] = sfx
 end
 
 local selectedSlot = 0
+local playingNote = -1
 
-local pitchGrid = {0,9, sfxNotes*2,12*8, sfxNotes,12*8}
+local pitchGrid = {2,9, sfxNotes*4,12*7, sfxNotes,12*7}
 
 local function drawPitch()
   local x,y = pitchGrid[1], pitchGrid[2]-1
   local sfx = sfxdata[selectedSlot]
   
   --Box Rectangle
-  rect(x,y,sfxNotes*2+1,12*8+2,false,0)
+  rect(x,y,pitchGrid[3],pitchGrid[4]+4,false,0)
+  
+  local playingNote = math.floor(playingNote)
   
   --Notes lines
   for i=0, sfxNotes-1 do
     local note,oct,wave = sfx:getNote(i); note = note-1
-    line(x+1+i*2, y+12*8-(note+oct*12), x+1+i*2, y+12*8, 7)
-    point(x+1+i*2, y+12*8-(note+oct*12),8+wave)
-    point(x+1+i*2, y+12*8-(note+oct*12)+1,8+wave)
+    rect(x+1+i*4, y+12*8-(note+oct*12), 2, note+oct*12-9, false, (playingNote == i and 6 or 1))
+    rect(x+1+i*4, y+12*8-(note+oct*12), 2, 2, false, 8+wave)
   end
-  
-  --Outline
-  rect(x,y,sfxNotes*2+1,12*8+2,true,0)
 end
 
 function se:entered()
   eapi:drawUI()
   drawPitch()
-  cursor("point",true)
 end
 
 function se:leaved()
@@ -65,11 +68,21 @@ function se:pitchMouse(state,x,y,button,istouch)
 end
 
 se.keymap = {
-  ["p"] = function()
+  ["space"] = function()
     sfxdata[selectedSlot]:play()
-    cprint("play !")
+    playingNote = 0
   end
 }
+
+function se:update(dt)
+  if playingNote >= 0 then
+    playingNote = playingNote + (dt*sfxNotes)/speed
+    if playingNote >= sfxNotes then
+      playingNote = -1
+    end
+    drawPitch()
+  end
+end
 
 function se:mousepressed(x,y,button,istouch)
   self:pitchMouse("pressed",x,y,button,istouch)
