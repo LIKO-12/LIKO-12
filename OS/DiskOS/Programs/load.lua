@@ -82,6 +82,11 @@ if filetype ~= "OSData" then
       eapi.leditors[eapi.editors.sprite]:import(simg:encode()..";0;")
       color(11) print("Imported to sprite editor successfully") return
     end
+  elseif filetype == "TILEMAP" then
+    if eapi.leditors[eapi.editors.tile] then
+      eapi.leditors[eapi.editors.tile]:import(saveData)
+      color(11) print("Imported to tilemap editor successfully") return
+    end
   else
     color(8) print("Can't load '"..filetype.."' files !") return
   end
