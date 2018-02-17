@@ -207,13 +207,13 @@ function se:speedMouse(state,x,y,button,istouch)
       self:drawSpeed()
     end
   else
-    if isInRect(x,y,speedLeft) then
+    if isInRect(x,y,speedLeft) and speedLeftDown then
       speed = math.max(speed-0.25,0.25)
       sfxdata[selectedSlot]:setSpeed(speed)
     end
     speedLeftDown = false
     
-    if isInRect(x,y,speedRight) then
+    if isInRect(x,y,speedRight) and speedRightDown then
       speed = math.min(speed+0.25,255*0.25)
       sfxdata[selectedSlot]:setSpeed(speed)
     end
