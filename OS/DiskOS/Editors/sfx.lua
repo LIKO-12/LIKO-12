@@ -5,6 +5,7 @@ local sfxobj = require("Libraries.sfx") --The sfx object
 local eapi = select(1,...) --The editors api
 
 local sw, sh = screenSize() --The screensize
+local volColors = {1,2,13,6,12,14,15,7}
 
 local se = {} --sfx editor
 
@@ -14,43 +15,68 @@ local sfxNotes = 32 --The number of notes in each sfx
 local defaultSpeed = 0.25 --The default speed
 local speed = defaultSpeed --The current sfx speed
 
+local selectedSlot = 0
+local selectedWave = 0
+
+local playingNote = -1
+
+local pitchGrid = {0,9, sfxNotes*4,12*7, sfxNotes,12*7}
+local volumeGrid = {0,sh-8-8*2-1, sfxNotes*4,8*2, sfxNotes,8}
+
 --The SFXes datas.
 local sfxdata = {}
 for i=0,sfxSlots-1 do
   local sfx = sfxobj(sfxNotes, defaultSpeed)
   for i=0,sfxNotes-1 do
-    sfx:setNote(i,1,1,-1,0) --Octave 0 is hidden...
+    sfx:setNote(i,1,1,0,0) --Octave 0 is hidden...
   end
   sfxdata[i] = sfx
 end
 
-local selectedSlot = 0
-local playingNote = -1
+local patternImage = imagedata("LK12;GPUIMG;2x6;770007700077;")
+local pattern2Image = imagedata("LK12;GPUIMG;4x2;00070070;")
 
-local pitchGrid = {2,9, sfxNotes*4,12*7, sfxNotes,12*7}
-
-local function drawPitch()
+local function drawGraph()
   local x,y = pitchGrid[1], pitchGrid[2]-1
+  local x2,y2 = volumeGrid[1], volumeGrid[2]
   local sfx = sfxdata[selectedSlot]
   
-  --Box Rectangle
-  rect(x,y,pitchGrid[3],pitchGrid[4]+4,false,0)
+  --Pitch Rectangle
+  rect(x,y,pitchGrid[3]+1,pitchGrid[4]+4,false,0)
+  --Volume Rectangle
+  rect(x2,y2-1,volumeGrid[3]+1,volumeGrid[4]+2,false,0)
+  --Horizental Box (Style)
+  rect(x,y+pitchGrid[4]+4, pitchGrid[3]+1+1, y2-1-y-pitchGrid[4]-4, false, 9)
+  patternFill(patternImage)
+  rect(x,y+pitchGrid[4]+4, pitchGrid[3]+1+1, y2-1-y-pitchGrid[4]-4, false, 4)
+  patternFill()
+  --Vertical Line (Style)
+  rect(x+pitchGrid[3]+1,8, 4,sh-16, false, 9)
+  patternFill(pattern2Image)
+  rect(x+pitchGrid[3]+1,8, 4,sh-16, false, 4)
+  patternFill()
   
   local playingNote = math.floor(playingNote)
   
   --Notes lines
   for i=0, sfxNotes-1 do
-    local note,oct,wave = sfx:getNote(i); note = note-1
-    if wave >= 0 then
+    local note,oct,wave,amp = sfx:getNote(i); note = note-1
+    if wave >= 0 and amp > 0 then
       rect(x+1+i*4, y+12*8-(note+oct*12), 2, note+oct*12-9, false, (playingNote == i and 6 or 1))
       rect(x+1+i*4, y+12*8-(note+oct*12), 2, 2, false, 8+wave)
     end
+    
+    local vol = math.floor(amp*7)
+    
+    if wave < 0 then vol = 0 end
+    
+    rect(x2+1+i*4, y2+(7-vol)*2, 3,2, false, volColors[vol+1])
   end
 end
 
 function se:entered()
   eapi:drawUI()
-  drawPitch()
+  drawGraph()
 end
 
 function se:leaved()
@@ -64,8 +90,21 @@ function se:pitchMouse(state,x,y,button,istouch)
     cx, cy = cx-1, 12*8-cy+1
     local note = cy%12
     local oct = math.floor(cy/12)
-    sfx:setNote(cx,note,oct,0,1)
-    drawPitch()
+    local _,_,_,amp = sfx:getNote(cx)
+    sfx:setNote(cx,note,oct,selectedWave,amp == 0 and 5/7 or amp)
+    drawGraph()
+  end
+end
+
+function se:volumeMouse(state,x,y,button,istouch)
+  local cx,cy = whereInGrid(x,y,volumeGrid)
+  if cx and isMDown(1) then
+    local sfx = sfxdata[selectedSlot]
+    local note, oct, wave = sfx:getNote(cx-1)
+    if wave < 0 and cy < 8 then wave = selectedWave end
+    if cy == 8 then wave = -1 end
+    sfx:setNote(cx-1,false,false,wave,(8-cy)/7)
+    drawGraph()
   end
 end
 
@@ -82,20 +121,23 @@ function se:update(dt)
     if playingNote >= sfxNotes then
       playingNote = -1
     end
-    drawPitch()
+    drawGraph()
   end
 end
 
 function se:mousepressed(x,y,button,istouch)
   self:pitchMouse("pressed",x,y,button,istouch)
+  self:volumeMouse("pressed",x,y,button,istouch)
 end
 
 function se:mousemoved(x,y,button,istouch)
   self:pitchMouse("moved",x,y,dx,dy,istouch)
+  self:volumeMouse("moved",x,y,dx,dy,istouch)
 end
 
 function se:mousereleased(x,y,button,istouch)
   self:pitchMouse("released",x,y,button,istouch)
+  self:volumeMouse("released",x,y,button,istouch)
 end
 
 return se
