@@ -10,7 +10,7 @@ local json = require("Engine.JSON")
 local hasLuaSec = pcall(require,"ssl")
 
 if hasLuaSec then
-  require("ssl"); require("https")
+  require("ssl"); require(perpath:gsub("/",".").."https")
 end
 
 local thread = love.thread.newThread(perpath.."webthread.lua")
@@ -108,6 +108,10 @@ return function(config) --A function that creates a new WEB peripheral.
     if type(submodule) ~= "string" then return error("Submodule should be a string, provided: "..submodule) end
     submodule = string.lower(submodule)
     if submodule ~= "ssl" and submodule ~= "https" then return error("Invalid submodule: "..submodule) end
+    
+    if submodule == "https" then
+      return require(perpath:gsub("/",".").."https")
+    end
     
     return require(submodule)
   end
