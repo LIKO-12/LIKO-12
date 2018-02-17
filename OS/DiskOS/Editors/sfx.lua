@@ -74,9 +74,41 @@ local function drawGraph()
   end
 end
 
+local slotLeft = {sw-27,15,4,7}
+local slotRight = {sw-10,15,4,7}
+
+function se:drawSlot()
+  color(12)
+  print("SLOT:",sw-54,16)
+  eapi.editorsheet:draw(164,slotLeft[1],slotLeft[2])
+  
+  color(13)
+  rect(sw-22,15,fontWidth()*2+3,fontHeight()+2, false, 6)
+  print(selectedSlot, sw-21,16, fontWidth()*2+2, "right")
+  
+  eapi.editorsheet:draw(165,slotRight[1],slotRight[2])
+end
+
+local speedLeft = {sw-26,27,4,7}
+local speedRight = {sw-9,27,4,7}
+
+function se:drawSpeed()
+  color(7)
+  print("SPEED:",sw-56,28)
+  eapi.editorsheet:draw(164,speedLeft[1],speedLeft[2])
+  
+  color(13)
+  rect(sw-21,27,fontWidth()*2+3,fontHeight()+2, false, 6)
+  print(speed/0.25, sw-20,28, fontWidth()*2+2, "right")
+  
+  eapi.editorsheet:draw(165,speedRight[1],speedRight[2])
+end
+
 function se:entered()
   eapi:drawUI()
   drawGraph()
+  self:drawSlot()
+  self:drawSpeed()
 end
 
 function se:leaved()
