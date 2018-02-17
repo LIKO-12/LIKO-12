@@ -118,8 +118,8 @@ it will add it to our "bullets" table
 ```
 function createbullet(bx,by)
  b={}
- b.x=x
- b.y=y
+ b.x=bx
+ b.y=by
  table.insert(bullets,b)
 end
 ```
@@ -170,10 +170,29 @@ end
 note that when using remove, you actually pass the index of the thing you want to remove in the table !
 know you should see bullets disappearing before reaching the end of the screen
 
+add a call to ```movebaddies()``` in ```_update()```
+
+do not forget to draw a nice bullet on the second image ( 002 )
+
+![](s5draw.png)
+
+here is the resulting listing 
+
+![](s5scrollcode.gif)
+
+here is what should happen when you press a fire button
+
+![](s5result.gif)
+
+
 ## step 6: ennemies , working on a list of unkown size
 
 we will add ennemies to a table,
 so that we can have an unspecified amout depending on the level
+
+first go and draw a nice ennemy in picture 3:
+![](s6draw.png)
+
 
 let us declare a table to store ennemies:
 ```
@@ -190,21 +209,26 @@ function addennemy(ex,ey)
 end
 ```
 
-adding ennemies (before update )
+lets add ennemies right after in the global context (before update )
 ```
+--to test
 addennemy(40,40)
 addennemy(80,80)
 ```
 
-display ennemies 
+append this to ```draw()``` to display ennemies 
 ```
 for i,e in ipairs(ennemies)
 do
- Sprite(2,e.x,e.y)
+ Sprite(3,e.x,e.y)
 end
 ```
 
-result
+![](s6code.gif)
+
+
+this is the result you should have, starting to look like a game !!!!
+![](s6result.gif)
 
 
 
