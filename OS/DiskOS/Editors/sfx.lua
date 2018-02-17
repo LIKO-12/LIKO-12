@@ -74,42 +74,48 @@ local function drawGraph()
   end
 end
 
-local slotLeft, slotLeftDown = {sw-27,15,4,7}, false
-local slotRight, slotRightDown = {sw-10,15,4,7}, false
+local slotLeft, slotLeftDown = {sw-26,15,4,7}, false
+local slotRight, slotRightDown = {sw-9,15,4,7}, false
 
 function se:drawSlot()
   color(12)
-  print("SLOT:",sw-54,16)
+  print("SLOT:",sw-53,16)
   if slotLeftDown then pal(9,4) end
   eapi.editorsheet:draw(164,slotLeft[1],slotLeft[2])
   pal()
   
   color(13)
-  rect(sw-22,15,fontWidth()*2+3,fontHeight()+2, false, 6)
-  print(selectedSlot, sw-21,16, fontWidth()*2+2, "right")
+  rect(sw-21,15,fontWidth()*2+3,fontHeight()+2, false, 6)
+  print(selectedSlot, sw-20,16, fontWidth()*2+2, "right")
   
   if slotRightDown then pal(9,4) end
   eapi.editorsheet:draw(165,slotRight[1],slotRight[2])
   pal()
 end
 
-local speedLeft, speedLeftDown = {sw-26,27,4,7}, false
-local speedRight, speedRightDown = {sw-9,27,4,7}, false
+local speedLeft, speedLeftDown = {sw-25,27,4,7}, false
+local speedRight, speedRightDown = {sw-8,27,4,7}, false
 
 function se:drawSpeed()
   color(7)
-  print("SPEED:",sw-56,28)
+  print("SPEED:",sw-55,28)
   if speedLeftDown then pal(9,4) end
   eapi.editorsheet:draw(164,speedLeft[1],speedLeft[2])
   pal()
   
   color(13)
-  rect(sw-21,27,fontWidth()*2+3,fontHeight()+2, false, 6)
-  print(speed/0.25, sw-20,28, fontWidth()*2+2, "right")
+  rect(sw-20,27,fontWidth()*2+3,fontHeight()+2, false, 6)
+  print(speed/0.25, sw-19,28, fontWidth()*2+2, "right")
   
   if speedRightDown then pal(9,4) end
   eapi.editorsheet:draw(165,speedRight[1],speedRight[2])
   pal()
+end
+
+local playRect, playDown = {sw-8,sh-8,8,8}, false
+
+function se:drawPlay()
+  eapi.editorsheet:draw(playDown and 40 or 16,playRect[1],playRect[2])
 end
 
 function se:entered()
@@ -117,6 +123,7 @@ function se:entered()
   drawGraph()
   self:drawSlot()
   self:drawSpeed()
+  self:drawPlay()
 end
 
 function se:leaved()
@@ -223,6 +230,30 @@ function se:speedMouse(state,x,y,button,istouch)
   end
 end
 
+function se:playMouse(state,x,y,button,istouch)
+  if state == "pressed" then
+    if isInRect(x,y,playRect) then
+      playDown = true
+      self:drawPlay()
+    end
+  elseif state == "moved" then
+    if not isInRect(x,y,playRect) and playDown then
+      playDown = false
+      self:drawPlay()
+    end
+  elseif state == "released" then
+    if isInRect(x,y,playRect) and playDown then
+      playDown = false
+      self:drawPlay()
+      if playingNote >= 0 then
+        Audio.stop()
+      else
+        sfxdata[selectedSlot]:play(0)
+      end
+    end
+  end
+end
+
 se.keymap = {
   ["space"] = function()
     sfxdata[selectedSlot]:play()
@@ -245,6 +276,7 @@ function se:mousepressed(x,y,button,istouch)
   self:volumeMouse("pressed",x,y,button,istouch)
   self:slotMouse("pressed",x,y,button,istouch)
   self:speedMouse("pressed",x,y,button,istouch)
+  self:playMouse("pressed",x,y,button,istouch)
 end
 
 function se:mousemoved(x,y,button,istouch)
@@ -252,6 +284,7 @@ function se:mousemoved(x,y,button,istouch)
   self:volumeMouse("moved",x,y,dx,dy,istouch)
   self:slotMouse("moved",x,y,dx,dy,istouch)
   self:speedMouse("moved",x,y,dx,dy,istouch)
+  self:playMouse("moved",x,y,dx,dy,istouch)
 end
 
 function se:mousereleased(x,y,button,istouch)
@@ -259,6 +292,7 @@ function se:mousereleased(x,y,button,istouch)
   self:volumeMouse("released",x,y,button,istouch)
   self:slotMouse("released",x,y,button,istouch)
   self:speedMouse("released",x,y,button,istouch)
+  self:playMouse("released",x,y,button,istouch)
 end
 
 return se
