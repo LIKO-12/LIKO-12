@@ -74,34 +74,42 @@ local function drawGraph()
   end
 end
 
-local slotLeft = {sw-27,15,4,7}
-local slotRight = {sw-10,15,4,7}
+local slotLeft, slotLeftDown = {sw-27,15,4,7}, false
+local slotRight, slotRightDown = {sw-10,15,4,7}, false
 
 function se:drawSlot()
   color(12)
   print("SLOT:",sw-54,16)
+  if slotLeftDown then pal(9,4) end
   eapi.editorsheet:draw(164,slotLeft[1],slotLeft[2])
+  pal()
   
   color(13)
   rect(sw-22,15,fontWidth()*2+3,fontHeight()+2, false, 6)
   print(selectedSlot, sw-21,16, fontWidth()*2+2, "right")
   
+  if slotRightDown then pal(9,4) end
   eapi.editorsheet:draw(165,slotRight[1],slotRight[2])
+  pal()
 end
 
-local speedLeft = {sw-26,27,4,7}
-local speedRight = {sw-9,27,4,7}
+local speedLeft, speedLeftDown = {sw-26,27,4,7}, false
+local speedRight, speedRightDown = {sw-9,27,4,7}, false
 
 function se:drawSpeed()
   color(7)
   print("SPEED:",sw-56,28)
+  if speedLeftDown then pal(9,4) end
   eapi.editorsheet:draw(164,speedLeft[1],speedLeft[2])
+  pal()
   
   color(13)
   rect(sw-21,27,fontWidth()*2+3,fontHeight()+2, false, 6)
   print(speed/0.25, sw-20,28, fontWidth()*2+2, "right")
   
+  if speedRightDown then pal(9,4) end
   eapi.editorsheet:draw(165,speedRight[1],speedRight[2])
+  pal()
 end
 
 function se:entered()
@@ -139,6 +147,82 @@ function se:volumeMouse(state,x,y,button,istouch)
   end
 end
 
+function se:slotMouse(state,x,y,button,istouch)
+  if state == "pressed" then
+    if isInRect(x,y,slotLeft) then
+      slotLeftDown = true
+      self:drawSlot()
+    end
+    
+    if isInRect(x,y,slotRight) then
+      slotRightDown = true
+      self:drawSlot()
+    end
+  elseif state == "moved" then
+    if not isInRect(x,y,slotLeft) and slotLeftDown then
+      slotLeftDown = false
+      self:drawSlot()
+    end
+    
+    if not isInRect(x,y,slotRight) and slotRightDown then
+      slotRightDown = false
+      self:drawSlot()
+    end
+  else
+    if isInRect(x,y,slotLeft) and slotLeftDown then
+      selectedSlot = math.max(selectedSlot-1,0)
+      speed = sfxdata[selectedSlot]:getSpeed()
+    end
+    slotLeftDown = false
+    
+    if isInRect(x,y,slotRight) and slotRightDown then
+      selectedSlot = math.min(selectedSlot+1,sfxSlots-1)
+      speed = sfxdata[selectedSlot]:getSpeed()
+    end
+    slotRightDown = false
+    
+    drawGraph() self:drawSlot() self:drawSpeed()
+  end
+end
+
+function se:speedMouse(state,x,y,button,istouch)
+  if state == "pressed" then
+    if isInRect(x,y,speedLeft) then
+      speedLeftDown = true
+      self:drawSpeed()
+    end
+    
+    if isInRect(x,y,speedRight) then
+      speedRightDown = true
+      self:drawSpeed()
+    end
+  elseif state == "moved" then
+    if not isInRect(x,y,speedLeft) and speedLeftDown then
+      speedLeftDown = false
+      self:drawSpeed()
+    end
+    
+    if not isInRect(x,y,speedRight) and speedRightDown then
+      speedRightDown = false
+      self:drawSpeed()
+    end
+  else
+    if isInRect(x,y,speedLeft) then
+      speed = math.max(speed-0.25,0.25)
+      sfxdata[selectedSlot]:setSpeed(speed)
+    end
+    speedLeftDown = false
+    
+    if isInRect(x,y,speedRight) then
+      speed = math.min(speed+0.25,255*0.25)
+      sfxdata[selectedSlot]:setSpeed(speed)
+    end
+    speedRightDown = false
+    
+    drawGraph() self:drawSlot() self:drawSpeed()
+  end
+end
+
 se.keymap = {
   ["space"] = function()
     sfxdata[selectedSlot]:play()
@@ -159,16 +243,22 @@ end
 function se:mousepressed(x,y,button,istouch)
   self:pitchMouse("pressed",x,y,button,istouch)
   self:volumeMouse("pressed",x,y,button,istouch)
+  self:slotMouse("pressed",x,y,button,istouch)
+  self:speedMouse("pressed",x,y,button,istouch)
 end
 
 function se:mousemoved(x,y,button,istouch)
   self:pitchMouse("moved",x,y,dx,dy,istouch)
   self:volumeMouse("moved",x,y,dx,dy,istouch)
+  self:slotMouse("moved",x,y,dx,dy,istouch)
+  self:speedMouse("moved",x,y,dx,dy,istouch)
 end
 
 function se:mousereleased(x,y,button,istouch)
   self:pitchMouse("released",x,y,button,istouch)
   self:volumeMouse("released",x,y,button,istouch)
+  self:slotMouse("released",x,y,button,istouch)
+  self:speedMouse("released",x,y,button,istouch)
 end
 
 return se
