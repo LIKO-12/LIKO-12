@@ -129,7 +129,7 @@ function se:drawWave()
     if colorize then pal(6,8+i) end
     if down then palt(13,true) end
     
-    eapi.editorsheet:draw(173+i,waveGrid[1]+i*9,down and waveGrid[2]+1 or waveGrid[2])
+    eapi.editorsheet:draw(173+i,down and waveGrid[1]+i*9+1 or waveGrid[1]+i*9,down and waveGrid[2]+1 or waveGrid[2])
     
     pal() palt()
   end
@@ -348,7 +348,7 @@ end
 function se:export()
   local data, dpos = {}, 1
   for i=0,sfxSlots-1 do
-    data[dpos] = sfxdata[i]:export()
+    data[dpos] = sfxdata[i]:export():sub(1,-2)
     data[dpos+1] = ";\n"
     dpos = dpos +2
   end
@@ -359,7 +359,7 @@ function se:import(data)
   data = data:gsub("\n","")
   local id = 0
   for sfxd in data:gmatch("(.-);") do
-    sfxdata[id]:import(sfxd)
+    sfxdata[id]:import(sfxd..",")
     id = id + 1
   end
 end
