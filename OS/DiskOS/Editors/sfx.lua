@@ -265,8 +265,10 @@ function se:playMouse(state,x,y,button,istouch)
       self:drawPlay()
       if playingNote >= 0 then
         Audio.stop()
+        playingNote = -1
       else
         sfxdata[selectedSlot]:play(0)
+        playingNote = 0
       end
     end
   end
