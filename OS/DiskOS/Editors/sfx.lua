@@ -121,9 +121,10 @@ end
 local waveGrid,waveHover,waveDown = {sw-56,40,9*6,7,6,1}, false, false
 
 function se:drawWave()
+  rect(waveGrid[1],waveGrid[2],waveGrid[3],waveGrid[4], false, 5)
   for i=0,5 do
     local colorize = (waveHover and waveHover == i+1) or (selectedWave == i)
-    local down = (waveDown) or (selectedWave == i)
+    local down = (waveDown and waveHover and waveHover == i+1) or (selectedWave == i)
     
     if colorize then pal(6,8+i) end
     if down then palt(13,true) end
@@ -281,7 +282,7 @@ function se:waveMouse(state,x,y,button,istouch)
       self:drawWave()
     end
   elseif state == "moved" then
-    if waveHover and cx and waveHover ~= cx then
+    if (waveHover and cx and waveHover ~= cx) or not waveHover then
       waveHover = cx
       self:drawWave()
     elseif waveHover and not cx then
