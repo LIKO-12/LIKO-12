@@ -2,6 +2,9 @@
 
 local term = require("terminal")
 
+local parser = require("Libraries/parser/parser")
+parser:loadParser("xshell")
+
 local args = {...}
 
 local function test(current, flag, result)
@@ -27,7 +30,30 @@ local function split(str)
 end
 
 local function execute(args)
+  ok = true
   flag = false
+  result = parser:parseLines({args}, 0)
+  parsed = result[1]
+  for k, v in ipairs(parsed) do
+    if k % 2 ~= 0 then
+      if parsed[k] == "command" then
+        if flag then
+          if ok then
+            ok = term.execute(unpack(split(parsed[k+1])))
+            print(ok)
+          end
+          flag = false
+        else
+          ok = term.execute(unpack(split(parsed[k+1])))
+          print(ok)
+        end
+      elseif parsed[k] == "chainer" then
+      elseif parsed[k] == "conditionalChainer" then
+        flag = true
+      end
+    end
+  end
+  --[[ flag = false
   result = true
   current = nil
   for i = 0, #args, 1
@@ -55,16 +81,15 @@ local function execute(args)
       end
     end
   end
-  term.execute(unpack(current))
+  term.execute(unpack(current)) ]]--
 end
-
 if #args < 1 then
   -- when interactively
   while true do
     color(7) print("> ",false)
     code = input(); print("")
     if not code or code == "exit" then break end
-    execute(split(code))
+    execute(code)
   end
-else execute(args)
+else execute(table.concat(args, " "))
 end
