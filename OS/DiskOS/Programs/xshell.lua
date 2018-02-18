@@ -40,12 +40,10 @@ local function execute(args)
         if flag then
           if ok then
             ok = term.execute(unpack(split(parsed[k+1])))
-            print(ok)
           end
           flag = false
         else
           ok = term.execute(unpack(split(parsed[k+1])))
-          print(ok)
         end
       elseif parsed[k] == "chainer" then
       elseif parsed[k] == "conditionalChainer" then
