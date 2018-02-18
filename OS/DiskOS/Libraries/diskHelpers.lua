@@ -19,6 +19,13 @@ function SpriteGroup(id,x,y,w,h,sx,sy,r,sheet)
   end
 end
 
+--Play a sfx
+function SFX(id,chn)
+  if (not SFXS) or (not SFXS[id]) then return error("SFX "..tostring(id).." doesn't exists!") end
+  
+  SFXS[id]:play(chn)
+end
+
 --Flags API
 --SpriteID, [bit number] (Note: currently bits are numbered from left to right)
 function fget(id,n)
