@@ -39,9 +39,9 @@ do
   end
   
   add("dofile","printUsage","getAPI")
-  add("bump","class","lume")
-  add("Sprite","fget","fset","map","eventLoop","pget","pset","sget","sset","mget","mset","Controls")
-  add("SpriteMap","SheetFlagsData","TileMap","MapObj","btn","btnp","__BTNUpdate","__BTNKeypressed","__BTNTouchControl","_BTNGamepad")
+  add("bump","class","lume","JSON")
+  add("Sprite","fget","fset","map","eventLoop","pget","pset","sget","sset","mget","mset","Controls","SFX")
+  add("SpriteMap","SheetFlagsData","TileMap","MapObj","SFXS","SfxObj","btn","btnp","__BTNUpdate","__BTNKeypressed","__BTNTouchControl","_BTNGamepad")
 end
 
 function getAPI()

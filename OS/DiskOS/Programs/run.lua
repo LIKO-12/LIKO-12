@@ -11,10 +11,12 @@ end
 local term = require("terminal")
 local eapi = require("Editors")
 local mapobj = require("Libraries/map")
+local sfxobj = require("Libraries/sfx")
 
-local sprid = eapi.editors.sprite --"spritesheet"
-local codeid = eapi.editors.code --"luacode"
-local tileid = eapi.editors.tile --"tilemap"
+local sprid = eapi.editors.sprite
+local codeid = eapi.editors.code
+local tileid = eapi.editors.tile
+local sfxid = eapi.editors.sfx
 
 local swidth, sheight = screenSize()
 
@@ -30,6 +32,16 @@ local mapData = eapi.leditors[tileid]:export()
 local mapW, mapH = swidth*0.75, sheight
 local TileMap = mapobj(mapW,mapH,SpriteMap)
 TileMap:import(mapData)
+
+--Load the sfx
+local sfxData = eapi.leditors[sfxid]:export():gsub("\n","")
+local SFXList, SFXListPos = {}, 0
+for sfxstr in sfxData:gmatch("(.-);") do
+  local s = sfxobj(32)
+  s:import(sfxstr..",")
+  SFXList[SFXListPos] = s
+  SFXListPos = SFXListPos + 1
+end
 
 --Load the code
 local luacode = eapi.leditors[codeid]:export()
@@ -115,6 +127,8 @@ glob.SpriteMap = SpriteMap
 glob.SheetFlagsData = FlagsData
 glob.TileMap = TileMap
 glob.MapObj = mapobj
+glob.SFXS = SFXList
+glob.SfxObj = sfxobj
 
 local json = require("Libraries/JSON")
 
@@ -245,7 +259,7 @@ addLibrary("C:/Libraries/lume.lua","lume")
 addLibrary("C:/Libraries/middleclass.lua","class")
 addLibrary("C:/Libraries/bump.lua","bump")
 addLibrary("C:/Libraries/likocam.lua","likocam")
-addLibrary("C:/Libraries/JSON.lua","json")
+addLibrary("C:/Libraries/JSON.lua","JSON")
 
 local helpersloader, err = fs.load("C:/Libraries/diskHelpers.lua")
 if not helpersloader then error(err) end
