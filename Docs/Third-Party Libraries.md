@@ -118,7 +118,7 @@ world:remove(B)
 
 An awesome Lua library for decoding and encoding JSON tables, with customizable options.
 
-**It's available as `json` in the globals.**
+**It's available as `JSON` in the globals.**
 
 **Documentation:** [https://github.com/RamiLego4Game/LIKO-12/blob/master/Engine/JSON.lua](https://github.com/RamiLego4Game/LIKO-12/blob/master/Engine/JSON.lua)
 
