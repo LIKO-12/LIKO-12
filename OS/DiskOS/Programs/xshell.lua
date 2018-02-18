@@ -51,35 +51,6 @@ local function execute(args)
       end
     end
   end
-  --[[ flag = false
-  result = true
-  current = nil
-  for i = 0, #args, 1
-  do
-    if args[i] and args[i] ~= " " then
-      if args[i] == ";" then
-        --do the next command uncondtionally
-        if test(current, flag, result) then
-          result = term.execute(unpack(current))
-          current = {}
-        end
-      elseif args[i] == '&' then
-        --do only if the command last was successful
-        if test() then
-          result = term.execute(unpack(current))
-          current = {}
-          flag = true
-        end
-      else
-        if current then
-          current[#current + 1] = args[i]
-        else
-          current = {args[i]}
-        end
-      end
-    end
-  end
-  term.execute(unpack(current)) ]]--
 end
 if #args < 1 then
   -- when interactively
