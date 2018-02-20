@@ -101,6 +101,19 @@ local function newSFX(notes,speed)
     return table.concat(data)
   end
   
+  function sfx:encode()
+    local Write = RamUtils.binWriter()
+    Write(floor(self.speed/0.25),8)
+    for i=1, self.notes*4, 4 do
+      local n,o = toFreq(self[i+2])
+      Write(n-1, 4) --Note
+      Write(o, 3) --Octave
+      Write(self[i+1], 3) --Instrument
+      Write(floor(self[i+3]*7), 3) --Volume
+    end
+    return Write()
+  end
+  
   function sfx:import(data)
     
     local speed, notes = data:match("(%d*):(.*)")
@@ -116,6 +129,23 @@ local function newSFX(notes,speed)
       self[id+1] = tonumber(note:sub(4,4))
       self[id+2] = toNote(notesL[note:sub(1,2)], tonumber(note:sub(3,3)))
       self[id+3] = tonumber(note:sub(5,5))/7
+    end
+  end
+  
+  function sfx:decode(data)
+    local Read = RamUtils.binReader(data)
+    
+    self.speed = tonumber(Read(8))*0.25
+    local nt = self.speed/self.notes
+    self.notetime = nt
+    
+    for i=1, self.notes*4, 4 do
+      local n = Read(4)+1 --Note
+      local o = Read(3) --Octave
+      self[i+2] = toNote(n,o) --Frequency
+      self[i+1] = Read(3) --Waveform
+      self[i+3] = Read(3)/7 --Amplitude
+      self[i] = nt
     end
   end
   

@@ -366,4 +366,21 @@ function se:import(data)
   end
 end
 
+function se:encode()
+  local data, dpos = {}, 1
+  for i=0,sfxSlots-1 do
+    data[dpos] = sfxdata[i]:encode()
+    dpos = dpos +1
+  end
+  
+  return table.concat(data)
+end
+
+function se:decode(data)
+  for i=0,sfxSlots-1 do
+    local bin = data:sub(i*53+1,i*53+53+1)
+    sfxdata[i]:decode(bin)
+  end
+end
+
 return se
