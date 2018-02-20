@@ -7,7 +7,7 @@ local sw,sh = screenSize()
 local unpack = unpack
 local floor, ceil, min = math.floor, math.ceil, math.min
 local strChar, strByte = string.char, string.byte
-local lshift, rshift, bor, band = bit.lshift, bit.rshift, bit.bor, bit.band
+local lshift, rshift, bor, band, bxor = bit.lshift, bit.rshift, bit.bor, bit.band, bit.bxor
 
 --The API
 local RamUtils = {}
@@ -112,7 +112,7 @@ function RamUtils.numToBin(num,length,getTable)
   return strChar(unpack(bytes))
 end
 
---Load a number from binar
+--Load a number from binary
 function RamUtils.binToNum(bin)
   local number = 0
   for i=1,bin:len() do
@@ -141,6 +141,50 @@ function RamUtils.binIter(bin)
     return strByte(bin,counter)
   end, function()
     return counter
+  end
+end
+
+--Create a binary writer
+function RamUtils.binWriter()
+  local bytes, bid, byte, bpos = {}, 1, 0, 0
+  return function(bits,count)
+    if bits then
+      byte = lshift(byte,count)
+      byte = bor(byte,bits)
+      bpos = bpos + count
+      
+      if bpos >= 8 then
+        local cbyte = rshift(byte,bpos-8)
+        byte = bxor(byte,lshift(cbyte,bpos-8))
+        bpos = bpos - 8
+        bytes[bid] = strChar(cbyte)
+        bid = bid + 1
+      end
+    else --Generate the string
+      if bpos > 0 then
+        bytes[bid] = strChar(byte)
+      end
+      
+      return table.concat(bytes)
+    end
+  end
+end
+
+--Create a bin reader
+function RamUtils.binReader(data)
+  local bid, byte, bc = 1, 0, 0
+  return function(c)
+    if c > bc then
+      byte = lshift(byte,8)
+      byte = bxor(byte,strByte(data,bid))
+      bc = bc + 8
+      bid = bid + 1
+    end
+    
+    local bits = rshift(byte,bc-c)
+    byte = bxor(byte,lshift(bits,bc-c))
+    bc = bc - c
+    return bits
   end
 end
 
