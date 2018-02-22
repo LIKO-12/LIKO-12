@@ -216,7 +216,7 @@ function term.ecommand(command) --Editor post command
 	ecommand = command
 end
 
---abc
+local function splitFilePath(path) return path:match("(.-)([^\\/]-%.?([^%.\\/]*))$") end --A function to split path to path, name, extension.
 
 function term.loop() --Enter the while loop of the terminal
   cursor("none")
@@ -225,8 +225,26 @@ function term.loop() --Enter the while loop of the terminal
   buffer, inputPos = "", 1
   for event, a,b,c,d,e,f in pullEvent do
     checkCursor() --Which also draws the cursor blink
-
-    if event == "textinput" then
+    
+    if event == "filedropped" then
+      local p, n, e = splitFilePath(a)
+      if e == "png" or e == "lk12" then
+        if b then
+          fs.write("C:/.temp/"..n,b)
+          blink = false; checkCursor()
+          print("load "..n)
+          term.execute("load","C:/.temp/"..n)
+          term.prompt()
+          blink = true; checkCursor()
+        else
+          blink = false; checkCursor()
+          print("load "..n)
+          color(8) print("Failed to read file.") color(7)
+          term.prompt()
+          blink = true; checkCursor()
+        end
+      end
+    elseif event == "textinput" then
       print(a..buffer:sub(inputPos,-1),false)
       for i=inputPos,buffer:len() do printBackspace(-1) end
       buffer = buffer:sub(1,inputPos-1)..a..buffer:sub(inputPos,-1)
