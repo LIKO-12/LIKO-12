@@ -11,7 +11,7 @@ local tar = table.concat(args," ") --The path may include whitespaces
 local term = require("terminal")
 tar = term.resolve(tar)
 
-if fs.exists(tar) and fs.isDirectory(tar) then color(8) print("Can't edit directories !") return end
+if fs.exists(tar) and fs.isDirectory(tar) then color(8) print("Can't edit directories !") return 1 end
 local eutils = require("Editors.utils")
 local tool = eutils:newTool()
 

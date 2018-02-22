@@ -52,7 +52,7 @@ if not diskchunk then
   local pos = string.find(err,":")
   err = err:sub(pos+1,-1)
   color(8) print("Compile ERR: "..err )
-  return
+  return 1
 end
 
 --Create the sandboxed global variables
@@ -285,6 +285,7 @@ local function printErr(msg)
 end
 
 local lastArgs = {...}
+local crashed = false
 while true do
   if coroutine.status(co) == "dead" then break end
   
@@ -293,7 +294,8 @@ while true do
     local err = tostring(args[2])
     local pos = string.find(err,":") or 0
     pal() palt() cam() clip() colorPalette()
-    err = err:sub(pos+1,-1); printErr("ERR: "..err ); break
+    err = err:sub(pos+1,-1); printErr("ERR: "..err )
+    crashed = true; break
   end
   if args[2] then
     if args[2] == "RUN:exit" then break end
@@ -323,3 +325,5 @@ print("")
 
 TC.setInput(false)
 Audio.stop()
+
+if crashed then return 1 end

@@ -18,8 +18,8 @@ end
 local source = args[1]
 source = term.resolve(source..".lk12")
 
-if not fs.exists(source) then printErr("Cart doesn't exists !") return end
-if not fs.isFile(source) then printErr("Cart can't be a directory !") return end
+if not fs.exists(source) then printErr("Cart doesn't exists !") return 1 end
+if not fs.isFile(source) then printErr("Cart can't be a directory !") return 1 end
 
 local cartdata = fs.read(source)
 local cart = loadstring(cartdata)()

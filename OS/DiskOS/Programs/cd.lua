@@ -16,5 +16,5 @@ tar = term.resolve(tar)
 
 local ok, err = pcall(term.setpath,tar)
 if not ok then
-  color(8) print(tostring(err))
+  color(8) print(tostring(err)) return 1
 end

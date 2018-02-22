@@ -16,7 +16,7 @@ end
 if destination ~= "@label" then
   destination = term.resolve(destination)
 
-  if fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end
+  if fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return 1 end
 end
 
 if destination == "@label" then
@@ -38,6 +38,6 @@ elseif destination:sub(-4,-1) == ".lua" then --Lua code Exporting.
   fs.write(destination,eapi.leditors[eapi.editors.code]:export())
   color(11) print("Exported Luacode successfully")
 else --Unknown
-  color(8) print("Unknown export extension")
+  color(8) print("Unknown export extension") return 1
 end
 

@@ -15,5 +15,5 @@ local ok, err = pcall(fs.newDirectory,tar)
 if ok then
   color(11) print("Created directory successfully")
 else
-  color(8) print(err or "Failed to create directory")
+  color(8) print(err or "Failed to create directory") return 1
 end

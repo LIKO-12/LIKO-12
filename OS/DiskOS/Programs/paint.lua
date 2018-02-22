@@ -41,13 +41,13 @@ elseif tar == "@clip" then
     color(7) local width = input()
     if not width or width:len() == 0 then print("") return end
     local w = tonumber(width)
-    if not w then color(8) print("\nInvalid Width: "..width..", width must be a number !") return end
+    if not w then color(8) print("\nInvalid Width: "..width..", width must be a number !") return 1 end
   
     color(11) print(", Height: ",false)
     color(7) local height = input()
     if not height or height:len() == 0 then print("") return end
     local h = tonumber(height)
-    if not h then color(8) print("\nInvalid Height: "..height..", height must be a number !") return end
+    if not h then color(8) print("\nInvalid Height: "..height..", height must be a number !") return 1 end
     print("")
   
     imgdata = imagedata(w,h)
@@ -73,7 +73,7 @@ else
   local term = require("terminal")
   tar = term.resolve(tar)
 
-  if fs.exists(tar) and fs.isDirectory(tar) then color(8) print("Can't edit directories !") return end
+  if fs.exists(tar) and fs.isDirectory(tar) then color(8) print("Can't edit directories !") return 1 end
   
   if not fs.exists(tar) then --Create a new image
     color(9) print("Input image size:")
@@ -82,13 +82,13 @@ else
     color(7) local width = input()
     if not width or width:len() == 0 then print("") return end
     local w = tonumber(width)
-    if not w then color(8) print("\nInvalid Width: "..width..", width must be a number !") return end
+    if not w then color(8) print("\nInvalid Width: "..width..", width must be a number !") return 1 end
   
     color(11) print(", Height: ",false)
     color(7) local height = input()
     if not height or height:len() == 0 then print("") return end
     local h = tonumber(height)
-    if not h then color(8) print("\nInvalid Height: "..height..", height must be a number !") return end
+    if not h then color(8) print("\nInvalid Height: "..height..", height must be a number !") return 1 end
     print("")
   
     imgdata = imagedata(w,h)

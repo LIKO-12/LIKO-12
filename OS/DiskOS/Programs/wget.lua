@@ -7,57 +7,58 @@ local function printErr(str)
 end
 
 if #args < 1 or args[1] == "-?" then
-   printUsage(
-      "wget <address>", "Download the document at <address>",
-      "wget <address> <filename>", "Download the document at <address> and save it as <filename>"
-   )
-   return
+  printUsage(
+    "wget <address>", "Download the document at <address>",
+    "wget <address> <filename>", "Download the document at <address> and save it as <filename>"
+  )
+  return
 end
 
 if not WEB then
   printErr("wget requires WEB peripheral")
   printErr("Edit /bios/bconf.lua and make sure that the WEB peripheral exists")
-  return
+  return 1
 end
 
 local address = args[1]
 local filename = args[2]
 
 if address ~= nil then
-   print("Downloading " .. address .. "...")
-   local request = WEB.send(address)
-   for event, id, url, data, errnum, errmsg, errline in pullEvent do
-      if event == "webrequest" then
-	 if id == request then
-	    if data then
-	       if tonumber(data.code) ~= 200 then
-		  printErr("Request error, HTTP Error code: " .. data.code)
-		  return
-	       else
-		  if not filename then
-		     local tokens = split(address, '/')
-		     filename = tokens[#tokens]
-		  end
-		  if fs.exists(filename) then
-		     printErr("File called " .. filename .. " already exists!")
-		     return
-		  else
-		     print("Saving to '" .. filename .. "'")
-		     fs.write(filename, data.body)
-		     print("File saved!")
-		  end
-		  
-		  return
-	       end
-	    else
-	       printErr("The request did not return any data")
-	       return
-	    end
-	 end
-      elseif event == "keypressed" then
-	 if id == "escape" then
-	    return false, "Request Canceled"
-	 end
+  print("Downloading " .. address .. "...")
+  local request = WEB.send(address)
+  for event, id, url, data, errnum, errmsg, errline in pullEvent do
+    if event == "webrequest" then
+      if id == request then
+        if data then
+          if tonumber(data.code) ~= 200 then
+            printErr("Request error, HTTP Error code: " .. data.code)
+            return 1
+          else
+            if not filename then
+              local tokens = split(address, '/')
+              filename = tokens[#tokens]
+            end
+            if fs.exists(filename) then
+              printErr("File called " .. filename .. " already exists!")
+              return 1
+            else
+              print("Saving to '" .. filename .. "'")
+              fs.write(filename, data.body)
+              print("File saved!")
+            end
+
+            return 0
+          end
+        else
+          printErr("The request did not return any data")
+          return 1
+        end
       end
-   end
+    elseif event == "keypressed" then
+      if id == "escape" then
+        printErr("Request Canceled")
+        return 1
+      end
+    end
+  end
 end

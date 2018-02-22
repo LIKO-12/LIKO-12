@@ -34,7 +34,7 @@ if (not destination) or destination == "-?" then
   return
 end
 
-if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end
+if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return 1 end
 
 local sw, sh = screenSize()
 
@@ -79,7 +79,7 @@ elseif png then
   local savesize = savedata:len()
   if savesize > 64*1024 then
     color(8) print("Save too big to fit in a floppy disk ("..(math.floor(savesize/102.4)*10).." kb/ 64 kb) !")
-    return
+    return 1
   end
   memset(RamUtils.FRAM, savedata)
   fs.write(destination, FDD.exportDisk())

@@ -19,7 +19,7 @@ end
 if not WEB then
   printErr( "Pastebin requires WEB peripheral" )
   printErr( "Edit /bios/bconf.lua and make sure that the WEB peripheral exists" )
-  return
+  return 1
 end
 
 local function getName(str)
@@ -70,6 +70,7 @@ local function getPaste(paste)
     return response
   else
     printErr("Failed: "..tostring(err))
+    return 1
   end
 end
 
@@ -114,6 +115,7 @@ if command == "put" then
     print('Run "',false) color(6) print('pastebin get '..pasteCode,false) color(7) print('" to download anywhere') sleep(0.01)
   else
     printErr("Failed: "..tostring(err))
+    return 1
   end
 elseif command == "get" then
   -- Download a file from pastebin.com
@@ -128,7 +130,7 @@ elseif command == "get" then
   local path = term.resolve(file)
   if fs.exists( path ) then
     printErr("File already exists")
-    return
+    return 1
   end
   
   -- Downloads the  pastebin
@@ -139,6 +141,7 @@ elseif command == "get" then
     color(12) print("Downloaded as "..file) sleep(0.01) color(7)
   else
     printErr("Failed")
+    return 1
   end
 elseif command == "run" then
   -- Run a file from pastebin.com
@@ -157,6 +160,7 @@ elseif command == "run" then
     term.executeFile("C:/.temp/"..pasteCode..".lua")
   else
     printErr("Failed")
+    return 1
   end
 else
   printPBUsage()
