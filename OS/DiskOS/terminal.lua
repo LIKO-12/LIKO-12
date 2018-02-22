@@ -178,6 +178,16 @@ function term.executeFile(file,...)
   return tonumber(err) or 0, e
 end
 
+--[[
+Exit codes:
+-----------
+0 -> Success
+1 -> Failure
+2 -> Execution Error
+3 -> Compilation Error
+4 -> Command not found 404
+]]
+
 function term.execute(command,...)
   if not command then return 4, "No command" end
   if fs.exists(curpath..command..".lua") then
