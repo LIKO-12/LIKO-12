@@ -136,6 +136,7 @@ function se:drawWave()
 end
 
 function se:entered()
+  speed = sfxdata[selectedSlot]:getSpeed()
   eapi:drawUI()
   drawGraph()
   self:drawSlot()
