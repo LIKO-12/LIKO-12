@@ -25,31 +25,21 @@ local function getName(str)
   return name
 end
 
-local function request(url, args)
-  local ticket = WEB.send(url,args)
-  for event, id, url, data, errnum, errmsg, errline in pullEvent do
-    if event == "webrequest" then
-      if id == ticket then
-        if data then
-          data.code = tonumber(data.code)
-          if (data.code < 200 or data.code >= 300) and data.body:sub(1,21) ~= "https://pastebin.com/" then
-            cprint("Body: "..tostring(data.body))
-            return false, "HTTP Error: "..data.code
-          end
-          if data.body:sub(1,15) == "Bad API request" then
-            return false, "API Error: "..data.body
-          end
-          return data.body
-        else
-          return false, errmsg
-        end
-      end
-    elseif event == "keypressed" then
-      if id == "escape" then
-        return false, "Request Canceled"
-      end
+local function request(url,postdata,headers,method)
+  
+  local body, data, data2 = http.request(url,postdata,headers,method)
+  
+  if body then
+    if data.body:sub(1,15) == "Bad API request" then
+      return false, "API Error: "..data.body
+    end
+  elseif data2 then
+    if data2.body and data2.body:sub(1,21) == "https://pastebin.com/" then
+      return data2.body
     end
   end
+  
+  return body, data
 end
 
 local args = { ... }
@@ -91,14 +81,13 @@ if command == "put" then
   -- POST the contents to pastebin
   color(9) print("Connecting to pastebin.com...") color(7) flip()
   local key = "e31065c6df5a451f3df3fdf5f4c2be61"
-  local response, err = request("https://pastebin.com/api/api_post.php",{
-    method = "POST",
-    data = "api_option=paste&"..
-           "api_dev_key="..key.."&"..
-           (name:sub(-4,-1) == ".lua" and "api_paste_format=lua&" or "")..
-           "api_paste_name="..WEB.urlEncode(name).."&"..
-           "api_paste_code="..WEB.urlEncode(text)
-  })
+  local response, err = request("https://pastebin.com/api/api_post.php", 
+    "api_option=paste&"..
+    "api_dev_key="..key.."&"..
+    (name:sub(-4,-1) == ".lua" and "api_paste_format=lua&" or "")..
+    "api_paste_name="..WEB.urlEncode(name).."&"..
+    "api_paste_code="..WEB.urlEncode(text)
+  )
   
   if response then
     color(11) print("Success.") flip() sleep(0.01) color(7)
