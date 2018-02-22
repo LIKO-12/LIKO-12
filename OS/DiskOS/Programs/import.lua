@@ -25,11 +25,11 @@ end
 if destination then destination = term.resolve(destination) end
 
 if source ~= "@label" then
-  if not fs.exists(source) then color(8) print("Source doesn't exists") return end
-  if fs.isDirectory(source) then color(8) print("Source can't be a directory") return end
+  if not fs.exists(source) then color(8) print("Source doesn't exists") return 1 end
+  if fs.isDirectory(source) then color(8) print("Source can't be a directory") return 1 end
 end
 
-if destination then if fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return end end
+if destination then if fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return 1 end end
 
 if destination then --Convert mode
   local imgd = (source == "@label") and getLabelImage() or imagedata(fs.read(source))

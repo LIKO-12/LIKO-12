@@ -53,7 +53,7 @@ end
 
 if peri then
  if not perlist[peri] then
-   color(8) print("Peripheral '"..peri.."' doesn't exists") return
+   color(8) print("Peripheral '"..peri.."' doesn't exists") return 1
  end
  color(11) if sprint(peri..":") then return end color(7)
  for name, f in pairs(perlist[peri]) do

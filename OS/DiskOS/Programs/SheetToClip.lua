@@ -13,8 +13,8 @@ source = term.resolve(source..".lk12")
 
 color(8)
 
-if not fs.exists(source) then print("Sheet doesn't exist !") return end
-if not fs.isFile(source) then print("Sheet can't be a folder !") return end
+if not fs.exists(source) then print("Sheet doesn't exist !") return 1 end
+if not fs.isFile(source) then print("Sheet can't be a folder !") return 1 end
 
 color(12)
 
