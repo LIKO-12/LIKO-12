@@ -42,7 +42,7 @@ function http.request(url, postData, headers, method)
           
           if data.code < 200 or data.code >= 300 then --Too bad...
             cprint("HTTP Failed Request Body: "..tostring(data.body))
-            return false, "HTTP Error: "..data.code
+            return false, "HTTP Error: "..data.code, data
           end
           
           return data.body, data --Yay
