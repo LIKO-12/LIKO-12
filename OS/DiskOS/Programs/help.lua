@@ -46,7 +46,7 @@ for path in nextPath() do
   end
 end
 
-if not doc then color(8) print("Help file not found '"..topic.."' !") return 1 end
+if not doc then return 1, "Help file not found '"..topic.."' !" end
 
 -- Waits for any input (keyboard or mouse) to continue
 -- Returns true if "q" was pressed, to quit

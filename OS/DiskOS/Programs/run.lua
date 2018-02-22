@@ -51,8 +51,7 @@ if not diskchunk then
   local err = tostring(err)
   local pos = string.find(err,":")
   err = err:sub(pos+1,-1)
-  color(8) print("Compile ERR: "..err )
-  return 1
+  return 1, "Compile ERR: "..err
 end
 
 --Create the sandboxed global variables
@@ -294,8 +293,7 @@ while true do
     local err = tostring(args[2])
     local pos = string.find(err,":") or 0
     pal() palt() cam() clip() colorPalette()
-    err = err:sub(pos+1,-1); printErr("ERR: "..err )
-    crashed = true; break
+    crashed = "ERR: "..err; break
   end
   if args[2] then
     if args[2] == "RUN:exit" then break end
@@ -326,4 +324,4 @@ print("")
 TC.setInput(false)
 Audio.stop()
 
-if crashed then return 1 end
+if crashed then return 1, crashed end
