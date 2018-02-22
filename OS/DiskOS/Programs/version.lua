@@ -3,7 +3,7 @@ if select(1,...) == "-?" then
   return
 end
 
-local _, new, old = coroutine.yield("BIOS:GetVersion")
+local new, old = BIOS.getVersion()
 
 color(11) print("LIKO-12 V"..new)
 if old then
