@@ -15,9 +15,7 @@ if #args < 1 or args[1] == "-?" then
 end
 
 if not WEB then
-  printErr("wget requires WEB peripheral")
-  printErr("Edit /bios/bconf.lua and make sure that the WEB peripheral exists")
-  return 1
+  return 1, "wget requires WEB peripheral\nEdit /bios/bconf.lua and make sure that the WEB peripheral exists"
 end
 
 local address = args[1]
@@ -31,16 +29,14 @@ if address ~= nil then
       if id == request then
         if data then
           if tonumber(data.code) ~= 200 then
-            printErr("Request error, HTTP Error code: " .. data.code)
-            return 1
+            return 1, "Request error, HTTP Error code: " .. data.code
           else
             if not filename then
               local tokens = split(address, '/')
               filename = tokens[#tokens]
             end
             if fs.exists(filename) then
-              printErr("File called " .. filename .. " already exists!")
-              return 1
+              return 1, "File called " .. filename .. " already exists!"
             else
               print("Saving to '" .. filename .. "'")
               fs.write(filename, data.body)
@@ -50,14 +46,12 @@ if address ~= nil then
             return 0
           end
         else
-          printErr("The request did not return any data")
-          return 1
+          return 1, "The request did not return any data"
         end
       end
     elseif event == "keypressed" then
       if id == "escape" then
-        printErr("Request Canceled")
-        return 1
+        return 1, "Request Canceled"
       end
     end
   end

@@ -170,18 +170,19 @@ end
 
 function term.executeFile(file,...)
   local chunk, err = fs.load(file)
-  if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return 2, tostring(err) end
+  if not chunk then color(7) return 3, "\nL-ERR:"..tostring(err) end
   local ok, err, e = pcall(chunk,...)
   color(7) pal() palt() cam() clip() patternFill()
-  if not ok then color(8) print("\nERR: "..tostring(err)) color(7) cprint("Program Error:",err) return 2, tostring(err) end
+  if not ok then color(7) cprint("Program Error:",err) return 2, "\nERR: "..tostring(err) end
   if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":/" end
-  return err or 0, e
+  return tonumber(err) or 0, e
 end
 
 function term.execute(command,...)
-  if not command then return false, "No command" end
+  if not command then return 4, "No command" end
   if fs.exists(curpath..command..".lua") then
     local exitCode, err = term.executeFile(curpath..command..".lua",...)
+    if exitCode > 0 then color(8) print(err or "Failed !") color(7) end
     textinput(true)
     return exitCode, err
   end
@@ -191,13 +192,14 @@ function term.execute(command,...)
       for _,file in ipairs(files) do
         if file == command..".lua" then
           local exitCode, err = term.executeFile(path..file,...)
+          if exitCode > 0 then color(8) print(err or "Failed !") color(7) end
           textinput(true)
           return exitCode, err
         end
       end
     end
   end
-  color(9) print("Command not found: " .. command) color(7) return 3, "Command not found"
+  color(9) print("Command not found: " .. command) color(7) return 4, "Command not found"
 end
 
 function term.ecommand(command) --Editor post command

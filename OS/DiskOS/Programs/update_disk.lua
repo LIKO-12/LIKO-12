@@ -12,11 +12,11 @@ local term = require("terminal")
 local eapi = require("Editors")
 
 if source then source = term.resolve(source)..".lk12" else source = eapi.filePath end
-if not fs.exists(source) then color(8) print("File doesn't exists") return 1 end
-if fs.isDirectory(source) then color(8) print("Couldn't load a directory !") return 1 end
+if not fs.exists(source) then return 1, "File doesn't exists" end
+if fs.isDirectory(source) then return 1, "Couldn't load a directory !" end
 
 local saveData = fs.read(source)..";"
-if not saveData:sub(0,5) == "LK12;" then color(8) print("This is not a valid LK12 file !!") return 1 end
+if not saveData:sub(0,5) == "LK12;" then return 1, "This is not a valid LK12 file !!" end
 
 --LK12;OSData;OSName;DataType;Version;Compression;CompressLevel; data"
 --local header = "LK12;OSData;DiskOS;DiskGame;V"..saveVer..";"..sw.."x"..sh..";C:"
@@ -25,44 +25,44 @@ local nextarg = saveData:gmatch("(.-);")
 nextarg() --Skip LK12;
 
 local filetype = nextarg()
-if not filetype then color(8) print("Invalid Data !") 1 return end
+if not filetype then return 1, "Invalid Data !" end
 if filetype ~= "OSData" then
-  color(8) print("Can't update '"..filetype.."' files !") return 1
+  return 1, "Can't update '"..filetype.."' files !"
 end
 
 local osname = nextarg()
-if not osname then color(8) print("Invalid Data !") return 1 end
-if osname ~= "DiskOS" then color(8) print("Can't update files from '"..osname.."' OS !") return 1 end
+if not osname then return 1, "Invalid Data !" end
+if osname ~= "DiskOS" then return 1, "Can't update files from '"..osname.."' OS !" end
 
 local datatype = nextarg()
-if not datatype then color(8) print("Invalid Data !") return 1 end
-if datatype ~= "DiskGame" then color(8) print("Can't update '"..datatype.."' from '"..osname.."' OS !") return 1 end
+if not datatype then return 1, "Invalid Data !" end
+if datatype ~= "DiskGame" then return 1, "Can't update '"..datatype.."' from '"..osname.."' OS !" end
 
 local dataver = nextarg()
-if not dataver then color(8) print("Invalid Data !") return 1 end
+if not dataver then return 1, "Invalid Data !" end
 dataver = tonumber(string.match(dataver,"V(%d+)"))
-if not dataver then color(8) print("Invalid Data !") return 1 end
+if not dataver then return 1, "Invalid Data !" end
 if dataver == _DiskVer then color(8) print("Disk is already up to date !") return 0 end
-if dataver > 1 then color(8) print("Can't update disks newer than V1, provided: V"..dataver) return 1 end
-if dataver < 1 then color(8) print("Can't update disks older than V1, provided: V"..dataver) return 1 end
+if dataver > 1 then return 1, "Can't update disks newer than V1, provided: V"..dataver end
+if dataver < 1 then return 1, "Can't update disks older than V1, provided: V"..dataver end
 
 local sw, sh = screenSize()
 
 local datares = nextarg()
-if not datares then color(8) print("Invalid Data !") return 1 end
+if not datares then return 1, "Invalid Data !" end
 local dataw, datah = string.match(datares,"(%d+)x(%d+)")
-if not (dataw and datah) then color(8) print("Invalid Data !") return 1 end dataw, datah = tonumber(dataw), tonumber(datah)
-if dataw ~= sw or datah ~= sh then color(8) print("This disk is made for GPUs with "..dataw.."x"..datah.." resolution, current GPU is "..sw.."x"..sh) return 1 end
+if not (dataw and datah) then return 1, "Invalid Data !" end dataw, datah = tonumber(dataw), tonumber(datah)
+if dataw ~= sw or datah ~= sh then return 1, "This disk is made for GPUs with "..dataw.."x"..datah.." resolution, current GPU is "..sw.."x"..sh end
 
 local compress = nextarg()
-if not compress then color(8) print("Invalid Data !") return 1 end
+if not compress then return 1, "Invalid Data !" end
 compress = string.match(compress,"C:(.+)")
-if not compress then color(8) print("Invalid Data !") return 1 end
+if not compress then return 1, "Invalid Data !" end
 
 local clevel = nextarg()
-if not clevel then color(8) print("Invalid Data !") return 1 end
+if not clevel then return 1, "Invalid Data !" end
 clevel = string.match(clevel,"CLvl:(.+)")
-if not clevel then color(8) print("Invalid Data !") return 1 end clevel = tonumber(clevel)
+if not clevel then return 1, "Invalid Data !" end clevel = tonumber(clevel)
 
 --local data = saveData:sub(datasum+1,-1)
 local data = ""

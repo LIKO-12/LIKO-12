@@ -78,8 +78,7 @@ if destination == "@clip" then
 elseif png then
   local savesize = savedata:len()
   if savesize > 64*1024 then
-    color(8) print("Save too big to fit in a floppy disk ("..(math.floor(savesize/102.4)*10).." kb/ 64 kb) !")
-    return 1
+    return 1, "Save too big to fit in a floppy disk ("..(math.floor(savesize/102.4)*10).." kb/ 64 kb) !"
   end
   memset(RamUtils.FRAM, savedata)
   fs.write(destination, FDD.exportDisk())

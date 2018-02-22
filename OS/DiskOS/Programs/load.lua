@@ -30,8 +30,8 @@ if not source or source == "-?" then
   )
   return
 end
-if source ~= "@clip" and not fs.exists(source) then color(8) print("File doesn't exists") return 1 end
-if source ~= "@clip" and fs.isDirectory(source) then color(8) print("Couldn't load a directory !") return 1 end
+if source ~= "@clip" and not fs.exists(source) then return 1, "File doesn't exists" end
+if source ~= "@clip" and fs.isDirectory(source) then return 1, "Couldn't load a directory !" end
 
 local saveData = source == "@clip" and clipboard() or fs.read(source)
 
@@ -40,7 +40,7 @@ if png then
   saveData = memget(RamUtils.FRAM,64*1024)
 end
 
-if not saveData:sub(0,5) == "LK12;" then color(8) print("This is not a valid LK12 file !!") return 1 end
+if not saveData:sub(0,5) == "LK12;" then return 1, "This is not a valid LK12 file !!" end
 
 saveData = saveData:gsub("\r\n","\n")
 
@@ -72,7 +72,7 @@ end
 nextarg() --Skip LK12;
 
 local filetype = nextarg()
-if not filetype then color(8) print("Invalid Data !") return 1 end
+if not filetype then return 1, "Invalid Data !" end
 if filetype ~= "OSData" then
   if filetype == "GPUIMG" then --Import it
     if eapi.leditors[eapi.editors.sprite] then
@@ -88,49 +88,49 @@ if filetype ~= "OSData" then
       color(11) print("Imported to tilemap editor successfully") return
     end
   else
-    color(8) print("Can't load '"..filetype.."' files !") return 1
+    return 1, "Can't load '"..filetype.."' files !"
   end
 end
 
 local osname = nextarg()
-if not osname then color(8) print("Invalid Data !") return 1 end
-if osname ~= "DiskOS" then color(8) print("Can't load files from '"..osname.."' OS !") return 1 end
+if not osname then return 1, "Invalid Data !" end
+if osname ~= "DiskOS" then return 1, "Can't load files from '"..osname.."' OS !" end
 
 local datatype = nextarg()
-if not datatype then color(8) print("Invalid Data !") return 1 end
-if datatype ~= "DiskGame" then color(8) print("Can't load '"..datatype.."' from '"..osname.."' OS !") return 1 end
+if not datatype then return 1, "Invalid Data !" end
+if datatype ~= "DiskGame" then return 1, "Can't load '"..datatype.."' from '"..osname.."' OS !" end
 
 local dataver = nextarg()
-if not dataver then color(8) print("Invalid Data !") return 1 end
+if not dataver then return 1, "Invalid Data !" end
 dataver = tonumber(string.match(dataver,"V(%d+)"))
-if not dataver then color(8) print("Invalid Data !") return 1 end
-if dataver > _DiskVer then color(8) print("Can't load disks newer than V".._DiskVer..", provided: V"..dataver) return 1 end
-if dataver < _MinDiskVer then color(8) print("Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk") return 1 end
+if not dataver then return 1, "Invalid Data !" end
+if dataver > _DiskVer then return 1, "Can't load disks newer than V".._DiskVer..", provided: V"..dataver end
+if dataver < _MinDiskVer then color(8) return 1, "Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk" end
 
 local sw, sh = screenSize()
 
 local datares = nextarg()
-if not datares then color(8) print("Invalid Data !") return 1 end
+if not datares then return 1, "Invalid Data !" end
 local dataw, datah = string.match(datares,"(%d+)x(%d+)")
-if not (dataw and datah) then color(8) print("Invalid Data !") return 1 end dataw, datah = tonumber(dataw), tonumber(datah)
-if dataw ~= sw or datah ~= sh then color(8) print("This disk is made for GPUs with "..dataw.."x"..datah.." resolution, current GPU is "..sw.."x"..sh) return 1 end
+if not (dataw and datah) then return 1, "Invalid Data !" end dataw, datah = tonumber(dataw), tonumber(datah)
+if dataw ~= sw or datah ~= sh then return 1, "This disk is made for GPUs with "..dataw.."x"..datah.." resolution, current GPU is "..sw.."x"..sh end
 
 local compress = nextarg()
-if not compress then color(8) print("Invalid Data !") return 1 end
+if not compress then return 1, "Invalid Data !" end
 compress = string.match(compress,"C:(.+)")
-if not compress then color(8) print("Invalid Data !") return 1 end
+if not compress then return 1, "Invalid Data !" end
 
 if compress == "binary" then
   
   local revision = nextarg()
-  if not revision then color(8) print("Invalid Data !") return 1 end
+  if not revision then return 1, "Invalid Data !" end
   revision = string.match(revision,"Rev:(%d+)")
-  if not revision then color(8) print("Invalid Data !") return 1 end
+  if not revision then return 1, "Invalid Data !" end
   
   revision = tonumber(revision)
   
-  if revision < 1 then color(8) print("Can't load binary saves with revision 0 or lower ("..revision..")") return 1 end
-  if revision > 1 then color(8) print("Can't load binary saves with revision 2 or higher") return 1 end
+  if revision < 1 then return 1, "Can't load binary saves with revision 0 or lower ("..revision..")" end
+  if revision > 1 then return 1, "Can't load binary saves with revision 2 or higher" end
   
   local data = saveData:sub(datasum+1,-1)
 
@@ -140,9 +140,9 @@ if compress == "binary" then
 else
   
   local clevel = nextarg()
-  if not clevel then color(8) print("Invalid Data !") return 1 end
+  if not clevel then color(8) print("Invalid Data !") return 1, "Invalid Data !" end
   clevel = string.match(clevel,"CLvl:(.+)")
-  if not clevel then color(8) print("Invalid Data !") return 1 end clevel = tonumber(clevel)
+  if not clevel then color(8) print("Invalid Data !") return 1, "Invalid Data !" end clevel = tonumber(clevel)
 
   local data = saveData:sub(datasum+2,-1)
 
