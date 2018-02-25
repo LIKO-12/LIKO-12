@@ -30,7 +30,7 @@ local function split(str)
 end
 
 local function execute(args)
-  ok = true
+  code = 0
   flag = false
   result = parser:parseLines({args}, 0)
   parsed = result[1]
@@ -38,12 +38,12 @@ local function execute(args)
     if k % 2 ~= 0 then
       if parsed[k] == "command" then
         if flag then
-          if ok then
-            ok = term.execute(unpack(split(parsed[k+1])))
+          if code == 0 then
+            code = term.execute(unpack(split(parsed[k+1])))
           end
           flag = false
         else
-          ok = term.execute(unpack(split(parsed[k+1])))
+          code = term.execute(unpack(split(parsed[k+1])))
         end
       elseif parsed[k] == "chainer" then
       elseif parsed[k] == "conditionalChainer" then
