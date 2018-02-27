@@ -12,7 +12,7 @@ local function contains(t, e)
   return false
 end
 
-local specials = {"&",";"}
+local specials = {"&",";","$"}
 
 function token(stream, state)
   local result = nil
@@ -23,6 +23,12 @@ function token(stream, state)
       result = "chainer"
     elseif char == "&" then
       result = "conditionalChainer"
+    elseif char == "$" then
+      if stream:peek() == "(" then
+      else
+        stream:eatWhile("[^"..table.concat(specials,"").."]")
+        result = "assigner"
+      end
     else
       result = "command"
       stream:eatWhile("[^"..table.concat(specials,"").."]")
