@@ -7,6 +7,10 @@ parser:loadParser("xshell")
 
 local args = {...}
 
+local env = {}
+
+env["PROMPT"] = ">"
+
 local function test(current, flag, result)
   if current ~= nil then
     if flag then
@@ -48,6 +52,10 @@ local function execute(args)
       elseif parsed[k] == "chainer" then
       elseif parsed[k] == "conditionalChainer" then
         flag = true
+      elseif parsed[k] == "assigner" then
+        text = parsed[k+1]:sub(2)
+        splitter = text:find("=")
+        env[text:sub(1,splitter-1)] = text:sub(splitter+1)
       end
     end
   end
@@ -55,7 +63,7 @@ end
 if #args < 1 then
   -- when interactively
   while true do
-    color(7) print("> ",false)
+    color(7) print(env["PROMPT"].." ",false)
     code = input(); print("")
     if not code or code == "exit" then break end
     execute(code)
