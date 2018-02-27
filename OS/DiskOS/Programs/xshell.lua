@@ -1,4 +1,6 @@
---A shell with the ability to chain commands
+--A shell with the ability to chain commands and a custom prompt
+
+local version = "1.0.0"
 
 local term = require("terminal")
 
@@ -60,7 +62,17 @@ local function execute(args)
     end
   end
 end
-if #args < 1 then
+
+if args[1] == "-?" then
+  printUsage(
+    "xshell <text>", "run command in non interactive shell",
+    "xshell", "Enter interactive shell",
+    "xshell -v", "Prints current version of xshell"
+  )
+  return
+elseif args[1] == "-v" then
+  print(version)
+elseif #args < 1 then
   -- when interactively
   while true do
     color(7) print(env["PROMPT"].." ",false)
