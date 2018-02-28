@@ -1,107 +1,229 @@
 --BIOS Setup Screen
 
-local Handled = ... --Handled is passed by BIOS POST
+local Handled, Devkits = ... --Handled is passed by BIOS POST
 
+--Engine parts
+local coreg = require("Engine.coreg")
+
+--Peripherals
 local BIOS = Handled.BIOS
 local GPU = Handled.GPU
 local CPU = Handled.CPU
 local fs = Handled.HDD
 local KB = Handled.Keyboard
-local coreg = require("Engine.coreg")
-local stopWhile = false
-local wipingMode = false
-GPU.clear(0)
+local TC = Handled.TC
 
-GPU.color(7)
-KB.textinput(true)
-local function drawInfo()
-  GPU.clear(0)
-  GPU.printCursor(0,0,0)
-  GPU.print("LIKO-12 Setup ------ Press R to reboot")
-  GPU.print("Press O to reflash DiskOS")
-  GPU.print("Press B to boot from D:")
-  GPU.print("Press W then C or D to wipe a disk")
-  if CPU.isMobile() then
-    GPU.print("Press F to show LIKO-12 folder")
-  else
-    GPU.print("Press F to open LIKO-12 folder")
+--Constants
+local sw,sh = GPU.screenSize()
+local tw,th = GPU.termSize()
+local fw,fh = GPU.fontSize()
+
+local checkboard = GPU.imagedata("LK12;GPUIMG;2x2;7007")
+
+local TMap = {"left","right","up","down","z","x","c"}
+
+--Setup Variables
+local events = {}
+local options = {} --Will be overrided later.
+local selectedOption = 1
+
+--Functions
+local function eventLoop(evlist)
+  for event, a,b,c,d,e,f in CPU.pullEvent do
+    
+    if evlist[event] then
+      if evlist[event](a,b,c,d,e,f) then break end
+    end
+    
   end
 end
-local function attemptBootFromD()
-  local bootchunk, err = fs.load("/boot.lua")
-  if not bootchunk then error(err or "") end
-  local coglob = coreg:sandbox(bootchunk)
-  local co = coroutine.create(bootchunk)
 
-  local HandledAPIS = BIOS.HandledAPIS()
-
-  coroutine.yield("echo",HandledAPIS)
-  coreg:setCoroutine(co,coglob) --Switch to boot.lua coroutine
+local function printBG(text,x,y,tc,bc)
+  local bgw, bgh = #text*(fw+1)+1, fh+2
+  GPU.rect(x-1,y-1,bgw,bgh,false,bc)
+  GPU.color(tc)
+  GPU.print(text,x,y)
 end
-drawInfo()
-while not stopWhile do
-  for event, a, _, c, _, _, _ in CPU.pullEvent do
-    if event == "keypressed" and c == false then
-      if a == "o" then
-        GPU.print("Flashing in 5 seconds...")
-        CPU.sleep(5)
-        love.filesystem.load("BIOS/installer.lua")(Handled,"DiskOS",false)
-        CPU.reboot()
-      end
-      if a == "r" then
-        CPU.reboot()
-      end
-      if a == "w" then
-        wipingMode = true
-        GPU.print("Wiping mode enabled")
-        GPU.flip()
-      end
-      if a == "b" then
-        fs.drive("D")
-        if not fs.exists("/boot.lua") then
-          GPU.print("Could not find boot.lua")
-          CPU.sleep(1)
-          drawInfo()
-        else
-          stopWhile = true
-          break
-        end
-      end
-      if a == "f" then
-        if CPU.isMobile() then
-          drawInfo()
-          GPU.print(CPU.getSaveDirectory())
-        else
-          CPU.openAppData("/")
-        end
-      end
-      if wipingMode then
-        if a == "c" then
-          GPU.print("Wiping C: in 15 seconds!")
-          CPU.sleep(15)
-          GPU.print("Please wait, wiping...")
-          fs.drive("C")
-          fs.delete("/")
-          GPU.print("Wipe done.")
-          GPU.flip()
-          CPU.sleep(1)
-          drawInfo()
-        end
-        if a == "d" and c == false then
-          GPU.print("Wiping D: in 15 seconds!")
-          CPU.sleep(15)
-          GPU.print("Please wait, wiping...")
-          fs.drive("D")
-          fs.delete("/")
-          GPU.print("Wipe done.")
-          CPU.sleep(1)
-          drawInfo()
-        end
-      end
-    end
-    if event == "touchpressed" then
-      KB.textinput(true)
-    end
+
+local function printCenterBG(text,y,tc,bc)
+  local txtw = #text*(fw+1)-1
+  printBG(text,(sw-txtw)/2,y,tc,bc)
+end
+
+local function drawUI()
+  GPU.clear(5) --Dark Gray
+  
+  --Top & Bottom Bar
+  GPU.rect(0,0,sw,8,false,12)
+  GPU.rect(0,sh-8,sw,8,false,12)
+  
+  GPU.patternFill(checkboard)
+  GPU.rect(1,1,sw-2,6,false,1)
+  GPU.rect(1,sh-7,sw-2,6,false,1)
+  GPU.patternFill()
+  
+  printCenterBG("@=- BIOS SETUP V2.0 -=@",1,1,12)
+  
+  --Options
+  for id, option in ipairs(options) do
+    local txty = 10+(id-1)*(fh+3)
+    
+    local selected = (id == selectedOption)
+    
+    --Selection Rect
+    GPU.rect(1,txty-1,sw-2,fh+2,false, selected and 6 or 5)
+    
+    GPU.color(selected and 7 or 6)
+    GPU.print(option[1],2,txty)
   end
 end
-attemptBootFromD()
+
+--Touch to Keyboard
+function events.touchcontrol(down,tid)
+  CPU.triggerEvent(down and "keypressed" or "keyreleased",TMap[tid],TMap[tid],false)
+end
+
+--Keyboard Navigation
+function events.keypressed(key,scancode,isrepeat)
+  if key == "up" then
+    if selectedOption == 1 then return end
+    
+    selectedOption = selectedOption - 1
+    if options[selectedOption][1] == "" then
+      selectedOption = selectedOption - 1
+    end
+    
+    drawUI()
+  elseif key == "down" then
+    if selectedOption == #options then return end
+    
+    selectedOption = selectedOption + 1
+    if options[selectedOption][1] == "" then
+      selectedOption = selectedOption + 1
+    end
+    
+    drawUI()
+  elseif key == "z" or key == "return" then
+    if isrepeat then return end
+    return options[selectedOption][2]()
+  end
+end
+
+local function showAppdata()
+  local ev = {}
+  ev.touchcontrol = events.touchcontrol
+  
+  local function draw()
+    GPU.clear(5) --Dark Gray
+    
+    --Top & Bottom Bar
+    GPU.rect(0,0,sw,8,false,12)
+    GPU.rect(0,sh-8,sw,8,false,12)
+    
+    GPU.patternFill(checkboard)
+    GPU.rect(1,1,sw-2,6,false,1)
+    GPU.rect(1,sh-7,sw-2,6,false,1)
+    GPU.patternFill()
+    
+    printCenterBG("@=- APPData Path -=@",1,1,12)
+    
+    --Appdata path
+    GPU.color(7)
+    GPU.print(CPU.getSaveDirectory().."/",0,sh*0.45-fh/2,sw,"center")
+    
+    printCenterBG("Press the green button to return back",sh*0.66,6,5)
+  end
+  
+  function ev.keypressed(key,scancode,isrepeat)
+    if key == "z" then
+      return true
+    end
+  end
+  
+  draw()
+  eventLoop(ev)
+  drawUI()
+end
+
+--BIOS Options
+options = {
+  {"- Boot from drive D", function()
+    if not fs.exists("D:/boot.lua") then
+      GPU._systemMessage("D:/boot.lua doesn't exist !",3,2,9)
+      return
+    end
+    
+    TC.setInput(false)
+    GPU.clear(0) GPU.color(7)
+    GPU.printCursor(0,0,0)
+    CPU.clearEStack() --Remove any events made.
+    
+    fs.drive("D")
+    local bootchunk, err = fs.load("/boot.lua")
+    if not bootchunk then error(err or "") end --Must be replaced with an error screen.
+    
+    local coglob = coreg:sandbox(bootchunk)
+    local co = coroutine.create(bootchunk)
+    
+    local HandledAPIS = BIOS.HandledAPIS()
+    coroutine.yield("echo",HandledAPIS)
+    coreg:setCoroutine(co,coglob) --Switch to boot.lua coroutine
+    
+    return true
+  end},
+  
+  {"- Open Appdata Folder", function()
+    if CPU.isMobile() then
+      showAppdata()
+    else
+      openAppData("/")
+    end
+  end},
+  
+  {"",function() end}, --Separetor
+  
+  {"- Install DiskOS", function()
+    love.filesystem.load("BIOS/installer.lua")(Handled,"DiskOS",false)
+    drawUI()
+    GPU._systemMessage("Installed Successfully",1,1,12)
+  end},
+  
+  {"- Install PoorOS", function()
+    love.filesystem.load("BIOS/installer.lua")(Handled,"PoorOS",false)
+    drawUI()
+    GPU._systemMessage("Installed Successfully",1,1,12)
+  end},
+  
+  {"",function() end}, --Separetor
+  
+  {"- Wipe Drive C", function()
+    GPU._systemMessage("Wiping Drive C...",100)
+    GPU.flip()
+    fs.delete("C:/")
+    GPU._systemMessage("Wiping Complete",1,1,12)
+    GPU.flip()
+  end},
+  
+  {"- Wipe Drive D", function()
+    GPU._systemMessage("Wiping Drive D...",100)
+    GPU.flip()
+    fs.delete("D:/")
+    GPU._systemMessage("Wiping Complete",1,1,12)
+    GPU.flip()
+  end},
+  
+  {"",function() end}, --Separetor
+  
+  {"- Reboot to DiskOS", function()
+    CPU.reboot()
+  end}
+}
+
+if CPU.isMobile() then
+  options[2][1] = "- Show Appdata Folder"
+end
+
+--Enter the UI
+drawUI()
+TC.setInput(true)
+eventLoop(events)
