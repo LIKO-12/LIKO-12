@@ -214,7 +214,19 @@ options = {
   
   {"",function() end}, --Separetor
   
-  {"- Reboot to DiskOS", function()
+  {"- Toggle DEVMODE", function()
+    if love.filesystem.exists("devmode.txt") then
+      love.filesystem.remove("devmode.txt")
+      GPU._systemMessage("Disabled DEVMODE",1,1,12)
+    else
+      love.filesystem.write("devmode.txt","")
+      GPU._systemMessage("Enabled DEVMODE",1,1,12)
+    end
+  end},
+  
+  {"",function() end}, --Separetor
+  
+  {"- Reboot", function()
     CPU.reboot()
   end}
 }
