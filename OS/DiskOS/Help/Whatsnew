@@ -36,7 +36,7 @@ DiskOS:
 BIOS:
 - The BIOS has been re-written.
 - It runs now the POST screen in a coroutine.
-- A basic BIOS setup screen has been made by Matix on Discord.
+- There's now a BIOS SETUP screen, which can do useful function, like opening appdata, wiping drives, installing DiskOS/PoorOS, booting from drive D and toggle devmode !
 - Most of peripherals functions are now called directly, better performance.
 - Peripherals function arguments verification is now much cleaner.
 - New DiskOS Installer/Updater screen, You can now know why LIKO-12 takes some time for the first boot.
