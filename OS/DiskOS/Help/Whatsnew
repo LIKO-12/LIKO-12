@@ -4,7 +4,6 @@ TODO: Add labels to disk images.
 
 V0.7.0_PRE (WIP):
 ================================
-
 Bugfixes:
 - Removed touch joystick dead range, it will be rewritten in the next update.
 - Removed copyrighted art form the snake demo, got much better art by @gardrek.
