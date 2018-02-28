@@ -1,4 +1,6 @@
---A shell with the ability to chain commands
+--A shell with the ability to chain commands and a custom prompt
+
+local version = "1.0.0"
 
 local term = require("terminal")
 
@@ -6,6 +8,10 @@ local parser = require("Libraries/parser/parser")
 parser:loadParser("xshell")
 
 local args = {...}
+
+local env = {}
+
+env["PROMPT"] = ">"
 
 local function test(current, flag, result)
   if current ~= nil then
@@ -48,14 +54,28 @@ local function execute(args)
       elseif parsed[k] == "chainer" then
       elseif parsed[k] == "conditionalChainer" then
         flag = true
+      elseif parsed[k] == "assigner" then
+        text = parsed[k+1]:sub(2)
+        splitter = text:find("=")
+        env[text:sub(1,splitter-1)] = text:sub(splitter+1)
       end
     end
   end
 end
-if #args < 1 then
+
+if args[1] == "-?" then
+  printUsage(
+    "xshell <text>", "run command in non interactive shell",
+    "xshell", "Enter interactive shell",
+    "xshell -v", "Prints current version of xshell"
+  )
+  return
+elseif args[1] == "-v" then
+  print(version)
+elseif #args < 1 then
   -- when interactively
   while true do
-    color(7) print("> ",false)
+    color(7) print(env["PROMPT"].." ",false)
     code = input(); print("")
     if not code or code == "exit" then break end
     execute(code)
