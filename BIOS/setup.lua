@@ -66,7 +66,7 @@ local function drawUI()
   
   --Options
   for id, option in ipairs(options) do
-    local txty = 10+(id-1)*(fh+3)
+    local txty = 14+(id-1)*(fh+3)
     
     local selected = (id == selectedOption)
     
@@ -172,11 +172,43 @@ options = {
     return true
   end},
   
+  {"- Boot PoorOS", function()
+    TC.setInput(false)
+    GPU.clear(0) GPU.color(7)
+    GPU.printCursor(0,0,0)
+    CPU.clearEStack() --Remove any events made.
+    
+    fs.drive("C")
+    local bootchunk, err = love.filesystem.load("/OS/PoorOS/boot.lua")
+    if not bootchunk then error(err or "") end --Must be replaced with an error screen.
+    
+    local coglob = coreg:sandbox(bootchunk)
+    local co = coroutine.create(bootchunk)
+    
+    local HandledAPIS = BIOS.HandledAPIS()
+    coroutine.yield("echo",HandledAPIS)
+    coreg:setCoroutine(co,coglob) --Switch to boot.lua coroutine
+    
+    return true
+  end},
+  
+  {"",function() end}, --Separetor
+  
   {"- Open Appdata Folder", function()
     if CPU.isMobile() then
       showAppdata()
     else
       openAppData("/")
+    end
+  end},
+  
+  {"- Toggle DEVMODE", function()
+    if love.filesystem.exists("devmode.txt") then
+      love.filesystem.remove("devmode.txt")
+      GPU._systemMessage("Disabled DEVMODE",1,1,12)
+    else
+      love.filesystem.write("devmode.txt","")
+      GPU._systemMessage("Enabled DEVMODE",1,1,12)
     end
   end},
   
@@ -214,25 +246,13 @@ options = {
   
   {"",function() end}, --Separetor
   
-  {"- Toggle DEVMODE", function()
-    if love.filesystem.exists("devmode.txt") then
-      love.filesystem.remove("devmode.txt")
-      GPU._systemMessage("Disabled DEVMODE",1,1,12)
-    else
-      love.filesystem.write("devmode.txt","")
-      GPU._systemMessage("Enabled DEVMODE",1,1,12)
-    end
-  end},
-  
-  {"",function() end}, --Separetor
-  
   {"- Reboot", function()
     CPU.reboot()
   end}
 }
 
 if CPU.isMobile() then
-  options[2][1] = "- Show Appdata Folder"
+  options[4][1] = "- Show Appdata Folder"
 end
 
 --Enter the UI
