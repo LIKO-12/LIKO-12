@@ -1,6 +1,14 @@
 --The BIOS should control the system of LIKO-12 and load the peripherals--
 --For now it's just a simple BIOS to get LIKO-12 working.
 local DevMode = love.filesystem.exists("devmode.txt")
+local BuildMode = love.filesystem.exists("config.json")
+
+local json = require("Engine.JSON")
+
+if BuildMode then
+  DevMode = false
+  BuildMode = json:decode(love.filesystem.read("config.json"))
+end
 
 local _LIKO_Version, _LIKO_Old = _LVer.magor..".".._LVer.minor..".".._LVer.patch..".".._LVer.build
 if love.filesystem.exists(".version") then
@@ -154,9 +162,9 @@ local bconfSandbox = {
 }
 
 --Load and execute the bios config
-local bconfChunk = love.filesystem.load("BIOS/bconf.lua")
+local bconfChunk = love.filesystem.load(BuildMode and "BIOS/bconf_splash.lua" or "BIOS/bconf.lua")
 setfenv(bconfChunk, bconfSandbox)
-bconfChunk()
+bconfChunk(BuildMode)
 
 --Register yielding APIS
 for mountName, yAPI in pairs(yAPIS) do
@@ -185,7 +193,7 @@ for mountName, pType in pairs(Mounted) do
 end
 
 --Bootup the POST chunk
-local POST = love.filesystem.load("/BIOS/post.lua")
+local POST = love.filesystem.load(BuildMode and "/BIOS/splash.lua" or "/BIOS/post.lua")
 local POSTCo = coroutine.create(POST)
 
 coreg:setCoroutine(POSTCo)
