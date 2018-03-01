@@ -1,5 +1,12 @@
 Changelog:
 
+V0.7.1_PRE (1/3/2018):
+================================
+Bugfixes:
+1. Fix `help` program crash.
+2. Fix BIOS Setup `Open Appdata` crash.
+3. Fix LIKO-12 failing to update DiskOS.
+
 V0.7.0_PRE (1/3/2018):
 ================================
 Bugfixes:
