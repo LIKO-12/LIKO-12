@@ -3,71 +3,71 @@ Changelog:
 V0.7.0_PRE (1/3/2018):
 ================================
 Bugfixes:
-- Removed touch joystick dead range, it will be rewritten in the next update.
-- Removed copyrighted art form the snake demo, got much better art by @gardrek.
+1. Removed touch joystick dead range, it will be rewritten in the next update.
+2. Removed copyrighted art form the snake demo, got much better art by @gardrek.
 
 DiskOS:
-- New `piano` and `chiptune` demos.
-- Optimized map and image encoding, `save` is now much faster on Mobile.
-- New `wget` command by @nukeop.
-- The `disk` and `save` commands can now accept the disk template name.
-- You can now move the terminal cursor back and forth.
-- You can now copy and paste in the terminal.
-- New AudioUtils API, used for `note,oc` <-> `frequency` conversion.
-- New HTTP API for easier HTTP requests.
-- The editor shortcuts now uses keynames instead of scancodes.
-- New `patterns` demo.
-- The `bounce` demo now has sound effects.
-- Now prints program errors to the developer console.
-- New `xshell` program by @boredom101 (inspiration101).
-- Now loads lk12/png files when dropped into LIKO-12 windows while the terminal is visible.
-- json library is now available as `JSON` for games (Instead of `json`).
-- New RamUtils.binWriter and binReader.
-- Programs now has exitcodes.
-- New SFX editor and SFX api.
-- The pastebin command now uses the HTTP api.
-- New `play` command, to play musical waves.
-- Updated BARNES Palette in the palletes demo.
-- New program `SheetToClip` for generating alt sheets to add in code.
-- New incremental code search by @trabitboy.
+2. New `piano` and `chiptune` demos.
+3. Optimized map and image encoding, `save` is now much faster on Mobile.
+4. New `wget` command by @nukeop.
+5. The `disk` and `save` commands can now accept the disk template name.
+6. You can now move the terminal cursor back and forth.
+7. You can now copy and paste in the terminal.
+8. New AudioUtils API, used for `note,oc` <-> `frequency` conversion.
+9. New HTTP API for easier HTTP requests.
+10. The editor shortcuts now uses keynames instead of scancodes.
+11. New `patterns` demo.
+12. The `bounce` demo now has sound effects.
+13. Now prints program errors to the developer console.
+14. New `xshell` program by @boredom101 (inspiration101).
+15. Now loads lk12/png files when dropped into LIKO-12 windows while the terminal is visible.
+16. json library is now available as `JSON` for games (Instead of `json`).
+17. New RamUtils.binWriter and binReader.
+18. Programs now has exitcodes.
+19. New SFX editor and SFX api.
+20. The pastebin command now uses the HTTP api.
+21. New `play` command, to play musical waves.
+22. Updated BARNES Palette in the palletes demo.
+23. New program `SheetToClip` for generating alt sheets to add in code.
+24. New incremental code search by @trabitboy.
 
 BIOS:
-- The BIOS has been re-written.
-- It runs now the POST screen in a coroutine.
-- There's now a BIOS SETUP screen, which can do useful function, like opening appdata, wiping drives, installing DiskOS/PoorOS, booting from drive D and toggle devmode !
-- Most of peripherals functions are now called directly, better performance.
-- Peripherals function arguments verification is now much cleaner.
-- New DiskOS Installer/Updater screen, You can now know why LIKO-12 takes some time for the first boot.
-- When updating LIKO-12, only the modified os files are updated.
-- Devmode is now colored with grey in POST screen when using it.
-- Now shows `Lua` instead of `LuaJIT` on Mobile (Because JIT is disabled due to memory leaking issue).
-- Support for easier .love packaging.
+26. The BIOS has been re-written.
+27. It runs now the POST screen in a coroutine.
+28. There's now a BIOS SETUP screen, which can do useful function, like opening appdata, wiping drives, installing DiskOS/PoorOS, booting from drive D and toggle devmode !
+29. Most of peripherals functions are now called directly, better performance.
+30. Peripherals function arguments verification is now much cleaner.
+31. New DiskOS Installer/Updater screen, You can now know why LIKO-12 takes some time for the first boot.
+32. When updating LIKO-12, only the modified os files are updated.
+33. Devmode is now colored with grey in POST screen when using it.
+34. Now shows `Lua` instead of `LuaJIT` on Mobile (Because JIT is disabled due to memory leaking issue).
+35. Support for easier .love packaging.
 
 Engine:
-- New Audio Peripheral.
-- 4 SFX Audio Channels, and 1 Generating Channel.
-- Rewrote the HDD peripheral, the code is much cleaner, and it can now delete, move and copy directories & files recursivly.
-- load() and loadstring() now takes chunkname.
-- New colored variants of the disk (png) template.
-- Typofix in GPU.printBackspace.
-- GPU Matrix stack depth error handling.
-- New post shaders support, check https://github.com/ramilego4game/LIKO-12-Shaders.
-- New pattern filling support.
-- New CPU.openURL.
-- Added LuaSec to the WEB peripheral.
-- New WEB.luasocket and WEB.luasec for passing them to the OS, you can now do networking in DiskOS.
-- New filedropped event.
+36. New Audio Peripheral.
+37. 4 SFX Audio Channels, and 1 Generating Channel.
+38. Rewrote the HDD peripheral, the code is much cleaner, and it can now delete, move and copy directories & files recursivly.
+39. load() and loadstring() now takes chunkname.
+40. New colored variants of the disk (png) template.
+41. Typofix in GPU.printBackspace.
+42. GPU Matrix stack depth error handling.
+43. New post shaders support, check https://github.com/ramilego4game/LIKO-12-Shaders.
+44. New pattern filling support.
+45. New CPU.openURL.
+46. Added LuaSec to the WEB peripheral.
+47. New WEB.luasocket and WEB.luasec for passing them to the OS, you can now do networking in DiskOS.
+48. New filedropped event.
 
 Other:
-- New LIKO-12 Icon.
-- The window icon is now the 16x16 version.
-- New Nightly Builds: https://ramilego4game.github.io/LIKO-12-Nightly/
-- Updated github readme.md
-- New Disks repository: https://ramilego4game.github.io/LIKO-12-Disks
-- Dropped Windows 64-bit support (temporary).
-- Luacheck now runs on LIKO-12 Github Repo.
-- Good amount of updates to the online Documentation.
-- LIKO-12 Got a Discord server dedicated for it.
+49. New LIKO-12 Icon.
+50. The window icon is now the 16x16 version.
+51. New Nightly Builds: https://ramilego4game.github.io/LIKO-12-Nightly/
+52. Updated github readme.md
+53. New Disks repository: https://ramilego4game.github.io/LIKO-12-Disks
+54. Dropped Windows 64-bit support (temporary).
+55. Luacheck now runs on LIKO-12 Github Repo.
+56. Good amount of updates to the online Documentation.
+57. LIKO-12 Got a Discord server dedicated for it.
 
 V0.6.0_PRE_07 (14/12/2017):
 ================================
