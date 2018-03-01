@@ -1,8 +1,6 @@
 Changelog:
 
-TODO: Add labels to disk images.
-
-V0.7.0_PRE (WIP):
+V0.7.0_PRE (1/3/2018):
 ================================
 Bugfixes:
 - Removed touch joystick dead range, it will be rewritten in the next update.
@@ -12,18 +10,18 @@ DiskOS:
 - New `piano` and `chiptune` demos.
 - Optimized map and image encoding, `save` is now much faster on Mobile.
 - New `wget` command by @nukeop.
-- The `disk` and `save` commands can now take the disk template name.
+- The `disk` and `save` commands can now accept the disk template name.
 - You can now move the terminal cursor back and forth.
 - You can now copy and paste in the terminal.
-- New AudioUtils API, used for note,oc <-> frequency conversions.
+- New AudioUtils API, used for `note,oc` <-> `frequency` conversion.
 - New HTTP API for easier HTTP requests.
 - The editor shortcuts now uses keynames instead of scancodes.
 - New `patterns` demo.
 - The `bounce` demo now has sound effects.
 - Now prints program errors to the developer console.
-- New `xshell` program by @yisroel (inspiration101).
-- New loads lk12/png files when dropped to the terminal.
-- json library is now available as `JSON` for games.
+- New `xshell` program by @boredom101 (inspiration101).
+- Now loads lk12/png files when dropped into LIKO-12 windows while the terminal is visible.
+- json library is now available as `JSON` for games (Instead of `json`).
 - New RamUtils.binWriter and binReader.
 - Programs now has exitcodes.
 - New SFX editor and SFX api.
@@ -43,6 +41,7 @@ BIOS:
 - When updating LIKO-12, only the modified os files are updated.
 - Devmode is now colored with grey in POST screen when using it.
 - Now shows `Lua` instead of `LuaJIT` on Mobile (Because JIT is disabled due to memory leaking issue).
+- Support for easier .love packaging.
 
 Engine:
 - New Audio Peripheral.
