@@ -198,7 +198,7 @@ options = {
     if CPU.isMobile() then
       showAppdata()
     else
-      openAppData("/")
+      CPU.openAppData("/")
     end
   end},
   
