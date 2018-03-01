@@ -1,4 +1,9 @@
 --The terminal !--
+local _LIKO_Version, _LIKO_Old = BIOS.getVersion()
+local _LIKO_TAG = _LIKO_Version:sub(-3,-1)
+local _LIKO_DEV = (_LIKO_TAG == "DEV")
+local _LIKO_BUILD = _LIKO_Version:sub(3,-5)
+
 local PATH = "D:/Programs/;C:/Programs/;" --The system PATH variable, used by the terminal to search for programs.
 local curdrive, curdir, curpath = "D", "/", "D:/" --The current active path in the terminal.
 
@@ -52,8 +57,8 @@ function term.init()
   clear() fs.drive("D") --Set the HDD api active drive to D
   SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
   printCursor(0,1,0)
-  color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
-  cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  B08") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
+  color(_LIKO_DEV and 8 or 9) print(_LIKO_TAG,5*8+1,3) flip() sleep(0.125)
+  cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  ".._LIKO_BUILD) editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
 
   flip() sleep(0.0625)
@@ -62,6 +67,11 @@ function term.init()
   elseif fs.exists("C:/autoexec.lua") then
     term.executeFile("C:/autoexec.lua")
   else
+    if _LIKO_Old then
+      color(7) print("\n Updated LIKO-12 Successfully.\n Type ",false)
+      color(6) print("help Whatsnew",false)
+      color(7) print(" for changelog.\n")
+    end
     color(9) print("TYPE HELP FOR HELP")
     flip() sleep(0.0625)
   end
