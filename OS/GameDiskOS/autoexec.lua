@@ -1,6 +1,6 @@
 local term = require("terminal")
 
-print("\nBooting Game...") flip() sleep(1)
+sleep(0.15) print("\nBooting Game...") sleep(0.2)
 
 term.execute("load","game")
 
