@@ -1,14 +1,12 @@
 --The bios configuration file.
 --per ,err = P(peripheral,mountedName,configTable)
 
-local Config = ...
-
 --Create a new cpu mounted as "CPU"
 local CPU, yCPU, CPUKit = PA("CPU")
 
 --Create a new gpu mounted as "GPU"
 local GPU, yGPU, GPUKit = PA("GPU","GPU",{
-  _ColorSet = Config.Palette or { --The P8 Pallete
+  _ColorSet = Build.Palette or { --The P8 Pallete
     {0,0,0,255}, --Black 1
     {28,43,83,255}, --Dark Blue 2
     {127,36,84,255}, --Dark Red 3
@@ -28,7 +26,7 @@ local GPU, yGPU, GPUKit = PA("GPU","GPU",{
   },
   _ClearOnRender = true, --Speeds up rendering, but may cause glitches on some devices !
   CPUKit = CPUKit,
-  Title = Config.Title
+  title = Build.Title
 })
 
 local LIKO_W, LIKO_H = GPUKit._LIKO_W, GPUKit._LIKO_H
