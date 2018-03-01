@@ -58,7 +58,7 @@ likologo:draw(2,7)
 GPU.print("LIKO-12 - Fantasy Computer",15,6)
 GPU.print("Copyright (C) Rami Sabbagh",15,13)
 GPU.printCursor(0,3,0)
-GPU.print("NormBIOS Revision 060-014")
+GPU.print(string.format("NormBIOS Revision %d%d%d-015",_LVer.magor,_LVer.minor,_LVer.patch))
 if DevMode then GPU.color(6) GPU.print("# Devmode Enabled #") GPU.color(7) end
 GPU.print("")
 
@@ -111,7 +111,7 @@ local function InstallOS(update)
 end
 
 if not fs.exists("/boot.lua") then _LIKO_Old = false; InstallOS()
-elseif DevMode then _LIKO_Old = false; InstallOS(true) end
+elseif DevMode or _LVer.tag == "DEV" then InstallOS(true) end
 
 --Update the operating system
 if _LIKO_Old then
