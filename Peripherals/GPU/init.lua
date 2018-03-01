@@ -84,8 +84,12 @@ return function(config) --A function that creates a new GPU peripheral.
       minwidth = _LIKO_W,
       minheight = _LIKO_H
     })
-
-    love.window.setTitle("LIKO-12 ".._LVERSION)
+    
+    if config.title then
+      love.window.setTitle(config.title)
+    else
+      love.window.setTitle("LIKO-12 ".._LVERSION)
+    end
     love.window.setIcon(love.image.newImageData("icon.png"))
   end
   
