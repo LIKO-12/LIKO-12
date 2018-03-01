@@ -1,16 +1,16 @@
 --The BIOS should control the system of LIKO-12 and load the peripherals--
 --For now it's just a simple BIOS to get LIKO-12 working.
 local DevMode = love.filesystem.exists("devmode.txt")
-local BuildMode = love.filesystem.exists("config.json")
+local BuildMode = love.filesystem.exists("build.json")
 
 local json = require("Engine.JSON")
 
 if BuildMode then
   DevMode = false
-  BuildMode = json:decode(love.filesystem.read("config.json"))
+  BuildMode = json:decode(love.filesystem.read("build.json"))
 end
 
-local _LIKO_Version, _LIKO_Old = _LVer.magor..".".._LVer.minor..".".._LVer.patch..".".._LVer.build
+local _LIKO_Version, _LIKO_Old = _LVERSION:sub(2,-1)
 if love.filesystem.exists(".version") then
   _LIKO_Old = love.filesystem.read(".version")
   if _LIKO_Old == _LIKO_Version then
@@ -158,7 +158,8 @@ end
 local bconfSandbox = {
   P=P, PA=PA,
   error=error, assert=assert,
-  _OS = love.system.getOS()
+  _OS = love.system.getOS(),
+  Build = BuildMode
 }
 
 --Load and execute the bios config
