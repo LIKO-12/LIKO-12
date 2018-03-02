@@ -8,6 +8,10 @@ local tips = {
   "You can check the drives usage by typing 'drives'",
   "You can check the available API functions by typing 'apis'",
   "You can store your own programs in D:/Programs/",
+  "You can always look in other people's code to see how to use a feature",
+  "There are included libraries for things ranging from collision detection to object orientation",
+  "If you want code to run on boot up, place it in autoexec.lua in the D: drive.",
+  "Updates overwrite the C: drive, so place your own data in the D: drive",
 }
 
 local seed = tonumber(os.date("%Y%m%d",os.time()))
