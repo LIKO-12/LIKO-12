@@ -71,6 +71,8 @@ function term.init()
       color(7) print("\n Updated LIKO-12 Successfully.\n Type ",false)
       color(6) print("help Whatsnew",false)
       color(7) print(" for changelog.\n")
+    else
+      term.execute("tip")
     end
     color(9) print("TYPE HELP FOR HELP")
     flip() sleep(0.0625)
