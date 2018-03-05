@@ -1,21 +1,56 @@
-MIT License
+ Files changed 1
+Conversation
+Reviewers
+No reviews
+Assignees
+No one assigned
+Labels
+None yet
+Projects
+None yet
+Milestone
+No milestone
+Notifications
 
-Copyright (c) 2017 Rami Sabbagh
+You’re receiving notifications because you authored the thread.
+1 participant
+@epic8009
+Allow edits from maintainers.
+@epic8009
+epic8009 commented 6 minutes ago
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+No description provided.
+@epic8009
+Update LICENSE
+7805f85
+Merge state
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Add more commits by pushing to the patch-4 branch on epic8009/LIKO-12.
+All checks have passed
+1 successful check
+continuous-integration/travis-ci/pr — The Travis CI build passed
+Details
+This branch has no conflicts with the base branch
+Only those with write access to this repository can merge pull requests.
+@epic8009
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Attach files by dragging & dropping,
+
+, or pasting from the clipboard.
+Styling with Markdown is supported
+ProTip! Add comments to specific lines under Files changed.
+
+    © 2018 GitHub, Inc.
+    Terms
+    Privacy
+    Security
+    Status
+    Help
+
+    Contact GitHub
+    API
+    Training
+    Shop
+    Blog
+    About
+
