@@ -34,12 +34,14 @@ local bgquad = bgsprite:quad(0,0,MapVPW,MapVPH) --The quad of the background ima
 
 --=======-- GUI VARIABLES --=======--
 
-local selectedTool = 1
+local selectedTool = 0
 local selectedSlot = 4
 
 local toolbarGrid = {swidth-9,8,9,sheight-8,1,15}
 
 local hotbarTiles = {0,22,23,73,46,47,48,70,71,49}
+
+local mapRect = {0,8,swidth-8,sheight-8}
 
 --=========-- Functions --=========--
 
@@ -100,10 +102,13 @@ function t:drawMap()
   if -mapdy < 0 then bgy = mapdy end
   if -mapdx > MapPW-MapVPW then bgx = MapPW-MapVPW+mapdx end
   if -mapdy > MapPH-MapVPH then bgy = MapPH-MapVPH+mapdy end
-  bgsprite:draw(bgx,bgy+8, 0,1,1, bgquad)
+  
+  clip(bgx,bgy+8,MapVPW,MapVPH)
+  bgsprite:draw(0,0, 0,1,1, bgquad)
+  clip(0,8,swidth-9,sheight-8)
   
   --Draw the map
-  Map:draw(mapdx%8,mapdy%8+8,math.floor(mapdx/8),math.floor(mapdy/8),MapVW,MapVH, 1,1, SpriteMap)
+  Map:draw(mapdx%8-8,mapdy%8,-math.floor(mapdx/8)-1,-math.floor(mapdy/8)-1,MapVW+1,MapVH+1, 1,1, SpriteMap)
   
   --Declip
   clip()
@@ -147,18 +152,69 @@ function t:toolbarmouse(x,y,it,state)
       self:selectTool(cy-11)
     end
   end
+  
+  if state == "released" then tbmouse = false end
+end
+
+local mpmouse = false
+local lastPX, lastPY = 0,0
+local panflag = false
+
+function t:mapmouse(x,y,it,state,dx,dy)
+  if isInRect(x,y,mapRect) then
+    if state == "pressed" and not it then
+      mpmouse = true
+    end
+    
+    if not it and not mpmouse then return end
+    
+    local cx = math.floor((x-mapdx)/8)
+    local cy = math.floor((y-8-mapdy)/8)
+    
+    --Pencil
+    if selectedTool == 0 then
+      Map:cell(cx,cy,hotbarTiles[selectedSlot])
+      self:drawMap()
+    
+    --Pan (Hand)
+    elseif selectedTool == 2 then
+      if state == "pressed" then
+        panflag = true
+      elseif state == "moved" and panflag then
+        local pdx, pdy = dx+lastPX, dy+lastPY
+        
+        lastPX, lastPY = pdx-math.floor(pdx), pdy-math.floor(pdy)
+        
+        pdx, pdy = math.floor(pdx), math.floor(pdy)
+        
+        mapdx, mapdy = mapdx+dx, mapdy+dy
+        
+        
+        cprint(state,mapdx,mapdy,dx,dy)
+        
+        self:drawMap()
+      elseif state == "released" then
+        panflag = false
+      end
+    end
+  end
+  
+  if state == "released" then mpmouse = false end
 end
 
 function t:mousepressed(x,y,b,it)
-  self:toolbarmouse(x,y,it,"released")
+  self:toolbarmouse(x,y,it,"pressed")
+  self:mapmouse(x,y,it,"pressed")
 end
 
 function t:mousemoved(x,y,dx,dy,it)
-  self:toolbarmouse(x,y,it,"moved")
+  self:toolbarmouse(x,y,it,"moved",dx,dy)
+  self:mapmouse(x,y,it,"moved",dx,dy)
 end
 
 function t:mousereleased(x,y,b,it)
   self:toolbarmouse(x,y,it,"released")
+  self:mapmouse(x,y,it,"released")
 end
 
 function t:export()
