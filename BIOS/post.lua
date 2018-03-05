@@ -22,7 +22,8 @@ local sw,sh = GPU.screenSize()
 
 local enterSetup = false --Delete/Escape has been pressed, enter setup.
 
-local function wait(timeout) --Wait for 'delete' or 'escape' keypress.
+local function wait(timeout, required) --Wait for 'delete' or 'escape' keypress.
+  if DevMode and not required then return end
   local timer = timeout
   local setupkey = Mobile and "escape" or "delete"
   for event, a,b,c,d,e,f in CPU.pullEvent do
@@ -96,7 +97,7 @@ for letter,drive in pairs(fs.drives()) do
 end
 
 GPU.flip()
-wait(1.5)
+wait(DevMode and 0.5 or 1.5,true)
 
 GPU.clear()
 GPU.printCursor(0,0,0)
