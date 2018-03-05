@@ -1,4 +1,9 @@
 --The terminal !--
+local _LIKO_Version, _LIKO_Old = BIOS.getVersion()
+local _LIKO_TAG = _LIKO_Version:sub(-3,-1)
+local _LIKO_DEV = (_LIKO_TAG == "DEV")
+local _LIKO_BUILD = _LIKO_Version:sub(3,-5)
+
 local PATH = "D:/Programs/;C:/Programs/;" --The system PATH variable, used by the terminal to search for programs.
 local curdrive, curdir, curpath = "D", "/", "D:/" --The current active path in the terminal.
 
@@ -52,8 +57,8 @@ function term.init()
   clear() fs.drive("D") --Set the HDD api active drive to D
   SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
   printCursor(0,1,0)
-  color(8) print("DEV",5*8+1,3) flip() sleep(0.125)
-  cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  B08") editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
+  color(_LIKO_DEV and 8 or 9) print(_LIKO_TAG,5*8+1,3) flip() sleep(0.125)
+  cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  ".._LIKO_BUILD) editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
 
   flip() sleep(0.0625)
@@ -62,6 +67,13 @@ function term.init()
   elseif fs.exists("C:/autoexec.lua") then
     term.executeFile("C:/autoexec.lua")
   else
+    if _LIKO_Old then
+      color(7) print("\n Updated LIKO-12 Successfully.\n Type ",false)
+      color(6) print("help Whatsnew",false)
+      color(7) print(" for changelog.\n")
+    else
+      term.execute("tip")
+    end
     color(9) print("TYPE HELP FOR HELP")
     flip() sleep(0.0625)
   end
@@ -170,40 +182,53 @@ end
 
 function term.executeFile(file,...)
   local chunk, err = fs.load(file)
-  if not chunk then color(8) print("\nL-ERR:"..tostring(err)) color(7) return false, tostring(err) end
-  local ok, err = pcall(chunk,...)
+  if not chunk then color(7) return 3, "\nL-ERR:"..tostring(err) end
+  local ok, err, e = pcall(chunk,...)
   color(7) pal() palt() cam() clip() patternFill()
-  if not ok then color(8) print("\nERR: "..tostring(err)) color(7) cprint("Program Error:",err) return false, tostring(err) end
+  if not ok then color(7) cprint("Program Error:",err) return 2, "\nERR: "..tostring(err) end
   if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":/" end
-  return ok
+  return tonumber(err) or 0, e
 end
 
+--[[
+Exit codes:
+-----------
+0 -> Success
+1 -> Failure
+2 -> Execution Error
+3 -> Compilation Error
+4 -> Command not found 404
+]]
+
 function term.execute(command,...)
-  if not command then return false, "No command" end
+  if not command then return 4, "No command" end
   if fs.exists(curpath..command..".lua") then
-    local ok = term.executeFile(curpath..command..".lua",...)
-    return ok
+    local exitCode, err = term.executeFile(curpath..command..".lua",...)
+    if exitCode > 0 then color(8) print(err or "Failed !") color(7) end
+    textinput(true)
+    return exitCode, err
   end
   for path in nextPath(PATH) do
     if fs.exists(path) then
       local files = fs.getDirectoryItems(path)
       for _,file in ipairs(files) do
         if file == command..".lua" then
-          local ok = term.executeFile(path..file,...)
+          local exitCode, err = term.executeFile(path..file,...)
+          if exitCode > 0 then color(8) print(err or "Failed !") color(7) end
           textinput(true)
-          return ok
+          return exitCode, err
         end
       end
     end
   end
-  color(9) print("Command not found: " .. command) color(7) return false, "Command not found"
+  color(9) print("Command not found: " .. command) color(7) return 4, "Command not found"
 end
 
 function term.ecommand(command) --Editor post command
 	ecommand = command
 end
 
---abc
+local function splitFilePath(path) return path:match("(.-)([^\\/]-%.?([^%.\\/]*))$") end --A function to split path to path, name, extension.
 
 function term.loop() --Enter the while loop of the terminal
   cursor("none")
@@ -212,8 +237,26 @@ function term.loop() --Enter the while loop of the terminal
   buffer, inputPos = "", 1
   for event, a,b,c,d,e,f in pullEvent do
     checkCursor() --Which also draws the cursor blink
-
-    if event == "textinput" then
+    
+    if event == "filedropped" then
+      local p, n, e = splitFilePath(a)
+      if e == "png" or e == "lk12" then
+        if b then
+          fs.write("C:/.temp/"..n,b)
+          blink = false; checkCursor()
+          print("load "..n)
+          term.execute("load","C:/.temp/"..n)
+          term.prompt()
+          blink = true; checkCursor()
+        else
+          blink = false; checkCursor()
+          print("load "..n)
+          color(8) print("Failed to read file.") color(7)
+          term.prompt()
+          blink = true; checkCursor()
+        end
+      end
+    elseif event == "textinput" then
       print(a..buffer:sub(inputPos,-1),false)
       for i=inputPos,buffer:len() do printBackspace(-1) end
       buffer = buffer:sub(1,inputPos-1)..a..buffer:sub(inputPos,-1)

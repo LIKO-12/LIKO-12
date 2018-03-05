@@ -72,7 +72,7 @@ return function(parent)
       pow=math.pow,
       rad=math.rad,
       random=love.math.random, --Replaced with love.math versions
-      randomseed=love.math.setRandomSeed,
+      randomseed=function(s) if s then love.math.setRandomSeed(s) else return love.math.getRandomSeed() end end,
       sin=math.sin,
       sinh=math.sinh,
       sqrt=math.sqrt,

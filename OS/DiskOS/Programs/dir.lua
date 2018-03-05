@@ -10,4 +10,4 @@ if select(1,...) == "-?" then
 end
 
 local term = require("terminal") --Require the terminal api.
-term.execute("ls",...)
+return term.execute("ls",...)

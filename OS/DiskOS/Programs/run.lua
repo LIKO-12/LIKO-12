@@ -11,10 +11,12 @@ end
 local term = require("terminal")
 local eapi = require("Editors")
 local mapobj = require("Libraries/map")
+local sfxobj = require("Libraries/sfx")
 
-local sprid = eapi.editors.sprite --"spritesheet"
-local codeid = eapi.editors.code --"luacode"
-local tileid = eapi.editors.tile --"tilemap"
+local sprid = eapi.editors.sprite
+local codeid = eapi.editors.code
+local tileid = eapi.editors.tile
+local sfxid = eapi.editors.sfx
 
 local swidth, sheight = screenSize()
 
@@ -31,6 +33,16 @@ local mapW, mapH = swidth*0.75, sheight
 local TileMap = mapobj(mapW,mapH,SpriteMap)
 TileMap:import(mapData)
 
+--Load the sfx
+local sfxData = eapi.leditors[sfxid]:export():gsub("\n","")
+local SFXList, SFXListPos = {}, 0
+for sfxstr in sfxData:gmatch("(.-);") do
+  local s = sfxobj(32)
+  s:import(sfxstr..",")
+  SFXList[SFXListPos] = s
+  SFXListPos = SFXListPos + 1
+end
+
 --Load the code
 local luacode = eapi.leditors[codeid]:export()
 luacode = luacode .. "\n__".."_autoEventLoop()" --Because trible _ are not allowed in LIKO-12
@@ -39,8 +51,7 @@ if not diskchunk then
   local err = tostring(err)
   local pos = string.find(err,":")
   err = err:sub(pos+1,-1)
-  color(8) print("Compile ERR: "..err )
-  return
+  return 1, "Compile ERR: "..err
 end
 
 --Create the sandboxed global variables
@@ -115,6 +126,8 @@ glob.SpriteMap = SpriteMap
 glob.SheetFlagsData = FlagsData
 glob.TileMap = TileMap
 glob.MapObj = mapobj
+glob.SFXS = SFXList
+glob.SfxObj = sfxobj
 
 local json = require("Libraries/JSON")
 
@@ -245,7 +258,7 @@ addLibrary("C:/Libraries/lume.lua","lume")
 addLibrary("C:/Libraries/middleclass.lua","class")
 addLibrary("C:/Libraries/bump.lua","bump")
 addLibrary("C:/Libraries/likocam.lua","likocam")
-addLibrary("C:/Libraries/JSON.lua","json")
+addLibrary("C:/Libraries/JSON.lua","JSON")
 
 local helpersloader, err = fs.load("C:/Libraries/diskHelpers.lua")
 if not helpersloader then error(err) end
@@ -271,6 +284,7 @@ local function printErr(msg)
 end
 
 local lastArgs = {...}
+local crashed = false
 while true do
   if coroutine.status(co) == "dead" then break end
   
@@ -279,7 +293,7 @@ while true do
     local err = tostring(args[2])
     local pos = string.find(err,":") or 0
     pal() palt() cam() clip() colorPalette()
-    err = err:sub(pos+1,-1); printErr("ERR: "..err ); break
+    crashed = "ERR: "..err; break
   end
   if args[2] then
     if args[2] == "RUN:exit" then break end
@@ -309,3 +323,5 @@ print("")
 
 TC.setInput(false)
 Audio.stop()
+
+if crashed then return 1, crashed end

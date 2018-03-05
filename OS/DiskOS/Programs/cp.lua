@@ -13,7 +13,7 @@ local destination = term.resolve(args[2])
 
 color(8)
 
-if not fs.exists(source) then print("Source doesn't exists !") return end
+if not fs.exists(source) then return 1, "Source doesn't exists !" end
 
 --Create destination folders
 --Parse directories in the destination
@@ -28,12 +28,12 @@ end
 --Create the missing directories
 for k, dir in ipairs(dirs) do
   if (not fs.exists(dir)) and not (fs.isFile(source) and k == #dirs) then
-    if not pcall(fs.newDirectory,dir) then print("Failed to create the destination folder") return end
+    if not pcall(fs.newDirectory,dir) then return 1, "Failed to create the destination folder" end
   elseif fs.exists(dir) and fs.isFile(dir) then
     if k < #dirs then
-      print("Can't copy inside a file !") return
+      return 1, "Can't copy inside a file !"
     elseif fs.isDirectory(source) then
-      print("Can't copy a directory into a file") return
+      return 1, "Can't copy a directory into a file"
     end
   end
 end
@@ -43,5 +43,5 @@ if fs.isFile(source) then
   fs.write(destination,fs.read(source))
   color(11) print("Copied file successfully")
 else
-  print("Copying directories is not supported yet")
+  return 1, "Copying directories is not supported yet"
 end
