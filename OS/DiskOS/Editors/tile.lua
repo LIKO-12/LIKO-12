@@ -52,10 +52,10 @@ function t:drawMap()
   bgsprite:draw(0,8, 0,1,1, bgquad)
   pal() --Reset blue to blue.
   local bgx, bgy = 0,0
-  if mapdx < 0 then bgx = -mapdx end
-  if mapdy < 0 then bgy = -mapdy end
-  if mapdx > MapPW-MapVPW then bgx = MapPW-MapVPW-mapdx end
-  if mapdy > MapPH-MapVPH then bgy = MapPH-MapVPH-mapdy end
+  if -mapdx < 0 then bgx = mapdx end
+  if -mapdy < 0 then bgy = mapdy end
+  if -mapdx > MapPW-MapVPW then bgx = MapPW-MapVPW+mapdx end
+  if -mapdy > MapPH-MapVPH then bgy = MapPH-MapVPH+mapdy end
   bgsprite:draw(bgx,bgy+8, 0,1,1, bgquad)
   
   --Draw the map
