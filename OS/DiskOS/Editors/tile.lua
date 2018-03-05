@@ -19,7 +19,7 @@ local MapPW, MapPH = MapW*8, MapH*8 --The map size in pixels.
 
 local MapVW, MapVH = swidth/8, sheight/8 --The visible map space in cells.
 
-local MapVPW, mapVPH = MapVW*8, MapVH*8 --The visible map space in pixels.
+local MapVPW, MapVPH = MapVW*8, MapVH*8 --The visible map space in pixels.
 
 local Map = MapObj(MapW, MapH)
 
@@ -35,7 +35,7 @@ function t:entered()
 end
 
 function t:redraw()
-  
+  self:drawMap()
 end
 
 function t:drawToolbar()
@@ -47,6 +47,7 @@ function t:drawMap()
   clip(0,8,swidth-8,sheight-8)
   
   --Draw the background.
+  rect(0,8,swidth-8,sheight-8, false,0)
   pal(1,2) --Change blue to red.
   bgsprite:draw(0,8, 0,1,1, bgquad)
   pal() --Reset blue to blue.
@@ -58,6 +59,7 @@ function t:drawMap()
   bgsprite:draw(bgx,bgy+8, 0,1,1, bgquad)
   
   --Draw the map
+  Map:draw(mapdx%8,mapdy%8+8,math.floor(mapdx/8),math.floor(mapdy/8),MapVW,MapVH, 1,1, SpriteMap)
   
   --Declip
   clip()
