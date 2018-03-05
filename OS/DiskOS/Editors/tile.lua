@@ -35,10 +35,11 @@ local bgquad = bgsprite:quad(0,0,MapVPW,MapVPH) --The quad of the background ima
 --=======-- GUI VARIABLES --=======--
 
 local selectedTool = 1
+local selectedSlot = 4
+
+local toolbarGrid = {swidth-9,8,9,sheight-8,1,15}
 
 local hotbarTiles = {0,22,23,73,46,47,48,70,71,49}
-
-local selectedSlot = 4
 
 --=========-- Functions --=========--
 
@@ -50,12 +51,13 @@ end
 
 function t:redraw()
   self:drawMap()
-  self:drawToolbar()
 end
 
 function t:drawToolbar()
+  eapi:drawTopBar()
+  
   --Draw the background
-  rect(swidth-9,8, 8,sheight-8, false, 0)
+  rect(swidth-9,8, 9,sheight-8, false, 0)
   
   --Draw the hotbar tiles
   for i=0,9 do
@@ -68,11 +70,6 @@ function t:drawToolbar()
     end
   end
   
-  --Draw hotbar selection box
-  rect(swidth-9,8*selectedSlot-1, 10,10, true, 1)
-  rect(swidth-11,8*selectedSlot-3, 12,14, true, 1)
-  rect(swidth-10,8*selectedSlot-2, 11,12, true, 7)
-  
   --Draw the tools
   rect(swidth-9,sheight-5*8,8,5*8, false, 9)
   for i=0,4 do
@@ -82,6 +79,11 @@ function t:drawToolbar()
     
     eapi.editorsheet:draw(sprid,swidth-8,sheight-5*8+i*8)
   end
+  
+  --Draw hotbar selection box
+  rect(swidth-9,8*selectedSlot-1, 10,10, true, 1)
+  rect(swidth-11,8*selectedSlot-3, 12,14, true, 1)
+  rect(swidth-10,8*selectedSlot-2, 11,12, true, 7)
 end
 
 function t:drawMap()
@@ -105,6 +107,58 @@ function t:drawMap()
   
   --Declip
   clip()
+  
+  --Draw the toolbar
+  self:drawToolbar()
+end
+
+function t:selectTool(id)
+  selectedTool = id
+  self:drawToolbar()
+end
+
+function t:selectSlot(id)
+  selectedSlot = id
+  self:drawMap()
+end
+
+function t:nextSlot()
+  self:selectSlot(id%10+1)
+end
+
+function t:prevSlot()
+  self:selectSlot((id+8)%10+1)
+end
+
+local tbmouse = false
+
+function t:toolbarmouse(x,y,it,state)
+  local cx, cy = whereInGrid(x,y,toolbarGrid)
+  if cx then
+    if state == "pressed" and not it then
+      tbmouse = true
+    end
+    
+    if not it and not tbmouse then return end
+    
+    if cy < 11 then --Tile slots
+      self:selectSlot(cy)
+    else --Tool
+      self:selectTool(cy-11)
+    end
+  end
+end
+
+function t:mousepressed(x,y,b,it)
+  self:toolbarmouse(x,y,it,"released")
+end
+
+function t:mousemoved(x,y,dx,dy,it)
+  self:toolbarmouse(x,y,it,"moved")
+end
+
+function t:mousereleased(x,y,b,it)
+  self:toolbarmouse(x,y,it,"released")
 end
 
 function t:export()
