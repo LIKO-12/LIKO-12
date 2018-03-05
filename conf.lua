@@ -1,13 +1,23 @@
 --Nothing should be changed with this config expect: window size, enabling a module.
-_LVERSION = "V0.6.0_DEV_08"
+
+--LIKO-12 Version
 _LVer = {
 	magor = 0,
-	minor = 6,
-	patch = 0,
-	build = "8_DEV", --"8_DEV"
+	minor = 7,
+	patch = 2,
+	tag = "DEV", --"DEV"
 }
+_LVERSION = string.format("V%d.%d.%d_%s",_LVer.magor,_LVer.minor,_LVer.patch,_LVer.tag)
+
+--BuildConfig
+local build = {}
+if love.filesystem.exists("build.json") then
+  build = love.filesystem.read("build.json")
+  build = require("Engine.JSON"):decode(build)
+end
+
 function love.conf(t)
-    t.identity = "liko12"               -- The name of the save directory (string)
+    t.identity = build.Appdata or "liko12"-- The name of the save directory (string)
     t.version = "0.10.2"                -- The LÖVE version this game was made for (string)
     t.console = false                   -- Attach a console (boolean, Windows only)
     t.accelerometerjoystick = false     -- Enable the accelerometer on iOS and Android by exposing it as a Joystick (boolean)

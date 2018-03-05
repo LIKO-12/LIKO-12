@@ -22,17 +22,17 @@ if type(giveApi) == "boolean" then --Requesting HELP api
   local api = {}
 
   function api.setHelpPATH(p)
-    helpPath = p
+    helpPATH = p
   end
 
   function api.getHelpPath()
-    return helpPath
+    return helpPATH
   end
 
   return api
 end
 
-helpPath = require("Programs/help",true).getHelpPath() --A smart way to keep the helpPath
+helpPATH = require("Programs/help",true).getHelpPath() --A smart way to keep the helpPath
 
 palt(0,false) --Make black opaque
 
@@ -46,7 +46,7 @@ for path in nextPath() do
   end
 end
 
-if not doc then color(8) print("Help file not found '"..topic.."' !") return end
+if not doc then return 1, "Help file not found '"..topic.."' !" end
 
 -- Waits for any input (keyboard or mouse) to continue
 -- Returns true if "q" was pressed, to quit

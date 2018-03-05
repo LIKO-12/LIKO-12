@@ -15,8 +15,8 @@ local dir = select(1,...)
 
 if dir then
 	local newpath, exists = term.resolve(dir)
-	if not exists then color(9) print("Folder doesn't exists !") return end
-	if not fs.isDirectory(newpath) then color(9) print("It should be a folder, provided a file !") return end
+	if not exists then return 1, "Folder doesn't exists !" end
+	if not fs.isDirectory(newpath) then return 1, "It should be a folder, provided a file !" end
 	path = newpath.."/"
 end
 

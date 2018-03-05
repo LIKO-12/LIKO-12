@@ -6,8 +6,8 @@ if #args < 2 or args[1] == "-?" then
   printUsage(
     "copy <source> <destination>","Copies a file creating any missing directory in the destination path"
   )
-  return
+  return 0
 end
 
 local term = require("terminal")
-term.execute("cp",...)
+return term.execute("cp",...)

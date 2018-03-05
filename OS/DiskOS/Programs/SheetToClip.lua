@@ -11,10 +11,8 @@ local term = require("terminal")
 
 source = term.resolve(source..".lk12")
 
-color(8)
-
-if not fs.exists(source) then print("Sheet doesn't exist !") return end
-if not fs.isFile(source) then print("Sheet can't be a folder !") return end
+if not fs.exists(source) then return 1, "Sheet doesn't exist !" end
+if not fs.isFile(source) then return 1, "Sheet can't be a folder !" end
 
 color(12)
 

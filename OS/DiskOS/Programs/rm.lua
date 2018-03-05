@@ -30,6 +30,6 @@ end
 
 tar = term.resolve(tar)
 
-if not fs.exists(tar) then color(8) print("Path doesn't exists") return end
+if not fs.exists(tar) then return 1, "Path doesn't exists" end
 
-index(tar)
+index(tar.."/")

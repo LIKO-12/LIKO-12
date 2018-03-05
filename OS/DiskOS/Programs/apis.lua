@@ -52,19 +52,19 @@ local function sprint(text)
 end
 
 if peri then
- if not perlist[peri] then
-   color(8) print("Peripheral '"..peri.."' doesn't exists") return
- end
- color(11) if sprint(peri..":") then return end color(7)
- for name, f in pairs(perlist[peri]) do
-   if sprint(name) then return end
- end
-else
- for per, funcs in pairs(perlist) do
-   color(11) print("---"..per.."---") color(7)
-   for name,f in pairs(funcs) do
-     if sprint(name) then return end
-   end
-   print("") print("")
- end
-end
+  if not perlist[peri] then
+    return 1, "Peripheral '"..peri.."' doesn't exists"
+  end
+  color(11) if sprint(peri..":") then return end color(7)
+    for name, f in pairs(perlist[peri]) do
+      if sprint(name) then return end
+    end
+  else
+    for per, funcs in pairs(perlist) do
+      color(11) print("---"..per.."---") color(7)
+      for name,f in pairs(funcs) do
+        if sprint(name) then return end
+      end
+      print("") print("")
+    end
+  end
