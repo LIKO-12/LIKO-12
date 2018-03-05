@@ -10,14 +10,20 @@ end
 
 local tips = split(fs.read("C:/Help/Tips"))
 
-local seed = tonumber(os.date("%Y%m%d",os.time()))
+local config = ConfigUtils.get("TipOfTheDay")
 
-local oldseed = math.randomseed()
+config.pos = config.pos or 0
+config.date = config.date or ""
 
-math.randomseed(seed)
-local tipid = math.random(1,#tips)
-math.randomseed(oldseed)
+if config.date ~= os.date("%Y%m%d",os.time()) then
+  
+  config.date = os.date("%Y%m%d",os.time())
+  config.pos = (config.pos % #tips) + 1
+  
+  ConfigUtils.saveConfig()
+  
+end
 
-local tip = tips[tipid]
+local tip = tips[config.pos]
 color(7) print("\nTip of the day:")
 color(6) print(" "..tip.."\n")
