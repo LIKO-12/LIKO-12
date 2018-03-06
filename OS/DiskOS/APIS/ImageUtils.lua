@@ -6,7 +6,7 @@
 local ImageUtils = {}
 
 --A queued fill algorithm.
-function ImageUtils.queuedFill(img,sx,sy,rcol)
+function ImageUtils.queuedFill(img,sx,sy,rcol,minx,miny,maxx,maxy)
   
   local get = img.getPixel
   local set = img.setPixel
@@ -18,7 +18,7 @@ function ImageUtils.queuedFill(img,sx,sy,rcol)
   --Queue, QueueSize, QueuePosition
   local q, qs, qp = {}, 0,0
   
-  set(img,sx,sy,rcol,minx,miny,maxx,maxy)
+  set(img,sx,sy,rcol)
   qs = qs + 1
   q[qs] = {sx,sy}
   
