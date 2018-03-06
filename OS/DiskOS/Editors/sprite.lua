@@ -123,7 +123,9 @@ local tools = {
     local data = self.SpriteMap:data()
     local qx,qy = self.SpriteMap:rect(sprsid)
     local col = (b == 2) and colsR or colsL
-    ImageUtils.queuedFill(data, qx+cx-1,qy+cy-1, col, qx,qy, qx+size-1,qy+size-1)
+    local size = 8*zscale - 1
+    
+    ImageUtils.queuedFill(data, qx+cx-1,qy+cy-1, col, qx,qy, qx+size,qy+size)
     self.SpriteMap.img = data:image()
   end,
 
