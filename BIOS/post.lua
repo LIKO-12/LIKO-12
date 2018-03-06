@@ -59,7 +59,7 @@ likologo:draw(2,7)
 GPU.print("LIKO-12 - Fantasy Computer",15,6)
 GPU.print("Copyright (C) Rami Sabbagh",15,13)
 GPU.printCursor(0,3,0)
-GPU.print(string.format("NormBIOS Revision %d%d%d-015",_LVer.magor,_LVer.minor,_LVer.patch))
+GPU.print(string.format("NormBIOS Revision %d%d%d-016",_LVer.magor,_LVer.minor,_LVer.patch))
 if DevMode then GPU.color(6) GPU.print("# Devmode Enabled #") GPU.color(7) end
 GPU.print("")
 
