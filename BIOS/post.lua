@@ -22,7 +22,8 @@ local sw,sh = GPU.screenSize()
 
 local enterSetup = false --Delete/Escape has been pressed, enter setup.
 
-local function wait(timeout) --Wait for 'delete' or 'escape' keypress.
+local function wait(timeout, required) --Wait for 'delete' or 'escape' keypress.
+  if DevMode and not required then return end
   local timer = timeout
   local setupkey = Mobile and "escape" or "delete"
   for event, a,b,c,d,e,f in CPU.pullEvent do
@@ -58,7 +59,7 @@ likologo:draw(2,7)
 GPU.print("LIKO-12 - Fantasy Computer",15,6)
 GPU.print("Copyright (C) Rami Sabbagh",15,13)
 GPU.printCursor(0,3,0)
-GPU.print(string.format("NormBIOS Revision %d%d%d-015",_LVer.magor,_LVer.minor,_LVer.patch))
+GPU.print(string.format("NormBIOS Revision %d%d%d-016",_LVer.magor,_LVer.minor,_LVer.patch))
 if DevMode then GPU.color(6) GPU.print("# Devmode Enabled #") GPU.color(7) end
 GPU.print("")
 
@@ -96,7 +97,7 @@ for letter,drive in pairs(fs.drives()) do
 end
 
 GPU.flip()
-wait(1.5)
+wait(DevMode and 0.5 or 1.5,true)
 
 GPU.clear()
 GPU.printCursor(0,0,0)
