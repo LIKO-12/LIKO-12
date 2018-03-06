@@ -30,29 +30,44 @@ local Map = MapObj(MapW, MapH)
 local mapdx, mapdy = 0,0 --Map drawing offsets.
 
 local bgsprite = eapi.editorsheet:extract(59):image() --The background image sprite.
-local bgquad = bgsprite:quad(0,0,MapVPW,MapVPH) --The quad of the background image.
+local bgquad = bgsprite:quad(0,0,MapVPW,MapVPH) --The quad of the background image
+
+local isquad = bgsprite:quad(0,0,8*8,8)
+
+local SpritesMap = MapObj(22,12)
+
+SpritesMap:map(function(x,y)
+  local tid = y*22+x
+  if tid > 255 then tid = 0 end
+  return tid
+end)
 
 --=======-- GUI VARIABLES --=======--
 
 local selectedTool = 0
-local selectedSlot = 4
+local selectedSlot = 2
 
 local toolbarGrid = {swidth-9,8,9,sheight-8,1,15}
 
-local hotbarTiles = {0,22,23,73,46,47,48,70,71,49}
+local hotbarTiles = {0,0,0,0,0,0,0,0,0,0}
 
 local mapRect = {0,8,swidth-8,sheight-8}
+
+local spritesGrid = {3,11,22*8,12*8,22,12}
 
 --=========-- Functions --=========--
 
 function t:entered()
   SpriteMap = eapi.leditors[eapi.editors.sprite].SpriteMap
-  eapi:drawTopBar()
   self:redraw()
 end
 
 function t:redraw()
-  self:drawMap()
+  if selectedTool == 4 then
+    self:drawMenu()
+  else
+    self:drawMap()
+  end
 end
 
 function t:drawToolbar()
@@ -100,21 +115,53 @@ function t:drawMap()
   local bgx, bgy = 0,0
   if -mapdx < 0 then bgx = mapdx end
   if -mapdy < 0 then bgy = mapdy end
-  if -mapdx > MapPW-MapVPW then bgx = MapPW-MapVPW+mapdx end
-  if -mapdy > MapPH-MapVPH then bgy = MapPH-MapVPH+mapdy end
+  if -mapdx > MapPW-MapVPW then bgx = MapPW-MapVPW+mapdx-1 end
+  if -mapdy > MapPH-MapVPH then bgy = MapPH-MapVPH+mapdy-1 end
   
   clip(bgx,bgy+8,MapVPW,MapVPH)
   bgsprite:draw(0,0, 0,1,1, bgquad)
   clip(0,8,swidth-9,sheight-8)
   
   --Draw the map
+  palt(0,false)
   Map:draw(mapdx%8-8,mapdy%8,-math.floor(mapdx/8)-1,-math.floor(mapdy/8)-1,MapVW+1,MapVH+1, 1,1, SpriteMap)
+  palt()
   
   --Declip
   clip()
   
   --Draw the toolbar
   self:drawToolbar()
+end
+
+function t:drawMenu()
+  --Clear the screen
+  rect(0,8,swidth,sheight-8, false, 5)
+  
+  --Draw the toolbar
+  self:drawToolbar()
+  
+  --Draw the sprites
+  local sdx, sdy = 1,9
+  rect(sdx,sdy,22*8+4,12*8+4,true,7)
+  rect(sdx+1,sdy+1,22*8+2,12*8+2,true,1)
+  rect(sdx+2,sdy+2,22*8,12*8,false,0)
+  SpritesMap:draw(sdx+2,sdy+2,false,false,false,false,false,false,SpriteMap)
+  eapi.editorsheet:draw(120,sdx+2,sdy+2)
+  
+  --Invalid tiles
+  pal(1,2)
+  bgsprite:draw(sdx+2+8*14,sdy+2+8*11,0,1,1,isquad)
+  pal()
+  
+  --Sprite selection box
+  local sprid = hotbarTiles[selectedSlot]
+  local sscx, sscy = sprid%22, math.floor(sprid/22)
+  
+  local ssx, ssy = sdx+sscx*8, sdy+sscy*8
+  rect(ssx-1,ssy-1,14,14,true,1)
+  rect(ssx,ssy,12,12,true,7)
+  rect(ssx+1,ssy+1,10,10,true,0)
 end
 
 function t:selectTool(id)
@@ -147,9 +194,20 @@ function t:toolbarmouse(x,y,it,state)
     if not it and not tbmouse then return end
     
     if cy < 11 then --Tile slots
-      self:selectSlot(cy)
+      if selectedTool == 4 then
+        selectedSlot = cy
+        self:drawMenu()
+      else
+        self:selectSlot(cy)
+      end
     else --Tool
+      local wasMenu = (selectedTool == 4)
       self:selectTool(cy-11)
+      if selectedTool == 4 then
+        self:drawMenu()
+      elseif wasMenu then
+        self:drawMap()
+      end
     end
   end
   
@@ -161,6 +219,7 @@ local lastPX, lastPY = 0,0
 local panflag = false
 
 function t:mapmouse(x,y,it,state,dx,dy)
+  if selectedTool == 4 then return end
   if isInRect(x,y,mapRect) then
     if state == "pressed" and not it then
       mpmouse = true
@@ -189,9 +248,6 @@ function t:mapmouse(x,y,it,state,dx,dy)
         
         mapdx, mapdy = mapdx+dx, mapdy+dy
         
-        
-        cprint(state,mapdx,mapdy,dx,dy)
-        
         self:drawMap()
       elseif state == "released" then
         panflag = false
@@ -202,19 +258,48 @@ function t:mapmouse(x,y,it,state,dx,dy)
   if state == "released" then mpmouse = false end
 end
 
+local mmouse = false
+
+function t:menumouse(x,y,it,state)
+  if selectedTool ~= 4 then
+    mmouse = false; return
+  end
+  
+  local cx, cy = whereInGrid(x,y,spritesGrid)
+  if cx then
+    if state == "pressed" and not it then
+      mmouse = true
+    end
+    
+    if not it and not mmouse then return end
+    
+    local tid = cy*22+cx-23
+    if tid <= 255 then
+      hotbarTiles[selectedSlot] = tid
+      self:drawMenu()
+    end
+  end
+  
+  if state == "released" then mmouse = false end
+end
+
+
 function t:mousepressed(x,y,b,it)
   self:toolbarmouse(x,y,it,"pressed")
   self:mapmouse(x,y,it,"pressed")
+  self:menumouse(x,y,it,"pressed")
 end
 
 function t:mousemoved(x,y,dx,dy,it)
   self:toolbarmouse(x,y,it,"moved",dx,dy)
   self:mapmouse(x,y,it,"moved",dx,dy)
+  self:menumouse(x,y,it,"moved",dx,dy)
 end
 
 function t:mousereleased(x,y,b,it)
   self:toolbarmouse(x,y,it,"released")
   self:mapmouse(x,y,it,"released")
+  self:menumouse(x,y,it,"released")
 end
 
 function t:export()
