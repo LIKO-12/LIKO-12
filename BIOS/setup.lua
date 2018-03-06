@@ -86,7 +86,7 @@ end
 --Keyboard Navigation
 function events.keypressed(key,scancode,isrepeat)
   if key == "up" then
-    if selectedOption == 1 then return end
+    if selectedOption == 1 then selectedOption = #options+1 end
     
     selectedOption = selectedOption - 1
     if options[selectedOption][1] == "" then
@@ -95,7 +95,7 @@ function events.keypressed(key,scancode,isrepeat)
     
     drawUI()
   elseif key == "down" then
-    if selectedOption == #options then return end
+    if selectedOption == #options then selectedOption = 0 end
     
     selectedOption = selectedOption + 1
     if options[selectedOption][1] == "" then
