@@ -57,6 +57,39 @@ local spritesGrid = {3,11,22*8,12*8,22,12}
 
 --=========-- Functions --=========--
 
+local function queuedFill(img,sx,sy,rcol)
+  
+  local cell = img.cell
+  
+  local tcol = cell(img,sx,sy) --The target color
+  
+  if tcol == rcol then return end
+  
+  --Queue, QueueSize, QueuePosition
+  local q, qs, qp = {}, 0,0
+  
+  cell(img,sx,sy,rcol)
+  qs = qs + 1
+  q[qs] = {sx,sy}
+  
+  local function test(x,y)
+    if minx and (x < minx or y < miny or x > maxx or y > maxy) then return end
+    if cell(img,x,y) == tcol then
+      cell(img,x,y,rcol)
+      qs = qs + 1
+      q[qs] = {x,y}
+    end
+  end
+  
+  while qp < qs do --While there are items in the queue.
+    qp = qp + 1
+    local n = q[qp]
+    local x,y = n[1], n[2]
+    test(x-1,y) test(x+1,y)
+    test(x,y-1) test(x,y+1)
+  end
+end
+
 function t:entered()
   SpriteMap = eapi.leditors[eapi.editors.sprite].SpriteMap
   self:redraw()
@@ -233,6 +266,11 @@ function t:mapmouse(x,y,it,state,dx,dy)
     --Pencil
     if selectedTool == 0 then
       Map:cell(cx,cy,hotbarTiles[selectedSlot])
+      self:drawMap()
+      
+    --Bucket (Fill)
+    elseif selectedTool == 1 then
+      queuedFill(Map,cx,cy,hotbarTiles[selectedSlot])
       self:drawMap()
     
     --Pan (Hand)
