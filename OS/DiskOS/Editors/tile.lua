@@ -55,6 +55,9 @@ local mapRect = {0,8,swidth-8,sheight-8}
 
 local spritesGrid = {3,11,22*8,12*8,22,12}
 
+local selPattern = imagedata("LK12;GPUIMG;2x2;0110")
+local selsx, selsy, selex, seley
+
 --=========-- Functions --=========--
 
 local function queuedFill(img,sx,sy,rcol)
@@ -160,6 +163,21 @@ function t:drawMap()
   Map:draw(mapdx%8-8,mapdy%8,-math.floor(mapdx/8)-1,-math.floor(mapdy/8)-1,MapVW+1,MapVH+1, 1,1, SpriteMap)
   palt()
   
+  --Draw selection
+  if selsx then
+    local seldx = selsx*8+mapdx-1
+    local seldy = selsy*8+mapdy-1+8
+    
+    local selw = (selex-selsx)*8+10
+    local selh = (seley-selsy)*8+10
+    rect(seldx-2,seldy-2,selw+4,selh+4,true,0)
+    rect(seldx-1,seldy-1,selw+2,selh+2,true,0)
+    rect(seldx,seldy,selw,selh,true,0)
+    patternFill(selPattern)
+    rect(seldx-1,seldy-1,selw+2,selh+2,true,7)
+    patternFill()
+  end
+  
   --Declip
   clip()
   
@@ -236,6 +254,12 @@ function t:toolbarmouse(x,y,it,state)
     else --Tool
       local wasMenu = (selectedTool == 4)
       self:selectTool(cy-11)
+      
+      if selectedTool ~= 3 and selsx then
+        selsx, selsy, selex, seley = nil,nil,nil,nil
+        self:drawMap()
+      end
+      
       if selectedTool == 4 then
         self:drawMenu()
       elseif wasMenu then
@@ -250,6 +274,7 @@ end
 local mpmouse = false
 local lastPX, lastPY = 0,0
 local panflag = false
+local selxf,selyf = false, false
 
 function t:mapmouse(x,y,it,state,dx,dy)
   if selectedTool == 4 then return end
@@ -290,6 +315,58 @@ function t:mapmouse(x,y,it,state,dx,dy)
       elseif state == "released" then
         panflag = false
       end
+      
+    --Selection
+    elseif selectedTool == 3 then
+      if state == "pressed" or not selsx then
+        if cx < 0 or cy < 0 or cx >= MapW or cy >= MapH then
+          selsx, selsy, selex, seley = nil,nil,nil,nil
+          self:drawMap()
+        else
+          selxf, selyf = false, false
+          selsx, selsy = cx, cy
+        end
+      end
+      
+      if selsx then
+        if selxf then
+          selsx = cx
+          if selsx == selex then
+            selxf = false
+          end
+        else
+          selex = cx
+          if selex < selsx then
+            selsx, selex = selex, selsx
+            selxf = true
+          end
+        end
+        
+        if selyf then
+          selsy = cy
+          if selsy == seley then
+            selyf = false
+          end
+        else
+          seley = cy
+          if seley < selsy then
+            selsy, seley = seley, selsy
+            selyf = true
+          end
+        end
+        
+        selex = math.max(0,selex)
+        seley = math.max(0,seley)
+        selex = math.min(MapW-1,selex)
+        seley = math.min(MapH-1,seley)
+        
+        selsx = math.max(0,selsx)
+        selsy = math.max(0,selsy)
+        selsx = math.min(MapW-1,selsx)
+        selsy = math.min(MapH-1,selsy)
+      end
+      
+      self:drawMap()
     end
   end
   
@@ -358,6 +435,38 @@ end
 
 function t:decode(data)
   RamUtils.binToMap(Map,data)
+end
+
+local mvspeed = 64
+
+function t:update(dt)
+  if selectedTool == 3 and isMDown(1) then
+    local mx, my = getMPos()
+    
+    if mx < swidth-8 and my > 7 then
+      local sd = false --should draw
+      
+      if mx < 7 then
+        mapdx = mapdx + mvspeed*dt
+        sd = true
+      elseif mx > swidth-14 then
+        mapdx = mapdx - mvspeed*dt
+        sd = true
+      end
+      
+      if my < 8+6 then
+        mapdy = mapdy + mvspeed*dt
+        sd = true
+      elseif my > sheight-6 then
+        mapdy = mapdy - mvspeed*dt
+        sd = true
+      end
+      
+      if sd then
+        self:mousemoved(mx,my,0,0,isMobile())
+      end
+    end
+  end
 end
 
 return t
