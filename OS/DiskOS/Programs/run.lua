@@ -260,6 +260,7 @@ addLibrary("C:/Libraries/bump.lua","bump")
 addLibrary("C:/Libraries/likocam.lua","likocam")
 addLibrary("C:/Libraries/JSON.lua","JSON")
 addLibrary("C:/Libraries/luann.lua","luann")
+addLibrary("C:/Libraries/genetic.lua","geneticAlgo")
 
 local helpersloader, err = fs.load("C:/Libraries/diskHelpers.lua")
 if not helpersloader then error(err) end
