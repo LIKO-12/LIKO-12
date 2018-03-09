@@ -493,7 +493,10 @@ t.keymap = {
   ["0"] = function(self) self:selectSlot(10) end,
   
   ["z"] = function(self) self:selectTool(0) end,
-  ["x"] = function(self) self:selectTool(1) end
+  ["c"] = function(self) self:selectTool(1) end,
+  ["q"] = function(self) self:selectTool(2) end,
+  ["s"] = function(self) self:selectTool(3) end,
+  ["e"] = function(self) self:selectTool(4) end
 }
 
 return t
