@@ -26,8 +26,8 @@ return function (...)
     local s,sp = {}, 1
     for c in string.gmatch(bitstring, ".") do
       if newRand() < g.mutationRate then
-        if c == "0" then; s[sp] = "1"
-        else; s[sp] = "0"; end
+        if c == "0" then s[sp] = "1"
+        else s[sp] = "0" end
       else
         s[sp] = c
       end
