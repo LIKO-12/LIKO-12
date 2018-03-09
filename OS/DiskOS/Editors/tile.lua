@@ -51,7 +51,7 @@ local toolbarGrid = {swidth-9,8,9,sheight-8,1,15}
 
 local hotbarTiles = {0,0,0,0,0,0,0,0,0,0}
 
-local mapRect = {0,8,swidth-8,sheight-8}
+local mapRect = {0,8,swidth-9,sheight-8}
 
 local spritesGrid = {3,11,22*8,12*8,22,12}
 
@@ -216,13 +216,26 @@ function t:drawMenu()
 end
 
 function t:selectTool(id)
-  selectedTool = id
-  self:drawToolbar()
+  if selectedTool == id then return end
+  if selectedTool == 4 then
+    selectedTool = id
+    self:drawMap()
+  elseif id == 4 then
+    selectedTool = id
+    self:drawMenu()
+  else
+    selectedTool = id
+    self:drawToolbar()
+  end
 end
 
 function t:selectSlot(id)
   selectedSlot = id
-  self:drawMap()
+  if selectedTool == 4 then
+    self:drawMenu()
+  else
+    self:drawMap()
+  end
 end
 
 function t:nextSlot()
@@ -245,24 +258,12 @@ function t:toolbarmouse(x,y,it,state)
     if not it and not tbmouse then return end
     
     if cy < 11 then --Tile slots
-      if selectedTool == 4 then
-        selectedSlot = cy
-        self:drawMenu()
-      else
-        self:selectSlot(cy)
-      end
+      self:selectSlot(cy)
     else --Tool
-      local wasMenu = (selectedTool == 4)
       self:selectTool(cy-11)
       
       if selectedTool ~= 3 and selsx then
         selsx, selsy, selex, seley = nil,nil,nil,nil
-        self:drawMap()
-      end
-      
-      if selectedTool == 4 then
-        self:drawMenu()
-      elseif wasMenu then
         self:drawMap()
       end
     end
@@ -279,6 +280,13 @@ local selxf,selyf = false, false
 function t:mapmouse(x,y,it,state,dx,dy)
   if selectedTool == 4 then return end
   if isInRect(x,y,mapRect) then
+    
+    if selectedTool == 2 then
+      cursor("hand")
+    else
+      cursor("normal")
+    end
+    
     if state == "pressed" and not it then
       mpmouse = true
     end
@@ -368,6 +376,8 @@ function t:mapmouse(x,y,it,state,dx,dy)
       
       self:drawMap()
     end
+  else
+    cursor("normal")
   end
   
   if state == "released" then mpmouse = false end
@@ -468,5 +478,22 @@ function t:update(dt)
     end
   end
 end
+
+t.keymap = {
+  --Hotbar
+  ["1"] = function(self) self:selectSlot(1) end,
+  ["2"] = function(self) self:selectSlot(2) end,
+  ["3"] = function(self) self:selectSlot(3) end,
+  ["4"] = function(self) self:selectSlot(4) end,
+  ["5"] = function(self) self:selectSlot(5) end,
+  ["6"] = function(self) self:selectSlot(6) end,
+  ["7"] = function(self) self:selectSlot(7) end,
+  ["8"] = function(self) self:selectSlot(8) end,
+  ["9"] = function(self) self:selectSlot(9) end,
+  ["0"] = function(self) self:selectSlot(10) end,
+  
+  ["z"] = function(self) self:selectTool(0) end,
+  ["x"] = function(self) self:selectTool(1) end
+}
 
 return t
