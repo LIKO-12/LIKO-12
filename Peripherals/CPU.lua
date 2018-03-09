@@ -16,7 +16,7 @@ return function(config) --A function that creates a new CPU peripheral.
       table.insert(EventStack,{name,...})
       
       if RawPull then
-        RawPull = false coreg:resumeCoroutine(true,name,...)
+        RawPull = false; coreg:resumeCoroutine(true,name,...)
       end
     end
   end
