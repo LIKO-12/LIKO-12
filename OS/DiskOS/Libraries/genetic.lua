@@ -97,7 +97,7 @@ return function (...)
     return best
   end
 
-  local function evolve()
+  function g.evolve()
     local population = {}
     local bestString = nil
     -- initialize the popuation random pool
