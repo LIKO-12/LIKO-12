@@ -58,6 +58,8 @@ local spritesGrid = {3,11,22*8,12*8,22,12}
 local selPattern = imagedata("LK12;GPUIMG;2x2;0110")
 local selsx, selsy, selex, seley
 
+local darkScreenshot
+
 --=========-- Functions --=========--
 
 local function queuedFill(img,sx,sy,rcol)
@@ -140,6 +142,9 @@ function t:drawToolbar()
 end
 
 function t:drawMap()
+  --Clear the darkScreenshot
+  darkScreenshot = false
+  
   --Clip to map area
   clip(0,8,swidth-9,sheight-8)
   
@@ -185,8 +190,6 @@ function t:drawMap()
   self:drawToolbar()
 end
 
-local darkScreenshot
-
 function t:drawMenu()
   
   if selectedTool ~= 4 then --Menu open by holding alt
@@ -195,8 +198,7 @@ function t:drawMenu()
       ImageUtils.darken(darkScreenshot)
       darkScreenshot = darkScreenshot:image()
     end
-    
-    darkScreenshot:draw(0,8)
+    palt(0,false); darkScreenshot:draw(0,8); palt()
   else --The menu tool is selected
     --Clear the screen
     rect(0,8,swidth,sheight-8, false, 5)
