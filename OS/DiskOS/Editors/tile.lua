@@ -124,12 +124,11 @@ function t:drawToolbar()
   end
   
   --Draw the tools
-  local selTool = isKDown("lalt","ralt") and 4 or selectedTool
   rect(swidth-9,sheight-5*8,8,5*8, false, 9)
   for i=0,4 do
     local sprid = 114+i
     
-    if i == selTool then sprid = sprid + 24 end
+    if i == selectedTool then sprid = sprid + 24 end
     
     eapi.editorsheet:draw(sprid,swidth-8,sheight-5*8+i*8)
   end
@@ -186,9 +185,25 @@ function t:drawMap()
   self:drawToolbar()
 end
 
+local darkScreenshot
+
 function t:drawMenu()
-  --Clear the screen
-  rect(0,8,swidth,sheight-8, false, 5)
+  
+  if selectedTool ~= 4 then --Menu open by holding alt
+    if not darkScreenshot then
+      darkScreenshot = screenshot(0,8,swidth-8,sheight-8)
+      ImageUtils.darken(darkScreenshot)
+      darkScreenshot = darkScreenshot:image()
+    end
+    
+    darkScreenshot:draw(0,8)
+  else --The menu tool is selected
+    --Clear the screen
+    rect(0,8,swidth,sheight-8, false, 5)
+    
+    --Delete the darkScreenshot
+    darkScreenshot = false
+  end
   
   --Draw the toolbar
   self:drawToolbar()

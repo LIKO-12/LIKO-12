@@ -45,5 +45,13 @@ function ImageUtils.queuedFill(img,sx,sy,rcol,minx,miny,maxx,maxy)
   
 end
 
+local darkPal = {0,0,5,1,2,1,13,6,2,4,9,3,13,5,13,6}
+
+function ImageUtils.darken(img)
+  img:map(function(x,y,c)
+    return darkPal[c+1]
+  end)
+end
+
 --Make the ImageUtils a global
 _G["ImageUtils"] = ImageUtils
