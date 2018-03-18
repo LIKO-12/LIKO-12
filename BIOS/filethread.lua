@@ -3,6 +3,13 @@
 
 --By default it only tracks the DiskOS folder.
 
+require("love.system")
+
+--Are we running on mobile ?
+local onMobile = (love.system.getOS() == "Android")
+
+if onMobile then jit.off() end --Love Bug
+
 local reg = {}
 
 local tpath = "/OS/DiskOS/" --Tracking Path
