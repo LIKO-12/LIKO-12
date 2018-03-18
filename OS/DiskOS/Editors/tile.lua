@@ -124,11 +124,12 @@ function t:drawToolbar()
   end
   
   --Draw the tools
+  local selTool = isKDown("lalt","ralt") and 4 or selectedTool
   rect(swidth-9,sheight-5*8,8,5*8, false, 9)
   for i=0,4 do
     local sprid = 114+i
     
-    if i == selectedTool then sprid = sprid + 24 end
+    if i == selTool then sprid = sprid + 24 end
     
     eapi.editorsheet:draw(sprid,swidth-8,sheight-5*8+i*8)
   end
@@ -217,10 +218,10 @@ end
 
 function t:selectTool(id)
   if selectedTool == id then return end
-  if selectedTool == 4 then
+  if selectedTool == 4 and not isKDown("lalt","ralt") then
     selectedTool = id
     self:drawMap()
-  elseif id == 4 then
+  elseif id == 4 or isKDown("lalt","ralt") then
     selectedTool = id
     self:drawMenu()
   else
@@ -231,7 +232,7 @@ end
 
 function t:selectSlot(id)
   selectedSlot = id
-  if selectedTool == 4 then
+  if selectedTool == 4 or isKDown("lalt","ralt")  then
     self:drawMenu()
   else
     self:drawMap()
@@ -289,7 +290,7 @@ local panflag = false
 local selxf,selyf = false, false
 
 function t:mapmouse(x,y,it,state,dx,dy)
-  if selectedTool == 4 then return end
+  if selectedTool == 4 or isKDown("lalt","ralt") then return end
   if isInRect(x,y,mapRect) then
     
     if selectedTool == 2 then
@@ -399,7 +400,7 @@ end
 local mmouse = false
 
 function t:menumouse(x,y,it,state)
-  if selectedTool ~= 4 then
+  if selectedTool ~= 4 and not isKDown("lalt","ralt")  then
     mmouse = false; return
   end
   
@@ -452,6 +453,20 @@ function t:mousereleased(x,y,b,it)
   self:toolbarmouse(x,y,it,"released")
   self:mapmouse(x,y,it,"released")
   self:menumouse(x,y,it,"released")
+end
+
+function t:keypressed(key, sc, isrep)
+  if (key == "lalt" or key == "ralt") and not isrep then
+    self:drawMenu()
+    local mx, my = getMPos(); self:mousemoved(mx,my,0,0,isMobile())
+  end
+end
+
+function t:keyreleased(key, sc)
+  if key == "lalt" or key == "ralt" then
+    self:drawMap()
+    local mx, my = getMPos(); self:mousemoved(mx,my,0,0,isMobile())
+  end
 end
 
 function t:export()
