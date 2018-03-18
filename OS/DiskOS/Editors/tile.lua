@@ -269,7 +269,7 @@ function t:toolbarmouse(x,y,it,state)
     else --Tool
       self:selectTool(cy-11)
       
-      if selectedTool ~= 3 and selsx then
+      if selectedTool < 3 and selsx then
         selsx, selsy, selex, seley = nil,nil,nil,nil
         self:drawMap()
       end
@@ -457,14 +457,14 @@ end
 
 function t:keypressed(key, sc, isrep)
   if (key == "lalt" or key == "ralt") and not isrep then
-    self:drawMenu()
+    if selectedTool ~= 4 then self:drawMenu() end
     local mx, my = getMPos(); self:mousemoved(mx,my,0,0,isMobile())
   end
 end
 
 function t:keyreleased(key, sc)
   if key == "lalt" or key == "ralt" then
-    self:drawMap()
+    if selectedTool ~= 4 then self:drawMap() end
     local mx, my = getMPos(); self:mousemoved(mx,my,0,0,isMobile())
   end
 end
