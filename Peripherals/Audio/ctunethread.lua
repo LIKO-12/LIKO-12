@@ -1,5 +1,12 @@
 --Chiptune Thread
 
+require("love.system")
+
+--Are we running on mobile ?
+local onMobile = (love.system.getOS() == "Android")
+
+if onMobile then jit.off() end --Love Bug
+
 --Store math functions in locals to optamize speed.
 local min, max, floor, sin, abs, random = math.min, math.max, math.floor, math.sin, math.abs, math.random
 
@@ -11,10 +18,6 @@ require("love.audio")
 require("love.sound")
 require("love.timer")
 require("love.math")
-require("love.system")
-
---Are we running on mobile ?
-local onMobile = (love.system.getOS() == "Android")
 
 --The QueueableSource
 local QSource = require("Peripherals.Audio.QueueableSource")
