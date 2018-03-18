@@ -425,7 +425,7 @@ function t:menumouse(x,y,it,state)
       hotbarTiles[selectedSlot] = tid
       self:drawMenu()
     end
-  else
+  elseif x < swidth-9 and y >= 8 then
     local curCursor = cursor()
     if curCursor == "handpress" or curCursor == "handrelease" then
       cursor("normal")
