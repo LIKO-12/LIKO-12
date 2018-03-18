@@ -251,6 +251,12 @@ local tbmouse = false
 function t:toolbarmouse(x,y,it,state)
   local cx, cy = whereInGrid(x,y,toolbarGrid)
   if cx then
+    if isMDown(1) then
+      cursor("handpress")
+    else
+      cursor("handrelease")
+    end
+    
     if state == "pressed" and not it then
       tbmouse = true
     end
@@ -266,6 +272,11 @@ function t:toolbarmouse(x,y,it,state)
         selsx, selsy, selex, seley = nil,nil,nil,nil
         self:drawMap()
       end
+    end
+  else
+    local curCursor = cursor()
+    if curCursor == "handpress" or curCursor == "handrelease" then
+      cursor("normal")
     end
   end
   
@@ -377,7 +388,9 @@ function t:mapmouse(x,y,it,state,dx,dy)
       self:drawMap()
     end
   else
-    cursor("normal")
+    if cursor() == "hand" then
+      cursor("normal")
+    end
   end
   
   if state == "released" then mpmouse = false end
@@ -392,6 +405,15 @@ function t:menumouse(x,y,it,state)
   
   local cx, cy = whereInGrid(x,y,spritesGrid)
   if cx then
+    
+    if cy > 11 and cx > 14 then
+      cursor("cross")
+    elseif isMDown(1) then
+      cursor("handpress")
+    else
+      cursor("handrelease")
+    end
+    
     if state == "pressed" and not it then
       mmouse = true
     end
@@ -402,6 +424,11 @@ function t:menumouse(x,y,it,state)
     if tid <= 255 then
       hotbarTiles[selectedSlot] = tid
       self:drawMenu()
+    end
+  else
+    local curCursor = cursor()
+    if curCursor == "handpress" or curCursor == "handrelease" then
+      cursor("normal")
     end
   end
   
@@ -450,6 +477,8 @@ end
 local mvspeed = 64
 
 function t:update(dt)
+  
+  --Auto scroll in select tool.
   if selectedTool == 3 and isMDown(1) then
     local mx, my = getMPos()
     
@@ -490,13 +519,7 @@ t.keymap = {
   ["7"] = function(self) self:selectSlot(7) end,
   ["8"] = function(self) self:selectSlot(8) end,
   ["9"] = function(self) self:selectSlot(9) end,
-  ["0"] = function(self) self:selectSlot(10) end,
-  
-  ["z"] = function(self) self:selectTool(0) end,
-  ["c"] = function(self) self:selectTool(1) end,
-  ["q"] = function(self) self:selectTool(2) end,
-  ["s"] = function(self) self:selectTool(3) end,
-  ["e"] = function(self) self:selectTool(4) end
+  ["0"] = function(self) self:selectSlot(10) end
 }
 
 return t
