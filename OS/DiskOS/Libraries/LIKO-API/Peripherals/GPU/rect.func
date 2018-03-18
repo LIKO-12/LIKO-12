@@ -1,0 +1,16 @@
+.D ~Description
+Draws a rectangle on the screen.
+.A ~Arguments
+x n The top-left x position of the rectangle.
+y n The top-left y position of the rectangle.
+w n The width of rectangle.
+h n The height of rectangle.
+line xb (false/nil) The rectangle will be filled, (true) The rectangle will have only lines (border).
+c xn The color of the rectangle (0-15), defaults to the active color.
+.N ~Note
+The arguments can be passed in a table:
+.C ~Codeblock
+rect( {x, y, w, h, l, c} )
+.S ~See also
+color
+polygon
