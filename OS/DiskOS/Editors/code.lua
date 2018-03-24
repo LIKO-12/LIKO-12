@@ -910,15 +910,7 @@ function ce:decode(data)
 end
 
 function ce:export()
-  local data = ""
-  for k, line in ipairs(buffer) do
-    if k == 1 then
-      data = data .. tostring(line)
-    else
-      data = data .. "\n" .. tostring(line)
-    end
-  end
-  return data
+  return table.concat(buffer, "\n")
 end
 
 function ce:encode()
