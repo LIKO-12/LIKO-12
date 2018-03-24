@@ -164,7 +164,7 @@ end
 
 --Draw the code on the screen
 function ce:drawBuffer()
-  local vbuffer = lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)) --Visible buffer
+  local vbuffer = lume.slice(buffer,self.vy,self.vy+self.th-1) --Visible buffer
   local cbuffer = self.colorize and syntax:highlightLines(vbuffer, self.vy) or vbuffer
   rect(0,7,screenW,screenH-8*2+1,false,self.bgc)
   for k, l in ipairs(cbuffer) do
