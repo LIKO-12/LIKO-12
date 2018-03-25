@@ -164,7 +164,7 @@ end
 
 --Draw the code on the screen
 function ce:drawBuffer()
-  local vbuffer = lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)) --Visible buffer
+  local vbuffer = lume.slice(buffer,self.vy,self.vy+self.th-1) --Visible buffer
   local cbuffer = self.colorize and syntax:highlightLines(vbuffer, self.vy) or vbuffer
   rect(0,7,screenW,screenH-8*2+1,false,self.bgc)
   for k, l in ipairs(cbuffer) do
@@ -910,15 +910,7 @@ function ce:decode(data)
 end
 
 function ce:export()
-  local data = ""
-  for k, line in ipairs(buffer) do
-    if k == 1 then
-      data = data .. tostring(line)
-    else
-      data = data .. "\n" .. tostring(line)
-    end
-  end
-  return data
+  return table.concat(buffer, "\n")
 end
 
 function ce:encode()
