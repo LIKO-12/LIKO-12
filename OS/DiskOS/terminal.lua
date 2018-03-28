@@ -74,7 +74,7 @@ function term.init()
     else
       term.execute("tip")
     end
-    color(9) print("TYPE HELP FOR HELP")
+    color(9) print("Type help for help")
     flip() sleep(0.0625)
   end
 end
