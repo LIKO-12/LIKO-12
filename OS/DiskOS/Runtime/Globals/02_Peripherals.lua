@@ -13,11 +13,11 @@ for peripheral, funcList in pairs(handledapis) do
       if funcName:sub(1,1) == "_" then
         funcList[funcName] = nil
       elseif perglob[peripheral] then
-        glob[funcName] = func
+        Globals[funcName] = func
       end
     end
     
-    glob[peripheral] = funcList
+    Globals[peripheral] = funcList
   end
 end
 

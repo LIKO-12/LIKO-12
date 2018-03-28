@@ -6,7 +6,7 @@ local eapi = require("Editors")
 
 local mapobj = require("Libraries/map")
 
-local swidth, sheight = screensize()
+local swidth, sheight = screenSize()
 
 local tileid = eapi.editors.tile
 
