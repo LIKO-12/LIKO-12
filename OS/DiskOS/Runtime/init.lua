@@ -98,7 +98,16 @@ function rt.runGame(glob,co,...)
       return false, "ERR :"..err
     end
     if args[2] then
-      if args[2] == "RUN:exit" then break end
+      
+      --Special command for exiting the game
+      if args[2] == "RUN:exit" then
+        rt.resetEnvironment()
+        
+        print("")
+        
+        return true
+      end
+      
       lastArgs = {coroutine.yield(select(2,unpack(args)))}
       if args[2] == "CPU:pullEvent" or args[2] == "CPU:rawPullEvent" or args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
         if args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
