@@ -68,7 +68,7 @@ do --So I can hide this part in ZeroBran studio
     end
   end
   
-  glob.__BTNUpdate = function(dt)
+  Globals.__BTNUpdate = function(dt)
     pkeys = {} --Reset the table (easiest way)
     rkeys = {} --Reset the table (easiest way)
     for k,v in pairs(dkeys) do
