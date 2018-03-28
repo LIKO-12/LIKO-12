@@ -1,11 +1,11 @@
 Welcome to LIKO-12 V0.7 !
 
-Type "help quickstart" for quick help.
+Type "help Quickstart" for quick help.
 Type "programs" to see the programs you can run.
 Type "<program> -?" to print the program usage.
-Type "help programming" to learn about programming.
-Type "help whatsnew" to find out about new features.
-Type "help credits" to learn who made all this.
+Type "help Programming" to learn about programming.
+Type "help Whatsnew" to find out about new features.
+Type "help Credits" to learn who made all this.
 
 Official documentation:
 http://liko-12.readthedocs.io/
