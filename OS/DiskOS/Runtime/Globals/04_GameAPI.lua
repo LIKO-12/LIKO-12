@@ -2,8 +2,6 @@
 
 local Globals = (...) or {}
 
-local json = require("Libraries/JSON")
-
 local pkeys = {} --Pressed keys
 local rkeys = {} --Repeated keys
 local dkeys = {} --Down keys
@@ -15,12 +13,18 @@ local defaultbmap = {
   {"s","f","e","d","tab","q","w"} --Player 2
 }
 
-if not fs.exists("C:/keymap.json") then
-  fs.write("C:/keymap.json",json:encode_pretty(defaultbmap))
-end
-
 do --So I can hide this part in ZeroBran studio
-  local bmap = json:decode(fs.read("C:/keymap.json"))
+  local bmap = ConfigUtils.get("GamesKeymap")
+
+  if not bmap[1] then
+    bmap[1] = {unpack(defaultbmap[1])}
+    ConfigUtils.saveConfig()
+  end
+  if not bmap[2] then
+    bmap[2] = {unpack(defaultbmap[2])}
+    ConfigUtils.saveConfig()
+  end
+
 
   function Globals.btn(n,p)
     local p = p or 1
@@ -29,11 +33,11 @@ do --So I can hide this part in ZeroBran studio
     n, p = math.floor(n), math.floor(p)
     if p < 1  then return error("The Player id is negative ("..p..") it must be positive !") end
     if n < 1 or n > 7 then return error("The Button id is out of range ("..n..") must be [1,7]") end
-    
+
     local map = bmap[p]
     local gmap = gpads[p]
     if not (map or gmap) then return false end --Failed to find a controller
-    
+
     return dkeys[map[n]] or (p == 1 and tbtn[n]) or (gmap and gmap[n])
   end
 
@@ -44,18 +48,18 @@ do --So I can hide this part in ZeroBran studio
     n, p = math.floor(n), math.floor(p)
     if p < 1  then return error("The Player id is negative ("..p..") it must be positive !") end
     if n < 1 or n > 7 then return error("The Button id is out of range ("..n..") must be [1,7]") end
-    
+
     local map = bmap[p]
     local gmap = gpads[p]
     if not (map or gmap) then return false end --Failed to find a controller
-    
+
     if rkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] >= 1) or (gmap and gmap[n] and gmap[n] >= 1) then
       return true, true
     else
       return pkeys[map[n]] or (p == 1 and tbtn[n] and tbtn[n] == 0) or (gmap and gmap[n] and gmap[n] == 0)
     end
   end
-  
+
   Globals.__BTNUpdate = function(dt)
     pkeys = {} --Reset the table (easiest way)
     rkeys = {} --Reset the table (easiest way)
@@ -64,7 +68,7 @@ do --So I can hide this part in ZeroBran studio
         dkeys[k] = nil
       end
     end
-    
+
     for k,v in ipairs(tbtn) do
       if v then
         if tbtn[k] >= 1 then
@@ -73,7 +77,7 @@ do --So I can hide this part in ZeroBran studio
         tbtn[k] = tbtn[k] + dt
       end
     end
-    
+
     for id, gpad in pairs(gpads) do
       for k,v in ipairs(gpad) do
         if v then
@@ -91,7 +95,7 @@ do --So I can hide this part in ZeroBran studio
     rkeys[a] = b
     dkeys[a] = true
   end
-  
+
   Globals.__BTNTouchControl = function(state,n)
     if state then
       tbtn[n] = 0
@@ -99,7 +103,7 @@ do --So I can hide this part in ZeroBran studio
       tbtn[n] = false
     end
   end
-  
+
   Globals.__BTNGamepad = function(state,n,id)
     if not gpads[id] then gpads[id] = {false,false,false,false,false,false} end
     if state then
