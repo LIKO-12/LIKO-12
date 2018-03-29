@@ -83,6 +83,8 @@ function rt.runGame(glob,co,...)
   --The event loop coroutine, created in the 01_Lua.lua script
   local evco = glob.__evco; glob.__evco = nil
   
+  local pause = glob.pause --Backup the pause function
+  
   local lastArgs = {...}
   while true do
     if coroutine.status(co) == "dead" then
@@ -124,6 +126,8 @@ function rt.runGame(glob,co,...)
         --Check for the escape key
         if event == "keypressed" and a == "escape" then
           rt.resetEnvironment(); print(""); return true
+        elseif event == "keypressed" and a == "return" then
+          pause()
         end
         
         --Hack the sleep command
@@ -140,6 +144,8 @@ function rt.runGame(glob,co,...)
               timer = timer - a
             elseif event == "keypressed" and a == "escape" then
               rt.resetEnvironment(); print(""); return true
+            elseif event == "keypressed" and a == "return" then
+              pause()
             else
               triggerEvent(event, a,b,c,d,e,f)
             end
@@ -156,6 +162,8 @@ function rt.runGame(glob,co,...)
           
           if event == "keypressed" and a == "escape" then
             rt.resetEnvironment(); print(""); return true
+          elseif event == "keypressed" and a == "return" then
+            pause()
           end
           
           triggerEvent(event, a,b,c,d,e,f)

@@ -2,6 +2,54 @@
 
 local Globals = (...) or {}
 
+local sw,sh = screenSize()
+
+function Globals.pause()
+  if Globals._DISABLE_PAUSE then return end
+  
+  pushMatrix()
+  pushPalette()
+  pushColor()
+  
+  palt() pal() colorPalette() cam()
+  
+  local oldClip = clip()
+  
+  local bkimg = screenshot():image()
+  local scimg = screenshot(sw/8,sh/8, sw*0.75,sh*0.75)
+  ImageUtils.darken(scimg,2)
+  scimg = scimg:image()
+  
+  palt(0,false)
+  scimg:draw(sw/8,sh/8)
+  rect(sw/8,sh/8,sw*0.75,sh*0.75, true, 0) --Black
+  rect(sw/8+1,sh/8+1,sw*0.75-2,sh*0.75-2, true, 7) --White
+  rect(sw/8+2,sh/8+2,sw*0.75-4,sh*0.75-4, true, 0) --Black
+  
+  color(7)
+  
+  print("GAME IS PAUSED",0,sh*0.4, sw, "center")
+  print("Press escape/return to resume",sw*0.175,sh*0.6, sw*0.65, "center")
+  
+  clearEStack()
+  
+  for event, a,b,c,d,e,f in pullEvent do
+    if event == "keypressed" then
+      if a == "escape" or a == "return" then
+        break
+      end
+    end
+  end
+  
+  bkimg:draw(0,0)
+  
+  if oldClip then clip(unpack(oldClip)) end
+  
+  popColor()
+  popPalette()
+  popMatrix()
+end
+
 local pkeys = {} --Pressed keys
 local rkeys = {} --Repeated keys
 local dkeys = {} --Down keys
