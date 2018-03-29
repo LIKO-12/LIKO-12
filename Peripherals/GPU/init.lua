@@ -781,7 +781,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --Check the flip flag and clear it
-  function GPU._isFlipped()
+  function GPU._hasFlipped()
     if _Flipped then
       _Flipped = false
       return true
@@ -1559,6 +1559,9 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Host to love.run when graphics is active--
   events:register("love:graphics",function()
+    
+    _Flipped = true --Set the flipped flag
+    
     if _ShouldDraw or _AlwaysDraw or _AlwaysDrawTimer > 0 or _DevKitDraw or _ActiveShader then --When it's required to draw (when changes has been made to the canvas)
       UnbindVRAM(true) --Make sure that the VRAM changes are applied
       
@@ -1641,7 +1644,6 @@ return function(config) --A function that creates a new GPU peripheral.
       
       if Clip then love.graphics.setScissor(unpack(Clip)) end
       _ShouldDraw = false --Reset the flag.
-      _Flipped = true --Set the flipped flag
       GPU.popColor() --Restore the active color.
       if flip then
         flip = false
