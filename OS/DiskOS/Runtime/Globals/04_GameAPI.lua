@@ -186,11 +186,15 @@ function Globals.SaveData(data)
   
   if #data > GameSaveSize then return error("Save data can be 2KB maximum !") end
   
+  if not GameSaveID then return error("Set SaveID inorder to save data !") end
+  
   --Write the game data
   fs.write(string.format("C:/GamesData/%s.bin",GameSaveID), data, GameSaveSize)
 end
 
 function Globals.LoadData()
+  if not GameSaveID then return error("Set SaveID inorder to load data !") end
+  
   return GameSaveData
 end
 
