@@ -94,30 +94,6 @@ function map(...)
  if not ok then return error(err) end
 end
 
---Enter the while true loop and pull events, including the call of calbacks in _G
-function eventLoop()
-  while true do
-    local name, a, b, c, d, e, f = pullEvent()
-    if _G["_"..name] and type(_G["_"..name]) == "function" then
-      _G["_"..name](a,b,c,d,e,f)
-    end
-    
-    if name == "update" and _G["_draw"] and type(_G["_draw"]) == "function" then
-      _G["_draw"](a,b,c,d,e,f)
-    end
-    
-    if name == "keypressed" then
-      __BTNKeypressed(a,c)
-    elseif name == "update" then
-      __BTNUpdate(a)
-    elseif name == "touchcontrol" then
-      __BTNTouchControl(a,b)
-    elseif name == "gamepad" then
-      __BTNGamepad(a,b,c)
-    end
-  end
-end
-
 --Get and set functions for lazy people
 --ScreenPixels--
 local sw, sh = screenSize()
@@ -230,6 +206,6 @@ function Controls(c)
   end
 end
 
-function exit()
-  coroutine.yield("RUN:exit")
+function exit(failReason)
+  coroutine.yield("RUN:exit", failReason)
 end

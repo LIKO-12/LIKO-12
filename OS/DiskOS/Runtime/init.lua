@@ -76,51 +76,100 @@ end
 
 function rt.runGame(glob,co,...)
   
+  --Enable the touch controls on mobile
   if isMobile() then TC.setInput(true) end
-  textinput(not isMobile())
+  textinput(not isMobile()) --And disable the touch keyboard
+  
+  --The event loop coroutine, created in the 01_Lua.lua script
+  local evco = glob.__evco; glob.__evco = nil
   
   local lastArgs = {...}
   while true do
-    if coroutine.status(co) == "dead" then break end
+    if coroutine.status(co) == "dead" then
+      if evco then
+        co = evco; evco = false --So it doesn't get placed again.
+      else
+        break
+      end
+    end
     
     local args = {coroutine.resume(co,unpack(lastArgs))}
+    
+    --Program crashed
     if not args[1] then
       local err = tostring(args[2])
-      
-      if err:sub(1,12) == '[string ""]:' then
-        err = err:sub(13,-1)
-      end
-      
-      rt.resetEnvironment()
-      
-      print("")
-      
+      if err:sub(1,12) == '[string ""]:' then err = err:sub(13,-1) end
+      rt.resetEnvironment(); print("")
       return false, "ERR :"..err
     end
+    
+    --Nope, it's alive :-)
     if args[2] then
       
       --Special command for exiting the game
       if args[2] == "RUN:exit" then
-        rt.resetEnvironment()
+        rt.resetEnvironment(); print("")
+        if args[3] then
+          return false, tostring(args[3])
+        else
+          return true
+        end
         
-        print("")
+        --Capture the keypressed event
+      elseif args[2] == "CPU:pullEvent" or args[2] == "CPU:rawPullEvent" then
+        lastArgs = {coroutine.yield(select(2,unpack(args)))}
         
-        return true
+        local event, a,b,c,d,e,f = select(2,unpack(lastArgs))
+        
+        --Check for the escape key
+        if event == "keypressed" and a == "escape" then
+          rt.resetEnvironment(); print(""); return true
+        end
+        
+        --Hack the sleep command
+      elseif args[2] == "CPU:sleep" then
+        local timer = args[3] --The sleep timer
+        
+        if type(timer) ~= "number" or timer < 0 then
+          lastArgs = {coroutine.yield(select(2,unpack(args)))} --Let the original sleep blame the programmer.
+        else
+          while timer > 0 do
+            local event, a,b,c,d,e,f = rawPullEvent()
+            
+            if event == "update" then
+              timer = timer - a
+            elseif event == "keypressed" and a == "escape" then
+              rt.resetEnvironment(); print(""); return true
+            else
+              triggerEvent(event, a,b,c,d,e,f)
+            end
+          end
+          
+          lastArgs = {true} --Sleep ran successfully
+        end
+        
+        --Hack the flip command
+      elseif args[2] == "CPU:flip" then
+        _hasFlipped() --Clear the flip flag
+        while true do
+          local event, a,b,c,d,e,f = rawPullEvent()
+          
+          if event == "keypressed" and a == "escape" then
+            rt.resetEnvironment(); print(""); return true
+          end
+          
+          triggerEvent(event, a,b,c,d,e,f)
+          
+          if _hasFlipped() then break end
+        end
+        
+        lastArgs = {true} --Sleep ran successfully
+        
+        --Run the rest of the commands normally
+      else
+        lastArgs = {coroutine.yield(select(2,unpack(args)))}
       end
       
-      lastArgs = {coroutine.yield(select(2,unpack(args)))}
-      if args[2] == "CPU:pullEvent" or args[2] == "CPU:rawPullEvent" or args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
-        if args[2] == "GPU:flip" or args[2] == "CPU:sleep" then
-          local name, key = rawPullEvent()
-          if name == "keypressed" and key == "escape" then
-            break
-          end
-        else
-          if lastArgs[1] and lastArgs[2] == "keypressed" and lastArgs[3] == "escape" then
-            break
-          end
-        end
-      end
     end
   end
   
