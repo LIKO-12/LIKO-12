@@ -64,6 +64,8 @@ end
 local evco = coroutine.create(evloop)
 Globals.__evco = evco --So the the runtime recieves the event loop coroutine.
 
+--Lua functions--
+
 Globals.getfenv = function(f)
   if type(f) ~= "function" then return error("bad argument #1 to 'getfenv' (function expected, got "..type(f)) end
   local ok, env = pcall(getfenv,f)
