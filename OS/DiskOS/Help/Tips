@@ -6,6 +6,17 @@ You can check the drives usage by typing 'drives'
 You can check the available API functions by typing 'apis'
 You can store your own programs in D:/Programs/
 You can always look in other people's code to see how to use a feature
-There are included libraries for things ranging from collision detection to object orientation
+There are third-party libraries included for things ranging from collision detection to object orientation
 If you want code to run on boot up, place it in autoexec.lua in the D: drive.
 Updates overwrite the C: drive, so place your own data in the D: drive
+You can use the pastebin command to share your work with your friends in no time.
+You can access the BIOS SETUP screen by pressing delete (or back on mobiles) at POST screen.
+You can wipe your drives, or reinstall DiskOS in the BIOS SETUP.
+You can install PoorOS in the BIOS SETUP, it's just a Lua interpreter.
+You can boot PoorOS directly without installing in the BIOS SETUP.
+You can boot from drive D from the BIOS SETUP, it will execute D:/boot.lua
+You can use the 'SheetToClip' command to store extra spritesheets in your code.
+There's a public github repository for LIKO-12 disk: https://ramilego4game.github.io/LIKO-12-Disks
+LIKO-12 can use post shader, check https://github.com/RamiLego4Game/LIKO-12-Shaders
+Don't forget to give a star in LIKO-12 Github https://github.com/RamiLego4Game/LIKO-12
+LIKO-12 Nightly-Builds are available at https://ramilego4game.github.io/LIKO-12-Nightly
