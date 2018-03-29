@@ -162,6 +162,39 @@ do --So I can hide this part in ZeroBran studio
   end
 end
 
+--Persistent data API
+local GameSaveID
+local GameSaveData
+local GameSaveSize = 1024*2 --2KB
+
+if not fs.exists("C:/GamesData") then fs.newDirectory("C:/GamesData") end
+
+function Globals.SaveID(name)
+  if type(name) ~= "string" then return error("SaveID should be a string, provided: "..type(name)) end
+  
+  if GameSaveID then return error("SaveID could be only set once !") end
+  
+  GameSaveID, GameSaveData = name, ""
+  
+  if fs.exists(string.format("C:/GamesData/%s.bin",GameSaveID)) then
+    GameSaveData = fs.read(string.format("C:/GamesData/%s.bin",GameSaveID), GameSaveSize)
+  end
+end
+
+function Globals.SaveData(data)
+  if type(data) ~= "string" then return error("Save data should be a string, provided: "..type(data)) end
+  
+  if #data > GameSaveSize then return error("Save data can be 2KB maximum !") end
+  
+  --Write the game data
+  fs.write(string.format("C:/GamesData/%s.bin",GameSaveID), data, GameSaveSize)
+end
+
+function Globals.LoadData()
+  return GameSaveData
+end
+
+--Helpers
 local helpersloader, err = fs.load("C:/Libraries/diskHelpers.lua")
 if not helpersloader then error(err) end
 setfenv(helpersloader,Globals) helpersloader()
