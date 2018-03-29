@@ -3,6 +3,67 @@
 local Globals = (...) or {}
 local co = select(2,...) or {}
 
+local function evloop()
+  
+  local evinit = Globals["_init"]
+  
+  if evinit and type(evinit) == "function" then
+    local ok, err = pcall(evinit, a,b,c,d,e,f)
+    if not ok then
+      local err = tostring(err)
+      if err:sub(1,12) == '[string ""]:' then err = err:sub(13,-1) end
+      coroutine.yield("RUN:exit", "ERR :"..err)
+      return
+    end
+  end
+  
+  if not ((Globals["_update"] and type(Globals["_update"]) == "function") or (Globals["_draw"] and type(Globals["_draw"]) == "function")) then
+    return
+  end
+  
+  while true do
+    local event, a,b,c,d,e,f = pullEvent()
+    local evf = Globals["_"..event]
+    
+    if evf and type(evf) == "function" then
+      local ok, err = pcall(evf, a,b,c,d,e,f)
+      if not ok then
+        local err = tostring(err)
+        if err:sub(1,12) == '[string ""]:' then err = err:sub(13,-1) end
+        coroutine.yield("RUN:exit", "ERR :"..err)
+        break
+      end
+    end
+    
+    if event == "update" then
+      evf = Globals["_draw"]
+      
+      if evf and type(evf) == "function" then
+        local ok, err = pcall(evf, a,b,c,d,e,f)
+        if not ok then
+          local err = tostring(err)
+          if err:sub(1,12) == '[string ""]:' then err = err:sub(13,-1) end
+          coroutine.yield("RUN:exit", "ERR :"..err)
+          break
+        end
+      end
+    end
+    
+    if event == "keypressed" then
+      Globals.__BTNKeypressed(a,c)
+    elseif event == "update" then
+      Globals.__BTNUpdate(a)
+    elseif event == "touchcontrol" then
+      Globals.__BTNTouchControl(a,b)
+    elseif event == "gamepad" then
+      Globals.__BTNGamepad(a,b,c)
+    end
+  end
+end
+
+local evco = coroutine.create(evloop)
+Globals.__evco = evco --So the the runtime recieves the event loop coroutine.
+
 Globals.getfenv = function(f)
   if type(f) ~= "function" then return error("bad argument #1 to 'getfenv' (function expected, got "..type(f)) end
   local ok, env = pcall(getfenv,f)
@@ -29,7 +90,7 @@ end
 
 Globals.coroutine.running = function()
   local curco = coroutine.running()
-  if co and curco == co then return end
+  if co and (curco == co or evco == co) then return end
   return curco
 end
 
