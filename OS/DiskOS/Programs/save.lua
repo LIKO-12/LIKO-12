@@ -43,6 +43,11 @@ if string.lower(flag) == "--sheet" then --Sheet export
   if destination == "@clip" then clipboard(data) else fs.write(destination,data) end
   color(11) print("Exported Spritesheet successfully")
   return
+elseif string.lower(flag) == "--map" then --Sheet export
+  local data = eapi.leditors[eapi.editors.tile]:export(true)
+  if destination == "@clip" then clipboard(data) else fs.write(destination,data) end
+  color(11) print("Exported Spritesheet successfully")
+  return
 elseif string.lower(flag) == "--code" then
   local data = eapi.leditors[eapi.editors.code]:export(true)
   if destination == "@clip" then clipboard(data) else fs.write(destination:sub(1,-6)..".lua",data) end
