@@ -10,15 +10,11 @@ return function(config) --A function that creates a new CPU peripheral.
   local devkit = {}
   
   function devkit.triggerEvent(name,...)
-	if Instant then
-      Instant = false coreg:resumeCoroutine(true,name,...)
+    if Instant or RawPull then
+      Instant, RawPull = false, false coreg:resumeCoroutine(true,name,...)
     else
       table.insert(EventStack,{name,...})
-      
-      if RawPull then
-        RawPull = false; coreg:resumeCoroutine(true,name,...)
       end
-    end
   end
   
   events:register("love:update", function(...) --Update event
