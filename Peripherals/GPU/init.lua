@@ -895,8 +895,11 @@ return function(config) --A function that creates a new GPU peripheral.
       Clip = {x,y,w,h}
       love.graphics.setScissor(unpack(Clip))
     else
+      local oldClip = Clip
       Clip = false
       love.graphics.setScissor()
+      
+      return Clip
     end
     return true
   end

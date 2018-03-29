@@ -45,11 +45,14 @@ function ImageUtils.queuedFill(img,sx,sy,rcol,minx,miny,maxx,maxy)
   
 end
 
-local darkPal = {0,0,5,1,2,1,13,6,2,4,9,3,13,5,13,6}
+local darkPal = {
+  {0,0,5,1,2,1,13,6,2,4,9,3,13,5,13,6}, --Level 1
+  {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1} --Level 2
+}
 
-function ImageUtils.darken(img)
+function ImageUtils.darken(img, lvl)
   img:map(function(x,y,c)
-    return darkPal[c+1]
+    return darkPal[lvl or 1][c+1]
   end)
 end
 
