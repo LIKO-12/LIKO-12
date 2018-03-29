@@ -11,14 +11,15 @@ return function(config) --A function that creates a new CPU peripheral.
   
   function devkit.triggerEvent(name,...)
     if Instant or RawPull then
-      Instant, RawPull = false, false coreg:resumeCoroutine(true,name,...)
+      Instant, RawPull = false, false
+      coreg:resumeCoroutine(true,name,...)
     else
       table.insert(EventStack,{name,...})
       end
   end
   
   events:register("love:update", function(...) --Update event
-	   devkit.triggerEvent("update",...)
+    if not sleepTimer then devkit.triggerEvent("update",...) end
   end)
   
   events:register("love:update",function(dt) --Sleep Timer
