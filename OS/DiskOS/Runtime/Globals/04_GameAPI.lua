@@ -2,18 +2,6 @@
 
 local Globals = (...) or {}
 
-function Globals.___autoEventLoop()
-  if _G._init and type(_G._init) == "function" then
-    _G._init()
-  end
-  if type(_G._eventLoop) == "boolean" and not _G._eventLoop then return end --Skip the auto eventLoop.
-  if _G._update or _G._draw or _G._eventLoop then
-    eventLoop()
-  end
-end
-
-setfenv(Globals.___autoEventLoop,Globals)
-
 local json = require("Libraries/JSON")
 
 local pkeys = {} --Pressed keys
