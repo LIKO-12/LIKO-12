@@ -97,6 +97,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --End of config loading--
   
+  local _Flipped = falde --This flag means that the screen has been flipped
   local _ShouldDraw = false --This flag means that the gpu has to update the screen for the user.
   local _AlwaysDraw = false --This flag means that the gpu has to always update the screen for the user.
   local _DevKitDraw = false --This flag means that the gpu has to always update the screen for the user, set by other peripherals
@@ -777,6 +778,16 @@ return function(config) --A function that creates a new GPU peripheral.
     if imgchange then _ImageShader:send('palette',unpack(_ImagePalette)) end
     if transchange then _ImageShader:send('transparent', unpack(_ImageTransparent)) end
     table.remove(PaletteStack,#PaletteStack)
+  end
+  
+  --Check the flip flag and clear it
+  function GPU._isFlipped()
+    if _Flipped then
+      _Flipped = false
+      return true
+    end
+    
+    return false
   end
   
   --Suspend the coroutine till the screen is updated
@@ -1630,6 +1641,7 @@ return function(config) --A function that creates a new GPU peripheral.
       
       if Clip then love.graphics.setScissor(unpack(Clip)) end
       _ShouldDraw = false --Reset the flag.
+      _Flipped = true --Set the flipped flag
       GPU.popColor() --Restore the active color.
       if flip then
         flip = false
