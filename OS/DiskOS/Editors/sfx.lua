@@ -115,7 +115,11 @@ end
 local playRect, playDown = {sw-8,sh-8,8,8}, false
 
 function se:drawPlay()
-  eapi.editorsheet:draw(playDown and 40 or 16,playRect[1],playRect[2])
+  if playingNote >= 0 then
+    eapi.editorsheet:draw(playDown and 41 or 17,playRect[1],playRect[2])
+  else
+    eapi.editorsheet:draw(playDown and 40 or 16,playRect[1],playRect[2])
+  end
 end
 
 local waveGrid,waveHover,waveDown = {sw-56,40,9*6,7,6,1}, false, false
@@ -146,7 +150,9 @@ function se:entered()
 end
 
 function se:leaved()
-  
+  --Stop the current playing SFX
+  Audio.stop()
+  playingNote = -1
 end
 
 function se:pitchMouse(state,x,y,button,istouch)
@@ -263,16 +269,15 @@ function se:playMouse(state,x,y,button,istouch)
   elseif state == "released" then
     if isInRect(x,y,playRect) and playDown then
       playDown = false
-      self:drawPlay()
       if playingNote >= 0 then
         Audio.stop()
         playingNote = -1
-        drawGraph()
       else
         sfxdata[selectedSlot]:play(0)
         playingNote = 0
-        drawGraph()
       end
+      drawGraph()
+      self:drawPlay()
     end
   end
 end
@@ -316,6 +321,7 @@ function se:update(dt)
     playingNote = playingNote + (dt*sfxNotes)/speed
     if playingNote >= sfxNotes then
       playingNote = -1
+      self:drawPlay()
     end
     drawGraph()
   end
