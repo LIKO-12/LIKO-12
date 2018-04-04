@@ -96,11 +96,11 @@ Globals.coroutine.running = function()
   return curco
 end
 
-Globals.dofile = function(path)
+Globals.dofile = function(path,...)
   local chunk, err = fs.load(path)
   if not chunk then return error(err) end
   setfenv(chunk,Globals)
-  local ok, err = pcall(chunk)
+  local ok, err = pcall(chunk,...)
   if not ok then return error(err) end
 end
 
