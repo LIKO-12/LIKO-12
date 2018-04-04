@@ -221,6 +221,7 @@ return function(config)
     if dist < dpad_radius + dpad_extra then
       touchangle = calcAngle(y - dpad_cy, x - dpad_cx)
       touchids[1] = id
+      updateDpad()
     end
   end)
   
