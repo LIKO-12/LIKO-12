@@ -139,6 +139,14 @@ return function(config) --A function that creates a new GPU peripheral.
     love.window.setIcon(love.image.newImageData("icon.png"))
   end
   
+  events:register("love:quit", function()
+    if love.window.isOpen() then
+      love.graphics.setCanvas()
+      love.window.close()
+    end
+    return false
+  end)
+  
   _HOST_W, _HOST_H = love.graphics.getDimensions()
   
   --End of config loading--
