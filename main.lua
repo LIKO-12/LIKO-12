@@ -76,7 +76,7 @@ function love.run(arg)
           for k,v in pairs(r) do
             if v and v[1] then r = nil break end
           end
-          if r then return a end
+          if r then return a or 0 end
         else
           events:trigger("love:"..name,a,b,c,d,e,f)
         end
