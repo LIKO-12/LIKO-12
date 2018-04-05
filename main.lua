@@ -64,7 +64,11 @@ function love.run(arg)
   return function()
     -- Process events.
     if love.event then
+      local canvas = love.graphics.getCanvas()
+      if canvas then love.graphics.setCanvas() end
       love.event.pump()
+      if canvas then love.graphics.setCanvas{canvas,stencil=true} end
+      
       for name, a,b,c,d,e,f in love.event.poll() do
         if name == "quit" then
           local r = events:trigger("love:quit")
