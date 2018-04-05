@@ -24,7 +24,6 @@ I don't think anyone would want to edit anything in this file.
 - Rami Sabbagh (RamiLego4Game)
 ]]
 
-
 love.setDeprecationOutput(false) --Disable desprecation output temporary (Until the 11.0 update is done)
 
 local package_exceptions = {
@@ -59,6 +58,8 @@ function love.run(arg)
 
     local dt = 0
   end
+
+  runReset() --Reset for the first time
 
   return function()
     -- Process events.
