@@ -45,7 +45,9 @@ local function canvas(w,h)
   love.graphics.clear(0,0,0,1)
 end
 local function imagedata()
+  love.graphics.setCanvas()
   imgdata =  _Canvas:newImageData()
+  love.graphics.setCanvas(_Canvas)
 end
 
 love.graphics.setDefaultFilter("nearest","nearest")
