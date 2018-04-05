@@ -17,7 +17,7 @@ local function evloop()
     end
   end
   
-  if not ((Globals["_update"] and type(Globals["_update"]) == "function") or (Globals["_draw"] and type(Globals["_draw"]) == "function")) then
+  if not ((Globals["_update"] and type(Globals["_update"]) == "function") or (Globals["_draw"] and type(Globals["_draw"]) == "function") or Globals["_eventLoop"]) then
     return
   end
   
