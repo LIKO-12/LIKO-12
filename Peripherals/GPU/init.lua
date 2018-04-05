@@ -1396,7 +1396,7 @@ return function(config) --A function that creates a new GPU peripheral.
         return false, "Pixel position out from the image region"
       end
       local r,g,b,a = imageData:getPixel(x,y)
-      return floor(r)*255
+      return floor(r*255)
     end
     function id:setPixel(x,y,c)
       if type(c) ~= "number" then return error("Color must be a number, provided "..type(c)) end
