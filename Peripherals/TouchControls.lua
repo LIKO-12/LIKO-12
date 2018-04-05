@@ -2,6 +2,20 @@ local events = require("Engine.events")
 
 local onMobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
 
+--Wrapper for setColor to use 0-255 values
+local function setColor(r,g,b,a)
+  local r,g,b,a = r,g,b,a
+  if type(r) == "table" then
+    r,g,b,a = unpack(r)
+  end
+  if r then r = r/255 end
+  if g then g = g/255 end
+  if b then b = b/255 end
+  if a then a = a/255 end
+  
+  love.graphics.setColor(r, g, b, a)
+end
+
 return function(config)
   local CPUKit = config.CPUKit
   if not CPUKit then error("TouchControls Peripheral can't work without the CPUKit passed") end
@@ -186,16 +200,16 @@ return function(config)
       love.graphics.setLineWidth(devkit.buttons[id] and 4 or 2)
       if id < 7 then --AB buttons
         local cx, cy, col; if id == 5 then cx,cy,col = a_cx,a_cy,a_col  else cx,cy,col = b_cx,b_cy,b_col end
-        col[4] = bg_alpha; love.graphics.setColor(col)
+        col[4] = bg_alpha; setColor(col)
         love.graphics.circle("fill",cx, cy, btn_radius)
         if devkit.buttons[id] then love.graphics.circle("fill",cx, cy, btn_radius) end
-        col[4] = alpha; love.graphics.setColor(col)
+        col[4] = alpha; setColor(col)
         love.graphics.circle("line",cx, cy, btn_radius)
       else --Start button
-        start_col[4] = bg_alpha; love.graphics.setColor(start_col)
+        start_col[4] = bg_alpha; setColor(start_col)
         love.graphics.rectangle("fill",start_x,start_y,start_w,start_h,start_r)
         if devkit.buttons[7] then love.graphics.rectangle("fill",start_x,start_y,start_w,start_h,start_r) end
-        start_col[4] = alpha; love.graphics.setColor(start_col)
+        start_col[4] = alpha; setColor(start_col)
         love.graphics.rectangle("line",start_x,start_y,start_w,start_h,start_r)
       end
     end
@@ -246,7 +260,7 @@ return function(config)
     
     --DPAD
     love.graphics.setLineWidth(2)
-    love.graphics.setColor(255,255,255,bg_alpha)
+    setColor(255,255,255,bg_alpha)
     love.graphics.circle("fill",dpad_cx, dpad_cy, dpad_radius)
     
     if touchangle then
@@ -268,12 +282,12 @@ return function(config)
       end
     end
     
-    love.graphics.setColor(255,255,255,alpha)
+    setColor(255,255,255,alpha)
     love.graphics.circle("line",dpad_cx, dpad_cy, dpad_radius)
     
     --Draw the lines
     love.graphics.setLineWidth(1)
-    love.graphics.setColor(255,255,255,fg_alpha)
+    setColor(255,255,255,fg_alpha)
     love.graphics.line(dpad_cx+dpad_line, dpad_cy-dpad_line,
                        dpad_cx-dpad_line, dpad_cy+dpad_line)
     
