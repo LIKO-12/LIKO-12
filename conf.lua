@@ -11,7 +11,7 @@ _LVERSION = string.format("V%d.%d.%d_%s",_LVer.magor,_LVer.minor,_LVer.patch,_LV
 
 --BuildConfig
 local build = {}
-if love.filesystem.exists("build.json") then
+if love.filesystem.getInfo("build.json", "file") then
   build = love.filesystem.read("build.json")
   build = require("Engine.JSON"):decode(build)
 end
@@ -21,13 +21,13 @@ function love.conf(t)
     t.version = "11.0"                -- The LÖVE version this game was made for (string)
     t.console = false                   -- Attach a console (boolean, Windows only)
     t.accelerometerjoystick = false     -- Enable the accelerometer on iOS and Android by exposing it as a Joystick (boolean)
-    t.externalstorage = true            -- True to save files (and read from the save directory) in external storage on Android (boolean) 
+    t.externalstorage = true            -- True to save files (and read from the save directory) in external storage on Android (boolean)
     t.gammacorrect = false              -- Enable gamma-correct rendering, when supported by the system (boolean)
-    
+
     t.audio.mixwithsystem = true        -- Keep background music playing when opening LOVE (boolean, iOS and Android only)
-    
+
     t.window = false --The window will be created later by the GPU Peripheral.
- 
+
     t.modules.audio = true              -- Enable the audio module (boolean)
     t.modules.data = true               -- Enable the data module (boolean)
     t.modules.event = true              -- Enable the event module (boolean)
