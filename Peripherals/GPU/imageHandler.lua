@@ -8,6 +8,7 @@
   local IMGSize4 = IMGLine4*IMGHeight
   
   local band,bor,lshift,rshift = bit.band,bit.bor,bit.lshift,bit.rshift
+  local floor = math.floor
   
   return function(mode,startAddress,address,...)
     address = address - startAddress
@@ -36,8 +37,8 @@
       lpix = rshift(lpix,4)
       
       --Set the pixels
-      IMG:setPixel(x,y,lpix,0,0,255)
-      IMG:setPixel(x+1,y,rpix,0,0,255)
+      IMG:setPixel(x,y,lpix/255,0,0,1)
+      IMG:setPixel(x+1,y,rpix/255,0,0,1)
       
       --Tell that it has been changed.
       OnChange()
@@ -51,7 +52,7 @@
       local y = math.floor(address / IMGLine4)
       
       --Set the pixels
-      IMG:setPixel(x,y,pix,0,0,255)
+      IMG:setPixel(x,y,pix/255,0,0,1)
       
       --Tell that it has been changed.
       OnChange()
@@ -63,8 +64,8 @@
       local y = math.floor(address / IMGLine)
       
       --Get the colors of the 2 pixels
-      local lpix = IMG:getPixel(x,y)
-      local rpix = IMG:getPixel(x+1,y)
+      local lpix = floor(IMG:getPixel(x,y)*255)
+      local rpix = floor(IMG:getPixel(x+1,y)*255)
       
       --Shift the left pixel.
       lpix = lshift(lpix,4)
@@ -82,7 +83,7 @@
       local y = math.floor(address / IMGLine4)
       
       --Return the pixel color
-      local pix = IMG:getPixel(x,y)
+      local pix = floor(IMG:getPixel(x,y)*255)
       return pix
       
     elseif mode == "memget" then
@@ -97,8 +98,8 @@
       for Y = y, imgHeight-1 do
         for X = xStart, imgWidth-1, 2 do
           
-          local lpix = IMG:getPixel(X,Y)
-          local rpix = IMG:getPixel(X+1,Y)
+          local lpix = floor(IMG:getPixel(X,Y)*255)
+          local rpix = floor(IMG:getPixel(X+1,Y)*255)
           
           lpix = lshift(lpix,4)
           
@@ -139,8 +140,8 @@
         
         lpix = rshift(lpix,4)
         
-        IMG:setPixel(x,y,lpix,0,0,255)
-        IMG:setPixel(x+1,y,rpix,0,0,255)
+        IMG:setPixel(x,y,lpix/255,0,0,1)
+        IMG:setPixel(x+1,y,rpix/255,0,0,1)
         
         x = x+2
         
