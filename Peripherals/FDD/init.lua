@@ -69,7 +69,7 @@ return function(config)
   
   --LabelDrawMapper
   local function _DrawLabel(x,y,r,g,b,a)
-    FIMG:setPixel(LabelX+x,LabelY+y,convertColor(ColorSet[r]))
+    FIMG:setPixel(LabelX+x,LabelY+y,convertColor(ColorSet[floor(r*255)]))
     return r,g,b,a
   end
   
