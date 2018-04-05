@@ -5,8 +5,6 @@ require("love.system")
 --Are we running on mobile ?
 local onMobile = (love.system.getOS() == "Android")
 
-if onMobile then jit.off() end --Love Bug
-
 --Store math functions in locals to optamize speed.
 local min, max, floor, ceil, sin, abs, random = math.min, math.max, math.floor, math.ceil, math.sin, math.abs, math.random
 
