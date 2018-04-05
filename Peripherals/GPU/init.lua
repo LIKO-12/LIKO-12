@@ -582,7 +582,9 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local function BindVRAM()
     if VRAMBound then return end
+    love.graphics.setCanvas()
     VRAMImg = _ScreenCanvas:newImageData()
+    love.graphics.setCanvas{_ScreenCanvas,stencil=true}
     VRAMBound = true
   end
   
@@ -1329,7 +1331,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     
     function i:refresh()
-      Image:refresh()
+      Image:replacePixels(SourceData)
       return self
     end
     
@@ -1475,7 +1477,10 @@ return function(config) --A function that creates a new GPU peripheral.
     y = Verify(y,"Y","number",true)
     w = Verify(w,"W","number",true)
     h = Verify(h,"H","number",true)
-    return GPU.imagedata(_ScreenCanvas:newImageData(1,1,x,y,w,h))
+    love.graphics.setCanvas()
+    local imgdata = GPU.imagedata(_ScreenCanvas:newImageData(1,1,x,y,w,h))
+    love.graphics.setCanvas{_ScreenCanvas,stencil=true}
+    return imgdata
   end
   
   function GPU.getLabelImage()
@@ -1589,7 +1594,9 @@ return function(config) --A function that creates a new GPU peripheral.
       love.filesystem.write("/LIKO12-"..os.time()..".png",png)
       systemMessage("Screenshot has been taken successfully",2)
     elseif key == _LabelCaptureKey then
+      love.graphics.setCanvas()
       LabelImage:paste(_ScreenCanvas:newImageData(),0,0,0,0,_LIKO_W,_LIKO_H)
+      love.graphics.setCanvas{_ScreenCanvas,stencil=true}
       systemMessage("Captured label image successfully !",2)
     end
   end)
