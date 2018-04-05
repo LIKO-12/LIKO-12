@@ -303,13 +303,14 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Convert from LIKO12 palette to real colors.
   local function _ExportImage(x,y, r,g,b,a)
-    if _ImageTransparent[floor(r*255)+1] == 0 then return 0,0,0,0 end
+    r = floor(r*255)
+    if _ImageTransparent[r+1] == 0 then return 0,0,0,0 end
     return colorTo1(_ColorSet[r])
   end
   
   --Convert from LIKO-12 palette to real colors ignoring transparent colors.
   local function _ExportImageOpaque(x,y, r,g,b,a)
-    return colorT1(_ColorSet[r])
+    return colorT1(_ColorSet[floor(r*255)])
   end
   
   local LastMSG = "" --Last system message.
@@ -1436,13 +1437,13 @@ return function(config) --A function that creates a new GPU peripheral.
     
     function id:export()
       local expData = love.image.newImageData(self:width(),self:height())
-      expData:mapPixel(_ExportImage)
+      expData:mapPixel(function(x,y) return _ExportImage(x,y, imageData:getPixel(x,y)) end)
       return expData:encode("png"):getString()
     end
     
     function id:exportOpaque()
       local expData = love.image.newImageData(self:width(),self:height())
-      expData:mapPixel(_ExportImageOpaque)
+      expData:mapPixel(function(x,y) return _ExportImageOpaque(x,y, imageData:getPixel(x,y)) end)
       return expData:encode("png"):getString()
     end
     
