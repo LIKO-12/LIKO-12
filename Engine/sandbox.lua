@@ -1,6 +1,5 @@
 --A function that creates new sandboxed global environment.
 
-local basexx = require("Engine.basexx")
 local bit = require("bit")
 
 local _LuaBCHeader = string.char(0x1B).."LJ"
@@ -79,12 +78,12 @@ return function(parent)
       tan=math.tan,
       tanh=math.tanh,
       noise = love.math.noise, --LOVE releated apis
-      b64enc = basexx.to_base64, --Will be replaced by love.math ones in love 0.11
-      b64dec = basexx.from_base64,
-      hexenc = basexx.to_hex,
-      hexdec = basexx.from_hex,
-      compress = function(...) return love.math.compress(...):getString() end,
-      decompress = love.math.decompress,
+      b64enc = function(rawstr) return love.data.encode("string","base64",rawstr) end, --Will be replaced by love.math ones in love 0.11
+      b64dec = function(rawstr) return love.data.decode("string","base64",rawstr) end,
+      hexenc = function(rawstr) return love.data.encode("string","hex",rawstr) end,
+      hexdec = function(rawstr) return love.data.decode("string","hex",rawstr) end,
+      compress = function(rawstr,format,lvl) return love.data.compress("string",format,rawstr,lvl) end,
+      decompress = function(rawstr,format) return love.data.decompress("string",format,rawstr) end,
       isConvex = love.math.isConvex,
       triangulate = love.math.triangulate,
       randomNormal = love.math.randomNormal
