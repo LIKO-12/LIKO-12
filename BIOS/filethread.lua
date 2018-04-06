@@ -19,20 +19,21 @@ local function checkDir(dir,r)
 	local items = love.filesystem.getDirectoryItems(path)
 	for k, file in ipairs(items) do if file:sub(1,1) ~= "." then
 		local fpath = path..file
-		if love.filesystem.isFile(fpath) then --It's a file
+		if love.filesystem.getInfo(fpath,"file") then --It's a file
 			local fupdate = false --Should the file be updated ?
 			if not love.filesystem.getInfo(dpath..dir..file) then --Add new file
 				print("New file added")
 				fupdate = true
 			else --Check old file
-				local modtime, merr = love.filesystem.getLastModified(fpath)
+        local info = love.filesystem.getInfo(fpath)
+				local modtime, merr = info and info.modtime, ""
 				if modtime then
 					if r[file] then --It's registered
 						if modtime > r[file] then --It has been edited !
 							fupdate = true
 						end
 					else --It's not registered !
-						r[file] = love.filesystem.getLastModified(fpath) --Register it.
+						r[file] = info.modtime --Register it.
 					end
 				else
 					print("Error: failed to get modification time,",modtime)
@@ -41,7 +42,8 @@ local function checkDir(dir,r)
 			
 			--Update the file
 			if fupdate then
-				r[file] = love.filesystem.getLastModified(fpath)
+        local info = love.filesystem.getInfo(fpath)
+				r[file] = info and info.modtime or false
 				local data, rerr = love.filesystem.read(fpath)
 				if data then
 					local ok, werr = love.filesystem.write(dpath..dir..file,data)
