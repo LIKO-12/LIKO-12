@@ -23,7 +23,7 @@ end
 local files = fs.getDirectoryItems(path) --Returns a table containing the names of folders and files in the given directory
 
 for k, f in ipairs(files) do
-  color(fs.isFile(path..f) and 7 or 11)
+  color(fs.isFile(path..f) and 6 or 11)
   print(f.." ",false)
 end
 print("")
