@@ -92,7 +92,7 @@ if update then
   for k, path in ipairs(OSFiles) do
     local HDDPath = "C:/"..path:sub(OSPathLen+1,-1)
     if fs.exists(HDDPath) then
-      local info = love.filesystem.getInfo(path)
+      local info = love.filesystem.getInfo(path,"file")
       if info then
         local newDate = assert(info.modtime,"failed to get mod time")
         local oldDate = assert(fs.getLastModified(HDDPath))
