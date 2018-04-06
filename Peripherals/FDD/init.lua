@@ -115,7 +115,7 @@ return function(config)
     --Scan the label image
     for y=LabelY,LabelY+LabelH-1 do
       for x=LabelX,LabelX+LabelW-1 do
-        _ScanLabel(x-LabelX,y-LabelY,floor(FIMG:getPixel(x,y)*255))
+        _ScanLabel(x-LabelX,y-LabelY,FIMG:getPixel(x,y))
       end
     end
     
