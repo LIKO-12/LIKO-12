@@ -89,7 +89,7 @@ return function(config)
   function fapi.newDisk(tname)
     local tname = tname or "Blue"
     if type(tname) ~= "string" then return error("Disk template name must be a string or a nil, provided: "..type(tname)) end
-    if not love.filesystem.exists(perpath..tname..".png") then return error("Disk template '"..tname.."' doesn't exist !") end
+    if not love.filesystem.getInfo(perpath..tname..".png","file") then return error("Disk template '"..tname.."' doesn't exist !") end
     
     FIMG = love.image.newImageData(perpath..tname..".png")
   end

@@ -21,7 +21,7 @@ local function checkDir(dir,r)
 		local fpath = path..file
 		if love.filesystem.isFile(fpath) then --It's a file
 			local fupdate = false --Should the file be updated ?
-			if not love.filesystem.exists(dpath..dir..file) then --Add new file
+			if not love.filesystem.getInfo(dpath..dir..file) then --Add new file
 				print("New file added")
 				fupdate = true
 			else --Check old file

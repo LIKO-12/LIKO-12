@@ -179,7 +179,7 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
   
   --Initialize the gpu--
-  if not love.filesystem.exists("Shaders") then
+  if not love.filesystem.getInfo("Shaders","directory") then
     love.filesystem.createDirectory("Shaders")
   end
   
@@ -205,10 +205,10 @@ return function(config) --A function that creates a new GPU peripheral.
   local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
   
   local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo() --Used to apply some device specific bugfixes.
-  if not love.filesystem.exists("/GPUInfo.txt") then love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
+  if not love.filesystem.getInfo("/GPUInfo.txt","file") then love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
   
   local ofs
-  if love.filesystem.exists("GPUCalibration.json") then
+  if love.filesystem.getInfo("GPUCalibration.json","file") then
     ofs = json:decode(love.filesystem.read("/GPUCalibration.json"))
     if ofs.version < 1.3 then --Redo calibration
       ofs = love.filesystem.load(perpath.."calibrate.lua")()
@@ -348,7 +348,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local function startGifRecording()
     if _GIFRec then return end --If there is an already in progress gif
-    if love.filesystem.exists("/~gifrec.gif") then
+    if love.filesystem.getInfo("/~gifrec.gif","file") then
       _GIFRec = _GIF.continue("/~gifrec.gif")
       _GIFPStart = love.filesystem.read("/~gifrec.pal")
       _GIFPChanged = true --To check if it's the same palette
@@ -378,7 +378,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local function endGifRecording()
     if not _GIFRec then
-      if love.filesystem.exists("/~gifrec.gif") then
+      if love.filesystem.getInfo("/~gifrec.gif","file") then
         _GIFRec = _GIF.continue("/~gifrec.gif")
       else return end
       systemMessage("Saved old gif recording successfully",2,false,false,true)
@@ -425,7 +425,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end)
   
   --Restoring the gif record if it was made by a reboot
-  if love.filesystem.exists("/~gifreboot.gif") then
+  if love.filesystem.getInfo("/~gifreboot.gif","file") then
     if not _GIFRec then
       love.filesystem.write("/~gifrec.gif",love.filesystem.read("/~gifreboot.gif"))
       love.filesystem.remove("/~gifreboot.gif")
