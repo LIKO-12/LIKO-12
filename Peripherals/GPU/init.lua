@@ -1528,7 +1528,7 @@ return function(config) --A function that creates a new GPU peripheral.
       _Cursor = imgdata
       if _Cursor == "none" or _GrappedCursor then
         love.mouse.setVisible(false)
-      elseif not _Mobile then
+      elseif love.mouse.isCursorSupported() then
         love.mouse.setVisible(true)
         love.mouse.setCursor(_CursorsCache[_Cursor].cursor)
       end
@@ -1552,7 +1552,7 @@ return function(config) --A function that creates a new GPU peripheral.
       gifimg = love.graphics.newImage(gifimg)
       
       local hotx, hoty = hx*math.floor(_LIKOScale), hy*math.floor(_LIKOScale) --Converted to host scale
-      local cur = _Mobile and {} or love.mouse.newCursor(limg,hotx,hoty)
+      local cur = love.mouse.isCursorSupported() and love.mouse.newCursor(limg,hotx,hoty) or {}
       local palt = {}
       for i=1, 16 do
         table.insert(palt,_ImageTransparent[i])
@@ -1570,7 +1570,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   events:register("love:resize",function() --The new size will be calculated in the top, because events are called by the order they were registered with
-    if _Mobile then return end
+    if not love.mouse.isCursorSupported() then return end
     for k, cursor in pairs(_CursorsCache) do
        --Hack
       GPU.pushPalette()
