@@ -207,17 +207,17 @@ return function(config) --A function that creates a new GPU peripheral.
   local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo() --Used to apply some device specific bugfixes.
   if not love.filesystem.getInfo("/GPUInfo.txt","file") then love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
   
-  local ofs
+  local calibVersion,ofs = 1.4
   if love.filesystem.getInfo("GPUCalibration.json","file") then
     ofs = json:decode(love.filesystem.read("/GPUCalibration.json"))
-    if ofs.version < 1.3 then --Redo calibration
+    if ofs.version < calibVersion then --Redo calibration
       ofs = love.filesystem.load(perpath.."calibrate.lua")()
-      ofs.version = 1.3
+      ofs.version = calibVersion
       love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
     end
   else
     ofs = love.filesystem.load(perpath.."calibrate.lua")()
-    ofs.version = 1.3
+    ofs.version = calibVersion
     love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
   end
   
