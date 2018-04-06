@@ -391,7 +391,7 @@ return function(Config)
     Verify(path,"string","Path")
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
-    
+    local info = love.filesystem.getInfo(RootDir..path)
     if not info then return false end
     return (info.type == "file")
   end
