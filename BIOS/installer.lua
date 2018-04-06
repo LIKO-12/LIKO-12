@@ -1,6 +1,6 @@
 --The OS Installer
 
-local devmode = love.filesystem.exists("/devmode.txt") or (_LVer.tag == "DEV")
+local devmode = (love.filesystem.getInfo("/devmode.txt") and true or false) or (_LVer.tag == "DEV")
 
 local HandledAPIS, osName, update = ...
 
