@@ -37,7 +37,7 @@ local Devkits = {} --The mounted peripherals devkits.
 local function indexPeripherals(path)
   local files = love.filesystem.getDirectoryItems(path)
   for k,filename in ipairs(files) do
-    if love.filesystem.isDirectory(path..filename) then
+    if love.filesystem.getInfo(path..filename,"directory") then
       if love.filesystem.getInfo(path..filename.."/init.lua","file") then
         local chunk, err = love.filesystem.load(path..filename.."/init.lua")
         if not chunk then Peripherals[filename] = "Err: "..tostring(err) else

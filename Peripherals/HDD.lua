@@ -124,8 +124,10 @@ return function(Config)
     for k, part in ipairs(parts) do
       totalPath = totalPath.."/"..part
       
-      if love.filesystem.getInfo(RootDir..totalPath) then
-        if love.filesystem.isFile(RootDir..totalPath) then
+      local info = love.filesystem.getInfo(RootDir..totalPath)
+      
+      if info then
+        if info.type == "file" then
           error("Can't create a directory in a file !",3)
         end
       else
@@ -150,9 +152,11 @@ return function(Config)
   
   --NOTE: The from and to should include the drive folder (eg C:/ex -> C/ex)
   local function copyRecursive(from, to)
-    if not love.filesystem.getInfo(RootDir..from) then return end
+    local info = love.filesystem.getInfo(RootDir..from)
     
-    if love.filesystem.isDirectory(RootDir..from) then
+    if not info then return end
+    
+    if info.type == "directory" then
       --Copy a directory:
       --Make the new directory
       love.filesystem.newDirectory(RootDir..to)
@@ -174,9 +178,10 @@ return function(Config)
   
   --NOTE: The from and to should include the drive folder (eg C:/ex -> C/ex)
   local function deleteRecursive(path)
-    if not love.filesystem.getInfo(RootDir..path) then return end
+    local info = love.filesystem.getInfo(RootDir..path)
+    if not info then return end
     
-    if love.filesystem.isDirectory(RootDir..path) then
+    if info.type == "directory" then
       --Delete a directory:
       
       local files = love.filesystem.getDirectoryItems(RootDir..path)
@@ -194,9 +199,10 @@ return function(Config)
   
   --NOTE: The path should include the drive folder (eg C:/ex -> C/ex)
   local function getSizeRecursive(path)
-    if not love.filesystem.getInfo(RootDir..path) then return 0 end
+    local info = love.filesystem.getInfo(RootDir..path)
+    if not info then return 0 end
     
-    if love.filesystem.isDirectory(RootDir..path) then
+    if info.type == "directory" then
       --Index a directory:
       local total = 0
       local files = love.filesystem.getDirectoryItems(RootDir..path)
@@ -205,13 +211,13 @@ return function(Config)
       end
       return total
     else
-      return love.filesystem.getSize(RootDir..path)
+      return info.size
     end
   end
   
   --NOTE: The path should include the drive folder (eg C:/ex -> C/ex)
   local function getLastModifiedRecursive(path)
-    if love.filesystem.isDirectory(RootDir..path) then
+    if love.filesystem.getInfo(RootDir..path,"directory") then
       --Index a directory:
       local latest = 0
       local files = love.filesystem.getDirectoryItems(RootDir..path)
@@ -230,7 +236,9 @@ return function(Config)
         return latest
       end
     else
-      return love.filesystem.getLastModified(RootDir..path)
+      local info = love.filesystem.getInfo(RootDir..path)
+      if info then return info.modtime end
+      return false
     end
   end
   
@@ -292,8 +300,10 @@ return function(Config)
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
-    if not love.filesystem.getInfo(RootDir..path) then return error("Folder doesn't exists !") end
-    if love.filesystem.isFile(RootDir..path) then return error("The path must be a directory, not a file !") end
+    local info = love.filesystem.getInfo(RootDir..path)
+    
+    if not info then return error("Folder doesn't exists !") end
+    if info.type ~= "directory" then return error("The path must be a directory, not a file !") end
     
     return assert(love.filesystem.getDirectoryItems(RootDir..path))
   end
@@ -381,8 +391,9 @@ return function(Config)
     Verify(path,"string","Path")
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
-    if not love.filesystem.getInfo(RootDir..path) then return false end
-    return love.filesystem.isFile(RootDir..path)
+    
+    if not info then return false end
+    return (info.type == "file")
   end
   
   --Check if it's a directory or not.
@@ -390,8 +401,9 @@ return function(Config)
     Verify(path,"string","Path")
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
-    if not love.filesystem.getInfo(RootDir..path) then return false end
-    return love.filesystem.isDirectory(RootDir..path)
+    local info = love.filesystem.getInfo(RootDir..path)
+    if not info then return false end
+    return (info.type == "directory")
   end
   
   --Create a new directory
@@ -509,8 +521,10 @@ return function(Config)
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
-    if not love.filesystem.getInfo(RootDir..path) then return error("File doesn't exists.") end
-    if love.filesystem.isDirectory(RootDir..path) then return error("Can't read content of a directory.") end
+    local info = love.filesystem.getInfo(RootDir..path)
+    
+    if not info then return error("File doesn't exists.") end
+    if info.type == "directory" then return error("Can't read content of a directory.") end
     
     return love.filesystem.read(RootDir..path, size)
   end
@@ -521,8 +535,10 @@ return function(Config)
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
-    if not love.filesystem.getInfo(RootDir..path) then return error("File doesn't exists.") end
-    if love.filesystem.isDirectory(RootDir..path) then return error("Can't load content of a directory.") end
+    local info = love.filesystem.getInfo(RootDir..path)
+    
+    if not info then return error("File doesn't exists.") end
+    if info.type == "directory" then return error("Can't load content of a directory.") end
     
     local data = love.filesystem.read(RootDir..path)
     if data and data:sub(1,3) == _LuaBCHeader then return error("LOADING BYTECODE IS NOT ALLOWED, YOU HACKER !") end
@@ -540,8 +556,10 @@ return function(Config)
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
-    if not love.filesystem.getInfo(RootDir..path) then return error("File doesn't exists.") end
-    if love.filesystem.isDirectory(RootDir..path) then return error("Can't read content of a directory.") end
+    local info = love.filesystem.getInfo(RootDir..path)
+    
+    if not info then return error("File doesn't exists.") end
+    if info.type == "directory" then return error("Can't read content of a directory.") end
     
     return love.filesystem.lines(RootDir..path)
   end
@@ -554,12 +572,14 @@ return function(Config)
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
-    if love.filesystem.isDirectory(RootDir..path) then return error("Can't write on a directory.") end
+    if love.filesystem.getInfo(RootDir..path,"directory") then return error("Can't write on a directory.") end
     
     local fsize = size or data:len()
     
-    if love.filesystem.getInfo(RootDir..path) then
-      fsize = fsize - love.filesystem.getSize(RootDir..path)
+    local info = love.filesystem.getInfo(RootDir..path)
+    
+    if info then
+      fsize = fsize - info.size
     end
     
     if Drives[drive].Usage + fsize > Drives[drive].Size then error("No enough space.") end
@@ -578,7 +598,7 @@ return function(Config)
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
-    if love.filesystem.isDirectory(RootDir..path) then return error("Can't append data on a directory.") end
+    if love.filesystem.getInfo(RootDir..path,"directory") then return error("Can't append data on a directory.") end
     
     local asize = size or data:len()
     if Drives[drive].Usage + asize > Drives[drive].Size then error("No enough space.") end

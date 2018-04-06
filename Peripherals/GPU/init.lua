@@ -444,7 +444,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local shaderslist = love.filesystem.getDirectoryItems("/Shaders/")
     if key == _GIFEndKey then --Next Shader
       local nextShader = shaderslist[_ActiveShaderID + 1]
-      if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
+      if nextShader and love.filesystem.getInfo("/Shaders/"..nextShader,"file") then
         local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
         if not ok then
           print("Failed to load shader",nextShader)
@@ -479,7 +479,7 @@ return function(config) --A function that creates a new GPU peripheral.
     elseif key == _GIFStartKey then --Prev Shader
       local nextID = _ActiveShaderID - 1; if nextID < 0 then nextID = #shaderslist end
       local nextShader = shaderslist[nextID]
-      if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
+      if nextShader and love.filesystem.getInfo("/Shaders/"..nextShader,"file") then
         local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
         if not ok then
           print("Failed to load shader",nextShader)
