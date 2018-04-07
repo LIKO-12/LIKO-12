@@ -206,6 +206,15 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo() --Used to apply some device specific bugfixes.
   if not love.filesystem.getInfo("/GPUInfo.txt","file") then love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
+  if not love.filesystem.getInfo("/GPUCanvasFormats.txt","file") then
+    local formats = {}
+    for k,v in pairs(_CanvasFormats) do
+      if v then table.insert(formats,k) end
+    end
+    table.sort(formats)
+    formats = table.concat(formats,"\n")
+    love.filesystem.write("/GPUCanvasFormats.txt",formats)
+  end
   
   local calibVersion,ofs = 1.4
   if love.filesystem.getInfo("GPUCalibration.json","file") then
