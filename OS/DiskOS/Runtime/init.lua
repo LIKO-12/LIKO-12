@@ -25,7 +25,7 @@ end
 function rt.loadGame()
   
   local glob = _FreshGlobals()
-glob._G = glob --Magic ;)
+  glob._G = glob --Magic ;)
   
   local resources = rt.loadResources()
   local globals = rt.loadGlobals()
