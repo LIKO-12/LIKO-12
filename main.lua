@@ -67,7 +67,7 @@ function love.run(arg)
       local canvas = love.graphics.getCanvas()
       if canvas then love.graphics.setCanvas() end
       love.event.pump()
-      if canvas then love.graphics.setCanvas{canvas,stencil=true} end
+      if canvas then love.graphics.setCanvas{canvas,stencil=true,depth=true} end
       
       for name, a,b,c,d,e,f in love.event.poll() do
         if name == "quit" then
