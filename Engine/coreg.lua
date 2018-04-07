@@ -4,6 +4,9 @@ local coreg = {reg={}}
 
 local sandbox = require("Engine.sandbox")
 
+--Args: table, shift
+local function shiftTable(a,b)b=b-1;for c=b+1,#a+b do a[c-b]=a[c]end end
+
 --Returns the current active coroutine if exists
 function coreg:getCoroutine()
   return self.co, self.coglob
@@ -40,7 +43,8 @@ function coreg:resumeCoroutine(...)
       
     elseif tostring(args[2]) == "echo" then
       
-      lastargs = {select(3,unpack(args))}
+      shiftTable(args,3)
+      lastargs = args
       
     elseif args[2] then --There's a command to process
       args = {self:trigger(select(2,unpack(args)))}
