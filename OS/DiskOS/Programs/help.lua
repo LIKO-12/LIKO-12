@@ -106,7 +106,7 @@ local function sprint(text)
       
       if curY == th then
         curY = th-1
-        sleep(0.08)
+        sleep(0.02)
         if skipY > 0 then
           skipY = skipY - 1
         else
