@@ -1,19 +1,17 @@
-Changelog:
+\BChangelog:
 
-V0.7.1_PRE (1/3/2018):
-================================
-Bugfixes:
+\9V0.7.1_PRE (1/3/2018):
+\FBugfixes:\7
 1. Fix `help` program crash.
 2. Fix BIOS Setup `Open Appdata` crash.
 3. Fix LIKO-12 failing to update DiskOS.
 
-V0.7.0_PRE (1/3/2018):
-================================
-Bugfixes:
+\9V0.7.0_PRE (1/3/2018):
+\FBugfixes:\7
 1. Removed touch joystick dead range, it will be rewritten in the next update.
 2. Removed copyrighted art form the snake demo, got much better art by @gardrek.
 
-DiskOS:
+\FDiskOS:\7
 2. New `piano` and `chiptune` demos.
 3. Optimized map and image encoding, `save` is now much faster on Mobile.
 4. New `wget` command by @nukeop.
@@ -38,7 +36,7 @@ DiskOS:
 23. New program `SheetToClip` for generating alt sheets to add in code.
 24. New incremental code search by @trabitboy.
 
-BIOS:
+\FBIOS:\7
 26. The BIOS has been re-written.
 27. It runs now the POST screen in a coroutine.
 28. There's now a BIOS SETUP screen, which can do useful function, like opening appdata, wiping drives, installing DiskOS/PoorOS, booting from drive D and toggle devmode !
@@ -50,7 +48,7 @@ BIOS:
 34. Now shows `Lua` instead of `LuaJIT` on Mobile (Because JIT is disabled due to memory leaking issue).
 35. Support for easier .love packaging.
 
-Engine:
+\FEngine:\7
 36. New Audio Peripheral.
 37. 4 SFX Audio Channels, and 1 Generating Channel.
 38. Rewrote the HDD peripheral, the code is much cleaner, and it can now delete, move and copy directories & files recursivly.
@@ -65,7 +63,7 @@ Engine:
 47. New WEB.luasocket and WEB.luasec for passing them to the OS, you can now do networking in DiskOS.
 48. New filedropped event.
 
-Other:
+\FOther:\7
 49. New LIKO-12 Icon.
 50. The window icon is now the 16x16 version.
 51. New Nightly Builds: https://ramilego4game.github.io/LIKO-12-Nightly/
@@ -76,9 +74,8 @@ Other:
 56. Good amount of updates to the online Documentation.
 57. LIKO-12 Got a Discord server dedicated for it.
 
-V0.6.0_PRE_07 (14/12/2017):
-================================
-New:
+\9V0.6.0_PRE_07 (14/12/2017):
+\FNew:\7
 1. New FDD Peripheral, to encode/decode .png disks while storing 64kb of data inside of them.
 2. The disk label image is readable and writable.
 3. F6 Captures the disk label.
@@ -89,62 +86,59 @@ New:
 8. The `export` command now accepts `@label` so you can set the label to your current spritesheet.
 9. The `factory_reset` command now accepts `-wipe` argument, to wipe the C drive before reflashing DiskOS.
 
-Editors:
+\FEditors:\7
 9. SpriteEditor brush size slider by @egordorichev
 10. New code-editor undo and redo support by @jminor
 
-API:
+\FAPI:\7
 11. New image:refresh(), to reload it's content from the source imagedata.
 12. New RAM functions: `poke4` and `peek4`.
 
-Demos:
+\FDemos:\7
 13. Added `BARNES` & `VV16` palettes by gardrek to the palettes demo.
 14. Added 'likocam' library, a 3D camera library + a new demo (cube.lk12).
 
-Bugfixes:
+\FBugfixes:\7
 15. The `appdata` and `folder` programs now shows the path on Android.
 16. Fix horizental scrolling in the code editor is reversed (issue #118).
 17. Fix `save -?` not showing help.
 18. Fix LIKO-12 crashing on Android when connecting/disconnecting a bluetooth keyboard, thanks for @trabitboy
 
-Operating System:
+\FOperating System:\7
 19. New DiskOS System Structure.
 20. New APIS system.
 21. New RamUtils API, for binary operations.
 22. DiskVersion 3: Added binary format support.
 
-Engine:
+\FEngine:\7
 23. New Simplified RAM Layout.
 24. Optamized RAM peripheral binary handler.
 25. Reworked parts of the RAM peripheral.
 
-V0.6.0_PRE_06 (14/9/2017):
-================================
-New:
+\9V0.6.0_PRE_06 (14/9/2017):
+\FNew:\7
 1. New custom palettes support, `colorPalette(id,red,green,blue)`
 2. New `exit()` function to exit the current running game.
 3. Ctrl-X and Ctrl-A now works in the code editor.
 4. New 'palette' demo by nesbox, to show different palettes on LIKO-12.
 
-Operating System:
+\FOperating System:\7
 5. Now shows the build number under 'PRE' in the terminal, instead of 0.6.
 6. New `reload` program to reload the editorsheet and reset the Lua package system.
 7. Added middleclass to the OS programs globals as 'class'.
 8. WorkInProgress GUI library.
 
-Engine:
+\FEngine:\7
 9. GIF recorder now supports palette changing.
 
-V0.6.0_PRE_05 (1/9/2017):
-================================
+\9V0.6.0_PRE_05 (1/9/2017):\7
 1. Fix some typos in the 'Whatsnew' help file.
 2. Fix a bug slowing down LIKO-12 boot time by causing the OS to always reflash if you used an older version.
 3. Fix LIKO-12 crashing when r8 canvas format is not supported.
 4. New 'version' program to check the running version.
 
-V0.6.0_PRE_04 (26/8/2017):
-================================
-New:
+\9V0.6.0_PRE_04 (26/8/2017):
+\FNew:\7
 1. New Paint program.
 2. New hex string sprite copy format.
 3. Now can paste from PICO-8 and TIC-80, and can also copy to TIC-80.
@@ -170,32 +164,31 @@ New:
 23. New math functions: math.isConvex, math.triangulate, math.noise and math.randomNormal.
 24. New 'mathcircles' Demo by @egordorichev, check it out !
 
-Improvements:
+\FImprovements:\7
 1. Faster gif recording.
 2. New sprite editor layout.
 
-Bugfixes:
+\FBugfixes:\7
 1. Bugfix appdata program oppening the appdata folder after showing help.
 2. Fix some internal cursors hot position.
 3. Fix `appdata` and `folder` programs on Android to print the path instead of openning the browser.
 4. Fixed a bug that the shaders fail to compile on some opengl-es devices.
 5. Bugfix issue #107 "Invalid Print Alignment"
 
-Operating System:
+\FOperating System:\7
 1. New Editor.utils, makes adding standalone editors more easier.
 2. New editors api function `eapi:addEditor()`, Allows you to add custom editor.
 3. Made the terminal commands case sensitive.
 4. New temp folder `C:/.temp/`, Gets cleaned at startup.
 
-Engine:
+\FEngine:\7
 1. Now uses `r8` canvas format instead of `rgba8`.
 2. `NormBIOS Revision 060-011`: New file tracking when in devmode.
 3. New system messages functionality.
 4. New `CPU.getSaveDirectory` to get the real save directory in the host filesystem.
 5. Added `os.date` to the lua sandbox.
 
-V0.6.0_PRE_03 (7/7/2017):
-=========================
+\9V0.6.0_PRE_03 (7/7/2017):\7
 1. New touch controls.
 2. There are android builds now !
 3. No longer crashes if it failed to load the WEB peripheral.
