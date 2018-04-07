@@ -237,7 +237,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   love.graphics.clear(0,0,0,1) --Clear the host screen.
   
-  love.graphics.setCanvas{_ScreenCanvas,stencil=true} --Activate LIKO12 canvas.
+  love.graphics.setCanvas{_ScreenCanvas,stencil=true,depth=true} --Activate LIKO12 canvas.
   love.graphics.clear(0,0,0,1) --Clear LIKO12 screen for the first time.
   
   events:trigger("love:resize", _HOST_W, _HOST_H) --Calculate LIKO12 scale to the host window for the first time.
@@ -602,7 +602,7 @@ return function(config) --A function that creates a new GPU peripheral.
     if VRAMBound then return end
     love.graphics.setCanvas()
     VRAMImg = _ScreenCanvas:newImageData()
-    love.graphics.setCanvas{_ScreenCanvas,stencil=true}
+    love.graphics.setCanvas{_ScreenCanvas,stencil=true,depth=true}
     VRAMBound = true
   end
   
@@ -1497,7 +1497,7 @@ return function(config) --A function that creates a new GPU peripheral.
     h = Verify(h,"H","number",true)
     love.graphics.setCanvas()
     local imgdata = GPU.imagedata(_ScreenCanvas:newImageData(1,1,x,y,w,h))
-    love.graphics.setCanvas{_ScreenCanvas,stencil=true}
+    love.graphics.setCanvas{_ScreenCanvas,stencil=true,depth=true}
     return imgdata
   end
   
@@ -1614,7 +1614,7 @@ return function(config) --A function that creates a new GPU peripheral.
     elseif key == _LabelCaptureKey then
       love.graphics.setCanvas()
       LabelImage:paste(_ScreenCanvas:newImageData(),0,0,0,0,_LIKO_W,_LIKO_H)
-      love.graphics.setCanvas{_ScreenCanvas,stencil=true}
+      love.graphics.setCanvas{_ScreenCanvas,stencil=true,depth=true}
       systemMessage("Captured label image successfully !",2)
     end
   end)
@@ -1719,7 +1719,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.present() --Present the screen to the host & the user.
       love.graphics.setShader(_DrawShader) --Reactivate the draw shader.
       love.graphics.pop()
-      love.graphics.setCanvas{_ScreenCanvas,stencil=true} --Reactivate the canvas.
+      love.graphics.setCanvas{_ScreenCanvas,stencil=true,depth=true} --Reactivate the canvas.
       
       if PatternFill then
         love.graphics.stencil(PatternFill, "replace", 1)
@@ -1791,7 +1791,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setShader(_DrawShader)
       
       love.graphics.pop() --Reapply the offset.
-      love.graphics.setCanvas{_ScreenCanvas,stencil=true} --Reactivate the canvas.
+      love.graphics.setCanvas{_ScreenCanvas,stencil=true,depth=true} --Reactivate the canvas.
       
       if PatternFill then
         love.graphics.stencil(PatternFill, "replace", 1)
