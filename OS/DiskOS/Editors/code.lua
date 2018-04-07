@@ -906,7 +906,7 @@ function ce:import(data)
 end
 
 function ce:decode(data)
-  self:import(RamUtils.binToCode(data))
+  self:import(BinUtils.binToCode(data))
 end
 
 function ce:export()
@@ -914,7 +914,7 @@ function ce:export()
 end
 
 function ce:encode()
-  return RamUtils.codeToBin(self:export())
+  return BinUtils.codeToBin(self:export())
 end
 
 return ce

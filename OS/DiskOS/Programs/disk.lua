@@ -36,7 +36,7 @@ if mode == "read" then
   if memget(FRAM, diskheader:len()) ~= diskheader then
     return 1, "Invalid Header !"
   end
-  local fsize = RamUtils.binToNum(memget(FRAM+diskheader:len(),4))
+  local fsize = BinUtils.binToNum(memget(FRAM+diskheader:len(),4))
   local fdata = memget(FRAM+diskheader:len()+4, fsize)
   fs.write(destination,fdata)
   color(11) print("Read disk successfully")
@@ -44,9 +44,9 @@ if mode == "read" then
 elseif mode == "write" then
   
   if source:len() > 64*1024-(diskheader:len()+4) then return 1, "File too big (Should be almost 64kb or less) !" end
-  memset(FRAM,string.rep(RamUtils.Null,64*1024))
+  memset(FRAM,string.rep(BinUtils.Null,64*1024))
   memset(FRAM,diskheader) --Set the disk header
-  memset(FRAM+diskheader:len(), RamUtils.numToBin(source:len(),4)) --Set the file size
+  memset(FRAM+diskheader:len(), BinUtils.numToBin(source:len(),4)) --Set the file size
   memset(FRAM+diskheader:len()+4,source) --Set the file data
   local data = FDD.exportDisk(diskColor)
   fs.write(destination,data)
@@ -61,7 +61,7 @@ elseif mode == "raw-read" then
   
 elseif mode == "raw-write" then
   
-  memset(FRAM,string.rep(RamUtils.Null,64*1024))
+  memset(FRAM,string.rep(BinUtils.Null,64*1024))
   memset(FRAM,source)
   local data = FDD.exportDisk(diskColor)
   fs.write(destination,data)

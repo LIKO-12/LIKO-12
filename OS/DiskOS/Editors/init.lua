@@ -255,7 +255,7 @@ function edit:export() --Export editors data
 end
 
 function edit:encode() --Encode editors data into binary
-  local null = RamUtils.Null
+  local null = BinUtils.Null
   
   local header, hid = {}, 2
   local chunks, cid = {}, 1
@@ -277,14 +277,14 @@ function edit:encode() --Encode editors data into binary
     end
   end
   
-  largest = RamUtils.numLength(largest)
+  largest = BinUtils.numLength(largest)
   
   header[1] = string.char(largest)
   header[hid] = null
   
   for id, value in pairs(header) do
     if type(value) == "number" then
-      header[id] = RamUtils.numToBin(value,largest)
+      header[id] = BinUtils.numToBin(value,largest)
     end
   end
   
@@ -295,7 +295,7 @@ function edit:encode() --Encode editors data into binary
 end
 
 function edit:decode(bindata) --decode editors data from binary
-  local iter, counter = RamUtils.binIter(bindata)
+  local iter, counter = BinUtils.binIter(bindata)
   
   local lengthSize = iter()
   
@@ -319,7 +319,7 @@ function edit:decode(bindata) --decode editors data from binary
     for i=1,lengthSize do iter() end
     
     names[nid] = saveid
-    lengths[lid] = RamUtils.binToNum(bindata:sub(endPos+2,endPos+lengthSize+1))
+    lengths[lid] = BinUtils.binToNum(bindata:sub(endPos+2,endPos+lengthSize+1))
     
     nid, lid = nid+1, lid+1
   end
