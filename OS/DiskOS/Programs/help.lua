@@ -43,8 +43,8 @@ local doc --The help document to print
 for path in nextPath() do
   if fs.exists(path..topic) then
     doc = path..topic break
-  elseif fs.exists(path..topic..".md") then
-    doc = path..topic..".md" break
+  elseif fs.exists(path..topic..".lua") then
+    doc = path..topic..".lua" break
   end
 end
 
@@ -123,26 +123,16 @@ local function sprint(text)
   end
 end
 
-local md = (doc:sub(-3,-1) == ".md")
+local lua = (doc:sub(-4,-1) == ".lua")
+if lua then
+  fs.load(doc)()
+  print("")
+  return 0
+end
+
 local doc = fs.read(doc)
 doc = doc:gsub("\r\n","\n")
-if doc:sub(-1,-1) ~= "\n" then doc = doc .. "\n" end
-
---Clear markdown
-if md then
-  doc = doc:gsub("%-%-%-","")
-  doc = doc:gsub("```lua","")
-  doc = doc:gsub("```","")
-  doc = doc:gsub("# ","")
-  doc = doc:gsub("#","")
-  doc = doc:gsub("%*%*","")
-  doc = doc:gsub("__","")
-  doc = doc:gsub("\\>",">")
-  
-  while doc:find("\n\n\n") do
-    doc = doc:gsub("\n\n\n","\n\n")
-  end
-end
+doc = doc:gsub("\\LIKO%-12","\\CL\\8I\\BK\\9O\\7-\\F12")
 
 color(7)
 
