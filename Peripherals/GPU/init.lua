@@ -1203,8 +1203,8 @@ return function(config) --A function that creates a new GPU peripheral.
         pc.x = pc.x + t:len() --Update the x pos
         return true --It ran successfully
       end
-      
-      if type(x) == "nil" or x then t = t .. "\n\n" end --Auto newline after printing.
+      t = t.."\n"
+      if type(x) == "nil" or x then t = t .. "\n" end --Auto newline after printing.
       
       local sw, sh = TERM_W*(_FontW+1), TERM_H*(_FontH+2) --Screen size
       local pre_spaces = string.rep(" ", pc.x) --The pre space for text wrapping to calculate
