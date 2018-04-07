@@ -191,6 +191,7 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setDefaultFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
   
   local _CanvasFormats = love.graphics.getCanvasFormats(true)
+  _CanvasFormats.r8 = false
   
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H,{
     format = (_CanvasFormats.r8 and "r8" or "normal")
