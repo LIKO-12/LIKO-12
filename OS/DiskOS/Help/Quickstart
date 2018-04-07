@@ -11,8 +11,8 @@ The \6'escape'\7 key mentioned in the docs is the same of your device \6'back'\7
  \7mkdir \5-\6 Create a new directory.
  \7cls \5-\6 Clears the screen.
  \7folder \5-\6 Open the current folder in the host explorer.
- \7reboot \5-\6 Reboots LIKO-12.
- \7shutdown \5-\6 Shuts down LIKO-12 ! and quits.
+ \7reboot \5-\6 Reboots \LIKO-12\6.
+ \7shutdown \5-\6 Shuts down \LIKO-12\6 ! and quits.
  \7save \5-\6 Saves the current game data in the editors.
  \7load \5-\6 Loads game data into the editors.
  \7new \5-\6 Clears the current game data in the editors.
@@ -20,7 +20,7 @@ The \6'escape'\7 key mentioned in the docs is the same of your device \6'back'\7
  \7apis \5-\6 List the peripherals' API functions.
  \7peripherals \5-\6 Lists the available peripherals.
  \7edit \5-\6 Allows you to edit system files.
- \7appdata \5-\6 Opens LIKO-12 appdata folder.
+ \7appdata \5-\6 Opens \LIKO-12\6 appdata folder.
  \7programs \5-\6 Lists installed programs.
  \7save <file> -c \5-\6 Saves with compression mode, required to upload via pastebin.
  \7pastebin \5-\6 Uploads and Downloads from pastebin.

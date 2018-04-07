@@ -4,7 +4,7 @@
 \FBugfixes:\7
 1. Fix `help` program crash.
 2. Fix BIOS Setup `Open Appdata` crash.
-3. Fix LIKO-12 failing to update DiskOS.
+3. Fix \LIKO-12\7 failing to update DiskOS.
 
 \9V0.7.0_PRE (1/3/2018):
 \FBugfixes:\7
@@ -25,7 +25,7 @@
 12. The `bounce` demo now has sound effects.
 13. Now prints program errors to the developer console.
 14. New `xshell` program by @boredom101 (inspiration101).
-15. Now loads lk12/png files when dropped into LIKO-12 windows while the terminal is visible.
+15. Now loads lk12/png files when dropped into \LIKO-12\7 windows while the terminal is visible.
 16. json library is now available as `JSON` for games (Instead of `json`).
 17. New RamUtils.binWriter and binReader.
 18. Programs now has exitcodes.
@@ -42,8 +42,8 @@
 28. There's now a BIOS SETUP screen, which can do useful function, like opening appdata, wiping drives, installing DiskOS/PoorOS, booting from drive D and toggle devmode !
 29. Most of peripherals functions are now called directly, better performance.
 30. Peripherals function arguments verification is now much cleaner.
-31. New DiskOS Installer/Updater screen, You can now know why LIKO-12 takes some time for the first boot.
-32. When updating LIKO-12, only the modified os files are updated.
+31. New DiskOS Installer/Updater screen, You can now know why \LIKO-12\7 takes some time for the first boot.
+32. When updating \LIKO-12\7, only the modified os files are updated.
 33. Devmode is now colored with grey in POST screen when using it.
 34. Now shows `Lua` instead of `LuaJIT` on Mobile (Because JIT is disabled due to memory leaking issue).
 35. Support for easier .love packaging.
@@ -64,15 +64,15 @@
 48. New filedropped event.
 
 \FOther:\7
-49. New LIKO-12 Icon.
+49. New \LIKO-12\7 Icon.
 50. The window icon is now the 16x16 version.
 51. New Nightly Builds: https://ramilego4game.github.io/LIKO-12-Nightly/
 52. Updated github readme.md
 53. New Disks repository: https://ramilego4game.github.io/LIKO-12-Disks
 54. Dropped Windows 64-bit support (temporary).
-55. Luacheck now runs on LIKO-12 Github Repo.
+55. Luacheck now runs on \LIKO-12\7 Github Repo.
 56. Good amount of updates to the online Documentation.
-57. LIKO-12 Got a Discord server dedicated for it.
+57. \LIKO-12\7 Got a Discord server dedicated for it.
 
 \9V0.6.0_PRE_07 (14/12/2017):
 \FNew:\7
@@ -102,7 +102,7 @@
 15. The `appdata` and `folder` programs now shows the path on Android.
 16. Fix horizental scrolling in the code editor is reversed (issue #118).
 17. Fix `save -?` not showing help.
-18. Fix LIKO-12 crashing on Android when connecting/disconnecting a bluetooth keyboard, thanks for @trabitboy
+18. Fix \LIKO-12\7 crashing on Android when connecting/disconnecting a bluetooth keyboard, thanks for @trabitboy
 
 \FOperating System:\7
 19. New DiskOS System Structure.
@@ -120,7 +120,7 @@
 1. New custom palettes support, `colorPalette(id,red,green,blue)`
 2. New `exit()` function to exit the current running game.
 3. Ctrl-X and Ctrl-A now works in the code editor.
-4. New 'palette' demo by nesbox, to show different palettes on LIKO-12.
+4. New 'palette' demo by nesbox, to show different palettes on \LIKO-12\7.
 
 \FOperating System:\7
 5. Now shows the build number under 'PRE' in the terminal, instead of 0.6.
@@ -133,8 +133,8 @@
 
 \9V0.6.0_PRE_05 (1/9/2017):\7
 1. Fix some typos in the 'Whatsnew' help file.
-2. Fix a bug slowing down LIKO-12 boot time by causing the OS to always reflash if you used an older version.
-3. Fix LIKO-12 crashing when r8 canvas format is not supported.
+2. Fix a bug slowing down \LIKO-12\7 boot time by causing the OS to always reflash if you used an older version.
+3. Fix \LIKO-12\7 crashing when r8 canvas format is not supported.
 4. New 'version' program to check the running version.
 
 \9V0.6.0_PRE_04 (26/8/2017):
@@ -146,7 +146,7 @@
 5. New `install_games` program, to install a set of built-in games.
 6. New games: Snake, minesweeper, batteryman, pong.
 7. New sprite editor shorcuts, check the docs for them.
-8. New `loadcart` program to load old LIKO-12 V0.0.5a carts.
+8. New `loadcart` program to load old \LIKO-12\7 V0.0.5a carts.
 9. New joysticks support, with unlimited number of controllers.
 10. New `joymap` program to remap the joystick buttons.
 11. New controls test demo `joytest`.
@@ -192,7 +192,7 @@
 1. New touch controls.
 2. There are android builds now !
 3. No longer crashes if it failed to load the WEB peripheral.
-4. Now automatically reflashes DiskOS when changing LIKO-12 version.
+4. Now automatically reflashes DiskOS when changing \LIKO-12\7 version.
 5. Updated the BIOS to version 060-010.
 6. New Demo game: Bump: A demo of middleclasses and bump.lua
 7. New `Controls(type)` function, defaults to "gamepad"
@@ -215,5 +215,5 @@
 24. Upgraded terminal path resolving.
 25. You can now take screenshots by pressing f6.
 26. Now prints D:/ instead of D:///
-27. The WEB peripherals now closes the thread when rebooting LIKO-12.
-28. New 'appdata' program to open LIKO-12 appdata folder.
+27. The WEB peripherals now closes the thread when rebooting \LIKO-12\7.
+28. New 'appdata' program to open \LIKO-12\7 appdata folder.
