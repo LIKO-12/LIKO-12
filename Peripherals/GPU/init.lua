@@ -213,7 +213,13 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     table.sort(formats)
     formats = table.concat(formats,"\n")
-    love.filesystem.write("/GPUCanvasFormats.txt",formats)
+    local rformats = {}
+    for k,v in pairs(love.graphics.getCanvasFormats(true)) do
+      if v then table.insert(rformats,k) end
+    end
+    table.sort(rformats)
+    rformats = table.concat(rformats,"\n")
+    love.filesystem.write("/GPUCanvasFormats.txt",formats.."\n\nReadable:\n\n"..rformats)
   end
   
   local calibVersion,ofs = 1.4
