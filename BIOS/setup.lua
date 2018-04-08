@@ -169,9 +169,9 @@ local function showGPUInfo()
     GPU.color(7)
     GPU.print(encoded,0,sh*0.45-fh/2,sw,"center")
     if CPU.isMobile() then
-      printCenterBG("Press the green button to return back",sh*0.66,6,5)
+      printCenterBG("Press the green button to go back",sh*0.66,6,5)
     else
-      printCenterBG("Press Z to return back",sh*0.66,6,5)
+      printCenterBG("Press Z to go back",sh*0.66,6,5)
     end
   end
   
