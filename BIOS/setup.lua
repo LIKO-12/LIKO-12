@@ -147,8 +147,8 @@ end
 
 local function showGPUInfo()
   local ev = {}
-  local renderer,ver,ven,dev = love.graphics.getRendererInfo()
-  local encoded = renderer .. ";" .. ver .. ";" .. ven .. ";" .. dev
+  local name,ver,ven,dev = love.graphics.getRendererInfo()
+  local encoded = string.format("Name: %s\n\nVersion: %s\n\nVendor: %s\n\nDevice: %s",name,ver,ven,dev)
   ev.touchcontrol = events.touchcontrol
   
   local function draw()
@@ -167,11 +167,11 @@ local function showGPUInfo()
     
     --Appdata path
     GPU.color(7)
-    GPU.print(encoded,0,sh*0.45-fh/2,sw,"center")
+    GPU.print(encoded,0,sh*0.26-fh/2,sw,"center")
     if CPU.isMobile() then
-      printCenterBG("Press the green button to go back",sh*0.66,6,5)
+      printCenterBG("Press the green button to go back",sh*0.75,6,5)
     else
-      printCenterBG("Press Z to go back",sh*0.66,6,5)
+      printCenterBG("Press Z to go back",sh*0.75,6,5)
     end
   end
   
