@@ -33,9 +33,9 @@ return function(config)
   local ControlsEnabled = false
   
   --DPAD Variables
-  local dpad_radius = love.window.toPixels(160/2) --The radius of the depad circle
-  local dpad_extra = love.window.toPixels(16) --The extra detection zone around the dpad
-  local dpad_cx, dpad_cy = love.window.toPixels(100) --The dpad center position 
+  local dpad_radius = 160/2 --The radius of the depad circle
+  local dpad_extra = 16 --The extra detection zone around the dpad
+  local dpad_cx, dpad_cy = 100 --The dpad center position 
   local dpad_line = math.sin(math.pi/4)*dpad_radius --The position of a point in pi/4 (For the cross line to draw)
   local touchangle --Touch variable
   
@@ -50,7 +50,7 @@ return function(config)
   --Start Button
   local start_col = GPUKit._GetColor(12) --The color of the Start button
   local start_w, start_h = dpad_radius*2*0.75, dpad_radius*0.75*0.75 --The size of the Start button rectangle
-  local start_x, start_y = love.window.toPixels(30) + dpad_radius/8 --The position of the Start button
+  local start_x, start_y = 30 + dpad_radius/8 --The position of the Start button
   local start_r = start_h/2 --The radius of the Start button corners
   
   --All Buttons (Shared)
