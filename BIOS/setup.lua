@@ -148,7 +148,7 @@ end
 local function showGPUInfo()
   local ev = {}
   local name,ver,ven,dev = love.graphics.getRendererInfo()
-  local encoded = string.format("Name: %s\n\nVersion: %s\n\nVendor: %s\n\nDevice: %s",name,ver,ven,dev)
+  local encoded = string.format("Renderer Name: %s\n\nVersion: %s\n\nVendor: %s\n\nDevice: %s",name,ver,ven,dev)
   ev.touchcontrol = events.touchcontrol
   
   local function draw()
