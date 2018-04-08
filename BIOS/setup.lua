@@ -145,6 +145,47 @@ local function showAppdata()
   drawUI()
 end
 
+local function showGPUInfo()
+  local ev = {}
+  local renderer,ver,ven,dev = love.graphics.getRendererInfo()
+  local encoded = renderer .. ";" .. ver .. ";" .. ven .. ";" .. dev
+  ev.touchcontrol = events.touchcontrol
+  
+  local function draw()
+    GPU.clear(5) --Dark Gray
+    
+    --Top & Bottom Bar
+    GPU.rect(0,0,sw,8,false,12)
+    GPU.rect(0,sh-8,sw,8,false,12)
+    
+    GPU.patternFill(checkboard)
+    GPU.rect(1,1,sw-2,6,false,1)
+    GPU.rect(1,sh-7,sw-2,6,false,1)
+    GPU.patternFill()
+    
+    printCenterBG("@=- GPU Information -=@",1,1,12)
+    
+    --Appdata path
+    GPU.color(7)
+    GPU.print(encoded,0,sh*0.45-fh/2,sw,"center")
+    if CPU.isMobile() then
+      printCenterBG("Press the green button to go back",sh*0.66,6,5)
+    else
+      printCenterBG("Press Z to go back",sh*0.66,6,5)
+    end
+  end
+  
+  function ev.keypressed(key,scancode,isrepeat)
+    if key == "z" then
+      return true
+    end
+  end
+  
+  draw()
+  eventLoop(ev)
+  drawUI()
+end
+
 --BIOS Options
 options = {
   {"- Boot from drive D", function()
@@ -192,7 +233,9 @@ options = {
     return true
   end},
   
-  {"",function() end}, --Separetor
+  {"- Show GPU Information",function()
+    showGPUInfo()
+  end},
   
   {"- Open Appdata Folder", function()
     if CPU.isMobile() then
