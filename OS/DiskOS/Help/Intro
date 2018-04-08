@@ -1,0 +1,11 @@
+\BWelcome to \LIKO-12\B !\7
+\6the opensource fantasy computer that's completely written in Lua.
+
+\LIKO-12\7 is a \6tool\7 for creating \6retro-looking\7 games programmed in \CLua\7.
+By pressing \Cescape/back\7 in the terminal, the editors mode will be activated.
+You'll see editors for \6Code\7,\6Sprites\7,\6Map\7,\6SFX\7 and \6Music\7.
+
+You can switch back to the terminal by pressing \Cescape/back\7 again.
+
+Try that now, once done,
+Type \9help Editors\7.
