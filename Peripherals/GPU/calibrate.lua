@@ -40,7 +40,7 @@ local _Canvas
 local imgdata
 local function canvas(w,h)
   love.graphics.setCanvas()
-  _Canvas = love.graphics.newCanvas(w,h)
+  _Canvas = love.graphics.newCanvas(w,h,{dpiscale=1})
   love.graphics.setCanvas(_Canvas)
   love.graphics.clear(0,0,0,1)
 end
