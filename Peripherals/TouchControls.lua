@@ -197,7 +197,7 @@ return function(config)
   
   local function drawButtons()
     for id=5, 7 do
-      love.graphics.setLineWidth(devkit.buttons[id] and 4 or 2)
+      love.graphics.setLineWidth(devkit.buttons[id] and 2 or 1)
       if id < 7 then --AB buttons
         local cx, cy, col; if id == 5 then cx,cy,col = a_cx,a_cy,a_col  else cx,cy,col = b_cx,b_cy,b_col end
         col[4] = bg_alpha; setColor(col)
@@ -259,7 +259,7 @@ return function(config)
     drawButtons()
     
     --DPAD
-    love.graphics.setLineWidth(2)
+    love.graphics.setLineWidth(1)
     setColor(255,255,255,bg_alpha)
     love.graphics.circle("fill",dpad_cx, dpad_cy, dpad_radius)
     
@@ -286,7 +286,7 @@ return function(config)
     love.graphics.circle("line",dpad_cx, dpad_cy, dpad_radius)
     
     --Draw the lines
-    love.graphics.setLineWidth(1)
+    love.graphics.setLineWidth(0.5)
     setColor(255,255,255,fg_alpha)
     love.graphics.line(dpad_cx+dpad_line, dpad_cy-dpad_line,
                        dpad_cx-dpad_line, dpad_cy+dpad_line)
