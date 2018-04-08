@@ -327,7 +327,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Convert from LIKO-12 palette to real colors ignoring transparent colors.
   local function _ExportImageOpaque(x,y, r,g,b,a)
-    return colorT1(_ColorSet[floor(r*255)])
+    return colorTo1(_ColorSet[floor(r*255)])
   end
   
   local LastMSG = "" --Last system message.
