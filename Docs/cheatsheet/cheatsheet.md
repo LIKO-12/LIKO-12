@@ -1,16 +1,10 @@
-loading and saving disks, running the programs
+loading and saving disks, running the programs  
+`save yourgame`
 
-`save yourgame
-`
-
-do a disk pretty disk
-`save yourgame.png`
-
-`load yourgame
-`
-
-`run
-`
+do a disk pretty disk  
+`save yourgame.png`  
+`load yourgame`  
+`run`
 
 variables:
 ```
@@ -46,18 +40,19 @@ update your logic very nth ms:
 ```
 function _update()
  -- check user interaction and update all of the game world 
- end
- ```
+end
+```
 
 function pointers 
 ```
 function myfunc()
  --bla bla
- end
+end
  
- ptr=myfunc -- pointer definition / update
- ptr() -- actually calls function myfunc() ! 
- ```
+ptr=myfunc -- pointer definition / update
+ptr() -- actually calls function myfunc() ! 
+```
+
 blit sprite
 ```
 Sprite(picnum,x,y)
@@ -72,6 +67,7 @@ play note
 ```
 Audio.generate(1,250,1)
 ```
+
 stop note 
 ```
 Audio.generate()
