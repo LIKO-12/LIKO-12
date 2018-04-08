@@ -193,13 +193,15 @@ return function(config) --A function that creates a new GPU peripheral.
   local _CanvasFormats = love.graphics.getCanvasFormats()
   
   local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H,{
-    format = (_CanvasFormats.r8 and "r8" or "normal")
+    format = (_CanvasFormats.r8 and "r8" or "normal"),
+    dpiscale = 1
   }) --Create the screen canvas.
 
-  local _BackBuffer = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --BackBuffer for post shaders.
+  local _BackBuffer = love.graphics.newCanvas(_LIKO_W, _LIKO_H,{dpiscale=1}) --BackBuffer for post shaders.
   
   local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale,{
-    format = (_CanvasFormats.r8 and "r8" or "normal")
+    format = (_CanvasFormats.r8 and "r8" or "normal"),
+    dpiscale = 1
   }) --Create the gif canvas, used to apply the gif scale factor.
 
   local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
