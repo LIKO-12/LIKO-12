@@ -82,8 +82,8 @@ return function(parent)
       b64dec = function(rawstr) return love.data.decode("string","base64",rawstr) end,
       hexenc = function(rawstr) return love.data.encode("string","hex",rawstr) end,
       hexdec = function(rawstr) return love.data.decode("string","hex",rawstr) end,
-      compress = function(rawstr,format,lvl) return love.data.compress("string",format,rawstr,lvl) end,
-      decompress = function(rawstr,format) return love.data.decompress("string",format,rawstr) end,
+      compress = function(rawstr,format,lvl) return love.data.compress("string",format or "lz4",rawstr,lvl or -1) end,
+      decompress = function(rawstr,format) return love.data.decompress("string",format or "lz4",rawstr) end,
       isConvex = love.math.isConvex,
       triangulate = love.math.triangulate,
       randomNormal = love.math.randomNormal
