@@ -2,6 +2,7 @@
 if select(1,...) == "-?" then
   printUsage(
     "help","Displays the help info",
+    "help Topics","Displays help topics list",
     "help <topic>", "Displays a help topic"
   )
   return
@@ -9,7 +10,7 @@ end
 
 local lume = require("Libraries.lume")
 
-local helpPATH = "C:/Help/;C:/Manual/Help/"
+local helpPATH = "C:/Help/"
 local function nextPath()
   if helpPATH:sub(-1)~=";" then helpPATH=helpPATH..";" end
   return helpPATH:gmatch("(.-);")
@@ -27,14 +28,14 @@ if type(giveApi) == "boolean" then --Requesting HELP api
     helpPATH = p
   end
 
-  function api.getHelpPath()
+  function api.getHelpPATH()
     return helpPATH
   end
 
   return api
 end
 
-helpPATH = require("Programs.help",true).getHelpPath() --A smart way to keep the helpPath
+helpPATH = require("Programs.help",true).getHelpPATH() --A smart way to keep the helpPath
 
 palt(0,false) --Make black opaque
 
@@ -125,12 +126,12 @@ end
 
 local lua = (doc:sub(-4,-1) == ".lua")
 if lua then
-  fs.load(doc)()
-  print("")
-  return 0
+  doc = fs.load(doc)()
+  if not doc then print("") return 0 end
+else
+  doc = fs.read(doc)
 end
 
-local doc = fs.read(doc)
 doc = doc:gsub("\r\n","\n")
 doc = doc:gsub("\\LIKO%-12","\\CL\\8I\\BK\\9O\\7-\\F12")
 
