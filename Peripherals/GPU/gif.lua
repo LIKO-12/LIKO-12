@@ -7,6 +7,7 @@ local lshift, rshift, band = bit.lshift, bit.rshift, bit.band
 local strchar = string.char
 local mthmin = math.min
 local tostring = tostring
+local floor = math.floor
 	
 local function num2str(data)
 	return strchar(band(data, 0xFF), rshift(data, 8))
@@ -19,8 +20,10 @@ local lct = strchar(tonumber(10000011,2)) --Local color table identifier
 function gif:frame(data,gifpalette,newpal)
 	self.file:write("\33\249\4\4\3\0\0\0")
 	local last=self.last
-  local lastget = last.getPixel
-  local dataget = data.getPixel
+  local lastgetorig = last.getPixel
+  local datagetorig = data.getPixel
+  local function lastget(x,y) return floor(lastgetorig(last,x,y)*255) end
+  local function dataget(x,y) return floor(lastgetorig(data,x,y)*255) end
 	local x0, y0, x1, y1=0, nil, data:getWidth()-1, data:getHeight()-1
 	if self.first or newpal then
 		y0=0
@@ -29,8 +32,8 @@ function gif:frame(data,gifpalette,newpal)
 		for y=0, y1 do
 			local kill=false
 			for x=x0, x1 do
-				local r1 = lastget(last, x, y)
-				local r2 = dataget(data, x, y)
+				local r1 = lastget(x, y)
+				local r2 = dataget(x, y)
 				if r1~=r2 then
 					y0=y
 					kill=true
@@ -48,8 +51,8 @@ function gif:frame(data,gifpalette,newpal)
 		for x=x0, x1 do
 			local kill=false
 			for y=y0, y1 do
-				local r1 = lastget(last, x, y)
-				local r2 = dataget(data, x, y)
+				local r1 = lastget(x, y)
+				local r2 = dataget(x, y)
 				if r1~=r2 then
 					x0=x
 					kill=true
@@ -63,8 +66,8 @@ function gif:frame(data,gifpalette,newpal)
 		for y=y1, y0, -1 do
 			local kill=false
 			for x=x0, x1 do
-				local r1 = lastget(last, x, y)
-				local r2 = dataget(data, x, y)
+				local r1 = lastget(x, y)
+				local r2 = dataget(x, y)
 				if r1~=r2 then
 					y1=y
 					kill=true
@@ -78,8 +81,8 @@ function gif:frame(data,gifpalette,newpal)
 		for x=x1, x0, -1 do
 			local kill=false
 			for y=y0, y1 do
-				local r1 = lastget(last, x, y)
-				local r2 = dataget(data, x, y)
+				local r1 = lastget(x, y)
+				local r2 = dataget(x, y)
 				if r1~=r2 or g1~=g2 or b1~=b2 then
 					x1=x
 					kill=true
@@ -107,7 +110,7 @@ function gif:frame(data,gifpalette,newpal)
 	local stream={16}
 	for y=y0, y1 do
 		for x=x0, x1 do
-			local r = dataget(data, x, y)
+			local r = dataget(x, y)
 			local index = strchar(r)
 			local temp = buffer..index
 			if codetbl[temp] then

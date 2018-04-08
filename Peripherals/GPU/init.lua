@@ -1783,10 +1783,10 @@ return function(config) --A function that creates a new GPU peripheral.
       end
       
       if MSGTimer > 0 and LastMSGGif then
-        setColor(LastMSGColor,0,0,255)
+        setColor(LastMSGColor/255,0,0,1)
         love.graphics.rectangle("fill", ofs.screen[1]+ofs.rect[1], ofs.screen[2] + (_LIKO_H-8) * _GIFScale + ofs.rect[2],
         _LIKO_W *_GIFScale + ofs.rectSize[1], 8*_GIFScale + ofs.rectSize[2])
-        setColor(LastMSGTColor,0,0,255)
+        setColor(LastMSGTColor/255,0,0,1)
         love.graphics.push()
         love.graphics.translate(ofs.screen[1]+ofs.print[1]+_GIFScale, ofs.screen[2] + (_LIKO_H-7) * _GIFScale + ofs.print[2])
         love.graphics.scale(_GIFScale,_GIFScale)
