@@ -1,6 +1,6 @@
 --The BIOS Post Screen !
 
-local DevMode = love.filesystem.exists("/devmode.txt")
+local DevMode = love.filesystem.getInfo("/devmode.txt") and true or false
 
 local events = require("Engine.events")
 local coreg = require("Engine.coreg")

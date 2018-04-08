@@ -5,8 +5,6 @@ require("love.system")
 --Are we running on mobile ?
 local onMobile = (love.system.getOS() == "Android")
 
-if onMobile then jit.off() end --Love Bug
-
 --Store math functions in locals to optamize speed.
 local min, max, floor, sin, abs, random = math.min, math.max, math.floor, math.sin, math.abs, math.random
 
@@ -19,9 +17,7 @@ require("love.sound")
 require("love.timer")
 require("love.math")
 
---The QueueableSource
-local QSource = require("Peripherals.Audio.QueueableSource")
-
+local bitdepth = 8 --Bits per sample (8 or 16)
 local rate = onMobile and 22050 or 44100 --The samples rate.
 local buffers_rate = 20 --The number of buffers created each second.
 
@@ -33,7 +29,7 @@ local buffers_cache_id = 1 --The current active sounddata from the cache
 local buffers_cache_amount = onMobile and 4 or 2 --The number of sounddatas to create
 
 --Create a new QueueableSource, with 2 buffer slots.
-local qs = QSource:new(buffers_cache_amount)
+local qs = love.audio.newQueueableSource(rate,bitdepth,1,buffers_cache_amount)
 
 local amp = 0 --The soundwave cycle amplitude.
 local tamp = 0 --The target amplitude.
@@ -210,8 +206,6 @@ while true do
   
   --Generate audio.
   if amp > 0 or tamp > 0 then
-    qs:step() --Make the QueueableSource check for empty buffer slots.
-    
     --If there're any free buffer slots, then we have to fill it.
     for i=1, qs:getFreeBufferCount() do
       
@@ -221,7 +215,7 @@ while true do
       if #buffers_cache == buffers_cache_amount then
         sounddata = buffers_cache[ buffers_cache_id ]
       else
-        sounddata = love.sound.newSoundData(buffer_size, rate, 16, 1)
+        sounddata = love.sound.newSoundData(buffer_size, rate, bitdepth, 1)
         buffers_cache[ buffers_cache_id ] = sounddata
       end
       

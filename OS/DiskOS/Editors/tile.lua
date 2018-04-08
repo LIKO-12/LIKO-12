@@ -491,7 +491,7 @@ function t:export()
 end
 
 function t:encode()
-  return RamUtils.mapToBin(Map)
+  return BinUtils.mapToBin(Map)
 end
 
 function t:import(data)
@@ -503,7 +503,7 @@ function t:import(data)
 end
 
 function t:decode(data)
-  RamUtils.binToMap(Map,data)
+  BinUtils.binToMap(Map,data)
 end
 
 local mvspeed = 64

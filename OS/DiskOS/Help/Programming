@@ -1,8 +1,8 @@
-To learn the Lua programming language visit http://lua-users.org/wiki/TutorialDirectory
+To learn the Lua programming language visit \6http://lua-users.org/wiki/TutorialDirectory\7
 
-To create games, press Escape to switch to the Editors Mode.
+To create games, press \6Escape/Back\7 to switch to the Editors Mode.
 For a list of available API functions, check the official documentation webpage.
 
-To edit system files, use "edit file.lua". If you mess something up, run "factory_reset" to revert the changes you've made.
+To edit system files, use \6"edit file.lua"\7. If you mess something up, run \6factory_reset"\7 to revert the changes you've made.
 
-Note that you will have to run "factory_reset" whenever a new update comes, so it's better to create a folder in drive D named "Programs" and place your own programs there.
+Note that you will have to run \6"factory_reset"\7 whenever a new update comes, so it's better to create a folder in drive \BD\7 named \6"Programs"\7 and place your own programs there.

@@ -5,9 +5,54 @@ local coreg = require("Engine.coreg")
 local bit = require("bit") --Require the bit operations library for use in VRAM
 local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 
+--Localized Lua Library
+local floor = math.floor
+
 local strformat = string.format
 
 local json = require("Engine.JSON") --Used to save the calibrarion values.
+
+--Wrapper for setColor to use 0-255 values
+local function setColor(r,g,b,a)
+  local r,g,b,a = r,g,b,a
+  if type(r) == "table" then
+    r,g,b,a = unpack(r)
+  end
+  if r then r = r/255 end
+  if g then g = g/255 end
+  if b then b = b/255 end
+  if a then a = a/255 end
+  
+  love.graphics.setColor(r, g, b, a)
+end
+
+--Wrapper for getColor to use 0-255 values
+local function getColor()
+  local r,g,b,a = love.graphics.getColor()
+  return floor(r*255), floor(g*255), floor(b*255), floor(a*255)
+end
+
+--Convert color from 0-255 to 0-1
+local function colorTo1(r,g,b,a)
+  local r,g,b,a = r,g,b,a
+  if type(r) == "table" then r,g,b,a = unpack(r) end
+  if r then r = r/255 end
+  if g then g = g/255 end
+  if b then b = b/255 end
+  if a then a = a/255 end
+  return r,g,b,a
+end
+
+--Convert color from 0-1 to 0-255
+local function colorTo255(r,g,b,a)
+  local r,g,b,a = r,g,b,a
+  if type(r) == "table" then r,g,b,a = unpack(r) end
+  if r then r = floor(r*255) end
+  if g then g = floor(g*255) end
+  if b then b = floor(b*255) end
+  if a then a = floor(a*255) end
+  return r,g,b,a
+end
 
 return function(config) --A function that creates a new GPU peripheral.
   
@@ -80,6 +125,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   if not love.window.isOpen() then
     love.window.setMode(_HOST_W,_HOST_H,{
+      vsync = 1,
       resizable = true,
       minwidth = _LIKO_W,
       minheight = _LIKO_H
@@ -92,6 +138,14 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     love.window.setIcon(love.image.newImageData("icon.png"))
   end
+  
+  events:register("love:quit", function()
+    if love.window.isOpen() then
+      love.graphics.setCanvas()
+      love.window.close()
+    end
+    return false
+  end)
   
   _HOST_W, _HOST_H = love.graphics.getDimensions()
   
@@ -125,7 +179,7 @@ return function(config) --A function that creates a new GPU peripheral.
   events:register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
   
   --Initialize the gpu--
-  if not love.filesystem.exists("Shaders") then
+  if not love.filesystem.getInfo("Shaders","directory") then
     love.filesystem.createDirectory("Shaders")
   end
   
@@ -135,26 +189,52 @@ return function(config) --A function that creates a new GPU peripheral.
   local _PostShaderTimer
   
   love.graphics.setDefaultFilter("nearest","nearest") --Set the scaling filter to the nearest pixel.
+  
   local _CanvasFormats = love.graphics.getCanvasFormats()
-  local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H,_CanvasFormats.r8 and "r8" or "normal") --Create the screen canvas.
-  local _BackBuffer = love.graphics.newCanvas(_LIKO_W, _LIKO_H) --BackBuffer for post shaders.
-  local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale) --Create the gif canvas, used to apply the gif scale factor.
+  
+  local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H,{
+    format = (_CanvasFormats.r8 and "r8" or "normal"),
+    dpiscale = 1
+  }) --Create the screen canvas.
+
+  local _BackBuffer = love.graphics.newCanvas(_LIKO_W, _LIKO_H,{dpiscale=1}) --BackBuffer for post shaders.
+  
+  local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale,{
+    format = (_CanvasFormats.r8 and "r8" or "normal"),
+    dpiscale = 1
+  }) --Create the gif canvas, used to apply the gif scale factor.
+
   local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
   
   local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo() --Used to apply some device specific bugfixes.
-  if not love.filesystem.exists("/GPUInfo.txt") then love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
+  if not love.filesystem.getInfo("/GPUInfo.txt","file") then love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
+  if not love.filesystem.getInfo("/GPUCanvasFormats.txt","file") then
+    local formats = {}
+    for k,v in pairs(_CanvasFormats) do
+      if v then table.insert(formats,k) end
+    end
+    table.sort(formats)
+    formats = table.concat(formats,"\n")
+    local rformats = {}
+    for k,v in pairs(love.graphics.getCanvasFormats(true)) do
+      if v then table.insert(rformats,k) end
+    end
+    table.sort(rformats)
+    rformats = table.concat(rformats,"\n")
+    love.filesystem.write("/GPUCanvasFormats.txt",formats.."\n\nReadable:\n\n"..rformats)
+  end
   
-  local ofs
-  if love.filesystem.exists("GPUCalibration.json") then
+  local calibVersion,ofs = 1.4
+  if love.filesystem.getInfo("GPUCalibration.json","file") then
     ofs = json:decode(love.filesystem.read("/GPUCalibration.json"))
-    if ofs.version < 1.3 then --Redo calibration
+    if ofs.version < calibVersion then --Redo calibration
       ofs = love.filesystem.load(perpath.."calibrate.lua")()
-      ofs.version = 1.3
+      ofs.version = calibVersion
       love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
     end
   else
     ofs = love.filesystem.load(perpath.."calibrate.lua")()
-    ofs.version = 1.3
+    ofs.version = calibVersion
     love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
   end
   
@@ -163,10 +243,10 @@ return function(config) --A function that creates a new GPU peripheral.
     ofs.screen = {0,-1}
   end
   
-  love.graphics.clear(0,0,0,255) --Clear the host screen.
+  love.graphics.clear(0,0,0,1) --Clear the host screen.
   
-  love.graphics.setCanvas(_ScreenCanvas) --Activate LIKO12 canvas.
-  love.graphics.clear(0,0,0,255) --Clear LIKO12 screen for the first time.
+  love.graphics.setCanvas{_ScreenCanvas,stencil=true} --Activate LIKO12 canvas.
+  love.graphics.clear(0,0,0,1) --Clear LIKO12 screen for the first time.
   
   events:trigger("love:resize", _HOST_W, _HOST_H) --Calculate LIKO12 scale to the host window for the first time.
   
@@ -234,19 +314,20 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Apply transparent colors effect on LIKO12 Images when encoded to PNG
   local function _EncodeTransparent(x,y, r,g,b,a)
-    if _ImageTransparent[r+1] == 0 then return 0,0,0,0 end
+    if _ImageTransparent[floor(r*255)+1] == 0 then return 0,0,0,0 end
     return r,g,b,a
   end
   
   --Convert from LIKO12 palette to real colors.
   local function _ExportImage(x,y, r,g,b,a)
+    r = floor(r*255)
     if _ImageTransparent[r+1] == 0 then return 0,0,0,0 end
-    return unpack(_ColorSet[r])
+    return colorTo1(_ColorSet[r])
   end
   
   --Convert from LIKO-12 palette to real colors ignoring transparent colors.
   local function _ExportImageOpaque(x,y, r,g,b,a)
-    return unpack(_ColorSet[r])
+    return colorTo1(_ColorSet[floor(r*255)])
   end
   
   local LastMSG = "" --Last system message.
@@ -276,7 +357,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Convert from real colors to LIKO-12 palette
   local function _ImportImage(x,y, r,g,b,a)
-    return _GetColorID(r,g,b,a),0,0,255
+    return _GetColorID(colorTo255(r,g,b,a))/255,0,0,1
   end
   
   --GifRecorder
@@ -284,7 +365,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local function startGifRecording()
     if _GIFRec then return end --If there is an already in progress gif
-    if love.filesystem.exists("/~gifrec.gif") then
+    if love.filesystem.getInfo("/~gifrec.gif","file") then
       _GIFRec = _GIF.continue("/~gifrec.gif")
       _GIFPStart = love.filesystem.read("/~gifrec.pal")
       _GIFPChanged = true --To check if it's the same palette
@@ -314,7 +395,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local function endGifRecording()
     if not _GIFRec then
-      if love.filesystem.exists("/~gifrec.gif") then
+      if love.filesystem.getInfo("/~gifrec.gif","file") then
         _GIFRec = _GIF.continue("/~gifrec.gif")
       else return end
       systemMessage("Saved old gif recording successfully",2,false,false,true)
@@ -361,7 +442,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end)
   
   --Restoring the gif record if it was made by a reboot
-  if love.filesystem.exists("/~gifreboot.gif") then
+  if love.filesystem.getInfo("/~gifreboot.gif","file") then
     if not _GIFRec then
       love.filesystem.write("/~gifrec.gif",love.filesystem.read("/~gifreboot.gif"))
       love.filesystem.remove("/~gifreboot.gif")
@@ -380,7 +461,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local shaderslist = love.filesystem.getDirectoryItems("/Shaders/")
     if key == _GIFEndKey then --Next Shader
       local nextShader = shaderslist[_ActiveShaderID + 1]
-      if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
+      if nextShader and love.filesystem.getInfo("/Shaders/"..nextShader,"file") then
         local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
         if not ok then
           print("Failed to load shader",nextShader)
@@ -399,7 +480,7 @@ return function(config) --A function that creates a new GPU peripheral.
             print(warnings)
           end
           
-          if _ActiveShader:getExternVariable("time") then
+          if _ActiveShader:hasUniform("time") then
             _PostShaderTimer = 0
           end
         else
@@ -415,7 +496,7 @@ return function(config) --A function that creates a new GPU peripheral.
     elseif key == _GIFStartKey then --Prev Shader
       local nextID = _ActiveShaderID - 1; if nextID < 0 then nextID = #shaderslist end
       local nextShader = shaderslist[nextID]
-      if nextShader and love.filesystem.isFile("/Shaders/"..nextShader) then
+      if nextShader and love.filesystem.getInfo("/Shaders/"..nextShader,"file") then
         local ok, shader = pcall(love.graphics.newShader,"/Shaders/"..nextShader)
         if not ok then
           print("Failed to load shader",nextShader)
@@ -435,7 +516,7 @@ return function(config) --A function that creates a new GPU peripheral.
             print(warnings)
           end
           
-          if _ActiveShader:getExternVariable("time") then
+          if _ActiveShader:hasUniform("time") then
             _PostShaderTimer = 0
           end
         else
@@ -527,7 +608,9 @@ return function(config) --A function that creates a new GPU peripheral.
   
   local function BindVRAM()
     if VRAMBound then return end
+    love.graphics.setCanvas()
     VRAMImg = _ScreenCanvas:newImageData()
+    love.graphics.setCanvas{_ScreenCanvas,stencil=true}
     VRAMBound = true
   end
   
@@ -537,9 +620,9 @@ return function(config) --A function that creates a new GPU peripheral.
     GPU.pushColor()
     love.graphics.push()
     love.graphics.origin()
-    love.graphics.setColor(255,255,255,255)
+    love.graphics.setColor(1,1,1,1)
     love.graphics.setShader()
-    love.graphics.clear(0,0,0,255)
+    love.graphics.clear(0,0,0,1)
     love.graphics.draw(Img,ofs.image[1],ofs.image[2])
     love.graphics.setShader(_DrawShader)
     love.graphics.pop()
@@ -560,7 +643,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --LabelImage - Handler
   local LabelImage = love.image.newImageData(_LIKO_W, _LIKO_H)
   
-  LabelImage:mapPixel(function() return 0,0,0,255 end)
+  LabelImage:mapPixel(function() return 0,0,0,1 end)
   
   local LIMGHandler; LIMGHandler = newImageHandler(_LIKO_W,_LIKO_H,function() end,function() end)
   
@@ -643,9 +726,9 @@ return function(config) --A function that creates a new GPU peripheral.
     if id then
       id = Verify(id,"The color id","number")
       if id > 15 or id < 0 then return error("The color id is out of range ("..id..") Must be [0,15]") end --Error
-      love.graphics.setColor(id,0,0,255) --Set the active color.
+      love.graphics.setColor(id/255,0,0,1) --Set the active color.
     else
-      local r,g,b,a = love.graphics.getColor()
+      local r,g,b,a = getColor()
       return r --Return the current color.
     end
   end
@@ -1122,8 +1205,8 @@ return function(config) --A function that creates a new GPU peripheral.
         pc.x = pc.x + t:len() --Update the x pos
         return true --It ran successfully
       end
-      
-      if type(x) == "nil" or x then t = t .. "\n\n" end --Auto newline after printing.
+      t = t.."\n"
+      if type(x) == "nil" or x then t = t .. "\n" end --Auto newline after printing.
       
       local sw, sh = TERM_W*(_FontW+1), TERM_H*(_FontH+2) --Screen size
       local pre_spaces = string.rep(" ", pc.x) --The pre space for text wrapping to calculate
@@ -1202,7 +1285,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local c = c or 0
     c = Verify(c,"The color id","number",true)
     if c > 15 or c < 0 then return error("The color id is out of range.") end --Error
-    love.graphics.clear(c,0,0,255) _ShouldDraw = true
+    love.graphics.clear(c/255,0,0,1) _ShouldDraw = true
   end
   
   --Draws a point/s at specific location/s, accepts the colorid as the last args, x and y of points must be provided before the colorid.
@@ -1242,7 +1325,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   function GPU.image(data)
-    local Image
+    local Image, SourceData
     if type(data) == "string" then --Load liko12 specialized image format
       local ok, imageData = pcall(GPU.imagedata,data)
       if not ok then return error(imageData) end
@@ -1252,6 +1335,7 @@ return function(config) --A function that creates a new GPU peripheral.
       if not ok then return error("Invalid image data") end
       Image = err
       Image:setWrap("repeat")
+      SourceData = data
     end
     
     local i = {}
@@ -1260,7 +1344,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local x, y, r, sx, sy = x or 0, y or 0, r or 0, sx or 1, sy or 1
       GPU.pushColor()
       love.graphics.setShader(_ImageShader)
-      love.graphics.setColor(255,255,255,255)
+      love.graphics.setColor(1,1,1,1)
       if quad then
         love.graphics.draw(Image,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,sx,sy)
       else
@@ -1273,14 +1357,14 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     
     function i:refresh()
-      Image:refresh()
+      Image:replacePixels(SourceData)
       return self
     end
     
     function i:size() return Image:getDimensions() end
     function i:width() return Image:getWidth() end
     function i:height() return Image:getHeight() end
-    function i:data() return GPU.imagedata(Image:getData()) end
+    function i:data() return GPU.imagedata(SourceData) end
     function i:quad(x,y,w,h) return love.graphics.newQuad(x,y,w or self:width(),h or self:height(),self:width(),self:height()) end
     
     function i:type() return "GPU.image" end
@@ -1293,7 +1377,7 @@ return function(config) --A function that creates a new GPU peripheral.
     local imageData
     if h and tonumber(w) then
       imageData = love.image.newImageData(w,h)
-      imageData:mapPixel(function() return 0,0,0,255 end)
+      imageData:mapPixel(function() return 0,0,0,1 end)
     elseif type(w) == "string" then --Load specialized liko12 image format
       if w:sub(0,12) == "LK12;GPUIMG;" then
         w = w:gsub("\n","")
@@ -1301,7 +1385,7 @@ return function(config) --A function that creates a new GPU peripheral.
         imageData = love.image.newImageData(w,h)
         local nextColor = string.gmatch(data,"%x")
         imageData:mapPixel(function(x,y,r,g,b,a)
-          return tonumber(nextColor() or "0",16),0,0,255
+          return tonumber(nextColor() or "0",16)/255,0,0,1
         end)
       else
         local ok, fdata = pcall(love.filesystem.newFileData,w,"image.png")
@@ -1329,7 +1413,7 @@ return function(config) --A function that creates a new GPU peripheral.
         return false, "Pixel position out from the image region"
       end
       local r,g,b,a = imageData:getPixel(x,y)
-      return r
+      return floor(r*255)
     end
     function id:setPixel(x,y,c)
       if type(c) ~= "number" then return error("Color must be a number, provided "..type(c)) end
@@ -1340,16 +1424,16 @@ return function(config) --A function that creates a new GPU peripheral.
         return false, "Pixel position out from the image region"
       end
       c = math.floor(c) if c < 0 or c > 15 then return error("Color out of range ("..c..") expected [0,15]") end
-      imageData:setPixel(x,y,c,0,0,255)
+      imageData:setPixel(x,y,c/255,0,0,1)
       return self
     end
     function id:map(mf)
       imageData:mapPixel(
       function(x,y,r,g,b,a)
-        local c = mf(x,y,r)
-        if c and type(c) ~= "number" then return error("Color must be a number, provided "..type(c)) elseif c then c = math.floor(c) end
+        local c = mf(x,y,floor(r*255))
+        if c and type(c) ~= "number" then return error("Color must be a number, provided "..type(c)) elseif c then c = floor(c) end
         if c and (c < 0 or c > 15) then return error("Color out of range ("..c..") expected [0,15]") end
-        if c then return c,0,0,255 else return r,g,b,a end
+        if c then return c/255,0,0,1 else return r,g,b,a end
       end)
       return self
     end
@@ -1419,7 +1503,10 @@ return function(config) --A function that creates a new GPU peripheral.
     y = Verify(y,"Y","number",true)
     w = Verify(w,"W","number",true)
     h = Verify(h,"H","number",true)
-    return GPU.imagedata(_ScreenCanvas:newImageData(x,y,w,h))
+    love.graphics.setCanvas()
+    local imgdata = GPU.imagedata(_ScreenCanvas:newImageData(1,1,x,y,w,h))
+    love.graphics.setCanvas{_ScreenCanvas,stencil=true}
+    return imgdata
   end
   
   function GPU.getLabelImage()
@@ -1458,7 +1545,7 @@ return function(config) --A function that creates a new GPU peripheral.
       _Cursor = imgdata
       if _Cursor == "none" or _GrappedCursor then
         love.mouse.setVisible(false)
-      elseif not _Mobile then
+      elseif love.mouse.isCursorSupported() then
         love.mouse.setVisible(true)
         love.mouse.setCursor(_CursorsCache[_Cursor].cursor)
       end
@@ -1477,12 +1564,12 @@ return function(config) --A function that creates a new GPU peripheral.
       local img = love.graphics.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
       local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
       local gifimg = love.image.newImageData(imgdata:size())
-      gifimg:mapPixel(function(x,y) return imgdata:getPixel(x,y),0,0,255 end)
+      gifimg:mapPixel(function(x,y) return imgdata:getPixel(x,y)/255,0,0,1 end)
       gifimg:mapPixel(_EncodeTransparent)
       gifimg = love.graphics.newImage(gifimg)
       
       local hotx, hoty = hx*math.floor(_LIKOScale), hy*math.floor(_LIKOScale) --Converted to host scale
-      local cur = _Mobile and {} or love.mouse.newCursor(limg,hotx,hoty)
+      local cur = love.mouse.isCursorSupported() and love.mouse.newCursor(limg,hotx,hoty) or {}
       local palt = {}
       for i=1, 16 do
         table.insert(palt,_ImageTransparent[i])
@@ -1500,7 +1587,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   events:register("love:resize",function() --The new size will be calculated in the top, because events are called by the order they were registered with
-    if _Mobile then return end
+    if not love.mouse.isCursorSupported() then return end
     for k, cursor in pairs(_CursorsCache) do
        --Hack
       GPU.pushPalette()
@@ -1533,7 +1620,9 @@ return function(config) --A function that creates a new GPU peripheral.
       love.filesystem.write("/LIKO12-"..os.time()..".png",png)
       systemMessage("Screenshot has been taken successfully",2)
     elseif key == _LabelCaptureKey then
+      love.graphics.setCanvas()
       LabelImage:paste(_ScreenCanvas:newImageData(),0,0,0,0,_LIKO_W,_LIKO_H)
+      love.graphics.setCanvas{_ScreenCanvas,stencil=true}
       systemMessage("Captured label image successfully !",2)
     end
   end)
@@ -1555,7 +1644,7 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setLineJoin("miter") --Set the line join style.
   love.graphics.setPointSize(1) --Set the point size to 1px.
   love.graphics.setLineWidth(1) --Set the line width to 1px.
-  love.graphics.setColor(_GetColor(0)) --Set the active color to black.
+  setColor(_GetColor(0)) --Set the active color to black.
   love.mouse.setVisible(false)
   
   GPU.clear() --Clear the canvas for the first time.
@@ -1579,8 +1668,8 @@ return function(config) --A function that creates a new GPU peripheral.
       if Clip then love.graphics.setScissor() end
       
       GPU.pushColor() --Push the current color to the stack.
-      love.graphics.setColor(255,255,255,255) --I don't want to tint the canvas :P
-      if _ClearOnRender then love.graphics.clear((_HOST_H > _HOST_W) and {25,25,25,255} or {0,0,0,255}) end --Clear the screen (Some platforms are glitching without this).
+      love.graphics.setColor(1,1,1,1) --I don't want to tint the canvas :P
+      if _ClearOnRender then love.graphics.clear((_HOST_H > _HOST_W) and {25/255,25/255,25/255,1} or {0,0,0,1}) end --Clear the screen (Some platforms are glitching without this).
       
       if _ActiveShader then
         if not _Mobile then love.mouse.setVisible(false) end
@@ -1611,22 +1700,22 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setShader() --Deactivate the display shader.
       
       if MSGTimer > 0 then
-        love.graphics.setColor(_GetColor(LastMSGColor))
+        setColor(_GetColor(LastMSGColor))
         love.graphics.rectangle("fill", _LIKO_X+ofs.screen[1]+ofs.rect[1], _LIKO_Y+ofs.screen[2] + (_LIKO_H-8) * _LIKOScale + ofs.rect[2],
         _LIKO_W * _LIKOScale + ofs.rectSize[1], 8*_LIKOScale + ofs.rectSize[2])
-        love.graphics.setColor(_GetColor(LastMSGTColor))
+        setColor(_GetColor(LastMSGTColor))
         love.graphics.push()
         love.graphics.translate(_LIKO_X+ofs.screen[1]+ofs.print[1]+_LIKOScale, _LIKO_Y+ofs.screen[2] + (_LIKO_H-7) * _LIKOScale + ofs.print[2])
         love.graphics.scale(_LIKOScale,_LIKOScale)
         love.graphics.print(LastMSG,0,0)
         love.graphics.pop()
-        love.graphics.setColor(255,255,255,255)
+        love.graphics.setColor(1,1,1,1)
       end
       
       if _DevKitDraw then
         events:trigger("GPU:DevKitDraw")
         love.graphics.origin()
-        love.graphics.setColor(255,255,255,255)
+        love.graphics.setColor(1,1,1,1)
         love.graphics.setLineStyle("rough")
         love.graphics.setLineJoin("miter")
         love.graphics.setPointSize(1)
@@ -1638,7 +1727,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.present() --Present the screen to the host & the user.
       love.graphics.setShader(_DrawShader) --Reactivate the draw shader.
       love.graphics.pop()
-      love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
+      love.graphics.setCanvas{_ScreenCanvas,stencil=true} --Reactivate the canvas.
       
       if PatternFill then
         love.graphics.stencil(PatternFill, "replace", 1)
@@ -1668,7 +1757,7 @@ return function(config) --A function that creates a new GPU peripheral.
       love.graphics.setCanvas() --Quit the canvas and return to the host screen.
       
       if PatternFill then
-         love.graphics.setStencilTest()
+        love.graphics.setStencilTest()
       end
       
       love.graphics.push()
@@ -1676,13 +1765,13 @@ return function(config) --A function that creates a new GPU peripheral.
       if Clip then love.graphics.setScissor() end
       
       GPU.pushColor() --Push the current color to the stack.
-      love.graphics.setColor(255,255,255,255) --I don't want to tint the canvas :P
+      love.graphics.setColor(1,1,1,1) --I don't want to tint the canvas :P
       
       love.graphics.setCanvas(_GIFCanvas)
       
-      love.graphics.clear(0,0,0,255) --Clear the screen (Some platforms are glitching without this).
+      love.graphics.clear(0,0,0,1) --Clear the screen (Some platforms are glitching without this).
       
-      love.graphics.setColor(255,255,255,255)
+      love.graphics.setColor(1,1,1,1)
       
       love.graphics.setShader()
       
@@ -1694,23 +1783,23 @@ return function(config) --A function that creates a new GPU peripheral.
       end
       
       if MSGTimer > 0 and LastMSGGif then
-        love.graphics.setColor(LastMSGColor,0,0,255)
+        setColor(LastMSGColor/255,0,0,1)
         love.graphics.rectangle("fill", ofs.screen[1]+ofs.rect[1], ofs.screen[2] + (_LIKO_H-8) * _GIFScale + ofs.rect[2],
         _LIKO_W *_GIFScale + ofs.rectSize[1], 8*_GIFScale + ofs.rectSize[2])
-        love.graphics.setColor(LastMSGTColor,0,0,255)
+        setColor(LastMSGTColor/255,0,0,1)
         love.graphics.push()
         love.graphics.translate(ofs.screen[1]+ofs.print[1]+_GIFScale, ofs.screen[2] + (_LIKO_H-7) * _GIFScale + ofs.print[2])
         love.graphics.scale(_GIFScale,_GIFScale)
         love.graphics.print(LastMSG,0,0)
         love.graphics.pop()
-        love.graphics.setColor(255,255,255,255)
+        love.graphics.setColor(1,1,1,1)
       end
       
       love.graphics.setCanvas()
       love.graphics.setShader(_DrawShader)
       
       love.graphics.pop() --Reapply the offset.
-      love.graphics.setCanvas(_ScreenCanvas) --Reactivate the canvas.
+      love.graphics.setCanvas{_ScreenCanvas,stencil=true} --Reactivate the canvas.
       
       if PatternFill then
         love.graphics.stencil(PatternFill, "replace", 1)

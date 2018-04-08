@@ -102,7 +102,7 @@ local function newSFX(notes,speed)
   end
   
   function sfx:encode()
-    local Write = RamUtils.binWriter()
+    local Write = BinUtils.binWriter()
     Write(floor(self.speed/0.25),8)
     for i=1, self.notes*4, 4 do
       local n,o = toFreq(self[i+2])
@@ -133,7 +133,7 @@ local function newSFX(notes,speed)
   end
   
   function sfx:decode(data)
-    local Read = RamUtils.binReader(data)
+    local Read = BinUtils.binReader(data)
     
     self.speed = tonumber(Read(8))*0.25
     local nt = self.speed/self.notes

@@ -1,41 +1,41 @@
-Important note for Android users:
-The 'escape' key mentioned in the docs is the same of your device 'back' key !
+\8Important note for \BAndroid\8 users:\7
+The \6'escape'\7 key mentioned in the docs is the same of your device \6'back'\7 key !
 
-The most used programs:
+\BThe most used programs:\7
 
-help - The current help program.
-drives - Lists the available storage drives and their space usage.
-ls - Lists the files and directories in the current directory.
-cd - Changes the current directory.
-rm - Remove/Delete a file or a folder, cunnot undo , be warned !
-mkdir - Create a new directory.
-cls - Clears the screen.
-folder - Open the current folder in the host explorer.
-reboot - Reboots LIKO-12.
-shutdown - Shuts down LIKO-12 ! and quits.
-save - Saves the current game data in the editors.
-load - Loads game data into the editors.
-new - Clears the current game data in the editors.
-run - Runs the current game in the editors.
-apis - List the peripherals' API functions.
-peripherals - Lists the available peripherals.
-edit - Allows you to edit system files.
-appdata - Opens LIKO-12 appdata folder.
-programs - Lists installed programs.
-save <file> -c - Saves with compression mode, required to upload via pastebin.
-pastebin - Uploads and Downloads from pastebin.
+ \7help \5-\6 The current help program.
+ \7drives \5-\6 Lists the available storage drives and their space usage.
+ \7ls \5-\6 Lists the files and directories in the current directory.
+ \7cd \5-\6 Changes the current directory.
+ \7rm \5-\6 Remove/Delete a file or a folder, cunnot undo , be warned !
+ \7mkdir \5-\6 Create a new directory.
+ \7cls \5-\6 Clears the screen.
+ \7folder \5-\6 Open the current folder in the host explorer.
+ \7reboot \5-\6 Reboots \LIKO-12\6.
+ \7shutdown \5-\6 Shuts down \LIKO-12\6 ! and quits.
+ \7save \5-\6 Saves the current game data in the editors.
+ \7load \5-\6 Loads game data into the editors.
+ \7new \5-\6 Clears the current game data in the editors.
+ \7run \5-\6 Runs the current game in the editors.
+ \7apis \5-\6 List the peripherals' API functions.
+ \7peripherals \5-\6 Lists the available peripherals.
+ \7edit \5-\6 Allows you to edit system files.
+ \7appdata \5-\6 Opens \LIKO-12\6 appdata folder.
+ \7programs \5-\6 Lists installed programs.
+ \7save <file> -c \5-\6 Saves with compression mode, required to upload via pastebin.
+ \7pastebin \5-\6 Uploads and Downloads from pastebin.
 
-Press escape to switch to Editors Mode.
+\9Press escape/back to switch to Editors Mode !\7
 
 Type "install_demos" to install some demos,
-"cd Demos"
-"load bump"
-"run"
+\6 cd Demos
+ load bump
+ run\7
 
 Type "install_games" to install some built-in games,
-"cd Games"
-"load snake"
-"run"
+\6 cd Games
+ load snake
+ run\7
 
-Official documentation:
+\BOfficial documentation:\6
 http://liko-12.readthedocs.io/

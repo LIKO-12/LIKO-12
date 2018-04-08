@@ -1,18 +1,11 @@
-When you turn on LIKO-12, the engine will load the BIOS configuration and initialize the peripherals, then show the POST screen giving you a little time to press Delete to enter the BIOS.
+\BWelcome to \LIKO-12\B !\7
+\6the opensource fantasy computer that's completely written in Lua.
 
-The liko12 BIOS is actually made of a host specs info screen and a code editor.
-The code editor will allow you to edit the BIOS configuration; this configuration code specifies for liko12 which peripherals to load and what configuration you would use for them.
-For example: Set the GPU color pallete and the screen resolution.
+\LIKO-12\7 is a \6tool\7 for creating \6retro-looking\7 games programmed in \CLua\7.
+By pressing \Cescape/back\7 in the terminal, the editors mode will be activated.
+You'll see editors for \6Code\7,\6Sprites\7,\6Map\7,\6SFX\7 and \6Music\7.
 
-The default BIOS configuration boots liko12 with the following list of peripherals:
-GPU: 192x128 res, pico8 color pallete, 4x5 font.
-CPU: responsible for handling events.
-Keyboard: Provides the keyboard input interface.
-HDD: The virtual file system; 2 Drives (C, D) each one with 50 mbyte of data.
+You can switch back to the terminal by pressing \Cescape/back\7 again.
 
-Note that the mouse is part of the GPU.
-
-* The BIOS screen has not been programmed yet.
-
-Then the engine looks for a file called 'boot.lua' in the C drive: this file (in DiskOS) wraps all the peripherals' APIs and makes them ready for use anywhere, and also simulates a 'require' system for handy use.
-After that the boot.lua loads terminal.lua which greets you with a shell to type commands into.
+Try that now, once done,
+Type \9help Editors\7.

@@ -2,12 +2,15 @@
 if select(1,...) == "-?" then
   printUsage(
     "help","Displays the help info",
+    "help Topics","Displays help topics list",
     "help <topic>", "Displays a help topic"
   )
   return
 end
 
-local helpPATH = "C:/Help/;C:/Manual/Help/"
+local lume = require("Libraries.lume")
+
+local helpPATH = "C:/Help/"
 local function nextPath()
   if helpPATH:sub(-1)~=";" then helpPATH=helpPATH..";" end
   return helpPATH:gmatch("(.-);")
@@ -25,14 +28,14 @@ if type(giveApi) == "boolean" then --Requesting HELP api
     helpPATH = p
   end
 
-  function api.getHelpPath()
+  function api.getHelpPATH()
     return helpPATH
   end
 
   return api
 end
 
-helpPATH = require("Programs/help",true).getHelpPath() --A smart way to keep the helpPath
+helpPATH = require("Programs.help",true).getHelpPATH() --A smart way to keep the helpPath
 
 palt(0,false) --Make black opaque
 
@@ -41,8 +44,8 @@ local doc --The help document to print
 for path in nextPath() do
   if fs.exists(path..topic) then
     doc = path..topic break
-  elseif fs.exists(path..topic..".md") then
-    doc = path..topic..".md" break
+  elseif fs.exists(path..topic..".lua") then
+    doc = path..topic..".lua" break
   end
 end
 
@@ -66,68 +69,74 @@ end
 printCursor(0) --Set the x pos to 0 (the start of the screen)
 
 local tw, th = termSize()
-local sw, sh = screenSize()
-local _, top = printCursor()
 local msg = "[press any key to continue, q to quit]"
 local msglen = msg:len()
+local skipY = select(2,printCursor())
 
 -- Smart print with the "press any key to continue" message
 -- Returns true if "q" was pressed, which should abort the process
 local function sprint(text)
-  local cx, cy = printCursor()
-
-  local txtlen = text:len()
-  local txth = math.ceil(txtlen/tw)
-  local txtw = text:sub((txth-1)*tw, -1)
-
-  -- print text directly if it won't scroll the content past the screen
-  if top - txth > 0 then
-    print(text)
-    top = top - txth
-    sleep(0.02) -- a short delay helps following the output
-    return
-  end
-
-  for i=1, txth do
-    printCursor(0)
-    if cy + i < th then
-      print(text:sub( (i-1)*tw+1, (i)*tw ))
-    else
-      pushColor() color(9)
-      print(msg,false) popColor()
-      flip()
-      local quit = waitkey()
-      printCursor(0,th-1)
-      rect(0,sh-9,sw,8,false,0)
-      if quit then return true end
-      print(text:sub( (i-1)*tw+1, (i)*tw ))
-    end
-  end
-end
-
-local md = (doc:sub(-3,-1) == ".md")
-local doc = fs.read(doc)
-doc = doc:gsub("\r\n","\n")
-if doc:sub(-1,-1) ~= "\n" then doc = doc .. "\n" end
-
---Clear markdown
-if md then
-  doc = doc:gsub("%-%-%-","")
-  doc = doc:gsub("```lua","")
-  doc = doc:gsub("```","")
-  doc = doc:gsub("# ","")
-  doc = doc:gsub("#","")
-  doc = doc:gsub("%*%*","")
-  doc = doc:gsub("__","")
-  doc = doc:gsub("\\>",">")
+  if text == "" then text = " " end
   
-  while doc:find("\n\n\n") do
-    doc = doc:gsub("\n\n\n","\n\n")
+  local iter = text:gmatch(".")
+  
+  local curX, curY = printCursor()
+  
+  skipY = skipY - 1
+  
+  for char in iter do
+    if char == "\\"  then
+      local nchar = iter()
+      if nchar == "\\" then
+        print(nchar,false)
+      else
+        color(tonumber(nchar,16))
+        curX = curX - 1
+      end
+    elseif char == "\n" then
+      print(char,false)
+      curX = tw-1 --A new line :o
+    else
+      print(char,false)
+    end
+    
+    curX = curX + 1
+    
+    if curX == tw then --End of line
+      curX, curY = 0, curY+1
+      
+      if curY == th then
+        curY = th-1
+        sleep(0.02)
+        if skipY > 0 then
+          skipY = skipY - 1
+        else
+          pushColor() color(9)
+          print(msg,false) flip()
+          local quit = waitkey()
+          for i=1,msglen do printBackspace() end
+          popColor()
+          if quit then return true end
+        end
+      end
+    end
+    
   end
 end
 
-for line in string.gmatch(doc,"(.-)\n") do
-  if sprint(line) then break end
+local lua = (doc:sub(-4,-1) == ".lua")
+if lua then
+  doc = fs.load(doc)()
+  if not doc then print("") return 0 end
+else
+  doc = fs.read(doc)
 end
+
+doc = doc:gsub("\r\n","\n")
+doc = doc:gsub("\\LIKO%-12","\\CL\\8I\\BK\\9O\\7-\\F12")
+
+color(7)
+
+sprint(doc)
 
 print("")

@@ -1,7 +1,7 @@
 --The BIOS should control the system of LIKO-12 and load the peripherals--
 --For now it's just a simple BIOS to get LIKO-12 working.
-local DevMode = love.filesystem.exists("devmode.txt")
-local BuildMode = love.filesystem.exists("build.json")
+local DevMode = love.filesystem.getInfo("devmode.txt") and true or false
+local BuildMode = love.filesystem.getInfo("build.json") and true or false
 
 local json = require("Engine.JSON")
 
@@ -11,7 +11,7 @@ if BuildMode then
 end
 
 local _LIKO_Version, _LIKO_Old = _LVERSION:sub(2,-1)
-if love.filesystem.exists(".version") then
+if love.filesystem.getInfo(".version","file") then
   _LIKO_Old = love.filesystem.read(".version")
   if _LIKO_Old == _LIKO_Version then
     _LIKO_Old = false
@@ -37,8 +37,8 @@ local Devkits = {} --The mounted peripherals devkits.
 local function indexPeripherals(path)
   local files = love.filesystem.getDirectoryItems(path)
   for k,filename in ipairs(files) do
-    if love.filesystem.isDirectory(path..filename) then
-      if love.filesystem.exists(path..filename.."/init.lua") then
+    if love.filesystem.getInfo(path..filename,"directory") then
+      if love.filesystem.getInfo(path..filename.."/init.lua","file") then
         local chunk, err = love.filesystem.load(path..filename.."/init.lua")
         if not chunk then Peripherals[filename] = "Err: "..tostring(err) else
         Peripherals[filename] = chunk(path..filename.."/") end

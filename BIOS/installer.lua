@@ -1,6 +1,6 @@
 --The OS Installer
 
-local devmode = love.filesystem.exists("/devmode.txt") or (_LVer.tag == "DEV")
+local devmode = (love.filesystem.getInfo("/devmode.txt") and true or false) or (_LVer.tag == "DEV")
 
 local HandledAPIS, osName, update = ...
 
@@ -71,7 +71,7 @@ if update then
 
     local items = love.filesystem.getDirectoryItems(path)
     for id, item in ipairs(items) do
-      if love.filesystem.isDirectory(path..item) then
+      if love.filesystem.getInfo(path..item,"directory") then
         table.insert(list,path..item)
         index(path..item.."/", list)
       else
@@ -92,8 +92,9 @@ if update then
   for k, path in ipairs(OSFiles) do
     local HDDPath = "C:/"..path:sub(OSPathLen+1,-1)
     if fs.exists(HDDPath) then
-      if love.filesystem.isFile(path) then
-        local newDate = assert(love.filesystem.getLastModified(path))
+      local info = love.filesystem.getInfo(path,"file")
+      if info then
+        local newDate = assert(info.modtime,"failed to get mod time")
         local oldDate = assert(fs.getLastModified(HDDPath))
         if newDate > oldDate then
           local data = love.filesystem.read(path)
@@ -102,7 +103,7 @@ if update then
         end
       end
     else --New File/Directory
-      if love.filesystem.isDirectory(path) then
+      if love.filesystem.getInfo(path,"directory") then
         fs.newDirectory(HDDPath)
         display("New Directory: "..HDDPath)
       else
@@ -122,7 +123,7 @@ else ---INSTALL--------------------------------------------
 
     local items = love.filesystem.getDirectoryItems(path)
     for id, item in ipairs(items) do
-      if love.filesystem.isDirectory(path..item) then
+      if love.filesystem.getInfo(path..item,"directory") then
         table.insert(list,path..item)
         index(path..item.."/", list)
       else
@@ -141,7 +142,7 @@ else ---INSTALL--------------------------------------------
   
   for k, path in ipairs(OSFiles) do
     local HDDPath = "C:/"..path:sub(OSPathLen+1,-1)
-    if love.filesystem.isDirectory(path) then
+    if love.filesystem.getInfo(path,"directory") then
       fs.newDirectory(HDDPath)
       display("Directory: "..HDDPath)
     else
