@@ -272,9 +272,27 @@ function term.loop() --Enter the while loop of the terminal
       elseif a == "backspace" then
         blink = false; checkCursor()
         if buffer:len() > 0 then
-          buffer = buffer:sub(1,-2)
-          inputPos = inputPos - 1
+          --Remove the character
           printBackspace()
+          
+          --Re print the buffer
+          for char in string.gmatch(buffer:sub(inputPos,-1),".") do
+            print(char,false)
+          end
+          
+          --Erase the last character
+          print("-",false) printBackspace()
+          
+          --Go back to the input position
+          for i=#buffer,inputPos,-1 do
+            printBackspace(-1)
+          end
+          
+          --Remove the character from the buffer
+          buffer = buffer:sub(1,inputPos-2) .. buffer:sub(inputPos,-1)
+          
+          --Update input postion
+          inputPos = inputPos-1
         end
         blink = true; checkCursor()
       elseif a == "delete" then
