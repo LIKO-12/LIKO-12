@@ -88,5 +88,7 @@ dofile("C:/System/osapi.lua") --Load DiskOS OS APIs
 
 local terminal = require("terminal")
 
+require("PackagesManager") --Initialize the packages manager
+
 terminal.init() --Initialize the terminal
 terminal.loop()
