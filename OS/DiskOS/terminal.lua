@@ -297,6 +297,7 @@ function term.loop() --Enter the while loop of the terminal
         blink = true; checkCursor()
       elseif a == "delete" then
         blink = false; checkCursor()
+        print(buffer:sub(inputPos,-1),false)
         for i=1,buffer:len() do
           printBackspace()
         end
