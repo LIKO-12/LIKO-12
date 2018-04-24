@@ -165,7 +165,7 @@ function t:drawMap()
   
   --Draw the map
   palt(0,false)
-  Map:draw(mapdx%8-8,mapdy%8,-math.floor(mapdx/8)-1,-math.floor(mapdy/8)-1,MapVW+1,MapVH+1, 1,1, SpriteMap)
+  Map:draw(math.floor(mapdx%8-8),math.floor(mapdy%8),-math.floor(mapdx/8)-1,-math.floor(mapdy/8)-1,MapVW+1,MapVH+1, 1,1, SpriteMap)
   palt()
   
   --Draw selection
