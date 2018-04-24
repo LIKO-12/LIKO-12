@@ -28,9 +28,11 @@ function token(stream, state)
 
   if state.tokenizer == "base" then
       char = stream:next()
+      local pos = stream.pos
       -- Comment and multiline comment matching
       if char == "-" and stream:eat('%-') then
-          if stream:match("%[%[") then
+          if stream:match("^%[=*%[") then
+              state.multilen = stream.pos - pos - 3
               state.tokenizer = "multilineComment"
           else
               stream:skipToEnd()
@@ -59,10 +61,11 @@ function token(stream, state)
       -- elseif operators[char] then
       --     return 'operator'
       -- Multiline string matching
-      elseif char == "[" and stream:eat("%[") then
+      elseif char == "[" and stream:match("^=*%[") then
+          state.multilen = stream.pos - pos - 1
           state.tokenizer = "multilineString"
           return "string"
-      -- Keyword matching                
+      -- Keyword matching
       elseif char:find('[%w_]') then
           stream:eatWhile('[%w_]')
           local word = stream:current()
@@ -103,12 +106,12 @@ function token(stream, state)
           stream:next()
           result = "escape"
         end
-      elseif char == "]" and stream:eat("%]") then
+      elseif char == "]" and stream:match("^" .. string.rep("=", state.multilen) .. "%]") then
           state.tokenizer = "base"
       end
 
   elseif state.tokenizer == "multilineComment" then
-      if stream:skipTo("%]%]") then
+      if stream:skipTo("%]" .. string.rep("=", state.multilen) .. "%]") then
           stream:next()
           state.tokenizer = "base"
       else
