@@ -174,18 +174,18 @@ local function nextWave()
   end
 end
 
+local StartTime = love.timer.getTime() --Start counting the delta time.
+
 --Pull a new command from the channel
 local function pullParams()
   if gen then
     return chIn:pop()
   else
     local arg = chIn:demand()
-    love.timer.step() --Don't count the time spent while waiting for a new command.
+    StartTime = love.timer.getTime() --Don't count the time spent while waiting for a new command.
     return arg
   end
 end
-
-love.timer.step() --Start counting the delta time.
 
 --The thread while true do loop !
 while true do
@@ -268,16 +268,18 @@ while true do
     end
   end
   
-  love.timer.step()--Calculate the time spent while generating.
+  local EndTime = love.timer.getTime() --Calculate the time spent while generating.
   
-  local dt = love.timer.getDelta()
+  local dt = EndTime-StartTime
+  
+  StartTime = EndTime
   
   local sleeptime = (buffer_time - dt*2)*0.6 --Calculate the remaining time that we can sleep.
   
   --There's time to sleep
   if sleeptime > 0 then
     love.timer.sleep(sleeptime) --ZzZzZzZzZzZzZzZzZzzzz.
-    love.timer.step() --Skip the time spent while sleeping..
+    StartTime = love.timer.getTime() --Skip the time spent while sleeping..
   else --Well, we're not generating enough
     
     --TODO: Lower the sample rate.
