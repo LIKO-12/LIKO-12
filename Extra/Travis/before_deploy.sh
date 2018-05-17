@@ -19,7 +19,9 @@ cd ..
 echo ----==== Building Windows 32bit ====----
 
 cat Windows_x86/love.exe LIKO-12.love > Windows_x86/LIKO-12.exe
+cat Windows_x86/lovec.exe LIKO-12.love > Windows_x86/LIKO-12_Console.exe
 rm -v -f Windows_x86/love.exe
+rm -v -f Windows_x86/lovec.exe
 7z A -r -y -tzip -bd Builds/LIKO-12_Nightly_Windows.zip Windows_x86/*
 
 echo ----==== Building Linux ====----
