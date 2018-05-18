@@ -265,7 +265,7 @@ function se:playMouse(state,x,y,button,istouch)
       playDown = false
       self:drawPlay()
       if playingNote >= 0 then
-        Audio.stop()
+        if Audio then Audio.stop() end
         playingNote = -1
         drawGraph()
       else

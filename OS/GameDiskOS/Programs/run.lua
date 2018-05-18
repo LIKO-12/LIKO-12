@@ -318,6 +318,6 @@ patternFill()
 print("")
 
 TC.setInput(false)
-Audio.stop()
+if Audio then Audio.stop() end
 
 if crashed then return 1, crashed end

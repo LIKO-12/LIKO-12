@@ -49,5 +49,5 @@ wave = tonumber(wave)
 
 local freq = AudioUtils.noteFrequency(note,oct)
 
-Audio.play({time,wave,freq,1})
+if Audio then Audio.play({time,wave,freq,1}) end
 sleep(time)

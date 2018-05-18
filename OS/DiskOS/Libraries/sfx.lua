@@ -70,7 +70,7 @@ local function newSFX(notes,speed)
   end
   
   function sfx:play(chn)
-    Audio.play(self,chn or 0)
+    if Audio then Audio.play(self,chn or 0) end
     
     return self
   end
