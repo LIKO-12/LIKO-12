@@ -3,49 +3,59 @@
 local Globals = (...) or {}
 local co = select(2,...) or {}
 
-local function evloop()
-  
-  local evinit = Globals["_init"]
-  
-  if evinit and type(evinit) == "function" then
-    local ok, err = pcall(evinit, a,b,c,d,e,f)
+local function callevfunc(evf, a,b,c,d,e,f)
+  if evf and type(evf) == "function" then
+    local ok, err = pcall(evf, a,b,c,d,e,f)
     if not ok then
       local err = tostring(err)
       if err:sub(1,12) == '[string ""]:' then err = err:sub(13,-1) end
       coroutine.yield("RUN:exit", "ERR :"..err)
-      return
+      return false
     end
   end
+  
+  return true
+end
+
+local function evloop()
+  
+  if not callevfunc(Globals["_init"]) then return end
   
   if not ((Globals["_update"] and type(Globals["_update"]) == "function") or (Globals["_draw"] and type(Globals["_draw"]) == "function") or Globals["_eventLoop"]) then
     return
   end
   
+  local time30, time60 = 1/30, 1/60
+  local timer30, timer60 = 0, 0
+  
   while true do
     local event, a,b,c,d,e,f = pullEvent()
-    local evf = Globals["_"..event]
     
-    if evf and type(evf) == "function" then
-      local ok, err = pcall(evf, a,b,c,d,e,f)
-      if not ok then
-        local err = tostring(err)
-        if err:sub(1,12) == '[string ""]:' then err = err:sub(13,-1) end
-        coroutine.yield("RUN:exit", "ERR :"..err)
-        break
+    if not callevfunc(Globals["_"..event], a,b,c,d,e,f) then return end
+    
+    if event == "update" then
+      if not callevfunc(Globals["_draw"], a,b,c,d,e,f) then return end
+    end
+    
+    if event == "update" and (Globals["_update60"] or Globals["_draw60"]) then
+      timer60 = timer60 + a
+      
+      if timer60 >= time60 then
+        timer60 = timer60 % time60
+        
+        if not callevfunc(Globals["_update60"]) then return end
+        if not callevfunc(Globals["_draw60"]) then return end
       end
     end
     
-    if event == "update" then
-      evf = Globals["_draw"]
+    if event == "update" and (Globals["_update30"] or Globals["_draw30"]) then
+      timer30 = timer30 + a
       
-      if evf and type(evf) == "function" then
-        local ok, err = pcall(evf, a,b,c,d,e,f)
-        if not ok then
-          local err = tostring(err)
-          if err:sub(1,12) == '[string ""]:' then err = err:sub(13,-1) end
-          coroutine.yield("RUN:exit", "ERR :"..err)
-          break
-        end
+      if timer30 >= time30 then
+        timer30 = timer30 % time30
+        
+        if not callevfunc(Globals["_update30"]) then return end
+        if not callevfunc(Globals["_draw30"]) then return end
       end
     end
     
