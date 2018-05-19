@@ -16,18 +16,8 @@ local function split(inputstr, sep)
 end
 
 local function lastIndexOf(str,of)
-  local lastIndex = 0
-  local lastEnd = 0
-  while true do
-    local cstart,cend = string.find(str,of,lastEnd+1)
-    if cstart then
-      lastIndex, lastEnd = cstart, cend
-    else
-      break
-    end
-  end
-  
-  return lastIndex
+  local lastIndex = string.find(string.reverse(str),of)
+  return lastIndex and #str-lastIndex+1 or 0
 end
 
 local function indexOf(str,of)
