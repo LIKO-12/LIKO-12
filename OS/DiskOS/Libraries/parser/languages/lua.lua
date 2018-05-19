@@ -5,7 +5,7 @@ local keywords = {
     "repeat", "return", "then", "true", "until", "while"
 }
 local api = getAPI()
-local callbacks = {"_draw","_init","_keypressed","_keyreleased","_mousemoved","_mousepressed","_mousereleased","_textinput","_touchcontrol","_touchmoved","_touchpressed","_touchreleased","_update","_wheelmoved","_filedropped","self"}
+local callbacks = {"_draw","_draw30","_draw60","_init","_keypressed","_keyreleased","_mousemoved","_mousepressed","_mousereleased","_textinput","_touchcontrol","_touchmoved","_touchpressed","_touchreleased","_update","_update30","_update60","_wheelmoved","_filedropped","self"}
 local escapable = {"a", "b", "f", "n", "r", "t", "v", "\\", "\"", "'"}
 
 -- Convert values to keys
