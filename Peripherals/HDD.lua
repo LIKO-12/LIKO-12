@@ -34,7 +34,7 @@ end
 
 return function(Config)
   local RootDir = Config.RootDir or "/drives/"
-  local Drives, ActiveDrive = {}
+  local Drives, ActiveDrive, MainDrive = {}
   
   --Create the drives root directory if it doesn't exists.
   if not love.filesystem.getInfo(RootDir,"directory") then
@@ -48,8 +48,10 @@ return function(Config)
     end
     
     ActiveDrive = ActiveDrive or name
-    Drives[name] = {Size=size, Usage=0}
+    Drives[name] = {Size=size, Usage=0, Readonly=false}
   end
+  
+  MainDrive = ActiveDrive
   
   local fs, yfs, devkit = {}, {}, {}
   
@@ -259,7 +261,7 @@ return function(Config)
   function fs.drives()
     local dlist = {}
     for k,v in pairs(Drives) do
-      dlist[k] = {size=Drives[k].Size,usage=Drives[k].Usage}
+      dlist[k] = {size=Drives[k].Size,usage=Drives[k].Usage,Readonly=Drives[k].Readonly}
     end
     return dlist
   end
@@ -402,6 +404,8 @@ return function(Config)
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
+    if Drives[drive].Readonly then return error("Drive "..drive.." is readonly !") end
+    
     createPath(path)
   end
   
@@ -413,6 +417,9 @@ return function(Config)
     
     local from, fromDrive = sanitizePath(from); from = fromDrive.."/"..from
     local to, toDrive = sanitizePath(to); to = toDrive.."/"..to
+    
+    if Drives[toDrive].Readonly then return error("Drive "..toDrive.." is readonly !") end
+    if Drives[fromDrive].Readonly then return error("Drive "..fromDrive.." is readonly !") end
     
     if not love.filesystem.getInfo(RootDir..from) then return error("From Path doesn't exists !") end
     
@@ -429,6 +436,8 @@ return function(Config)
     
     local from, fromDrive = sanitizePath(from); from = fromDrive.."/"..from
     local to, toDrive = sanitizePath(to); to = toDrive.."/"..to
+    
+    if Drives[toDrive].Readonly then return error("Drive "..toDrive.." is readonly !") end
     
     if not love.filesystem.getInfo(RootDir..from) then return error("From Path doesn't exists !") end
     
@@ -447,6 +456,8 @@ return function(Config)
     Verify(path,"string","Path")
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
+    
+    if Drives[drive].Readonly then return error("Drive "..drive.." is readonly !") end
     
     if not love.filesystem.getInfo(RootDir..path) then return error("Path doesn't exists !") end
     
@@ -562,6 +573,8 @@ return function(Config)
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
+    if Drives[drive].Readonly then return error("Drive "..drive.." is readonly !") end
+    
     if love.filesystem.getInfo(RootDir..path,"directory") then return error("Can't write on a directory.") end
     
     local fsize = size or data:len()
@@ -588,6 +601,8 @@ return function(Config)
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
+    if Drives[drive].Readonly then return error("Drive "..drive.." is readonly !") end
+    
     if love.filesystem.getInfo(RootDir..path,"directory") then return error("Can't append data on a directory.") end
     
     local asize = size or data:len()
@@ -602,6 +617,36 @@ return function(Config)
     end
     
     Drives[drive].Usage = Drives[drive].Usage + asize
+  end
+  
+  --Mount a ZIP drive.
+  function fs.mountZIP(zipData)
+    --Unmount zip
+    if Drives["ZIP"] then
+      love.filesystem.unmount(RootDir.."ZIPDrive.zip")
+      Drives["ZIP"] = nil
+    end
+    
+    if not zipData then
+      if ActiveDrive == "ZIP" then ActiveDrive = MainDrive end
+      return
+    end
+    
+    Verify(zipData,"string","zipData")
+    
+    love.filesystem.write(RootDir.."ZIPDrive.zip",zipData) --Write the zip for temporary mounting.
+    
+    local success = love.filesystem.mount(RootDir.."ZIPDrive.zip",RootDir.."ZIP") --Mount the zipfile
+    
+    if success then
+      local zipDriveSize = getSizeRecursive("ZIP")
+      Drives["ZIP"] = {Size=zipDriveSize,Usage=zipDriveSize,Readonly=true}
+      
+      return true
+    else
+      if ActiveDrive == "ZIP" then ActiveDrive = MainDrive end
+      return false
+    end
   end
   
   function devkit.calcUsage()
