@@ -3,8 +3,8 @@
 --LIKO-12 Version
 _LVer = {
 	magor = 0,
-	minor = 7,
-	patch = 2,
+	minor = 8,
+	patch = 0,
 	tag = "DEV", --"DEV"
 }
 _LVERSION = string.format("V%d.%d.%d_%s",_LVer.magor,_LVer.minor,_LVer.patch,_LVer.tag)
