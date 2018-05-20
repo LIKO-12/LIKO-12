@@ -3,9 +3,6 @@ local syntax = {}
 local parser = require("Libraries/parser/parser")
 local colorizer = require("Libraries/colorizer")
 
--- local parser = require("synparser/syntaxparse")
--- local colorizer = require("colorizer")
-
 function syntax:setTheme(theme)
    colorizer:setTheme(theme)
 end

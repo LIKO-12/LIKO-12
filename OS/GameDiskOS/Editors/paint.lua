@@ -44,6 +44,7 @@ local poldx, poldy --Pan old call coords
 local toolshold = {true,true,true} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
   function(self,x,y,b,state) --Pencil (Default)
+    if self.readonly then _systemMessage("The image is readonly !",1,9,4) return end
     if state == "outmove" or state == "outrelease" then return end
     local data = imgdata
     local col = (b == 1 or isMDown(1)) and self.fgcolor or self.bgcolor
@@ -52,21 +53,11 @@ local tools = {
   end,
 
   function(self,cx,cy,b,state) --Fill (Bucket)
+    if self.readonly then _systemMessage("The image is readonly !",1,9,4) return end
     if state == "outmove" or state == "outrelease" then return end
     local data = imgdata
     local col = (b == 1 or isMDown(1)) and self.fgcolor or self.bgcolor
-    local tofill = data:getPixel(cx,cy)
-    if tofill == col then return end
-    local function spixel(x,y) data:setPixel(x,y,col) end
-    local function gpixel(x,y) if x >= 0 and x <= imgdata:width() and y >= 0 and y <= imgdata:height() then return data:getPixel(x,y) else return false end end
-    local function mapPixel(x,y)
-      if gpixel(x,y) and gpixel(x,y) == tofill then spixel(x,y) end
-      if gpixel(x+1,y) and gpixel(x+1,y) == tofill then mapPixel(x+1,y) end
-      if gpixel(x-1,y) and gpixel(x-1,y) == tofill then mapPixel(x-1,y) end
-      if gpixel(x,y+1) and gpixel(x,y+1) == tofill then mapPixel(x,y+1) end
-      if gpixel(x,y-1) and gpixel(x,y-1) == tofill then mapPixel(x,y-1) end
-    end
-    pcall(mapPixel,cx,cy)
+    ImageUtils.queuedFill(data,cx,cy,col)
     img = data:image()
   end,
 

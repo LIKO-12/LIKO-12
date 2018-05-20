@@ -123,19 +123,9 @@ local tools = {
     local data = self.SpriteMap:data()
     local qx,qy = self.SpriteMap:rect(sprsid)
     local col = (b == 2) and colsR or colsL
-    local tofill = data:getPixel(qx+cx-1,qy+cy-1)
-    if tofill == col then return end
     local size = 8*zscale - 1
-    local function spixel(x,y) if x >= qx and x <= qx+size and y >= qy and y <= qy+size then data:setPixel(x,y,col) end end
-    local function gpixel(x,y) if x >= qx and x <= qx+size and y >= qy and y <= qy+size then return data:getPixel(x,y) else return false end end
-    local function mapPixel(x,y)
-      if gpixel(x,y) and gpixel(x,y) == tofill then spixel(x,y) end
-      if gpixel(x+1,y) and gpixel(x+1,y) == tofill then mapPixel(x+1,y) end
-      if gpixel(x-1,y) and gpixel(x-1,y) == tofill then mapPixel(x-1,y) end
-      if gpixel(x,y+1) and gpixel(x,y+1) == tofill then mapPixel(x,y+1) end
-      if gpixel(x,y-1) and gpixel(x,y-1) == tofill then mapPixel(x,y-1) end
-    end
-    mapPixel(qx+cx-1,qy+cy-1)
+    
+    ImageUtils.queuedFill(data, qx+cx-1,qy+cy-1, col, qx,qy, qx+size,qy+size)
     self.SpriteMap.img = data:image()
   end,
 
@@ -245,7 +235,7 @@ function se:export(imageonly)
 end
 
 function se:encode()
-  return RamUtils.imgToBin(self.SpriteMap:data())..flagsData
+  return BinUtils.imgToBin(self.SpriteMap:data())..flagsData
 end
 
 function se:import(data)
@@ -276,7 +266,7 @@ end
 function se:decode(data)
   local imgbin = data:sub(1,(swidth*sheight)/2)
   flagsData = data:sub((swidth*sheight)/2+1,-1)
-  RamUtils.binToImg(self.SpriteMap:data(),imgbin)
+  BinUtils.binToImg(self.SpriteMap:data(),imgbin)
   self.SpriteMap:image():refresh()
 end
 

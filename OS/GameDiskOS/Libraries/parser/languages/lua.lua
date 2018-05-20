@@ -5,7 +5,7 @@ local keywords = {
     "repeat", "return", "then", "true", "until", "while"
 }
 local api = getAPI()
-local callbacks = {"_draw","_init","_keypressed","_keyreleased","_mousemoved","_mousepressed","_mousereleased","_textinput","_touchcontrol","_touchmoved","_touchpressed","_touchreleased","_update","_wheelmoved","_filedropped","self"}
+local callbacks = {"_draw","_draw30","_draw60","_init","_keypressed","_keyreleased","_mousemoved","_mousepressed","_mousereleased","_textinput","_touchcontrol","_touchmoved","_touchpressed","_touchreleased","_update","_update30","_update60","_wheelmoved","_filedropped","self"}
 local escapable = {"a", "b", "f", "n", "r", "t", "v", "\\", "\"", "'"}
 
 -- Convert values to keys
@@ -107,14 +107,12 @@ function token(stream, state)
           result = "escape"
         end
       elseif char == "]" and stream:match("^" .. string.rep("=", state.multilen) .. "%]") then
-          state.multilen = false
           state.tokenizer = "base"
       end
 
   elseif state.tokenizer == "multilineComment" then
       if stream:skipTo("%]" .. string.rep("=", state.multilen) .. "%]") then
           stream:next()
-          state.multilen = false
           state.tokenizer = "base"
       else
           stream:skipToEnd()

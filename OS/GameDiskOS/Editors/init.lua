@@ -1,4 +1,7 @@
 --This file is responsible about the editors shown after pressing escape--
+local term = require("terminal")
+local MainDrive = term.getMainDrive()
+
 local edit = {}
 
 --=Contributing Guide=--
@@ -61,9 +64,9 @@ function edit:initialize()
   self.flavorBack = 4 --Brown
   self.background = 5 --Dark Grey
   
-  self.editorsheet = SpriteSheet(image(fs.read("GameDiskOS:/editorsheet.lk12")),24,16)
+  self.editorsheet = SpriteSheet(image(fs.read(MainDrive..":/editorsheet.lk12")),24,16)
   
-  self.active = 4 --Active editor3
+  self.active = 4 --Active editor
   
   self.editors = {"music","sfx","tile","sprite","code"; music=1,sfx=2,tile=3,sprite=4,code=5}
   self.saveid = {-1,"sfx","tilemap","spritesheet","luacode";sfx=2,tilemap=3,spritesheet=4,luacode=5}
@@ -87,7 +90,7 @@ function edit:initialize()
   
   local editors = {"soon","sfx","tile","sprite","code","soon"} --List of built-in editors to create chunks of
   for k, v in ipairs(editors) do --Load chunks
-    local chunk, err = fs.load("GameDiskOS:/Editors/"..v..".lua")
+    local chunk, err = fs.load(MainDrive..":/Editors/"..v..".lua")
     if not chunk then error(err or "Error loading: "..tostring(v)) end
     table.insert(self.chunks,k,chunk)
   end
@@ -255,7 +258,7 @@ function edit:export() --Export editors data
 end
 
 function edit:encode() --Encode editors data into binary
-  local null = RamUtils.Null
+  local null = BinUtils.Null
   
   local header, hid = {}, 2
   local chunks, cid = {}, 1
@@ -277,14 +280,14 @@ function edit:encode() --Encode editors data into binary
     end
   end
   
-  largest = RamUtils.numLength(largest)
+  largest = BinUtils.numLength(largest)
   
   header[1] = string.char(largest)
   header[hid] = null
   
   for id, value in pairs(header) do
     if type(value) == "number" then
-      header[id] = RamUtils.numToBin(value,largest)
+      header[id] = BinUtils.numToBin(value,largest)
     end
   end
   
@@ -295,7 +298,7 @@ function edit:encode() --Encode editors data into binary
 end
 
 function edit:decode(bindata) --decode editors data from binary
-  local iter, counter = RamUtils.binIter(bindata)
+  local iter, counter = BinUtils.binIter(bindata)
   
   local lengthSize = iter()
   
@@ -319,7 +322,7 @@ function edit:decode(bindata) --decode editors data from binary
     for i=1,lengthSize do iter() end
     
     names[nid] = saveid
-    lengths[lid] = RamUtils.binToNum(bindata:sub(endPos+2,endPos+lengthSize+1))
+    lengths[lid] = BinUtils.binToNum(bindata:sub(endPos+2,endPos+lengthSize+1))
     
     nid, lid = nid+1, lid+1
   end
@@ -372,7 +375,15 @@ function edit:loop() --Starts the while loop
           if not self.filePath then
             err = "Missing save name !"
           else
-            term.execute("save")
+            local exitCode, exitErr = term.execute("save")
+            
+            if exitCode == 1 then
+              err = "Failed: "..exitErr
+            elseif exitCode == 2 or exitCode == 3 then
+              err = "Failed, type save in terminal for info"
+            elseif exitCode == 4 then
+              err = "Save command not found !"
+            end
           end
 		  
           if err and err:len() > 4 then
