@@ -40,7 +40,6 @@ local likologo = loadImage("likologo")
 
 local Patterns = {}
 for i=1,17 do
-  print("p-"..i)
   Patterns[i] = loadImagedata("p-"..i)
 end
 
