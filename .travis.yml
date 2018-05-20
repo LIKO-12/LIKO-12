@@ -16,11 +16,22 @@ script: ./Extra/Travis/script.sh
 before_deploy: ./Extra/Travis/before_deploy.sh
 
 deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN
-  keep-history: true
-  on:
-    branch: master
-  local-dir: ../BuildUtils/Builds/
-  repo: RamiLego4Game/LIKO-12-Nightly
+  - provider: pages
+    skip-cleanup: true
+    github-token: $GITHUB_TOKEN
+    keep-history: true
+    on:
+      branch: master
+    local-dir: ../BuildUtils/Builds/
+    repo: RamiLego4Game/LIKO-12-Nightly
+  - provider: releases
+    skip_cleanup: true
+    api_key: $GITHUB_TOKEN
+    file:
+      - "../BuildUtils/Builds/LIKO-12_Nightly_Universal.love"
+      - "../BuildUtils/Builds/LIKO-12_Nightly_Windows.zip"
+      - "../BuildUtils/Builds/LIKO-12_Nightly_Linux.zip"
+      - "../BuildUtils/Builds/LIKO-12_Nightly_Mac.zip"
+    on:
+      tags: true
+    
