@@ -37,26 +37,45 @@ local function evloop()
       if not callevfunc(Globals["_draw"], a,b,c,d,e,f) then return end
     end
     
-    if event == "update" and (Globals["_update60"] or Globals["_draw60"]) then
-      timer60 = timer60 + a
-      
-      if timer60 >= time60 then
-        timer60 = timer60 % time60
-        
-        if not callevfunc(Globals["_update60"]) then return end
-        if not callevfunc(Globals["_draw60"]) then return end
-      end
-    end
+    local update60, update30 = Globals["_update60"], Globals["_update30"]
+    local draw60, draw30 = Globals["_draw60"], Globals["_draw30"]
+    local has60, has30 = update60 or draw60, update30 or draw30
     
-    if event == "update" and (Globals["_update30"] or Globals["_draw30"]) then
-      timer30 = timer30 + a
+    if event == "update" then
       
-      if timer30 >= time30 then
-        timer30 = timer30 % time30
-        
-        if not callevfunc(Globals["_update30"]) then return end
-        if not callevfunc(Globals["_draw30"]) then return end
+      if has60 then timer60 = timer60 + a end
+      if has30 then timer30 = timer30 + a end
+      
+      local fallTo30 = (timer60 >= time30) --Originally: timer60 > time60*2
+      
+      if has60 then
+        if timer60 >= time60 then
+          timer60 = timer60 % time60
+          
+          if update60 and not (update30 and fallTo30) then
+            if not callevfunc(Globals["_update60"]) then return end
+          end
+          
+          if draw60 and not (draw30 and fallTo30) then
+            if not callevfunc(Globals["_draw60"]) then return end
+          end
+        end
       end
+      
+      if has30 then
+        if timer30 >= time30 then
+          timer30 = timer30 % time30
+          
+          if update30 and (fallTo30 or not update60) then
+            if not callevfunc(Globals["_update30"]) then return end
+          end
+          
+          if draw30 and (fallTo30 or not draw60) then
+            if not callevfunc(Globals["_draw30"]) then return end
+          end
+        end
+      end
+      
     end
     
     if event == "keypressed" then
