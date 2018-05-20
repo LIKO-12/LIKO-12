@@ -84,6 +84,8 @@ local function sprint(text)
   
   skipY = skipY - 1
   
+  local codeBlockFlag = false
+  
   for char in iter do
     if char == "\\"  then
       local nchar = iter()
@@ -93,6 +95,10 @@ local function sprint(text)
         color(tonumber(nchar,16))
         curX = curX - 1
       end
+    elseif char == "`" then
+      color(codeBlockFlag and 7 or 6)
+      codeBlockFlag = not codeBlockFlag
+      curX = curX - 1
     elseif char == "\n" then
       print(char,false)
       curX = tw-1 --A new line :o
