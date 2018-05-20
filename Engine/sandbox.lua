@@ -84,6 +84,11 @@ return function(parent)
       hexdec = function(rawstr) return love.data.decode("string","hex",rawstr) end,
       compress = function(rawstr,format,lvl) return love.data.compress("string",format or "lz4",rawstr,lvl or -1) end,
       decompress = function(rawstr,format) return love.data.decompress("string",format or "lz4",rawstr) end,
+      hash = function(hashfunction,rawstr)
+        local ok, err = pcall(love.data.hash,hashfunction,rawstr)
+        if ok then return err
+        else return error(err) end
+      end,
       isConvex = love.math.isConvex,
       triangulate = love.math.triangulate,
       randomNormal = love.math.randomNormal
