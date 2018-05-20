@@ -1,3 +1,6 @@
+local term = require("terminal")
+local MainDrive = term.getMainDrive()
+
 local parser = {}
 
 parser.parser = {}
@@ -6,7 +9,7 @@ parser.state = nil
 
 function parser:loadParser(language)
    -- TODO: Factory! https://github.com/luarocks/lua-style-guide#modules
-   local chunk, err = fs.load("C:/Libraries/parser/languages/"..language..".lua")
+   local chunk, err = fs.load(MainDrive..":/Libraries/parser/languages/"..language..".lua")
    if not chunk then
       self.parser = { token = function(stream) print(err) stream:skipToEnd() end, startState = function() return {} end } -- Default parser
       return false
