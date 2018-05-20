@@ -1,5 +1,8 @@
 --Loads third-party libraries.
 
+local term = require("terminal")
+local MainDrive = term.getMainDrive()
+
 local Globals = (...) or {}
 
 local function addLibrary(path,name)
@@ -9,12 +12,12 @@ local function addLibrary(path,name)
   Globals[name] = lib()
 end
 
-addLibrary("C:/Libraries/lume.lua","lume")
-addLibrary("C:/Libraries/middleclass.lua","class")
-addLibrary("C:/Libraries/bump.lua","bump")
-addLibrary("C:/Libraries/likocam.lua","likocam")
-addLibrary("C:/Libraries/JSON.lua","JSON")
-addLibrary("C:/Libraries/luann.lua","luann")
-addLibrary("C:/Libraries/genetic.lua","geneticAlgo")
+addLibrary(MainDrive..":/Libraries/lume.lua","lume")
+addLibrary(MainDrive..":/Libraries/middleclass.lua","class")
+addLibrary(MainDrive..":/Libraries/bump.lua","bump")
+addLibrary(MainDrive..":/Libraries/likocam.lua","likocam")
+addLibrary(MainDrive..":/Libraries/JSON.lua","JSON")
+addLibrary(MainDrive..":/Libraries/luann.lua","luann")
+addLibrary(MainDrive..":/Libraries/genetic.lua","geneticAlgo")
 
 return Globals

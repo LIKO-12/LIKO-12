@@ -34,6 +34,9 @@ for peripheral,funcs in pairs(HandledAPIS) do
   end
 end
 
+local MainDrive = fs.drive()
+local GameDiskOS = (MainDrive == "GameDiskOS")
+
 --Temp folder
 local function rm(path)
   local files = fs.getDirectoryItems(path)
@@ -47,10 +50,12 @@ local function rm(path)
   end
 end
 
-if fs.exists("C:/.temp") then
-  rm("C:/.temp/")
+if not GameDiskOS then
+  if fs.exists(MainDrive..":/.temp") then
+    rm(MainDrive..":/.temp/")
+  end
+  fs.newDirectory(MainDrive..":/.temp/")
 end
-fs.newDirectory("C:/.temp/")
 
 --Create dofile function
 function dofile(path,...)
@@ -73,18 +78,18 @@ function split(inputstr, sep)
 end
 
 --Create the package system--
-dofile("C:/System/package.lua")
+dofile(MainDrive..":/System/package.lua")
 
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
 --Load APIS
-for k, file in ipairs(fs.getDirectoryItems("C:/APIS/")) do
-  dofile("C:/APIS/"..file)
+for k, file in ipairs(fs.getDirectoryItems(MainDrive..":/APIS/")) do
+  dofile(MainDrive..":/APIS/"..file)
 end
 
-dofile("C:/System/api.lua") --Load DiskOS APIs
-dofile("C:/System/osapi.lua") --Load DiskOS OS APIs
+dofile(MainDrive..":/System/api.lua") --Load DiskOS APIs
+dofile(MainDrive..":/System/osapi.lua") --Load DiskOS OS APIs
 
 local terminal = require("terminal")
 

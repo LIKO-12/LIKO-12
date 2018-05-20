@@ -3,13 +3,16 @@
 --Libraries
 local JSON = require("Libraries.JSON")
 
+local term = require("terminal")
+local MainDrive = term.getMainDrive()
+
 --Localized Lua Library
 
 --The API
 local ConfigUtils = {}
 
 --The path were the config file would be stored.
-ConfigUtils.configPath = "C:/user.json"
+ConfigUtils.configPath = MainDrive..":/user.json"
 
 --Load the config.
 function ConfigUtils.loadConfig()

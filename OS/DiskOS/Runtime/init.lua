@@ -1,22 +1,26 @@
 --Games runtime API
 
+local term = require("terminal")
+
+local MainDrive = term.getMainDrive()
+
 local rt = {}
 
 function rt.loadResources()
-  local scripts = fs.getDirectoryItems("C:/Runtime/Resources/")
+  local scripts = fs.getDirectoryItems(MainDrive..":/Runtime/Resources/")
   
   for id, name in ipairs(scripts) do
-    scripts[id] = fs.load("C:/Runtime/Resources/"..name)
+    scripts[id] = fs.load(MainDrive..":/Runtime/Resources/"..name)
   end
   
   return scripts
 end
 
 function rt.loadGlobals()
-  local scripts = fs.getDirectoryItems("C:/Runtime/Globals/")
+  local scripts = fs.getDirectoryItems(MainDrive..":/Runtime/Globals/")
   
   for id, name in ipairs(scripts) do
-    scripts[id] = fs.load("C:/Runtime/Globals/"..name)
+    scripts[id] = fs.load(MainDrive..":/Runtime/Globals/"..name)
   end
   
   return scripts

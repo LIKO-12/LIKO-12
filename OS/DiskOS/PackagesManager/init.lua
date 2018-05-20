@@ -1,5 +1,8 @@
 --LIKO-12 DiskOS PackageManager
 
+local term = require("terminal")
+local MainDrive = term.getMainDrive()
+
 --CONFIG--
 local defaultRepositories = {
   "https://raw.githubusercontent.com/RamiLego4Game/LK12-PKG-TEST/master/" --Test repository
@@ -7,7 +10,7 @@ local defaultRepositories = {
 
 --The path where the PackageManager is stored
 local reqPath = string.gsub((... or ""),"/",".") --Used to require other files
-local path = "C:/"..string.gsub(reqPath,"%.","/") --Used to refer to other files
+local path = MainDrive..":/"..string.gsub(reqPath,"%.","/") --Used to refer to other files
 
 local onMobile = isMobile() --Is LIKO-12 running on a mobile phone ?
 
@@ -17,12 +20,12 @@ local pm = {}
 pm.json = require(reqPath..".JSON") --The JSON library.
 pm.http = require(reqPath..".Http") --The HTTP request library.
 
-if not fs.exists("C:/Packages") then
-  fs.newDirectory("C:/Packages")
+if not fs.exists(MainDrive..":/Packages") then
+  fs.newDirectory(MainDrive..":/Packages")
 end
 
-if not fs.exists("C:/Packages/packages.json") then
-  fs.write("C:/Packages/packages.json", "{}")
+if not fs.exists(MainDrive..":/Packages/packages.json") then
+  fs.write(MainDrive..":/Packages/packages.json", "{}")
 end
 
 if not fs.exists(path.."/repositories.json") then

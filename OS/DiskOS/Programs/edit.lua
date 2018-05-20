@@ -9,6 +9,7 @@ end
 
 local tar = table.concat(args," ") --The path may include whitespaces
 local term = require("terminal")
+local MainDrive = term.getMainDrive()
 tar = term.resolve(tar)
 
 if fs.exists(tar) and fs.isDirectory(tar) then return 1, "Can't edit directories !" end
@@ -16,7 +17,7 @@ if fs.isReadonly(tar) and not fs.exists(tar) then return 1, "Directory is readon
 local eutils = require("Editors.utils")
 local tool = eutils:newTool(fs.isReadonly(tar))
 
-local ok, editor = assert(pcall(assert(fs.load("C:/Editors/code.lua")),tool))
+local ok, editor = assert(pcall(assert(fs.load(MainDrive..":/Editors/code.lua")),tool))
 if tar:sub(-4,-1) ~= ".lua" then editor.colorize = false end
 editor.readonly = fs.isReadonly(tar)
 
