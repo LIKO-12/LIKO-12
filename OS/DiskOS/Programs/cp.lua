@@ -14,6 +14,7 @@ local destination = term.resolve(args[2])
 color(8)
 
 if not fs.exists(source) then return 1, "Source doesn't exists !" end
+if fs.isReadonly(destination) then return 1, "Destination is readonly !" end
 
 --Create destination folders
 --Parse directories in the destination

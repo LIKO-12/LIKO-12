@@ -76,6 +76,8 @@ else
   if fs.exists(tar) and fs.isDirectory(tar) then return 1, "Can't edit directories !" end
   
   if not fs.exists(tar) then --Create a new image
+    if fs.isReadonly(tar) then return 1, "Directory is readonly !" end
+    
     color(9) print("Input image size:")
   
     color(11) print("Width: ",false)
@@ -119,13 +121,17 @@ else
   
   save = function(tool)
     local ndata = tool.editor:export()
-    fs.write(tar,ndata)
-    _systemMessage("Saved successfully",1)
+    local ok, err = pcall(fs.write,tar,ndata)
+    if ok then
+      _systemMessage("Saved successfully",1)
+    else
+      _systemMessage("Failed: "..err,5,9,4)
+    end
   end
 end
 
 local eutils = require("Editors.utils")
-local tool = eutils:newTool()
+local tool = eutils:newTool(fs.isReadonly(tar))
 
 local ok, editor = assert(pcall(assert(fs.load("C:/Editors/paint.lua")),tool,img,imgdata))
 

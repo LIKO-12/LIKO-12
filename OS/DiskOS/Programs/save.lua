@@ -34,7 +34,11 @@ if (not destination) or destination == "-?" then
   return
 end
 
-if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then color(8) print("Destination must not be a directory") return 1 end
+if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then return 1, "Destination must not be a directory" end
+
+if destination ~= "@clip" and fs.isReadonly(destination) then
+  return 1, "Destination is readonly !"
+end
 
 local sw, sh = screenSize()
 

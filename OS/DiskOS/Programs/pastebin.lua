@@ -117,6 +117,10 @@ elseif command == "get" then
     return 1, "File already exists"
   end
   
+  if fs.isReadonly(path) then
+    return 1, "Destination is Readonly !"
+  end
+  
   -- Downloads the  pastebin
   local result = getPaste(pasteCode)
   if result then

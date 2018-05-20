@@ -29,7 +29,10 @@ if source ~= "@label" then
   if fs.isDirectory(source) then return 1, "Source can't be a directory" end
 end
 
-if destination then if fs.exists(destination) and fs.isDirectory(destination) then return 1, "Destination must not be a directory" end end
+if destination then
+  if fs.exists(destination) and fs.isDirectory(destination) then return 1, "Destination must not be a directory" end
+  if fs.isReadonly(destination) then return 1, "Destination is readonly !" end
+end
 
 if destination then --Convert mode
   local imgd = (source == "@label") and getLabelImage() or imagedata(fs.read(source))
