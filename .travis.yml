@@ -34,4 +34,8 @@ deploy:
       - "../BuildUtils/Builds/LIKO-12_Nightly_Mac.zip"
     on:
       tags: true
+    name: "Travis Draft Release"
+    body: "Wait for @RamiLego4Game to setup this release"
+    draft: true
+    prerelease: true
     
