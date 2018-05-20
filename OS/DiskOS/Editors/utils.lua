@@ -6,7 +6,7 @@ local utils = {}
 
 local swidth, sheight = screenSize()
 
-function utils:newTool()
+function utils:newTool(readonly)
   local tool = {} --The tool editor api.
   
   tool.editorsheet = eapi.editorsheet
@@ -24,8 +24,15 @@ function utils:newTool()
     rect(0,0,swidth,8,false,self.flavor)
     SpriteGroup(55, 0,0, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
     SpriteGroup(controlID, controlGrid[1],controlGrid[2], controlGrid[5],controlGrid[6], 1,1, false, self.editorsheet)
+    if readonly then
+      self.editorsheet:draw(controlID-2, controlGrid[1]+8,controlGrid[2])
+    end
     if sid then
-      SpriteGroup(controlID+24+sid, controlGrid[1]+sid*8,controlGrid[2], 1,1, 1,1, false, self.editorsheet)
+      if readonly and sid == 1 then
+        self.editorsheet:draw(controlID+24-2, controlGrid[1]+sid*8,controlGrid[2])
+      else
+        self.editorsheet:draw(controlID+24+sid, controlGrid[1]+sid*8,controlGrid[2])
+      end
     end
   end
   
@@ -63,7 +70,12 @@ function utils:newTool()
       end,
 
       function() --Save
-        if save then save(self) end
+        if readonly then
+          _systemMessage("The file is readonly !",5,9,4)
+        else
+          if save then save(self) end
+          _systemMessage("Saved successfully",1)
+        end
       end,
 
       function() --Exit

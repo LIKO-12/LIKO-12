@@ -11,6 +11,10 @@ local term = require("terminal")
 
 tar = term.resolve(tar)
 
+if fs.isReadonly(tar) then
+  return 1, "Parent directory is readonly !"
+end
+
 local ok, err = pcall(fs.newDirectory,tar)
 if ok then
   color(11) print("Created directory successfully")

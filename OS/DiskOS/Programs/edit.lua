@@ -12,8 +12,9 @@ local term = require("terminal")
 tar = term.resolve(tar)
 
 if fs.exists(tar) and fs.isDirectory(tar) then return 1, "Can't edit directories !" end
+if fs.isReadonly(tar) and not fs.exists(tar) then return 1, "Directory is readonly !" end
 local eutils = require("Editors.utils")
-local tool = eutils:newTool()
+local tool = eutils:newTool(fs.isReadonly(tar))
 
 local ok, editor = assert(pcall(assert(fs.load("C:/Editors/code.lua")),tool))
 if tar:sub(-4,-1) ~= ".lua" then editor.colorize = false end
@@ -30,8 +31,12 @@ end
 
 local function save(tool)
   local ndata = tool.editor:export()
-  fs.write(tar,ndata)
-  _systemMessage("Saved successfully",1)
+  local ok, err = pcall(fs.write,tar,ndata)
+  if ok then
+    _systemMessage("Saved successfully",1)
+  else
+    _systemMessage("Failed: "..err,5,9,4)
+  end
 end
 
 local function hotkey(tool,key,sc)

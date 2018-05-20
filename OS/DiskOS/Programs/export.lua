@@ -17,6 +17,7 @@ if destination ~= "@label" then
   destination = term.resolve(destination)
 
   if fs.exists(destination) and fs.isDirectory(destination) then return 1, "Destination must not be a directory" end
+  if fs.isReadonly(destination) then return 1, "Destination is readonly !" end
 end
 
 if destination == "@label" then
