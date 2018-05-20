@@ -18,6 +18,7 @@ local tool = eutils:newTool(fs.isReadonly(tar))
 
 local ok, editor = assert(pcall(assert(fs.load("C:/Editors/code.lua")),tool))
 if tar:sub(-4,-1) ~= ".lua" then editor.colorize = false end
+editor.readonly = fs.isReadonly(tar)
 
 local data --Data to import at start.
 if fs.exists(tar) then

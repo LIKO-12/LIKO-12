@@ -135,4 +135,6 @@ local tool = eutils:newTool(fs.isReadonly(tar))
 
 local ok, editor = assert(pcall(assert(fs.load("C:/Editors/paint.lua")),tool,img,imgdata))
 
+editor.readonly = fs.isReadonly(tar)
+
 tool:start(editor,reload,save)

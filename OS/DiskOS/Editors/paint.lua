@@ -44,6 +44,7 @@ local poldx, poldy --Pan old call coords
 local toolshold = {true,true,true} --Is it a button (Clone, Stamp, Delete) or a tool (Pencil, fill)
 local tools = {
   function(self,x,y,b,state) --Pencil (Default)
+    if self.readonly then _systemMessage("The image is readonly !",1,9,4) return end
     if state == "outmove" or state == "outrelease" then return end
     local data = imgdata
     local col = (b == 1 or isMDown(1)) and self.fgcolor or self.bgcolor
@@ -52,6 +53,7 @@ local tools = {
   end,
 
   function(self,cx,cy,b,state) --Fill (Bucket)
+    if self.readonly then _systemMessage("The image is readonly !",1,9,4) return end
     if state == "outmove" or state == "outrelease" then return end
     local data = imgdata
     local col = (b == 1 or isMDown(1)) and self.fgcolor or self.bgcolor
