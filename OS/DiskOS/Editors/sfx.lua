@@ -246,12 +246,12 @@ function se:speedMouse(state,x,y,button,istouch)
     speedLeftDown = false
     
     if isInRect(x,y,speedRight) and speedRightDown then
-      speed = math.min(speed+0.25,255*0.25)
+      speed = math.min(speed+0.25,99*0.25)
       sfxdata[selectedSlot]:setSpeed(speed)
     end
     speedRightDown = false
     
-    drawGraph() self:drawSlot() self:drawSpeed()
+    self:drawSpeed()
   end
 end
 
@@ -310,10 +310,77 @@ function se:waveMouse(state,x,y,button,istouch)
 end
 
 se.keymap = {
-  ["space"] = function()
-    sfxdata[selectedSlot]:play()
-    playingNote = 0
-  end
+  --Play SFX
+  ["space"] = function(self)
+    if playingNote >= 0 then
+      if Audio then Audio.stop() end
+      playingNote = -1
+    else
+      sfxdata[selectedSlot]:play(0)
+      playingNote = 0
+    end
+    drawGraph()
+    self:drawPlay()
+  end,
+  
+  --Select Waveform
+  ["1"] = function(self)
+    selectedWave = 0
+    self:drawWave()
+  end,
+  
+  ["2"] = function(self)
+    selectedWave = 1
+    self:drawWave()
+  end,
+  
+  ["3"] = function(self)
+    selectedWave = 2
+    self:drawWave()
+  end,
+  
+  ["4"] = function(self)
+    selectedWave = 3
+    self:drawWave()
+  end,
+  
+  ["5"] = function(self)
+    selectedWave = 4
+    self:drawWave()
+  end,
+  
+  ["6"] = function(self)
+    selectedWave = 5
+    self:drawWave()
+  end,
+  
+  --Decrease speed
+  ["z"] = function(self)
+    speed = math.max(speed-0.25,0.25)
+    sfxdata[selectedSlot]:setSpeed(speed)
+    self:drawSpeed()
+  end,
+  
+  --Increase speed
+  ["x"] = function(self)
+    speed = math.min(speed+0.25,99*0.25)
+    sfxdata[selectedSlot]:setSpeed(speed)
+    self:drawSpeed()
+  end,
+  
+  --Decrease slot
+  ["a"] = function(self)
+    selectedSlot = math.max(selectedSlot-1,0)
+    speed = sfxdata[selectedSlot]:getSpeed()
+    drawGraph() self:drawSlot() self:drawSpeed()
+  end,
+  
+  --Increase slot
+  ["s"] = function(self)
+    selectedSlot = math.min(selectedSlot+1,sfxSlots-1)
+    speed = sfxdata[selectedSlot]:getSpeed()
+    drawGraph() self:drawSlot() self:drawSpeed()
+  end,
 }
 
 function se:update(dt)
