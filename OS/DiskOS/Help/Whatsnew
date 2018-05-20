@@ -1,5 +1,79 @@
 \BChangelog:
 
+\9V0.8.0_PRE (20/5/2018):
+\FRemarkable:\7
+1. New WIP map editor, with easier to use interface, biger view box.
+2. Added new library, `luann`, a nural network library.
+3. Added a genetic algorithm library.
+4. New TipOfTheDay system.
+5. New colored Help system.
+6. The game code string is now available as a global: _GameCode.
+7. Added SFX stop button.
+8. `clip()` now returns the old clip region when disabling it.
+9. New game persistent data support up to 2KB per game.
+10. `dofile(path,...)` now accepts args.
+11. Updated to LOVE 11.1.
+12. New `Palette` help file.
+13. Removed old dead help files.
+14. New `math.hash(hashFunction, rawString)` supporting md5,sha1,sha224,sha256,sha384 and sha512.
+15. Added highlighting of `[=...=[ ... ]=...=]` for strings and comments to the code editor.
+16. Added `mazezam` and `spaceblocks` to DiskOS games collection.
+17. Added windows console executable support (LIKO-12_Console.exe).
+18. New `_update60()` `_update30()` `_draw60()` `_draw30()` callbacks in games.
+19. New ZIP drive functionality, check the `mount` command for more info.
+20. New `getBtnName(buttonID,playerNumber)` function for games.
+
+\FBugfixes:\7
+1. Fix math.randomSeed not returning the seed when no arguments are passed.
+2. The bucket tool nolonger errors in the paint program.
+3. Huge performance boost for Audio on Android.
+4. Fix slowdown/desync effect when playing Audio.
+5. Fix touch controls not acting until the touch moves.
+6. Fix terminal backspace with cursor movement.
+7. Fix 'delete' key in terminal when cursor is not at EOL.
+
+\FDiskOS:\7
+1. New TipOfTheDay system.
+2. New ConfigUtils for programs that needs to save and read data, so there won't be a ton of config files in the C drive.
+3. New ImageUtils with a Queued flood fill algorithm, and darken effect.
+4. New WIP map editor, with easier to use interface, biger view box.
+5. Added new library, `luann`, a nural network library.
+6. Added a genetic algorithm library.
+7. New colored Help system.
+8. New Help scripts support.
+9. New Runtime library, for setting up the environment of games, no more spaghetti in run.lua.
+10. The game code string is now available as a global: _GameCode.
+11. Added SFX stop button.
+12. Got rid of the `___autoEventLoop()` thing.
+13. Added map save option to the `save` command.
+14. New game persistent data support up to 2KB per game.
+15. `dofile(path,...)` now accepts args.
+16. Tweaked patterns demo.
+17. Slowed down the rainbow demo.
+18. New `Palette` help file.
+19. Removed old dead help files.
+20. Add highlighting of `[=...=[ ... ]=...=]` for strings and comments to the code editor.
+21. Added `mazezam` and `spaceblocks` to DiskOS games collection.
+22. Audio peripheral is no longer required for DiskOS to operate.
+23. New `_update60()` `_update30()` `_draw60()` `_draw30()` callbacks in games.
+24. New `mount` command, to mount .ZIPs to the ZIP drive.
+25. Added support for bigEndian in BinUtils, and optamized `BinUtils.binToNum`.
+26. New `getBtnName(buttonID,playerNumber)` function for games.
+
+\FEngine:\7
+1. rawPullEvent no longer inserts the event into the stack, calls triggerevent instead.
+2. New GPU._hasFlipped(), to check if the screen has been flipped and reset the flag.
+3. clip() now returns the old clip region when disabling it.
+4. Updated to LOVE 11.1.
+5. New `math.hash(hashFunction, rawString)` supporting md5,sha1,sha224,sha256,sha384 and sha512.
+6. Added windows console executable support (LIKO-12_Console.exe).
+7. New ZIP drive functionality.
+8. New `fs.isReadonly(path)` to check if the path points to a readonly file/directory.
+
+\FBIOS:\7
+1. Faster boot time when in devmode.
+2. New show GPU information option in Setup screen.
+
 \9V0.7.1_PRE (1/3/2018):
 \FBugfixes:\7
 1. Fix `help` program crash.
