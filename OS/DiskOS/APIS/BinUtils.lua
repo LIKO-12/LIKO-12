@@ -6,7 +6,7 @@ local sw,sh = screenSize()
 --Localized Lua Library
 local unpack = unpack
 local floor, ceil, min = math.floor, math.ceil, math.min
-local strChar, strByte = string.char, string.byte
+local strChar, strByte, strReverse = string.char, string.byte, string.reverse
 local lshift, rshift, bor, band, bxor = bit.lshift, bit.rshift, bit.bor, bit.band, bit.bxor
 
 --The API
@@ -99,23 +99,31 @@ end
 --==Extra==--
 
 --Encode a number into binary
-function BinUtils.numToBin(num,length,getTable)
+function BinUtils.numToBin(num,length,getTable,bigEndian)
   local bytes = {}
-  for bnum=1,length do
-    bytes[bnum] = band(num,255)
-    num = rshift(num,8)
+  if bigEndian then
+    for bnum=length,1,-1 do
+      bytes[bnum] = band(num,255)
+      num = rshift(num,8)
+    end
+  else
+    for bnum=1,length do
+      bytes[bnum] = band(num,255)
+      num = rshift(num,8)
+    end
   end
   if getTable then return bytes end
   return strChar(unpack(bytes))
 end
 
 --Load a number from binary
-function BinUtils.binToNum(bin)
+function BinUtils.binToNum(bin,bigEndian)
+  if not bigEndian then bin = strReverse(bin) end
+  
   local number = 0
   for i=1,bin:len() do
     local byte = strByte(bin,i)
-    byte = lshift(byte,(i-1)*8)
-    number = bor(number,byte)
+    number = bor(lshift(number,8), byte)
   end
   return number
 end
