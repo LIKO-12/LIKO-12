@@ -209,7 +209,7 @@ function term.executeFile(file,...)
   local ok, err, e = pcall(chunk,...)
   color(7) pal() palt() cam() clip() patternFill()
   if not ok then color(7) cprint("Program Error:",err) return 2, "\nERR: "..tostring(err) end
-  if not fs.drives()[curdrive] then curdrive, curdir, curpath = "C", "/", "C:/" end
+  if not fs.drives()[curdrive] then curdrive, curdir, curpath = MainDrive, "/", MainDrive..":/" end
   if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":/" end
   return tonumber(err) or 0, e
 end
@@ -266,10 +266,10 @@ function term.loop() --Enter the while loop of the terminal
       local p, n, e = splitFilePath(a)
       if e == "png" or e == "lk12" then
         if b then
-          fs.write("C:/.temp/"..n,b)
+          fs.write(MainDrive..":/.temp/"..n,b)
           blink = false; checkCursor()
           print("load "..n)
-          term.execute("load","C:/.temp/"..n)
+          term.execute("load",MainDrive..":/.temp/"..n)
           term.prompt()
           blink = true; checkCursor()
         else
