@@ -164,7 +164,7 @@ end
 
 --Draw the code on the screen
 function ce:drawBuffer()
-  local vbuffer = lume.clone(lume.slice(buffer,self.vy,self.vy+self.th-1)) --Visible buffer
+  local vbuffer = lume.slice(buffer,self.vy,self.vy+self.th-1) --Visible buffer
   local cbuffer = self.colorize and syntax:highlightLines(vbuffer, self.vy) or vbuffer
   rect(0,7,screenW,screenH-8*2+1,false,self.bgc)
   for k, l in ipairs(cbuffer) do
@@ -284,6 +284,7 @@ function ce:searchTextAndNavigate(from_line)
 end
 
 function ce:textinput(t)
+  if self.readonly then _systemMessage("The file is readonly !",1,9,4) return end
   if self.incsearch then
    if self.searchtxt==nil then self.searchtxt="" end
    self.searchtxt=self.searchtxt..t
@@ -564,7 +565,10 @@ end
 ce.lastKey = ""
 
 ce.keymap = {
-  ["return"] = ce.insertNewLine,
+  ["return"] = function(self)
+    if self.readonly then _systemMessage("The file is readonly !",1,9,4) return end
+    ce:insertNewLine()
+  end,
 
   ["left"] = function(self)
     self:deselect()
@@ -659,6 +663,7 @@ ce.keymap = {
   end,
 
   ["backspace"] = function(self)
+    if self.readonly then _systemMessage("The file is readonly !",1,9,4) return end
     if self.sxs then self:deleteSelection() return end
     if self.cx == 1 and self.cy == 1 then return end
     local lineChange
@@ -669,6 +674,7 @@ ce.keymap = {
   end,
 
   ["delete"] = function(self)
+    if self.readonly then _systemMessage("The file is readonly !",1,9,4) return end
     if self.sxs then self:deleteSelection() return end
     local lineChange
     self.cx, self.cy, lineChange = self:deleteCharAt(self.cx,self.cy)
@@ -720,17 +726,34 @@ ce.keymap = {
 	self:searchTextAndNavigate(self.cy)
    end
   end,
-  ["ctrl-x"] = ce.cutText,
+  ["ctrl-x"] = function(self)
+    if self.readonly then _systemMessage("The file is readonly !",1,9,4) return end
+    ce:cutText()
+  end,
   
   ["ctrl-c"] = ce.copyText,
 
-  ["ctrl-v"] = ce.pasteText,
+  ["ctrl-v"] = function(self)
+    if self.readonly then _systemMessage("The file is readonly !",1,9,4) return end
+    ce:pasteText()
+  end,
   
   ["ctrl-a"] = ce.selectAll,
   
-  ["ctrl-z"] = ce.undo,
+  ["ctrl-z"] = function(self)
+    if self.readonly then _systemMessage("The file is readonly !",1,9,4) return end
+    ce:undo()
+  end,
 
-  ["shift-ctrl-z"] = ce.redo,
+  ["shift-ctrl-z"] = function(self)
+    if self.readonly then _systemMessage("The file is readonly !",1,9,4) return end
+    ce:redo()
+  end,
+  
+  ["ctrl-y"] = function(self)
+    if self.readonly then _systemMessage("The file is readonly !",1,9,4) return end
+    ce:redo()
+  end,
 }
 
 function ce:entered()
@@ -906,23 +929,15 @@ function ce:import(data)
 end
 
 function ce:decode(data)
-  self:import(RamUtils.binToCode(data))
+  self:import(BinUtils.binToCode(data))
 end
 
 function ce:export()
-  local data = ""
-  for k, line in ipairs(buffer) do
-    if k == 1 then
-      data = data .. tostring(line)
-    else
-      data = data .. "\n" .. tostring(line)
-    end
-  end
-  return data
+  return table.concat(buffer, "\n")
 end
 
 function ce:encode()
-  return RamUtils.codeToBin(self:export())
+  return BinUtils.codeToBin(self:export())
 end
 
 return ce

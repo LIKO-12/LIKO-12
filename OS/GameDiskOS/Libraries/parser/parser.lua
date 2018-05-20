@@ -6,7 +6,7 @@ parser.state = nil
 
 function parser:loadParser(language)
    -- TODO: Factory! https://github.com/luarocks/lua-style-guide#modules
-   local chunk, err = fs.load("GameDiskOS:/Libraries/parser/languages/"..language..".lua")
+   local chunk, err = fs.load("C:/Libraries/parser/languages/"..language..".lua")
    if not chunk then
       self.parser = { token = function(stream) print(err) stream:skipToEnd() end, startState = function() return {} end } -- Default parser
       return false
@@ -74,7 +74,7 @@ end
 
 function parser:parseLine(line, lineIndex)
     local result = {}
-    local chunk = fs.load("GameDiskOS:/Libraries/parser/stream.lua") -- TODO: Im sure that this can be improved
+    local chunk = fs.load("C:/Libraries/parser/stream.lua") -- TODO: Im sure that this can be improved
     local stream = chunk()(line)
 
     while not stream:eol() do

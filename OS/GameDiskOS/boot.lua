@@ -34,6 +34,9 @@ for peripheral,funcs in pairs(HandledAPIS) do
   end
 end
 
+local MainDrive = fs.drive()
+local GameDiskOS = (MainDrive == "GameDiskOS")
+
 --Temp folder
 local function rm(path)
   local files = fs.getDirectoryItems(path)
@@ -45,6 +48,13 @@ local function rm(path)
       fs.delete(path..file)
     end
   end
+end
+
+if not GameDiskOS then
+  if fs.exists(MainDrive..":/.temp") then
+    rm(MainDrive..":/.temp/")
+  end
+  fs.newDirectory(MainDrive..":/.temp/")
 end
 
 --Create dofile function
@@ -68,20 +78,22 @@ function split(inputstr, sep)
 end
 
 --Create the package system--
-dofile("GameDiskOS:/System/package.lua")
+dofile(MainDrive..":/System/package.lua")
 
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
 --Load APIS
-for k, file in ipairs(fs.getDirectoryItems("GameDiskOS:/APIS/")) do
-  dofile("GameDiskOS:/APIS/"..file)
+for k, file in ipairs(fs.getDirectoryItems(MainDrive..":/APIS/")) do
+  dofile(MainDrive..":/APIS/"..file)
 end
 
-dofile("GameDiskOS:/System/api.lua") --Load DiskOS APIs
-dofile("GameDiskOS:/System/osapi.lua") --Load DiskOS OS APIs
+dofile(MainDrive..":/System/api.lua") --Load DiskOS APIs
+dofile(MainDrive..":/System/osapi.lua") --Load DiskOS OS APIs
 
 local terminal = require("terminal")
+
+require("PackagesManager") --Initialize the packages manager
 
 terminal.init() --Initialize the terminal
 terminal.loop()
