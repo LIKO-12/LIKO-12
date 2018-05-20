@@ -649,6 +649,10 @@ return function(Config)
     end
   end
   
+  events:register("love:reboot", function()
+    fs.mountZIP() --Unmount the zip file.
+  end)
+  
   function devkit.calcUsage()
     for k, v in pairs(Drives) do
       v.Usage = getSizeRecursive(k)
