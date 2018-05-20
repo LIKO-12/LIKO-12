@@ -372,7 +372,15 @@ function edit:loop() --Starts the while loop
           if not self.filePath then
             err = "Missing save name !"
           else
-            term.execute("save")
+            local exitCode, exitErr = term.execute("save")
+            
+            if exitCode == 1 then
+              err = "Failed: "..exitErr
+            elseif exitCode == 2 or exitCode == 3 then
+              err = "Failed, type save in terminal for info"
+            elseif exitCode == 4 then
+              err = "Save command not found !"
+            end
           end
 		  
           if err and err:len() > 4 then
