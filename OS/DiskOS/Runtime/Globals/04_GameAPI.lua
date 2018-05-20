@@ -61,6 +61,10 @@ local defaultbmap = {
   {"s","f","e","d","tab","q","w"} --Player 2
 }
 
+local mobilebnames = {
+  "Left","Right","Up","Down","Green button","Red button","Blue button"
+}
+
 do --So I can hide this part in ZeroBran studio
   local bmap = ConfigUtils.get("GamesKeymap")
 
@@ -71,6 +75,23 @@ do --So I can hide this part in ZeroBran studio
   if not bmap[2] then
     bmap[2] = {unpack(defaultbmap[2])}
     ConfigUtils.saveConfig()
+  end
+  
+  function Globals.getBtnName(n,p)
+    local p = p or 1
+    if type(n) ~= "number" then return error("Button id must be a number, provided: "..type(n)) end
+    if type(p) ~= "number" then return error("Player id must be a number or nil, provided: "..type(p)) end
+    n, p = math.floor(n), math.floor(p)
+    if p < 1  then return error("The Player id is negative ("..p..") it must be positive !") end
+    if n < 1 or n > 7 then return error("The Button id is out of range ("..n..") must be [1,7]") end
+    
+    if isMobile() and p == 1 then
+      return mobilebnames[n]
+    else
+      local map = bmap[p]
+      local bname = map[n]
+      return string.upper(string.sub(bname,1,1))..string.sub(bname,2,-1)
+    end
   end
 
 
