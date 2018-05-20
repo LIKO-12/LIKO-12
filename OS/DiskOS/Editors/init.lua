@@ -1,4 +1,7 @@
 --This file is responsible about the editors shown after pressing escape--
+local term = require("terminal")
+local MainDrive = term.getMainDrive()
+
 local edit = {}
 
 --=Contributing Guide=--
@@ -61,7 +64,7 @@ function edit:initialize()
   self.flavorBack = 4 --Brown
   self.background = 5 --Dark Grey
   
-  self.editorsheet = SpriteSheet(image(fs.read("C:/editorsheet.lk12")),24,16)
+  self.editorsheet = SpriteSheet(image(fs.read(MainDrive..":/editorsheet.lk12")),24,16)
   
   self.active = 4 --Active editor
   
@@ -87,7 +90,7 @@ function edit:initialize()
   
   local editors = {"soon","sfx","tile","sprite","code","soon"} --List of built-in editors to create chunks of
   for k, v in ipairs(editors) do --Load chunks
-    local chunk, err = fs.load("C:/Editors/"..v..".lua")
+    local chunk, err = fs.load(MainDrive..":/Editors/"..v..".lua")
     if not chunk then error(err or "Error loading: "..tostring(v)) end
     table.insert(self.chunks,k,chunk)
   end

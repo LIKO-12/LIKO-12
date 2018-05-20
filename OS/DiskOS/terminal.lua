@@ -4,8 +4,16 @@ local _LIKO_TAG = _LIKO_Version:sub(-3,-1)
 local _LIKO_DEV = (_LIKO_TAG == "DEV")
 local _LIKO_BUILD = _LIKO_Version:sub(3,-5)
 
+local MainDrive = fs.drive()
+local GameDiskOS = (MainDrive == "GameDiskOS")
+
 local PATH = "D:/Programs/;C:/Programs/;" --The system PATH variable, used by the terminal to search for programs.
 local curdrive, curdir, curpath = "D", "/", "D:/" --The current active path in the terminal.
+
+if GameDiskOS then
+  PATH = "GameDiskOS:/Programs/;"
+  curdrive, curpath = "GameDiskOS", "GameDiskOS:/"
+end
 
 local editor --The editors api, will be loaded later in term.init()
 
@@ -54,7 +62,10 @@ local term = {} --The terminal API
 
 function term.init()
   editor = require("Editors") --Load the editors
-  clear() fs.drive("D") --Set the HDD api active drive to D
+  clear()
+  if not GameDiskOS then
+    fs.drive("D") --Set the HDD api active drive to D
+  end
   SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
   printCursor(0,1,0)
   color(_LIKO_DEV and 8 or 9) print(_LIKO_TAG,5*8+1,3) flip() sleep(0.125)
@@ -62,31 +73,40 @@ function term.init()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
 
   flip() sleep(0.0625)
-  if fs.exists("D:/autoexec.lua") then
-    term.executeFile("D:/autoexec.lua")
-  elseif fs.exists("C:/autoexec.lua") then
-    term.executeFile("C:/autoexec.lua")
-  else
-    if _LIKO_Old then
-      color(7) print("\n Updated LIKO-12 Successfully.\n Type ",false)
-      color(6) print("help Whatsnew",false)
-      color(7) print(" for changelog.\n")
+  if GameDiskOS then
+    if fs.exists("GameDiskOS:/autoexec.lua") then
+      term.executeFile("GameDiskOS:/autoexec.lua")
     else
-      term.execute("tip")
+      color(9) print("Type help for help")
+      flip() sleep(0.0625)
     end
-    color(9) print("Type help for help")
-    flip() sleep(0.0625)
+  else
+    if fs.exists("D:/autoexec.lua") then
+      term.executeFile("D:/autoexec.lua")
+    elseif fs.exists("C:/autoexec.lua") then
+      term.executeFile("C:/autoexec.lua")
+    else
+      if _LIKO_Old then
+        color(7) print("\n Updated LIKO-12 Successfully.\n Type ",false)
+        color(6) print("help Whatsnew",false)
+        color(7) print(" for changelog.\n")
+      else
+        term.execute("tip")
+      end
+      color(9) print("Type help for help")
+      flip() sleep(0.0625)
+    end
   end
 end
 
 --Reload the system
 function term.reload()
   package.loaded = {} --Reset the package system
-  package.loaded["C:/terminal.lua"] = term --Restore the current terminal instance
+  package.loaded[MainDrive..":/terminal.lua"] = term --Restore the current terminal instance
 
   --Reload the APIS
-  for k, file in ipairs(fs.getDirectoryItems("C:/APIS/")) do
-    dofile("C:/APIS/"..file)
+  for k, file in ipairs(fs.getDirectoryItems(MainDrive..":/APIS/")) do
+    dofile(MainDrive..":/APIS/"..file)
   end
 
   editor = require("Editors") --Re initialize the editors
@@ -130,6 +150,9 @@ function term.getdirectory() return curdir end
 
 function term.setPATH(p) PATH = p end
 function term.getPATH() return PATH end
+
+function term.getMainDrive() return MainDrive end
+function term.isGameDiskOS() return GameDiskOS end
 
 function term.prompt()
   color(7) print(term.getpath().."> ",false)

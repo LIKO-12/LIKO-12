@@ -1,6 +1,9 @@
 --DiskOS LIKO-12 GUI Library
+local term = require("terminal")
+local MainDrive = term.getMainDrive()
+
 local path = select(1,...)
-local objectsPath = "C:/"..path:gsub("%.","/").."/"
+local objectsPath = MainDrive..":/"..path:gsub("%.","/").."/"
 
 local GUI = class("DiskOS.GUI")
 
