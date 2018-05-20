@@ -5,7 +5,7 @@ _LVer = {
 	magor = 0,
 	minor = 8,
 	patch = 0,
-	tag = "DEV", --"DEV"
+	tag = "PRE", --"DEV"
 }
 _LVERSION = string.format("V%d.%d.%d_%s",_LVer.magor,_LVer.minor,_LVer.patch,_LVer.tag)
 
