@@ -370,6 +370,15 @@ return function(Config)
     return getLastModifiedRecursive(path)
   end
   
+  --Check if a file path is readonly or not
+  function fs.isReadonly(path)
+    Verify(path,"string","Path")
+    
+    local path, drive = sanitizePath(path)
+    
+    return Drives[drive].Readonly
+  end
+  
   --Check if a file exists or not.
   function fs.exists(path)
     Verify(path,"string","Path")
