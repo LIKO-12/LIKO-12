@@ -57,7 +57,7 @@ local function waitkey()
   clearEStack()
   while true do
     local name, a = pullEvent()
-    if name == "keypressed" then
+    if name == "keypressed" and a ~= "q" then
       return false
     elseif name == "textinput" then
       if string.lower(a) == "q" then return true else return end
