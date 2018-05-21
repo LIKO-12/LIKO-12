@@ -116,7 +116,7 @@ elseif DevMode or _LVer.tag == "DEV" then InstallOS(true) end
 
 --Update the operating system
 if _LIKO_Old then
-  InstallOS()
+  InstallOS(true)
   love.filesystem.write(".version",tostring(_LIKO_Version)) --Update the .version file
 end
 
