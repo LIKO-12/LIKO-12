@@ -21,6 +21,9 @@ local button = class("DiskOS.GUI.button",base)
 button.static.text = "Button"   
 button.static.align = "center"
 
+--Callbacks
+--button.onclick(button) -> Called when the button is clicked.
+
 --Create a new button object:
 --<gui> -> The GUI instance that should contain the button.
 --[text] -> The text of the button label.
