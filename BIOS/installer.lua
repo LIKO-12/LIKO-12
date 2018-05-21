@@ -62,7 +62,7 @@ local function display(text)
   GPU.flip()
 end
 
-if update then
+if update and false then --Temporary disable this thing.
   display("Indexing Files")
   
   local function index(path, list)
