@@ -54,6 +54,7 @@ if not doc then return 1, "Help file not found '"..topic.."' !" end
 -- Waits for any input (keyboard or mouse) to continue
 -- Returns true if "q" was pressed, to quit
 local function waitkey()
+  clearEStack()
   while true do
     local name, a = pullEvent()
     if name == "keypressed" then
@@ -113,7 +114,7 @@ local function sprint(text)
       
       if curY == th then
         curY = th-1
-        sleep(0.02) clearEStack()
+        sleep(0.02)
         if skipY > 0 then
           skipY = skipY - 1
         else
