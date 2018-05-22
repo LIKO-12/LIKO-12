@@ -17,7 +17,7 @@ local GUI = class("DiskOS.GUI",container)
 --[tcol] -> The defaul text color.
 --[w],[h] -> The size of the screen.
 function GUI:initialize(bgcol,sheet,lightcol,darkcol,tcol,x,y,w,h)
-  container.initialize(self,self,self,x,y,w,h,bgcol,lightcol,darkcol,tcol,sheet)
+  container.initialize(self,self,self,x,y,w,h,bgcol,tcol,lightcol,darkcol,sheet)
   
   self._objects = {} --The objects that can be created.
   
