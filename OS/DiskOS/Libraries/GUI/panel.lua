@@ -12,6 +12,7 @@ local panel = class("DiskOS.GUI.panel",base)
 function panel:initialize(gui,x,y,w,h,bgcolor)
   base.initialize(self,gui,x,y,w,h)
   
+  self:setBGColor(bgcolor,true)
 end
 
 return panel
