@@ -1,11 +1,13 @@
 --A program to test the GUI library.
 
+local term = require("terminal")
+term.reload()
+
 local GUIState = require("Libraries.GUI")
 
 local MainState = GUIState(5)
 
 local b1 = MainState:newObject("button","Button",5,5)
-
 
 local trashIcon = image(
 [[LK12;GPUIMG;13x13;
