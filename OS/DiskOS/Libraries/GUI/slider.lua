@@ -19,11 +19,11 @@ slider.static.max = 1
 --[x],[y] -> The position of the top-left corner of the button.
 --[align] -> The aligning of the button label text.
 --[w],[h] -> The size of the button, automatically calculated by default.
-function slider:initialize(gui,x,y,length,vertical,min,max,w,h)
+function slider:initialize(gui,container,x,y,length,vertical,min,max,w,h)
   if vertical then
-    base.initialize(self,gui,x,y,h or slider.static.height,length or slider.static.length)
+    base.initialize(self,gui,container,x,y,h or slider.static.height,length or slider.static.length)
   else
-    base.initialize(self,gui,x,y,length or slider.static.length,h or slider.static.height)
+    base.initialize(self,gui,container,x,y,length or slider.static.length,h or slider.static.height)
   end
 
   self.length = length or slider.static.length --The length of the slider line

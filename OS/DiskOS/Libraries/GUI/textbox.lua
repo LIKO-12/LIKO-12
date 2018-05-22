@@ -15,8 +15,8 @@ textbox.static.align = "left"
 --[x],[y] -> The position of the top-left corner of the textbox.
 --[align] -> The aligning of the text in the textbox.
 --[w],[h] -> The size of the textbox, automatically calculated by default.
-function textbox:initialize(gui,text,x,y,align,w,h)
-  base.initialize(self,gui,x,y,w,h)
+function textbox:initialize(gui,container,text,x,y,align,w,h)
+  base.initialize(self,gui,container,x,y,w,h)
 
   self:setAlign(align or textbox.static.align, true)
 
@@ -48,9 +48,7 @@ function textbox:setText(t,nodraw)
   local x = self:getX()
   local gw = self.gui:getWidth()
 
-  local fw = self.gui:getFontWidth()
-  local fh = self.gui:getFontHeight()
-  
+  local fw fh = fontSize()
   local maxlen, wt = wrapText(t,gw-x)
   
   self:setWidth(maxlen+1,true)
