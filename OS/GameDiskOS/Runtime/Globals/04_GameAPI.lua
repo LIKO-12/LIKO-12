@@ -213,7 +213,7 @@ function Globals.SaveData(data)
   if not GameSaveID then return error("Set SaveID inorder to save data !") end
   
   --Write the game data
-  fs.write(string.format(MainDrive..":/GamesData/%s.bin",GameSaveID), data, GameSaveSize)
+  fs.write(string.format(MainDrive..":/GamesData/%s.bin",GameSaveID), data)
 end
 
 function Globals.LoadData()
