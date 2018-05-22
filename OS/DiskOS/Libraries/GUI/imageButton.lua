@@ -2,18 +2,6 @@ local path = select(1,...):sub(1,-(string.len("imageButton")+1))
 
 local base = require(path..".base")
 
---Wrap a function, used to add functions alias names.
-local function wrap(f)
-  return function(self,...)
-    local args = {pcall(self[f],self,...)}
-    if args[1] then
-      return select(2,unpack(args))
-    else
-      return error(tostring(args[2]))
-    end
-  end
-end
-
 --Button with a text label
 local imgbtn = class("DiskOS.GUI.imageButton",base)
 

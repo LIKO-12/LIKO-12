@@ -7,18 +7,6 @@ local objectsPath = MainDrive..":/"..path:gsub("%.","/").."/"
 
 local GUI = class("DiskOS.GUI")
 
---Wrap a function, used to add functions alias names.
-local function wrap(f)
-  return function(self,...)
-    local args = {pcall(self[f],self,...)}
-    if args[1] then
-      return select(2,unpack(args))
-    else
-      return error(tostring(args[2]))
-    end
-  end
-end
-
 --Default internal values:
 GUI.static.lightcol = 9 --The light color
 GUI.static.darkcol = 4 --The dark color
@@ -32,7 +20,8 @@ GUI.static.tcol = 7 --Text color
 --[darkcol] -> The default dark color.
 --[tcol] -> The defaul text color.
 --[w],[h] -> The size of the screen.
-function GUI:initialize(bgcol,sheet,lightcol,darkcol,tcol,w,h)
+--[fw],[fh] -> The font character size.
+function GUI:initialize(bgcol,sheet,lightcol,darkcol,tcol,w,h,fw,fh)
   self._objects = {} --The objects that can be created.
   self.objects = {} --Registered objects
   
@@ -105,8 +94,8 @@ function GUI:getSize() return self.w, self.h end
 --Get font size
 function GUI:getFontWidth() return self.fw end
 function GUI:getFontHeight() return self.fh end
-GUI.getFW = wrap("getFontWidth")
-GUI.getFH = wrap("getFontHeight")
+GUI.getFW = GUI.getFontWidth
+GUI.getFH = GUI.getFontHeight
 
 --Set default colors.
 function GUI:setLightColor(lightcol) self.lightcol = lightcol or self.lightcol; return self end
@@ -143,25 +132,29 @@ function GUI:event(event,a,b,c,d,e,f)
   
   if self[event] then
     if self[event](self,a,b,c,d,e,f) then
-      return
+      return --Event consumed
     end
   end
   
   for k, obj in ipairs(self:getObjects()) do
     if obj[event] then
       if obj[event](obj,a,b,c,d,e,f) then
-        break
+        return --Event consumed
       end
     end
-  end
-  
-  if event == "_mousepressed" or event == "_mousereleased" then
-    self:_mousemoved(a,b,0,0,d)
   end
 end
 
 function GUI:redraw()
   self:event("draw")
+end
+
+function GUI:_mousepressed(x,y,button,istouch)
+  self:_mousemoved(x,y,0,0,istouch)
+end
+
+function GUI:_mousereleased(x,y,button,istouch)
+  self:_mousemoved(x,y,0,0,istouch)
 end
 
 function GUI:_mousemoved(x,y,dx,dy,istouch)
