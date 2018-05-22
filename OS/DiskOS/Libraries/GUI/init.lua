@@ -94,8 +94,6 @@ function GUI:getSize() return self.w, self.h end
 --Get font size
 function GUI:getFontWidth() return self.fw end
 function GUI:getFontHeight() return self.fh end
-GUI.getFW = GUI.getFontWidth
-GUI.getFH = GUI.getFontHeight
 
 --Set default colors.
 function GUI:setLightColor(lightcol) self.lightcol = lightcol or self.lightcol; return self end
@@ -126,9 +124,7 @@ function GUI:getObjects() return self.objects end
 
 --Hooks
 function GUI:event(event,a,b,c,d,e,f)
-  if event ~= "draw" then
-    event = "_"..event
-  end
+  event = "_"..event
   
   if self[event] then
     if self[event](self,a,b,c,d,e,f) then
@@ -150,6 +146,11 @@ function GUI:event(event,a,b,c,d,e,f)
 end
 
 function GUI:redraw()
+  local w,h = self:getSize()
+  local bgColor = self:getBGColor()
+  
+  rect(0,0,w,h,false,bgColor)
+  
   self:event("draw")
 end
 
