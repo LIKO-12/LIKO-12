@@ -22,7 +22,7 @@ local function checkDir(dir,r)
 		if love.filesystem.getInfo(fpath,"file") then --It's a file
 			local fupdate = false --Should the file be updated ?
 			if not love.filesystem.getInfo(dpath..dir..file) then --Add new file
-				print("New file added")
+				--print("New file added")
 				fupdate = true
 			else --Check old file
         local info = love.filesystem.getInfo(fpath)
@@ -48,7 +48,7 @@ local function checkDir(dir,r)
 				if data then
 					local ok, werr = love.filesystem.write(dpath..dir..file,data)
 					if not ok then r[file] = nil print("Error: Failed to write,",werr) else
-						print("Updated File",fpath)
+						--print("Updated File",fpath)
 					end
 				else
 					print("Error: Failed to read,",rerr)

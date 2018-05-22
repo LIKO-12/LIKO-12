@@ -1,11 +1,15 @@
 --A program to test the GUI library.
 
+local term = require("terminal")
+term.reload()
+
 local GUIState = require("Libraries.GUI")
 
 local MainState = GUIState(5)
 
-local b1 = MainState:newObject("button","Button",5,5)
+local t1 = MainState:newObject("textbox","GUI Demo",5,5)
 
+local b1 = MainState:newObject("button","Button",5,25)
 
 local trashIcon = image(
 [[LK12;GPUIMG;13x13;
@@ -24,12 +28,12 @@ local trashIcon = image(
 5999999999995]]
 )
 
-local ib1 = MainState:newObject("imageButton",5,15)
+local ib1 = MainState:newObject("imageButton",5,35)
 ib1:setImage(trashIcon,4,9)
 --local s1 = MainState:newObject("slider", 20,20)
 
-clear(5)
-MainState:redraw()
+cursor("normal")
+MainState:draw()
 
 for event,a,b,c,d,e,f in pullEvent do
   

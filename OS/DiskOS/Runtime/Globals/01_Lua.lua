@@ -21,9 +21,24 @@ local function evloop()
   
   if not callevfunc(Globals["_init"]) then return end
   
-  if not ((Globals["_update"] and type(Globals["_update"]) == "function") or (Globals["_draw"] and type(Globals["_draw"]) == "function") or Globals["_eventLoop"]) then
-    return
+  local functionsToLoop = {
+    "_update", "_draw", "_update60", "_draw60", "_update30", "_draw30"
+  }
+  
+  local shouldLoop = false
+  
+  for id,funcName in pairs(functionsToLoop) do
+    if Globals[funcName] and type(Globals[funcName]) == "function" then
+      shouldLoop = true
+      break
+    end
   end
+  
+  if type(Globals["_eventLoop"]) == "boolean" then
+    shouldLoop = Globals["_eventLoop"]
+  end
+  
+  if not shouldLoop then return end
   
   local time30, time60 = 1/30, 1/60
   local timer30, timer60 = 0, 0
