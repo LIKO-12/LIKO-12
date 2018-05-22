@@ -7,7 +7,29 @@ local GUIState = require("Libraries.GUI")
 
 local MainState = GUIState(5)
 
-local t1 = MainState:newObject("textbox","GUI Demo",5,5)
+local topBar = MainState:newObject("container",0,0, screenWidth(),7, 9,4,9,4)
+
+local appTitle = topBar:newObject("textbox","GUI Demo",0,0)
+
+local closeIcon = image(
+[[LK12;GPUIMG;7x7;
+1111111
+1A111A1
+11A1A11
+111A111
+11A1A11
+1A111A1
+1111111]]
+)
+
+local terminateFlag = false
+
+local closeButton = topBar:newObject("imageButton",-7,0)
+closeButton:setImage(closeIcon,10,1)
+
+function closeButton:onclick()
+  terminateFlag = true
+end
 
 local b1 = MainState:newObject("button","Button",5,25)
 
@@ -34,10 +56,13 @@ ib1:setImage(trashIcon,4,9)
 
 cursor("normal")
 MainState:draw()
+--c1:draw()
 
 for event,a,b,c,d,e,f in pullEvent do
   
   MainState:event(event,a,b,c,d,e,f)
+  
+  if terminateFlag then break end
   
   if event == "keypressed" then
     if a == "escape" then
