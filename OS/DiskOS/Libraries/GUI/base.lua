@@ -7,17 +7,18 @@ local base = class("DiskOS.GUI.base")
 --[w],[h]: The size of the object.
 function base:initialize(gui,x,y,w,h)
   self.gui = gui or error("GUI State has to be passed",2)
-  
+
   self.x, self.y = 0, 0
   self.w, self.h = 0, 0
-  
+  self.visible = true
+
   --self.touchid -> The object press touch id.
   --self.mousepress -> True when the object is pressed using the mouse.
   --self.down -> Is the object being held down ?
-  
+
   self:setSize(w,h,true)
   self:setPosition(x,y,true)
-  
+
   self:setLightColor(self.gui:getLightColor(),true)
   self:setDarkColor(self.gui:getDarkColor(),true)
   self:setBGColor(self.gui:getBGColor(),true)
@@ -29,70 +30,92 @@ function base:getGUI()
   return self.gui
 end
 
+--Set object visiblilty
+function base:setVisible(visible,nodraw)
+  self.visible = visible or false
+
+  if not self.visible then
+    self.down, self.touchid, self.mousepressed = false, false, false
+    if not nodraw then self:clear() end
+  end
+end
+
+function base:isVisible()
+  return self.visible
+end
+
 --Set object position, accepts negative positions (GUI size - pos).
 function base:setX(x,nodraw)
+  if not nodraw then self:clear() end
+
   if x then
     if x < 0 then
       x = self.gui:getWidth()-self.w+x
     end
   end
-  
+
   self.x = x or self.x
   if not nodraw then self:draw() end
-  
+
   return self
 end
 
 function base:setY(y,nodraw)
+  if not nodraw then self:clear() end
+
   if y then
     if y < 0 then
       y = self.gui:getHeight()-self.h+y
     end
   end
-  
+
   self.y = y or self.y
   if not nodraw then self:draw() end
-  
+
   return self
 end
 
-function base:setPos(x,y,nodraw)
+function base:setPosition(x,y,nodraw)
+  if not nodraw then self:clear() end
+
   self:setX(x,true)
   self:setY(y,true)
-  
+
   if not nodraw then self:draw() end
-  
+
   return self
 end
-base.setPosition = base.setPos
 
 --Get object position
 function base:getX() return self.x end
 function base:getY() return self.y end
-function base:getPos() return self:getX(), self:getY() end
-base.getPosition = base.getPos
+function base:getPosition() return self:getX(), self:getY() end
 
 --Set object size
 function base:setWidth(w,nodraw)
+  if not nodraw then self:clear() end
   self.w = w or self.w
   if not nodraw then self:draw() end
-  
+
   return self
 end
 
 function base:setHeight(h,nodraw)
+  if not nodraw then self:clear() end
   self.h = h or self.h
   if not nodraw then self:draw() end
-  
+
   return self
 end
 
 function base:setSize(w,h,nodraw)
+  if not nodraw then self:clear() end
+
   self:setWidth(w,true)
   self:setHeight(h,true)
-  
+
   if not nodraw then self:draw() end
-  
+
   return self
 end
 
@@ -102,11 +125,13 @@ function base:getHeight() return self.h end
 function base:getSize() return self:getWidth(), self:getHeight() end
 
 function base:setRect(x,y,w,h,nodraw)
+  if not nodraw then self:clear() end
+
   self:setPosition(x,y,true)
   self:setSize(x,y,true)
-  
+
   if not nodraw then self:draw() end
-  
+
   return self
 end
 
@@ -118,38 +143,44 @@ end
 
 --Set object colors
 function base:setLightColor(lightcol,nodraw)
+  if not nodraw then self:clear() end
   self.lightcol = lightcol or self.lightcol
   if not nodraw then self:draw() end
   return self
 end
 
 function base:setDarkColor(darkcol,nodraw)
+  if not nodraw then self:clear() end
   self.darkcol = darkcol or self.darkcol
   if not nodraw then self:draw() end
   return self
 end
 
 function base:setBGColor(bgcol,nodraw)
+  if not nodraw then self:clear() end
   self.bgcol = bgcol or self.bgcol
   if not nodraw then self:draw() end
   return self
 end
 
 function base:setTColor(tcol,nodraw)
+  if not nodraw then self:clear() end
   self.tcol = tcol or self.tcol
   if not nodraw then self:draw() end
   return self
 end
 
 function base:setColors(lightcol,darkcol,bgcol,tcol,nodraw)
- self:setLightColor(lightcol,true)
- self:setDarkColor(darkcol,true)
- self:setBGColor(bgcol,true)
- self:setTColor(tcol,true)
- 
- if not nodraw then self:draw() end
- 
- return self
+  if not nodraw then self:clear() end
+
+  self:setLightColor(lightcol,true)
+  self:setDarkColor(darkcol,true)
+  self:setBGColor(bgcol,true)
+  self:setTColor(tcol,true)
+
+  if not nodraw then self:draw() end
+
+  return self
 end
 
 --Get object colors
@@ -161,6 +192,7 @@ function base:getColors() return self:getLightColor(), self:getDarkColor(), self
 
 --Set the object sheet
 function base:setSheet(sheet,nodraw)
+  if not nodraw then self:clear() end
   self.sheet = sheet or self.sheet
   if not nodraw then self:draw() end
   return self
@@ -172,12 +204,39 @@ function base:getSheet() return self.sheet end
 --Is the object being held down.
 function base:isDown() return self.down end
 
+--Provide prefered cursor
+function base:cursor(x,y)
+  local down = self:isDown()
+
+  if isInRect(x,y,{self:getRect()}) then
+    if down then
+      return "handpress"
+    else
+      return "handrelease"
+    end
+  end
+end
+
+--Clear previous draw area.
+function base:clear()
+  local x,y = self:getPosition()
+  local w,h = self:getSize()
+  local bgColor = self:getBGColor()
+  rect(x,y,w,h,false,bgColor)
+end
+
+--Draw the object
+function base:_draw(dt)
+  if self:isVisible() then
+    return self:draw(dt)
+  end
+end
+
 --Has to be overwritten
 function base:_update(dt) end
 function base:draw(dt) end
 function base:pressed(x,y) return false end --Called when the mouse/touch is pressed.
 function base:released(x,y) end --Called when the mouse/touch is released after returning try from base:pressed.
-function base:cursor(x,y) end --Should return prefered cursor name.
 
 --Internal functions to handle multitouch and computer mouse
 function base:_mousepressed(x,y,b,istouch)

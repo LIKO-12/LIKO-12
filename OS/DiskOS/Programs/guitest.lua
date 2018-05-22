@@ -30,7 +30,7 @@ local ib1 = MainState:newObject("imageButton",5,15)
 ib1:setImage(trashIcon,4,9)
 --local s1 = MainState:newObject("slider", 20,20)
 
-clear(5) cursor("normal")
+cursor("normal")
 MainState:redraw()
 
 for event,a,b,c,d,e,f in pullEvent do
