@@ -8,8 +8,8 @@ local imgbtn = class("DiskOS.GUI.imageButton",base)
 --Default Values:
 
 
-function imgbtn:initialize(gui,x,y)
-  base.initialize(self,gui,x,y,0,0)
+function imgbtn:initialize(gui,container,x,y)
+  base.initialize(self,gui,container,x,y,0,0)
 
   --self.fimg <- The image when the button is not held
   --self.bimg <- The image when the button is held

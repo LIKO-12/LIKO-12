@@ -33,7 +33,7 @@ ib1:setImage(trashIcon,4,9)
 --local s1 = MainState:newObject("slider", 20,20)
 
 cursor("normal")
-MainState:redraw()
+MainState:draw()
 
 for event,a,b,c,d,e,f in pullEvent do
   

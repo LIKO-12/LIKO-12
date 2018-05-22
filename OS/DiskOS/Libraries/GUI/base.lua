@@ -5,8 +5,9 @@ local base = class("DiskOS.GUI.base")
 --<gui>: The GUI instance that should contain the object.
 --[x],[y]: The position of the top-left corner of the object.
 --[w],[h]: The size of the object.
-function base:initialize(gui,x,y,w,h)
+function base:initialize(gui,container,x,y,w,h)
   self.gui = gui or error("GUI State has to be passed",2)
+  self.container = container or error("Container has to be passed",2)
 
   self.x, self.y = 0, 0
   self.w, self.h = 0, 0
@@ -24,12 +25,17 @@ function base:initialize(gui,x,y,w,h)
   self:setBGColor(self.gui:getBGColor(),true)
   self:setTColor(self.gui:getTColor(),true)
   
-  self:setSheet(self.gui:getSheet())
+  self:setSheet(self.gui:getSheet(),true)
 end
 
 --Get object GUI instance.
 function base:getGUI()
   return self.gui
+end
+
+--Get object parent container.
+function base:getContainer()
+  return self.container
 end
 
 --Set object visiblilty

@@ -3,33 +3,45 @@ local path = select(1,...):sub(1,-(string.len("container")+1))
 --Container object class
 local container = class("DiskOS.GUI.container")
 
+--Default internal values:
+container.static.lightcol = 9 --The light color
+container.static.darkcol = 4 --The dark color
+container.static.bgcol = 0 --Background color
+container.static.tcol = 7 --Text color
+
 --Create a new objects container:
 --<gui>: The GUI instance of this container.
 --[x],[y]: The position of the top-left corner of the object.
 --[w],[h]: The size of the object.
-function container:initialize(gui,x,y,w,h)
+function container:initialize(gui,parentContainer,x,y,w,h,bgcol,lightcol,darkcol,tcol,sheet)
   self.gui = gui or error("GUI State has to be passed",2)
+  self.container = parentContainer or error("Container has to be passed",2)
   
   self.objects = {} --Registered objects
   
-  self.x, self.y = 0, 0
-  self.w, self.h = w or screenWidth(), h or screenHeight()
-  self.visible = true
-
-  self:setSize(w,h,true)
-  self:setPosition(x,y,true)
-
-  self:setLightColor(self.gui:getLightColor(),true)
-  self:setDarkColor(self.gui:getDarkColor(),true)
-  self:setBGColor(self.gui:getBGColor(),true)
-  self:setTColor(self.gui:getTColor(),true)
+  self.x = x or 0
+  self.y = y or 0
+  self.w = w or screenWidth()
+  self.h = h or screenHeight()
   
-  self:setSheet(self.gui:getSheet())
+  self.visible = true
+  
+  self.sheet = sheet
+
+  self.lightcol = lightcol or container.static.lightcol
+  self.darkcol = darkcol or container.static.darkcol
+  self.bgcol = bgcol or container.static.bgcol
+  self.tcol = tcol or container.static.tcol
 end
 
 --Get object GUI instance.
 function container:getGUI()
   return self.gui
+end
+
+--Get object parent container.
+function container:getContainer()
+  return self.container
 end
 
 --Set object visiblilty
@@ -46,15 +58,9 @@ function container:isVisible()
   return self.visible
 end
 
---Set object position, accepts negative positions (GUI size - pos).
+--Set object position.
 function container:setX(x,nodraw)
   if not nodraw then self:clear() end
-
-  if x then
-    if x < 0 then
-      x = self.gui:getWidth()-self.w+x
-    end
-  end
 
   self.x = x or self.x
   if not nodraw then self:draw() end
@@ -64,12 +70,6 @@ end
 
 function container:setY(y,nodraw)
   if not nodraw then self:clear() end
-
-  if y then
-    if y < 0 then
-      y = self.gui:getHeight()-self.h+y
-    end
-  end
 
   self.y = y or self.y
   if not nodraw then self:draw() end
@@ -211,6 +211,18 @@ end
 --Return registered objects list
 function container:getObjects() return self.objects end
 
+--Create a new object
+function container:newObject(name,...)
+  local objclass = self.gui:getObjectClass(name) --Get the object class from the loaded objects list
+  
+  if not objclass then return error("Object '"..name.."' doesn't exist !") end
+  
+  local obj = objclass(self.gui,self,...) --Create a new object
+  self:register(obj) --Register the object in this GUI instance so it's events get called.
+
+  return obj --Return the created object
+end
+
 --Clear previous draw area.
 function container:clear()
   local x,y = self:getPosition()
@@ -224,8 +236,9 @@ function container:_draw(dt)
   if self:isVisible() then
     local w,h = self:getSize()
     local bgColor = self:getBGColor()
-
     rect(0,0,w,h,false,bgColor)
+    
+    self:event("draw")
   end
 end
 
@@ -233,7 +246,7 @@ end
 function container:event(event,a,b,c,d,e,f)
   event = "_"..event
 
-  if self[event] then
+  if self[event] and event ~= "_draw" then
     if self[event](self,a,b,c,d,e,f) then
       return true --Event consumed
     end
@@ -242,7 +255,12 @@ function container:event(event,a,b,c,d,e,f)
   local consumed = false --Did the even get consumed ?
 
   for k, obj in ipairs(self:getObjects()) do
-    if obj[event] then
+    if obj.event then
+      if obj:event(a,b,c,d,e,f) then
+        consumed = true
+        break --Event consumed
+      end
+    elseif obj[event] then
       if obj[event](obj,a,b,c,d,e,f) then
         consumed = true
         break --Event consumed
@@ -257,7 +275,8 @@ function container:event(event,a,b,c,d,e,f)
   return consumed
 end
 
-function container:redraw()
+function container:draw()
+  self:_draw()
   self:event("draw")
 end
 

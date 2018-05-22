@@ -18,8 +18,8 @@ button.static.align = "center"
 --[x],[y] -> The position of the top-left corner of the button.
 --[align] -> The aligning of the button label text.
 --[w],[h] -> The size of the button, automatically calculated by default.
-function button:initialize(gui,text,x,y,align,w,h)
-  base.initialize(self,gui,x,y,w,h)
+function button:initialize(gui,container,text,x,y,align,w,h)
+  base.initialize(self,gui,container,x,y,w,h)
 
   self:setAlign(align or button.static.align, true)
 
@@ -49,8 +49,7 @@ function button:setText(t,nodraw)
   local x = self:getX()
   local gw = self.gui:getWidth()
 
-  local fw = self.gui:getFontWidth()
-  local fh = self.gui:getFontHeight()
+  local fw, fh = fontSize()
   local maxlen, wt = wrapText(t,gw-x)
   self:setWidth(maxlen+1,true)
   self:setHeight(#wt*(fh+2),true)
