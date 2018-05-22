@@ -2,18 +2,6 @@ local path = select(1,...):sub(1,-(string.len("button")+1))
 
 local base = require(path..".base")
 
---Wrap a function, used to add functions alias names.
-local function wrap(f)
-  return function(self,...)
-    local args = {pcall(self[f],self,...)}
-    if args[1] then
-      return select(2,unpack(args))
-    else
-      return error(tostring(args[2]))
-    end
-  end
-end
-
 --Button with a text label
 local button = class("DiskOS.GUI.button",base)
 
@@ -30,18 +18,22 @@ button.static.align = "center"
 --[x],[y] -> The position of the top-left corner of the button.
 --[align] -> The aligning of the button label text.
 --[w],[h] -> The size of the button, automatically calculated by default.
-function button:initialize(gui,text,x,y,align,w,h)
-  base.initialize(self,gui,x,y,w,h)
-  
+function button:initialize(gui,container,text,x,y,align,w,h)
+  base.initialize(self,gui,container,x,y,w,h)
+
   self:setAlign(align or button.static.align, true)
-  
-  self:setText(text or button.static.text,true)
+
+  self:setText(text or button.static.text, true)
 end
 
 --Set the text align in the button label (when using multiline)
 function button:setAlign(align,nodraw)
+  if not nodraw then self:clear() end
+  
   self.align = align or self.align
+  
   if not nodraw then self:draw() end
+  
   return self
 end
 
@@ -50,21 +42,22 @@ function button:getAlign() return self.align end
 
 --Set the button text
 function button:setText(t,nodraw)
+  if not nodraw then self:clear() end
+  
   self.text = t or self.text
-  
+
   local x = self:getX()
-  local gw = self.gui:getWidth()
-  
-  local fw = self.gui:getFontWidth()
-  local fh = self.gui:getFontHeight()
-  local maxlen, wt = wrapText(t,gw-x)
+  local cw = self.container:getWidth()
+
+  local fw, fh = fontSize()
+  local maxlen, wt = wrapText(t,cw-x)
   self:setWidth(maxlen+1,true)
   self:setHeight(#wt*(fh+2),true)
-  
+
   if not nodraw then
     self:draw() --Update the button
   end
-  
+
   return self
 end
 
@@ -79,11 +72,11 @@ function button:draw()
   local w,h = self:getSize()
   local text = self:getText()
   local down = self:isDown()
-  
+
   if down then
     lightcol,darkcol = darkcol,lightcol
   end
-  
+
   rect(x,y,w,h,false,lightcol)
   color(darkcol)
   print(text,x+1,y+1,w-1,self.align)
@@ -106,21 +99,8 @@ function button:released(x,y)
       self:onclick()
     end
   end
-  
-  self:draw() --Update the button
-end
 
---Provide prefered cursor
-function button:cursor(x,y)
-  local down = self:isDown()
-  
-  if isInRect(x,y,{self:getRect()}) then
-    if down then
-      return "handpress"
-    else
-      return "handrelease"
-    end
-  end
+  self:draw() --Update the button
 end
 
 return button

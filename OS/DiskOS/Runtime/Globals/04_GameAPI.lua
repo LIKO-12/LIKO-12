@@ -200,8 +200,8 @@ function Globals.SaveID(name)
   
   GameSaveID, GameSaveData = name, ""
   
-  if fs.exists(string.format(MainDrive..":/GamesData/%s.bin",GameSaveID)) then
-    GameSaveData = fs.read(string.format(MainDrive..":/GamesData/%s.bin",GameSaveID), GameSaveSize)
+  if fs.exists(MainDrive..":/GamesData/"..GameSaveID..".bin") then
+    GameSaveData = fs.read(MainDrive..":/GamesData/"..GameSaveID..".bin", GameSaveSize)
   end
 end
 
@@ -212,8 +212,10 @@ function Globals.SaveData(data)
   
   if not GameSaveID then return error("Set SaveID inorder to save data !") end
   
+  GameSaveData = data
+  
   --Write the game data
-  fs.write(string.format(MainDrive..":/GamesData/%s.bin",GameSaveID), data, GameSaveSize)
+  fs.write(string.format(MainDrive..":/GamesData/%s.bin",GameSaveID), GameSaveData)
 end
 
 function Globals.LoadData()
