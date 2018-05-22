@@ -1,15 +1,3 @@
---Wrap a function, used to add functions alias names.
-local function wrap(f)
-  return function(self,...)
-    local args = {pcall(self[f],self,...)}
-    if args[1] then
-      return select(2,unpack(args))
-    else
-      return error(tostring(args[2]))
-    end
-  end
-end
-
 --Base object class
 local base = class("DiskOS.GUI.base")
 
@@ -41,7 +29,7 @@ function base:getGUI()
   return self.gui
 end
 
---Set object position.
+--Set object position, accepts negative positions (GUI size - pos).
 function base:setX(x,nodraw)
   if x then
     if x < 0 then
@@ -76,13 +64,13 @@ function base:setPos(x,y,nodraw)
   
   return self
 end
-base.setPosition = wrap("setPos")
+base.setPosition = base.setPos
 
 --Get object position
 function base:getX() return self.x end
 function base:getY() return self.y end
 function base:getPos() return self:getX(), self:getY() end
-base.getPosition = wrap("getPos")
+base.getPosition = base.getPos
 
 --Set object size
 function base:setWidth(w,nodraw)
