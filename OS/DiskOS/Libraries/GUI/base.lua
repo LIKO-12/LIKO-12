@@ -58,7 +58,7 @@ function base:setX(x,nodraw)
 
   if x then
     if x < 0 then
-      x = self.contianer:getWidth()-self.w+x
+      x = self.container:getWidth()-self.w+x
     end
   end
 
