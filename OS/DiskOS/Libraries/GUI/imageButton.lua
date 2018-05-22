@@ -5,9 +5,6 @@ local base = require(path..".base")
 --Button with a text label
 local imgbtn = class("DiskOS.GUI.imageButton",base)
 
---Default Values:
-
-
 function imgbtn:initialize(gui,container,x,y)
   base.initialize(self,gui,container,x,y,0,0)
 
