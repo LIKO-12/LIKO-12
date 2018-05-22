@@ -20,12 +20,12 @@ function base:initialize(gui,container,x,y,w,h)
   self:setSize(w,h,true)
   self:setPosition(x,y,true)
 
-  self:setLightColor(self.gui:getLightColor(),true)
-  self:setDarkColor(self.gui:getDarkColor(),true)
-  self:setBGColor(self.gui:getBGColor(),true)
-  self:setTColor(self.gui:getTColor(),true)
-  
-  self:setSheet(self.gui:getSheet(),true)
+  self:setLightColor(self.container:getLightColor(),true)
+  self:setDarkColor(self.container:getDarkColor(),true)
+  self:setBGColor(self.container:getBGColor(),true)
+  self:setTColor(self.container:getTColor(),true)
+
+  self:setSheet(self.container:getSheet(),true)
 end
 
 --Get object GUI instance.
@@ -58,7 +58,7 @@ function base:setX(x,nodraw)
 
   if x then
     if x < 0 then
-      x = self.gui:getWidth()-self.w+x
+      x = self.contianer:getWidth()-self.w+x
     end
   end
 
@@ -73,7 +73,7 @@ function base:setY(y,nodraw)
 
   if y then
     if y < 0 then
-      y = self.gui:getHeight()-self.h+y
+      y = self.container:getHeight()-self.h+y
     end
   end
 
@@ -229,7 +229,7 @@ end
 function base:clear()
   local x,y = self:getPosition()
   local w,h = self:getSize()
-  local bgColor = self.gui:getBGColor()
+  local bgColor = self.container:getBGColor()
   rect(x,y,w,h,false,bgColor)
 end
 

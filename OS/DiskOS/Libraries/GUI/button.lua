@@ -47,10 +47,10 @@ function button:setText(t,nodraw)
   self.text = t or self.text
 
   local x = self:getX()
-  local gw = self.gui:getWidth()
+  local cw = self.container:getWidth()
 
   local fw, fh = fontSize()
-  local maxlen, wt = wrapText(t,gw-x)
+  local maxlen, wt = wrapText(t,cw-x)
   self:setWidth(maxlen+1,true)
   self:setHeight(#wt*(fh+2),true)
 
