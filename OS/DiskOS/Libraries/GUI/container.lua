@@ -13,7 +13,7 @@ container.static.tcol = 7 --Text color
 --<gui>: The GUI instance of this container.
 --[x],[y]: The position of the top-left corner of the object.
 --[w],[h]: The size of the object.
-function container:initialize(gui,parentContainer,x,y,w,h,bgcol,lightcol,darkcol,tcol,sheet)
+function container:initialize(gui,parentContainer,x,y,w,h,bgcol,tcol,lightcol,darkcol,sheet)
   self.gui = gui or error("GUI State has to be passed",2)
   self.container = parentContainer or error("Container has to be passed",2)
   
@@ -37,12 +37,12 @@ function container:initialize(gui,parentContainer,x,y,w,h,bgcol,lightcol,darkcol
     
   else
     
-    self:setLightColor(self.container:getLightColor(),true)
-    self:setDarkColor(self.container:getDarkColor(),true)
-    self:setBGColor(self.container:getBGColor(),true)
-    self:setTColor(self.container:getTColor(),true)
+    self:setLightColor(lightcol or self.container:getLightColor(),true)
+    self:setDarkColor(darkcol or self.container:getDarkColor(),true)
+    self:setBGColor(bgcol or self.container:getBGColor(),true)
+    self:setTColor(tcol or self.container:getTColor(),true)
 
-    self:setSheet(self.container:getSheet(),true)
+    self:setSheet(sheet or self.container:getSheet(),true)
     
   end
 end
@@ -240,16 +240,17 @@ end
 function container:clear()
   local x,y = self:getPosition()
   local w,h = self:getSize()
-  local bgColor = self.gui:getBGColor()
+  local bgColor = self.container:getBGColor()
   rect(x,y,w,h,false,bgColor)
 end
 
 --Draw the container
 function container:_draw(dt)
   if self:isVisible() then
+    local x,y = self:getPosition()
     local w,h = self:getSize()
     local bgColor = self:getBGColor()
-    rect(0,0,w,h,false,bgColor)
+    rect(x,y,w,h,false,bgColor)
     
     self:event("draw")
   end
@@ -268,8 +269,8 @@ function container:event(event,a,b,c,d,e,f)
   local consumed = false --Did the even get consumed ?
 
   for k, obj in ipairs(self:getObjects()) do
-    if obj.event then
-      if obj:event(a,b,c,d,e,f) then
+    if obj.event and event ~= "_draw" then
+      if obj:event(event:sub(2,-1),a,b,c,d,e,f) then
         consumed = true
         break --Event consumed
       end
@@ -306,5 +307,8 @@ function container:_mousemoved(x,y,dx,dy,istouch)
   end
 end
 
+function container:cursor(x,y)
+  return self:_mousemoved(x,y,0,0,false)
+end
 
 return container
