@@ -201,7 +201,7 @@ function Globals.SaveID(name)
   GameSaveID, GameSaveData = name, ""
   
   if fs.exists(MainDrive..":/GamesData/"..GameSaveID..".bin") then
-    GameSaveData = fs.read(MainDrive..":/GamesData/"..GameSaveID..".bin"), GameSaveSize)
+    GameSaveData = fs.read(MainDrive..":/GamesData/"..GameSaveID..".bin", GameSaveSize)
   end
 end
 
