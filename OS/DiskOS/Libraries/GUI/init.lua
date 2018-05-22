@@ -24,19 +24,19 @@ GUI.static.tcol = 7 --Text color
 function GUI:initialize(bgcol,sheet,lightcol,darkcol,tcol,w,h,fw,fh)
   self._objects = {} --The objects that can be created.
   self.objects = {} --Registered objects
-  
+
   self.sheet = sheet
-  
+
   self.w = w or screenWidth()
   self.h = h or screenHeight()
   self.fw = fw or fontWidth()
   self.fh = fh or fontHeight()
-  
+
   self.bgcol = bgcol or GUI.static.bgcol
   self.lightcol = lightcol or GUI.static.lightcol
   self.darkcol = darkcol or GUI.static.darkcol
   self.tcol = tcol or GUI.static.tcol
-  
+
   self:loadDefaultObjects()
 end
 
@@ -70,10 +70,10 @@ end
 --Create a new object
 function GUI:newObject(name,...)
   local objclass = self:getObjectClass(name) --Get the object class from the loaded objects list
-  
+
   local obj = objclass(self,...) --Create a new object
   self:register(obj) --Register the object in this GUI instance so it's events get called.
-  
+
   return obj --Return the created object
 end
 
@@ -125,13 +125,13 @@ function GUI:getObjects() return self.objects end
 --Hooks
 function GUI:event(event,a,b,c,d,e,f)
   event = "_"..event
-  
+
   if self[event] then
     if self[event](self,a,b,c,d,e,f) then
       return --Event consumed
     end
   end
-  
+
   for k, obj in ipairs(self:getObjects()) do
     if obj[event] then
       if obj[event](obj,a,b,c,d,e,f) then
@@ -139,7 +139,7 @@ function GUI:event(event,a,b,c,d,e,f)
       end
     end
   end
-  
+
   if event == "_mousepressed" or event == "_mousereleased" then
     self:_mousemoved(a,b,0,0,d)
   end
@@ -148,15 +148,15 @@ end
 function GUI:redraw()
   local w,h = self:getSize()
   local bgColor = self:getBGColor()
-  
+
   rect(0,0,w,h,false,bgColor)
-  
+
   self:event("draw")
 end
 
 function GUI:_mousemoved(x,y,dx,dy,istouch)
   if istouch then return end
-  
+
   for k, obj in ipairs(self:getObjects()) do
     if obj.cursor then
       local c = obj:cursor(x,y)
@@ -166,7 +166,7 @@ function GUI:_mousemoved(x,y,dx,dy,istouch)
       end
     end
   end
-  
+
   cursor("normal") --Defaults to the normal cursor
 end
 

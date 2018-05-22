@@ -10,7 +10,7 @@ local imgbtn = class("DiskOS.GUI.imageButton",base)
 
 function imgbtn:initialize(gui,x,y)
   base.initialize(self,gui,x,y,0,0)
-  
+
   --self.fimg <- The image when the button is not held
   --self.bimg <- The image when the button is held
   --self.img <- The image when using single-image mode.
@@ -21,39 +21,39 @@ end
 function imgbtn:setImage(img,fcol,bcol,nodraw)
   self.fimg, self.bimg = nil, nil
   self.img, self.fcol, self.bcol = img or self.img, fcol or self.fcol, bcol or self.bcol
-  
+
   if self.img and type(self.img) ~= "number" then
     local imgW, imgH = self.img:size()
     self:setSize(imgW,imgH,true)
   end
   if not nodraw then self:draw() end
-  
+
   return self
 end
 
 function imgbtn:setFrontImage(img,nodraw)
   self.img, self.fcol, self.bcol = nil,nil,nil
   self.fimg = img
-  
+
   if self.fimg and type(self.fimg) ~= "number" then
     local imgW, imgH = self.fgimg:size()
     self:setSize(imgW,imgH,true)
   end
   if not nodraw then self:draw() end
-  
+
   return self
 end
 
 function imgbtn:setBackImage(img,nodraw)
   self.img, self.fcol, self.bcol = nil,nil,nil
   self.bimg = img
-  
+
   if self.bimg and type(self.bimg) ~= "number" then
     local imgW, imgH = self.bgimg:size()
     self:setSize(imgW,imgH,true)
   end
   if not nodraw then self:draw() end
-  
+
   return self
 end
 
@@ -65,21 +65,21 @@ function imgbtn:getBackImage() return self.bimg end
 function imgbtn:draw()
   local lightcol = self:getLightColor()
   local darkcol = self:getDarkColor()
-  
+
   local fimg = self:getFrontImage()
   local bimg = self:getBackImage()
-  
+
   local img, fcol, bcol = self:getImage()
-  
+
   local sheet = self:getSheet()
-  
+
   local x,y = self:getPosition()
   local down = self:isDown()
-  
+
   if down then
     lightcol, darkcol = darkcol, lightcol
   end
-  
+
   if img then --Single-image Mode
     pushPalette()
     pal(fcol,darkcol)
@@ -92,7 +92,7 @@ function imgbtn:draw()
     popPalette()
   else --Multiple images
     local i = down and bimg or fimg
-    
+
     if type(i) == "number" then --SpriteSheet mode
       sheet:draw(i,x,y)
     else --Normal image
@@ -118,7 +118,7 @@ function imgbtn:released(x,y)
       self:onclick()
     end
   end
-  
+
   self:draw() --Update the button
 end
 
