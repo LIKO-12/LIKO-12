@@ -20,9 +20,9 @@ button.static.align = "center"
 --[w],[h] -> The size of the button, automatically calculated by default.
 function button:initialize(gui,text,x,y,align,w,h)
   base.initialize(self,gui,x,y,w,h)
-  
+
   self:setAlign(align or button.static.align, true)
-  
+
   self:setText(text or button.static.text,true)
 end
 
@@ -39,20 +39,20 @@ function button:getAlign() return self.align end
 --Set the button text
 function button:setText(t,nodraw)
   self.text = t or self.text
-  
+
   local x = self:getX()
   local gw = self.gui:getWidth()
-  
+
   local fw = self.gui:getFontWidth()
   local fh = self.gui:getFontHeight()
   local maxlen, wt = wrapText(t,gw-x)
   self:setWidth(maxlen+1,true)
   self:setHeight(#wt*(fh+2),true)
-  
+
   if not nodraw then
     self:draw() --Update the button
   end
-  
+
   return self
 end
 
@@ -67,11 +67,11 @@ function button:draw()
   local w,h = self:getSize()
   local text = self:getText()
   local down = self:isDown()
-  
+
   if down then
     lightcol,darkcol = darkcol,lightcol
   end
-  
+
   rect(x,y,w,h,false,lightcol)
   color(darkcol)
   print(text,x+1,y+1,w-1,self.align)
@@ -94,7 +94,7 @@ function button:released(x,y)
       self:onclick()
     end
   end
-  
+
   self:draw() --Update the button
 end
 
