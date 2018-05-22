@@ -190,7 +190,7 @@ function base:_mousepressed(x,y,b,istouch)
 end
 
 function base:_mousereleased(x,y,b,istouch)
-  if self.touchid or (not self.mousepress) or istouch then return end
+  if istouch or (not self.down) then return end
   self.down = false
   self:released(x,y)
   self.mousepressed = false
