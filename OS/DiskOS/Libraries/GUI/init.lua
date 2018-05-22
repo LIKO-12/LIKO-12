@@ -139,22 +139,18 @@ function GUI:event(event,a,b,c,d,e,f)
   for k, obj in ipairs(self:getObjects()) do
     if obj[event] then
       if obj[event](obj,a,b,c,d,e,f) then
-        return --Event consumed
+        break --Event consumed
       end
     end
+  end
+  
+  if event == "_mousepressed" or event == "_mousereleased" then
+    self:_mousemoved(a,b,0,0,d)
   end
 end
 
 function GUI:redraw()
   self:event("draw")
-end
-
-function GUI:_mousepressed(x,y,button,istouch)
-  self:_mousemoved(x,y,0,0,istouch)
-end
-
-function GUI:_mousereleased(x,y,button,istouch)
-  self:_mousemoved(x,y,0,0,istouch)
 end
 
 function GUI:_mousemoved(x,y,dx,dy,istouch)
