@@ -26,12 +26,25 @@ function container:initialize(gui,parentContainer,x,y,w,h,bgcol,lightcol,darkcol
   
   self.visible = true
   
-  self.sheet = sheet
+  if self.container == self then
+  
+    self.sheet = sheet
+    
+    self.lightcol = lightcol or container.static.lightcol
+    self.darkcol = darkcol or container.static.darkcol
+    self.bgcol = bgcol or container.static.bgcol
+    self.tcol = tcol or container.static.tcol
+    
+  else
+    
+    self:setLightColor(self.container:getLightColor(),true)
+    self:setDarkColor(self.container:getDarkColor(),true)
+    self:setBGColor(self.container:getBGColor(),true)
+    self:setTColor(self.container:getTColor(),true)
 
-  self.lightcol = lightcol or container.static.lightcol
-  self.darkcol = darkcol or container.static.darkcol
-  self.bgcol = bgcol or container.static.bgcol
-  self.tcol = tcol or container.static.tcol
+    self:setSheet(self.container:getSheet(),true)
+    
+  end
 end
 
 --Get object GUI instance.
