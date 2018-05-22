@@ -23,6 +23,8 @@ function base:initialize(gui,x,y,w,h)
   self:setDarkColor(self.gui:getDarkColor(),true)
   self:setBGColor(self.gui:getBGColor(),true)
   self:setTColor(self.gui:getTColor(),true)
+  
+  self:setSheet(self.gui:getSheet())
 end
 
 --Get object GUI instance.
