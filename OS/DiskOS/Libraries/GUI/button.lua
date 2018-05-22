@@ -23,13 +23,17 @@ function button:initialize(gui,text,x,y,align,w,h)
 
   self:setAlign(align or button.static.align, true)
 
-  self:setText(text or button.static.text,true)
+  self:setText(text or button.static.text, true)
 end
 
 --Set the text align in the button label (when using multiline)
 function button:setAlign(align,nodraw)
+  if not nodraw then self:clear() end
+  
   self.align = align or self.align
+  
   if not nodraw then self:draw() end
+  
   return self
 end
 
@@ -38,6 +42,8 @@ function button:getAlign() return self.align end
 
 --Set the button text
 function button:setText(t,nodraw)
+  if not nodraw then self:clear() end
+  
   self.text = t or self.text
 
   local x = self:getX()

@@ -221,7 +221,7 @@ end
 function base:clear()
   local x,y = self:getPosition()
   local w,h = self:getSize()
-  local bgColor = self:getBGColor()
+  local bgColor = self.gui:getBGColor()
   rect(x,y,w,h,false,bgColor)
 end
 

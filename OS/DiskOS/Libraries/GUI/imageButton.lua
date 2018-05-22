@@ -19,6 +19,8 @@ function imgbtn:initialize(gui,x,y)
 end
 
 function imgbtn:setImage(img,fcol,bcol,nodraw)
+  if not nodraw then self:clear() end
+  
   self.fimg, self.bimg = nil, nil
   self.img, self.fcol, self.bcol = img or self.img, fcol or self.fcol, bcol or self.bcol
 
@@ -32,6 +34,8 @@ function imgbtn:setImage(img,fcol,bcol,nodraw)
 end
 
 function imgbtn:setFrontImage(img,nodraw)
+  if not nodraw then self:clear() end
+  
   self.img, self.fcol, self.bcol = nil,nil,nil
   self.fimg = img
 
@@ -45,6 +49,8 @@ function imgbtn:setFrontImage(img,nodraw)
 end
 
 function imgbtn:setBackImage(img,nodraw)
+  if not nodraw then self:clear() end
+  
   self.img, self.fcol, self.bcol = nil,nil,nil
   self.bimg = img
 

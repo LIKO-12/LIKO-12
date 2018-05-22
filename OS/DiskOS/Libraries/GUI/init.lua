@@ -70,7 +70,9 @@ end
 --Create a new object
 function GUI:newObject(name,...)
   local objclass = self:getObjectClass(name) --Get the object class from the loaded objects list
-
+  
+  if not objclass then return error("Object '"..name.."' doesn't exist !") end
+  
   local obj = objclass(self,...) --Create a new object
   self:register(obj) --Register the object in this GUI instance so it's events get called.
 
@@ -128,13 +130,16 @@ function GUI:event(event,a,b,c,d,e,f)
 
   if self[event] then
     if self[event](self,a,b,c,d,e,f) then
-      return --Event consumed
+      return true --Event consumed
     end
   end
+  
+  local consumed = false --Did the even get consumed ?
 
   for k, obj in ipairs(self:getObjects()) do
     if obj[event] then
       if obj[event](obj,a,b,c,d,e,f) then
+        consumed = true
         break --Event consumed
       end
     end
@@ -143,6 +148,8 @@ function GUI:event(event,a,b,c,d,e,f)
   if event == "_mousepressed" or event == "_mousereleased" then
     self:_mousemoved(a,b,0,0,d)
   end
+  
+  return consumed
 end
 
 function GUI:redraw()
