@@ -219,7 +219,7 @@ function base:cursor(x,y)
   if isInRect(x,y,{self:getRect()}) then
     if down then
       return "handpress"
-    else
+    elseif not (isMDown(1) or isMDown(2) or isMDown(3)) then
       return "handrelease"
     end
   end
