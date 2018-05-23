@@ -79,6 +79,20 @@ function slider:getOrientation()
   return self.vertical
 end
 
+function slider:getHandlePosition()
+  local x,y = self:getPosition()
+  local w,h = self:getSize()
+  local length = self:getLength()
+  local value = self:getValue(0,1)
+  local vertical = self:getOrientation()
+  
+  if vertical then
+    return x,y + (length-h)*value
+  else
+    return x + (length-w)*value,y
+  end
+end
+
 function slider:clear()
   local bgcol = self.container:getBGColor()
   local x,y = self:getPosition()
@@ -88,9 +102,9 @@ function slider:clear()
   local vertical = self:getOrientation()
   
   if vertical then
-    rect(x,y-length*value,w,length,false,bgcol)
+    rect(x,y,w,length,false,bgcol)
   else
-    rect(x,y-length*value,length,h,false,bgcol)
+    rect(x,y,length,h,false,bgcol)
   end
 end
 
@@ -99,6 +113,7 @@ function slider:draw()
   local darkcol = self:getDarkColor()
   local tcol = self:getTColor()
   local x,y = self:getPosition()
+  local hx,hy = self:getHandlePosition()
   local w,h = self:getSize()
   local value = self:getValue(0,1)
   local length = self:getLength()
@@ -110,19 +125,21 @@ function slider:draw()
   end
   
   if vertical then
-    line(x+w/2-1,y+1-length*value, x+w/2-1,y+length-2-length*value, tcol)
+    line(x+w/2-1,y+1, x+w/2-1,y+length-2, tcol)
   else
-    line(x+1-length*value,y+h/2-1, x+length-2-length*value,y+h/2-1, tcol)
+    line(x+1,y+h/2-1, x+length-2,y+h/2-1, tcol)
   end
-
-  rect(x,y,w,h,false,lightcol)
+  
+  rect(hx,hy,w,h,false,lightcol)
 end
 
 --Internal functions--
 
 --Handle cursor press
 function slider:pressed(x,y)
-  if isInRect(x,y,{self:getRect()}) then
+  local hx,hy = self:getHandlePosition()
+  local w,h = self:getSize()
+  if isInRect(x,y,{hx,hy,w,h}) then
     self:draw() --Update the button
     return true
   end
@@ -130,21 +147,22 @@ end
 
 function slider:dragged(x,y,dx,dy)
   local vertical = self:getOrientation()
-  local cx, cy = self:getPosition()
-  local l = self:getLength()
-  local v = self:getValue(0,1)
+  local bx, by = self:getPosition()
+  local w,h = self:getSize()
+  local length = self:getLength()
+  
   if vertical then
-    self:setPosition(cx,cy+dy,true)
-    self:setValue(v+dx/l,0,1)
+    self:setValue((y-by)/(length-h),0,1)
   else
-    self:setPosition(cx+dx,cy)
-    --self:setValue()
+    self:setValue((x-bx)/(length-w),0,1)
   end
 end
 
 --Handle cursor release
 function slider:released(x,y)
-  if isInRect(x,y,{self:getRect()}) then
+  local hx,hy = self:getHandlePosition()
+  local w,h = self:getSize()
+  if isInRect(x,y,{hx,hy,w,h}) then
     --[[if self.onclick then
       self:onclick()
     end]]
@@ -160,7 +178,9 @@ function slider:cursor(x,y)
   if down then
     return "handpress"
   else
-    if isInRect(x,y,{self:getRect()}) then
+    local hx,hy = self:getHandlePosition()
+    local w,h = self:getSize()
+    if isInRect(x,y,{hx,hy,w,h}) then
       return "handrelease"
     end
   end
