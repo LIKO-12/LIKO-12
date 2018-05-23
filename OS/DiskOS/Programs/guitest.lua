@@ -72,6 +72,8 @@ function verticalSlider:onchange()
   verticalSliderTextbox:setText("VS: "..math.floor(self:getValue(0,100)).."/100")
 end
 
+local scrollbar = MainState:newObject("scrollbar",screenWidth()-8,7,screenHeight()-7)
+
 local mousePosTextbox = MainState:newObject("textbox",string.format("MX: %d MY: %d",getMPos()),1,0)
 mousePosTextbox:setY(-1):setBGColor(6)
 
