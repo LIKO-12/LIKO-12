@@ -7,8 +7,6 @@ local slider = class("DiskOS.GUI.slider",base)
 
 --Default Values:
 slider.static.length = 32
-slider.static.min = 0
-slider.static.max = 1
 slider.static.value = 0
 slider.static.w = 3
 slider.static.h = 7
@@ -17,12 +15,12 @@ slider.static.h = 7
 --slider.onchange(slider) -> Called when the slide is moved.
 
 --Create a new button object:
---<gui> -> The GUI instance that should contain the button.
---[text] -> The text of the button label.
---[x],[y] -> The position of the top-left corner of the button.
---[align] -> The aligning of the button label text.
---[w],[h] -> The size of the button, automatically calculated by default.
-function slider:initialize(gui,container,x,y,length,vertical,max,min,w,h)
+--<gui> -> The GUI instance that should contain the slider.
+--[x],[y] -> The position of the top-left corner of the slider.
+--[length] -> The length of the slider bar.
+--[vertical] (boolean) -> The orientation of the slider.
+--[w],[h] -> The size of the slider handle, automatically set by default.
+function slider:initialize(gui,container,x,y,length,vertical,w,h)
   if vertical then
     base.initialize(self,gui,container,x,y,h or slider.static.h,w or slider.static.w)
   else
@@ -30,21 +28,35 @@ function slider:initialize(gui,container,x,y,length,vertical,max,min,w,h)
   end
   
   self.vertical = vertical
+  self.value = 0
   
-  self:setValue(slider.static.value, slider.static.min, slider.static.max, true)
   self:setLength(length or slider.static.length, true)
 end
 
 function slider:setValue(v,min,max,nodraw)
+  local min, max = min or 0, max or 0
   if not nodraw then self:clear() end
-  self.value = math.min(math.max(v or self.value,min),max)
+  
+  v = math.min(math.max(v,min),max)
+  
+  if min ~= 0 or max ~= 1 then
+    v = (v-min)/(max-min)
+  end
+  
+  self.value = v
+  
   if not nodraw then self:draw() end
   
   return self
 end
 
 function slider:getValue(min,max)
-  return self.value
+  local min, max = min or 0, max or 0
+  if min == 0 and max == 1 then
+    return self.value
+  else
+    return min + self.value*(max-min)
+  end
 end
 
 function slider:setLength(l,nodraw)
@@ -156,6 +168,8 @@ function slider:dragged(x,y,dx,dy)
   else
     self:setValue((x-bx)/(length-w),0,1)
   end
+  
+  if self.onchange then self:onchange() end
 end
 
 --Handle cursor release
