@@ -269,7 +269,13 @@ function container:event(event,a,b,c,d,e,f)
   local x,y = self:getPosition()
   
   pushMatrix()
-  cam("translate",-x,-y)
+  cam("translate",x,y)
+  
+  if event:sub(2,6) == "mouse" then
+    a,b = a-x, b-y
+  elseif event:sub(2,6) == "touch" then
+    b,c = b-x, c-y
+  end
   
   local consumed = false --Did the even get consumed ?
 
@@ -303,10 +309,12 @@ end
 
 function container:_mousemoved(x,y,dx,dy,istouch)
   if istouch then return end
-
+  
+  local cx,cy = self:getPosition()
+  
   for k, obj in ipairs(self:getObjects()) do
     if obj.cursor then
-      local c = obj:cursor(x,y)
+      local c = obj:cursor(x-cx,y-cy)
       if c then
         return c
       end
