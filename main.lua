@@ -85,8 +85,7 @@ function love.run(arg)
 
     -- Update dt, as we'll be passing it to update
     if love.timer then
-      love.timer.step()
-      dt = love.timer.getDelta()
+      dt = love.timer.step()
     end
 
     -- Call update and draw
@@ -95,8 +94,6 @@ function love.run(arg)
     if love.graphics and love.graphics.isActive() then
       events:trigger("love:graphics")
     end
-
-    if love.timer then love.timer.sleep(0.001) end
 
     if reboot then
       for k,v in pairs(package.loaded) do
