@@ -3,13 +3,68 @@ local path = select(1,...):sub(1,-(string.len("scrollbar")+1))
 local base = require(path..".base")
 local container = require(path..".container")
 
+local onMobile = isMobile()
+
 --Internal images
 local imgdataCheckboard = imagedata("LK12;GPUIMG;2x2;1001;")
 local imgArrowUp = image("LK12;GPUIMG;8x8;7777777777777777777667777766667776666667766666677777777707777770;")
 local imgArrowDown = image("LK12;GPUIMG;8x8;0777777077777777766666677666666777666677777667777777777777777777;")
+local imgBodyCap = image("LK12;GPUIMG;8x2;0066660006777760;")
 
 --Internal objects
 local scrollBody = class("DiskOS.GUI.scrollbar.body",base)
+
+function scrollBody:_update(dt)
+  if not onMobile then
+    if not (isMDown(1) or isMDown(2) or isMDown(3)) then
+      local x,y = getMPos()
+      local inside = isInRect(x,y,{self:getRect()})
+      if not (inside and self.hover) and (inside or self.hover) then
+        self.hover = inside
+        self:draw()
+      end
+    elseif self.hover then
+      self.hover = false
+      self:draw()
+    end
+  end
+end
+
+function scrollBody:draw()
+  local lightcol = self:getLightColor()
+  local darkcol = self:getDarkColor()
+  local x,y = self:getPosition()
+  local w,h = self:getSize()
+  local down = self:isDown()
+
+  if down then
+    lightcol,darkcol = darkcol,lightcol
+  elseif self.hover then
+    darkcol = 10
+  end
+  
+  rect(x,y+2,w,h-4,false,lightcol)
+  line(x,y+1,x,y+h-2-1, darkcol)
+  line(x+w-1,y+1,x+w-1,y+h-2-1, darkcol)
+  
+  pushPalette()
+  pal(6,darkcol) pal(7,lightcol)
+  imgBodyCap:draw(x,y)
+  imgBodyCap:draw(x,y+h,0,1,-1)
+  popPalette()
+  --rect(x,y,w,h,true,darkcol)
+end
+
+function scrollBody:pressed(x,y)
+  if isInRect(x,y,{self:getRect()}) then
+    self:draw() --Update the button
+    return true
+  end
+end
+
+function scrollBody:released(x,y)
+  self:draw()
+end
 
 --Scrollbar
 local scrollbar = class("DiskOS.GUI.scrollbar",container)
@@ -35,11 +90,13 @@ function scrollbar:initialize(gui,parentContainer,x,y,length,horizental)
   
   if horizental then
     self.downButton:setPosition(w-8,0)
+    self.body = scrollBody(gui,self,8,0, w-16,8)
   else
     self.downButton:setPosition(0,h-8)
+    self.body = scrollBody(gui,self,0,8, 8,h-16)
   end
   
-  self.body = scrollBody(gui,self,0,8)
+  
   self:register(self.body)
 end
 

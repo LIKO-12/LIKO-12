@@ -191,7 +191,7 @@ function slider:cursor(x,y)
 
   if down then
     return "handpress"
-  else
+  elseif not (isMDown(1) or isMDown(2) or isMDown(3)) then
     local hx,hy = self:getHandlePosition()
     local w,h = self:getSize()
     if isInRect(x,y,{hx,hy,w,h}) then
