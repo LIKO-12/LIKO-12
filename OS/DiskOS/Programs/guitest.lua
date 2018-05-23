@@ -58,8 +58,22 @@ local trashIcon = image(
 local ib1 = MainState:newObject("imageButton",5,35)
 ib1:setImage(trashIcon,4,9)
 
-local s1 = MainState:newObject("slider", 64,25, 32,false)
-local s2 = MainState:newObject("slider", 64,35, 32,true)
+local horizentalSliderTextbox = MainState:newObject("textbox","HS: 0/100",55,25):setBGColor(6)
+local verticalSliderTextbox = MainState:newObject("textbox","VS: 0/100",55,35):setBGColor(6)
+
+local horizentalSlider = MainState:newObject("slider", 55,15, 32,false)
+local verticalSlider = MainState:newObject("slider", 45,15, 32,true)
+
+function horizentalSlider:onchange()
+  horizentalSliderTextbox:setText("HS: "..math.floor(self:getValue(0,100)).."/100")
+end
+
+function verticalSlider:onchange()
+  verticalSliderTextbox:setText("VS: "..math.floor(self:getValue(0,100)).."/100")
+end
+
+local mousePosTextbox = MainState:newObject("textbox",string.format("MX: %d MY: %d",getMPos()),1,0)
+mousePosTextbox:setY(-1):setBGColor(6)
 
 cursor("normal")
 MainState:draw()
@@ -75,6 +89,8 @@ for event,a,b,c,d,e,f in pullEvent do
     if a == "escape" then
       break
     end
+  elseif event == "mousemoved" then
+    mousePosTextbox:setText(string.format("MX: %d MY: %d",a,b))
   end
   
 end
