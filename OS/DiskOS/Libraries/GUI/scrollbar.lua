@@ -14,22 +14,6 @@ local imgBodyCap = image("LK12;GPUIMG;8x2;0066660006777760;")
 --Internal objects
 local scrollBody = class("DiskOS.GUI.scrollbar.body",base)
 
-function scrollBody:_update(dt)
-  if not onMobile then
-    if not (isMDown(1) or isMDown(2) or isMDown(3)) then
-      local x,y = getMPos()
-      local inside = isInRect(x,y,{self:getRect()})
-      if not (inside and self.hover) and (inside or self.hover) then
-        self.hover = inside
-        self:draw()
-      end
-    elseif self.hover then
-      self.hover = false
-      self:draw()
-    end
-  end
-end
-
 function scrollBody:draw()
   local lightcol = self:getLightColor()
   local darkcol = self:getDarkColor()
@@ -39,8 +23,6 @@ function scrollBody:draw()
 
   if down then
     lightcol,darkcol = darkcol,lightcol
-  elseif self.hover then
-    darkcol = 10
   end
   
   rect(x,y+2,w,h-4,false,lightcol)
