@@ -62,7 +62,7 @@ function base:setX(x,nodraw)
     end
   end
 
-  self.x = x or self.x
+  self.x = (x or self.x) % self.container:getWidth()
   if not nodraw then self:draw() end
 
   return self
@@ -77,7 +77,7 @@ function base:setY(y,nodraw)
     end
   end
 
-  self.y = y or self.y
+  self.y = (y or self.y) % self.container:getHeight()
   if not nodraw then self:draw() end
 
   return self
@@ -244,6 +244,7 @@ end
 function base:_update(dt) end
 function base:draw(dt) end
 function base:pressed(x,y) return false end --Called when the mouse/touch is pressed.
+function base:dragged(x,y,dx,dy) end --Called when the mouse/touch is moved while down.
 function base:released(x,y) end --Called when the mouse/touch is released after returning try from base:pressed.
 
 --Internal functions to handle multitouch and computer mouse
@@ -254,6 +255,12 @@ function base:_mousepressed(x,y,b,istouch)
   self.mousepress = self:pressed(x,y,b)
   self.down = self.mousepress
   return self.mousepress
+end
+
+function base:_mousemoved(x,y,dx,dy,istouch)
+  if istouch or (not self.down) then return end
+  self:dragged(x,y,dx,dy)
+  return true
 end
 
 function base:_mousereleased(x,y,b,istouch)
@@ -275,9 +282,14 @@ function base:_touchpressed(id,x,y)
   return self.touchid
 end
 
+function base:_touchmoved(id,x,y,dx,dy)
+  if (not self.touchid) or self.mousepress or self.touchid ~= id then return end
+  self:dragged(x,y,dx,dy)
+  return true
+end
+
 function base:_touchreleased(id,x,y)
-  if (not self.touchid) or self.mousepress then return end
-  if self.touchid ~= id then return end
+  if (not self.touchid) or self.mousepress or self.touchid ~= id then return end
   self.down = false
   self:released(x,y)
   self.touchid = nil
