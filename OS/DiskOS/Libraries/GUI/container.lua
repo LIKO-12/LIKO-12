@@ -266,6 +266,11 @@ function container:event(event,a,b,c,d,e,f)
     end
   end
   
+  local x,y = self:getPosition()
+  
+  pushMatrix()
+  cam("translate",-x,-y)
+  
   local consumed = false --Did the even get consumed ?
 
   for k, obj in ipairs(self:getObjects()) do
@@ -281,6 +286,8 @@ function container:event(event,a,b,c,d,e,f)
       end
     end
   end
+  
+  popMatrix()
 
   if event == "_mousepressed" or event == "_mousereleased" then
     self:_mousemoved(a,b,0,0,d)

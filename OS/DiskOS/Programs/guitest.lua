@@ -33,6 +33,11 @@ end
 
 local b1 = MainState:newObject("button","Button",5,25)
 
+local redrawButton = MainState:newObject("button","Redraw",5,15)
+function redrawButton:onclick()
+  self:getGUI():draw()
+end
+
 local trashIcon = image(
 [[LK12;GPUIMG;13x13;
 5999999999995
@@ -52,7 +57,9 @@ local trashIcon = image(
 
 local ib1 = MainState:newObject("imageButton",5,35)
 ib1:setImage(trashIcon,4,9)
---local s1 = MainState:newObject("slider", 20,20)
+
+local s1 = MainState:newObject("slider", 64,25, 32,false)
+local s2 = MainState:newObject("slider", 64,35, 32,true)
 
 cursor("normal")
 MainState:draw()
