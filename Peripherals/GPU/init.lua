@@ -183,6 +183,14 @@ return function(config) --A function that creates a new GPU peripheral.
     love.filesystem.createDirectory("Shaders")
   end
   
+  if not love.filesystem.getInfo("Screenshots","directory") then
+    love.filesystem.createDirectory("Screenshots")
+  end
+  
+  if not love.filesystem.getInfo("GIF Recordings","directory") then
+    love.filesystem.createDirectory("GIF Recordings")
+  end
+  
   local _ActiveShaderID = 0
   local _ActiveShaderName = "None"
   local _ActiveShader
@@ -207,8 +215,8 @@ return function(config) --A function that creates a new GPU peripheral.
   local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
   
   local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo() --Used to apply some device specific bugfixes.
-  if not love.filesystem.getInfo("/GPUInfo.txt","file") then love.filesystem.write("/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
-  if not love.filesystem.getInfo("/GPUCanvasFormats.txt","file") then
+  if not love.filesystem.getInfo("/Misc/GPUInfo.txt","file") then love.filesystem.write("/Misc/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
+  if not love.filesystem.getInfo("/Misc/GPUCanvasFormats.txt","file") then
     local formats = {}
     for k,v in pairs(_CanvasFormats) do
       if v then table.insert(formats,k) end
@@ -221,21 +229,21 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     table.sort(rformats)
     rformats = table.concat(rformats,"\n")
-    love.filesystem.write("/GPUCanvasFormats.txt",formats.."\n\nReadable:\n\n"..rformats)
+    love.filesystem.write("/Misc/GPUCanvasFormats.txt",formats.."\n\nReadable:\n\n"..rformats)
   end
   
   local calibVersion,ofs = 1.4
-  if love.filesystem.getInfo("GPUCalibration.json","file") then
-    ofs = json:decode(love.filesystem.read("/GPUCalibration.json"))
+  if love.filesystem.getInfo("/Misc/GPUCalibration.json","file") then
+    ofs = json:decode(love.filesystem.read("/Misc/GPUCalibration.json"))
     if ofs.version < calibVersion then --Redo calibration
       ofs = love.filesystem.load(perpath.."calibrate.lua")()
       ofs.version = calibVersion
-      love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
+      love.filesystem.write("/Misc/GPUCalibration.json",json:encode_pretty(ofs))
     end
   else
     ofs = love.filesystem.load(perpath.."calibrate.lua")()
     ofs.version = calibVersion
-    love.filesystem.write("/GPUCalibration.json",json:encode_pretty(ofs))
+    love.filesystem.write("/Misc/GPUCalibration.json",json:encode_pretty(ofs))
   end
   
   if gpuVersion == "OpenGL ES 3.1 v1.r7p0-03rel0.b8759509ece0e6dda5325cb53763bcf0" then
@@ -405,7 +413,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
     _GIFRec:close()
     _GIFRec = nil
-    love.filesystem.write("/LIKO12-"..os.time()..".gif",love.filesystem.read("/~gifrec.gif"))
+    love.filesystem.write("/GIF Recordings/LIKO12-"..os.time()..".gif",love.filesystem.read("/~gifrec.gif"))
     love.filesystem.remove("/~gifrec.gif")
     love.filesystem.remove("/~gifrec.pal")
   end
@@ -1618,7 +1626,7 @@ return function(config) --A function that creates a new GPU peripheral.
       local sc = GPU.screenshot()
       sc = sc:enlarge(_ScreenshotScale)
       local png = sc:exportOpaque()
-      love.filesystem.write("/LIKO12-"..os.time()..".png",png)
+      love.filesystem.write("/Screenshots/LIKO12-"..os.time()..".png",png)
       systemMessage("Screenshot has been taken successfully",2)
     elseif key == _LabelCaptureKey then
       love.graphics.setCanvas()

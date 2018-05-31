@@ -1,6 +1,6 @@
 --The BIOS should control the system of LIKO-12 and load the peripherals--
 --For now it's just a simple BIOS to get LIKO-12 working.
-local DevMode = love.filesystem.getInfo("devmode.txt") and true or false
+local DevMode = love.filesystem.getInfo("Misc/devmode.txt") and true or false
 local BuildMode = love.filesystem.getInfo("build.json") and true or false
 
 local json = require("Engine.JSON")
@@ -10,14 +10,18 @@ if BuildMode then
   BuildMode = json:decode(love.filesystem.read("build.json"))
 end
 
+if not love.filesystem.getInfo("Misc","directory") then
+  love.filesystem.createDirectory("Misc")
+end
+
 local _LIKO_Version, _LIKO_Old = _LVERSION:sub(2,-1)
-if love.filesystem.getInfo(".version","file") then
-  _LIKO_Old = love.filesystem.read(".version")
+if love.filesystem.getInfo("Misc/.version","file") then
+  _LIKO_Old = love.filesystem.read("Misc/.version")
   if _LIKO_Old == _LIKO_Version then
     _LIKO_Old = false
   end
 else
-  love.filesystem.write(".version",tostring(_LIKO_Version))
+  love.filesystem.write("Misc/.version",tostring(_LIKO_Version))
 end
 
 --Require the engine libraries--
@@ -154,9 +158,9 @@ do
   
   --Returns LIKO-12_Source.love data
   function yAPIS.BIOS.getSRC()
-    if not love.filesystem.getInfo("/LIKO-12_Source.love") then return false, "LIKO-12_Source.love doesn't exist ! Try to reboot." end
+    if not love.filesystem.getInfo("/Misc/LIKO-12_Source.love") then return false, "LIKO-12_Source.love doesn't exist ! Try to reboot." end
     
-    return true, love.filesystem.read("/LIKO-12_Source.love")
+    return true, love.filesystem.read("/Misc/LIKO-12_Source.love")
   end
   
 end
