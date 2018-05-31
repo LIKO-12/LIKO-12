@@ -74,9 +74,10 @@ elseif args[1] == "-v" then
   print(version)
 elseif #args < 1 then
   -- when interactively
+  local history = {}
   while true do
     color(7) print(env["PROMPT"].." ",false)
-    code = input(); print("")
+    code = TextUtils.textInput(history); print("")
     if not code or code == "exit" then break end
     execute(code)
   end
