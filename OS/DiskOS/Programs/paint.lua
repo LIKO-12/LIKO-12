@@ -38,13 +38,13 @@ elseif tar == "@clip" then
     color(9) print("Input image size:")
   
     color(11) print("Width: ",false)
-    color(7) local width = input()
+    color(7) local width = TextUtils.textInput()
     if not width or width:len() == 0 then print("") return end
     local w = tonumber(width)
     if not w then return 1, "\nInvalid Width: "..width..", width must be a number !" end
   
     color(11) print(", Height: ",false)
-    color(7) local height = input()
+    color(7) local height = TextUtils.textInput()
     if not height or height:len() == 0 then print("") return end
     local h = tonumber(height)
     if not h then return 1, "\nInvalid Height: "..height..", height must be a number !" end
@@ -81,13 +81,13 @@ else
     color(9) print("Input image size:")
   
     color(11) print("Width: ",false)
-    color(7) local width = input()
+    color(7) local width = TextUtils.textInput()
     if not width or width:len() == 0 then print("") return end
     local w = tonumber(width)
     if not w then return 1, "\nInvalid Width: "..width..", width must be a number !" end
   
     color(11) print(", Height: ",false)
-    color(7) local height = input()
+    color(7) local height = TextUtils.textInput()
     if not height or height:len() == 0 then print("") return end
     local h = tonumber(height)
     if not h then return 1, "\nInvalid Height: "..height..", height must be a number !" end
