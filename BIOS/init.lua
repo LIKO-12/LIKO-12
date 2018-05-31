@@ -158,7 +158,7 @@ do
   
   --Returns LIKO-12_Source.love data
   function yAPIS.BIOS.getSRC()
-    if not love.filesystem.getInfo("/Misc/LIKO-12_Source.love") then return false, "LIKO-12_Source.love doesn't exist ! Try to reboot." end
+    if not love.filesystem.getInfo("/Misc/LIKO-12_Source.love") then return true, false, "LIKO-12_Source.love doesn't exist ! Try to reboot." end
     
     return true, love.filesystem.read("/Misc/LIKO-12_Source.love")
   end
