@@ -19,7 +19,7 @@ local fs = Handled.HDD
 local _LIKO_Version, _LIKO_Old = BIOS.getVersion()
 
 if _LIKO_Old then
-  love.filesystem.write(".version",tostring(_LIKO_Version)) --Update the .version file
+  love.filesystem.write("Misc/.version",tostring(_LIKO_Version)) --Update the .version file
 end
 
 local sw,sh = GPU.screenSize()

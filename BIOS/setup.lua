@@ -246,11 +246,11 @@ options = {
   end},
   
   {"- Toggle DEVMODE", function()
-    if love.filesystem.getInfo("devmode.txt","file") then
-      love.filesystem.remove("devmode.txt")
+    if love.filesystem.getInfo("Misc/devmode.txt","file") then
+      love.filesystem.remove("Misc/devmode.txt")
       GPU._systemMessage("Disabled DEVMODE",1,1,12)
     else
-      love.filesystem.write("devmode.txt","")
+      love.filesystem.write("Misc/devmode.txt","")
       GPU._systemMessage("Enabled DEVMODE",1,1,12)
     end
   end},
