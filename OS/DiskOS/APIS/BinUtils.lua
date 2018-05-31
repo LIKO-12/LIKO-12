@@ -1,6 +1,6 @@
 --Binary Utilities.
 
---Variabes.
+--Variables.
 local sw,sh = screenSize()
 
 --Localized Lua Library
@@ -193,5 +193,5 @@ function BinUtils.binReader(data)
   end
 end
 
---Make the ramutils a global
+--Make the binutils a global
 _G["BinUtils"] = BinUtils
