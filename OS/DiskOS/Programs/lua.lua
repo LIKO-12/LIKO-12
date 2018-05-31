@@ -5,12 +5,14 @@ if select(1,...) == "-?" then
   return
 end
 
+local history = {}
+
 print("LuaJIT ".._VERSION)
 print("Type 'exit' to exit")
 pushColor()
 while true do
   color(7) print("> ",false)
-  local code = input(); print("")
+  local code = TextUtils.textInput(history); print("")
   if not code or code == "exit" then break end
   local chunk, err = loadstring(code)
   if not chunk then
