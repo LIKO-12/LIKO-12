@@ -337,6 +337,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local MSGTimer = 0 --The message timer.
   
   local function systemMessage(msg,time,tcol,col,hideInGif)
+    if not msg then MSGTimer = 0 end --Clear last message
     if type(msg) ~= "string" then return false, "Message must be a string, provided: "..type(msg) end
     
     if time and type(time) ~= "number" then return false, "Time must be a number or a nil, provided: "..type(time) end
