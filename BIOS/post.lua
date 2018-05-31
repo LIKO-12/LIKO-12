@@ -108,7 +108,7 @@ if _LIKO_Old or not love.filesystem.getInfo("/LIKO-12_Source.love") then
 end
 
 GPU.printCursor(0,3,0)
-GPU.print(string.format("NormBIOS Revision %d%d%d-016",_LVer.magor,_LVer.minor,_LVer.patch))
+GPU.print(string.format("NormBIOS Revision %d%d%d-017",_LVer.magor,_LVer.minor,_LVer.patch))
 if DevMode then GPU.color(6) GPU.print("# Devmode Enabled #") GPU.color(7) end
 GPU.print("")
 
