@@ -221,6 +221,10 @@ function edit:switchEditor(neweditor)
   end
 end
 
+function edit:import()
+  
+end
+
 function edit:import(data) --Import editors data
   data = data:gsub("\r\n","\n")
   local savePos = {}
@@ -255,6 +259,24 @@ function edit:export() --Export editors data
     end
   end
   return save
+end
+
+function edit:export()
+  local edata = {}
+  
+  for k = #self.saveid, 1, -1 do
+    local v = self.saveid[k]
+    if v ~= -1 and self.leditors[k].export then
+      
+      local data = self.leditors[k]:export()
+      if type(data) ~= "nil" then
+        edata[v] = data
+      end
+      
+    end
+  end
+  
+  return edata
 end
 
 function edit:encode() --Encode editors data into binary

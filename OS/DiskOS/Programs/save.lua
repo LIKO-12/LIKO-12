@@ -60,22 +60,16 @@ elseif string.lower(flag) == "--code" then
 end
 
 eapi.filePath = destination
---              LK12;OSData;OSName;DataType;Version;Compression;CompressLevel;data"
-local header, data, savedata = "LK12;OSData;DiskOS;DiskGame;V".._DiskVer..";"..sw.."x"..sh..";C:"
+
+local editorsData = eapi:export()
+local diskData = ""
 
 if string.lower(flag) == "-c" then
-  data = eapi:export()
-  data = math.b64enc(math.compress(data, ctype, clvl))
-  header = header..ctype..";CLvl:"..tostring(clvl)..";"
-  savedata = header.."\n"..data
+  diskData = DiskUtils.encodeDiskGame(editorsData,ctype,clvl)
 elseif string.lower(flag) == "-b" or png then
-  data = eapi:encode()
-  header = header.."binary;Rev:1;"
-  savedata = header..data
+  diskData = DiskUtils.encodeDiskGame(editorsData,"binary")
 else
-  data = eapi:export()
-  header = header.."none;CLvl:0;"
-  savedata = header.."\n"..data
+  diskData = DiskUtils.encodeDiskGame(editorsData)
 end
 
 if string.lower(flag) == "-color" and png then
@@ -83,16 +77,16 @@ if string.lower(flag) == "-color" and png then
 end
 
 if destination == "@clip" then
-  clipboard(savedata)
+  clipboard(diskData)
 elseif png then
-  local savesize = savedata:len()
-  if savesize > 64*1024 then
-    return 1, "Save too big to fit in a floppy disk ("..(math.floor(savesize/102.4)*10).." kb/ 64 kb) !"
+  local diskSize = #diskData
+  if diskSize > 64*1024 then
+    return 1, "Save too big to fit in a floppy disk ("..(math.floor(diskSize/102.4)*10).." kb/ 64 kb) !"
   end
-  memset(RamUtils.FRAM, savedata)
+  memset(RamUtils.FRAM, diskData)
   fs.write(destination, FDD.exportDisk())
 else
-  fs.write(destination,savedata)
+  fs.write(destination,diskData)
 end
 
 color(11) print(destination == "@clip" and "Saved to clipboard successfully" or "Saved successfully")
