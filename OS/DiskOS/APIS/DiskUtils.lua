@@ -1,7 +1,7 @@
 --Disk File (.lk12) Utilities.
 
 --Variables.
-
+local sw, sh = screenSize()
 
 --Localized Lua Library
 
@@ -16,7 +16,7 @@ function DiskUtils.encodeDiskGame(edata,ctype,clvl)
   local header = string.format("LK12;OSData;DiskOS;DiskGame;V%d;%dx%d;C:",_DiskVer,sw,sh)
   
   --Binary encoding.
-  if ctype == "bin" then
+  if ctype == "binary" then
     local null = BinUtils.Null --0x00 Character
   
     local bHeader, hid = {}, 2 --The header, contains the saveid and the data size.
@@ -68,7 +68,7 @@ else
     --Store
     else
       
-      return header.."none;CLvl:0;"..body
+      return header.."none;CLvl:0;\n"..body
     end
   end
 end
@@ -140,8 +140,6 @@ function DiskUtils.decodeDiskGame(diskData)
   if not dataver then return error("Invalid Data !") end
   if dataver > _DiskVer then return error("Can't load disks newer than V".._DiskVer..", provided: V"..dataver) end
   if dataver < _MinDiskVer then return error("Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk") end
-  
-  local sw, sh = screenSize()
 
   local datares = nextarg()
   if not datares then return error("Invalid Data !") end
