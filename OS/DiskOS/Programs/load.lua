@@ -105,7 +105,7 @@ if not dataver then return 1, "Invalid Data !" end
 dataver = tonumber(string.match(dataver,"V(%d+)"))
 if not dataver then return 1, "Invalid Data !" end
 if dataver > _DiskVer then return 1, "Can't load disks newer than V".._DiskVer..", provided: V"..dataver end
-if dataver < _MinDiskVer then color(8) return 1, "Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk" end
+if dataver < _MinDiskVer then return 1, "Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk" end
 
 local sw, sh = screenSize()
 
@@ -140,9 +140,9 @@ if compress == "binary" then
 else
   
   local clevel = nextarg()
-  if not clevel then color(8) print("Invalid Data !") return 1, "Invalid Data !" end
+  if not clevel then return 1, "Invalid Data !" end
   clevel = string.match(clevel,"CLvl:(.+)")
-  if not clevel then color(8) print("Invalid Data !") return 1, "Invalid Data !" end clevel = tonumber(clevel)
+  if not clevel then return 1, "Invalid Data !" end clevel = tonumber(clevel)
 
   local data = saveData:sub(datasum+2,-1)
 
