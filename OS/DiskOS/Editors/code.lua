@@ -56,7 +56,11 @@ local syntaxTheme = {
 }
 syntax:setTheme(syntaxTheme)
 
-ce.bgc = 5--Background Color
+local editorTheme = {
+  bg = 5, --Background Color
+  cursor = 4 --Cursor Color
+}
+ce.theme = editorTheme
 ce.cx, ce.cy = 1, 1 --Cursor Position
 ce.fw, ce.fh = fontSize() --The font character size
 ce.tw, ce.th = termSize() --The terminal size
@@ -158,7 +162,7 @@ function ce:drawBlink()
   if self.sxs then return end
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   if self.bflag then
-    rect((self.cx-self.vx+1)*(self.fw+1)-4,(self.cy-self.vy+1)*(self.fh+2)+1, self.fw+1,self.fh, false, 4)
+    rect((self.cx-self.vx+1)*(self.fw+1)-4,(self.cy-self.vy+1)*(self.fh+2)+1, self.fw+1,self.fh, false, self.theme.cursor)
   end
 end
 
@@ -166,7 +170,7 @@ end
 function ce:drawBuffer()
   local vbuffer = lume.slice(buffer,self.vy,self.vy+self.th-1) --Visible buffer
   local cbuffer = self.colorize and syntax:highlightLines(vbuffer, self.vy) or vbuffer
-  rect(0,7,screenW,screenH-8*2+1,false,self.bgc)
+  rect(0,7,screenW,screenH-8*2+1,false,self.theme.bg)
   for k, l in ipairs(cbuffer) do
     if self.sxs and self.vy+k-1 >= self.sys and self.vy+k-1 <= self.sye then --Selection
       printCursor(-(self.vx-2)-1,k,syntaxTheme.selection)
@@ -200,8 +204,8 @@ function ce:drawLine()
     cline, colateral = syntax:highlightLine(buffer[self.cy], self.cy)
   end
   if not cline then cline = buffer[self.cy] end
-  rect(0,(self.cy-self.vy+2)*(self.fh+2)-(self.fh+2), screenW,self.fh+2, false,self.bgc)
-  printCursor(-(self.vx-2)-1,(self.cy-self.vy+1),self.bgc)
+  rect(0,(self.cy-self.vy+2)*(self.fh+2)-(self.fh+2), screenW,self.fh+2, false,self.theme.bg)
+  printCursor(-(self.vx-2)-1,(self.cy-self.vy+1),self.theme.bg)
   if not colateral then
     self:colorPrint(cline)
   else
