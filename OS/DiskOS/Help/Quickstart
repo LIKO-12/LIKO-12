@@ -22,7 +22,7 @@ The \6'escape'\7 key mentioned in the docs is the same of your device \6'back'\7
  \7edit \5-\6 Allows you to edit system files.
  \7appdata \5-\6 Opens \LIKO-12\6 appdata folder.
  \7programs \5-\6 Lists installed programs.
- \7save <file> -c \5-\6 Saves with compression mode, required to upload via pastebin.
+ \7save <file> -c \5-\6 Saves with compression mode.
  \7pastebin \5-\6 Uploads and Downloads from pastebin.
 
 \9Press escape/back to switch to Editors Mode !\7
