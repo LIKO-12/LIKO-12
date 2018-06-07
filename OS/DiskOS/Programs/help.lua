@@ -141,9 +141,14 @@ end
 
 doc = doc:gsub("\r\n","\n")
 doc = doc:gsub("\\LIKO%-12","\\CL\\8I\\BK\\9O\\7-\\F12")
+doc = doc:gsub("\\DiskOS","\\CD\\6isk\\COS")
 
 color(7)
 
+flip() clearEStack()
+
 sprint(doc)
+
+flip() clearEStack()
 
 print("")

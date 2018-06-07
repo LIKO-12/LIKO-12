@@ -1,11 +1,16 @@
 \BWelcome to \LIKO-12\B !\7
-\6the opensource fantasy computer that's completely written in Lua.
+\6the open-source fantasy computer that's completely written in Lua.
 
 \LIKO-12\7 is a \6tool\7 for creating \6retro-looking\7 games programmed in \CLua\7.
-By pressing \Cescape/back\7 in the terminal, the editors mode will be activated.
-You'll see editors for \6Code\7,\6Sprites\7,\6Map\7,\6SFX\7 and \6Music\7.
 
-You can switch back to the terminal by pressing \Cescape/back\7 again.
+It provides a \6programming environment\7 inside of a \6virtual computer\7 that has \Climited\6 capabilities\7, with a default \6operating system\7 installed, called \DiskOS\7.
 
-Try that now, once done,
-Type \9help Editors\7.
+When \DiskOS\7 boots, it will show you a \6terminal\7, which is waiting for you to input commands in.
+
+But not only that, DiskOS also comes with \6user-friendly editors\7 for editing \6Code\7,\6Sprites\7,\6Map\7,\6SFX\7 and \6Music\7 of your games !
+
+You can access those editors be pressing \Cescape/back\7.
+
+and then switch back to the terminal by pressing \Cescape/back\7 again.
+
+Try that \6now\7 !, toy around with the editors. And once done, Type \9help Editors\7.
