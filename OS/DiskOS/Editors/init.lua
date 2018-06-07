@@ -221,15 +221,6 @@ function edit:switchEditor(neweditor)
   end
 end
 
-function edit:import(edata)
-  for saveId, saveData in pairs(edata) do
-    local editorId = self.saveid[saveId]
-    if editorId and self.leditors[editorId].import then
-      self.leditors[editorId]:import(saveData)
-    end
-  end
-end
-
 function edit:export() --Export editors data
   local edata = {}
   
@@ -248,85 +239,39 @@ function edit:export() --Export editors data
   return edata
 end
 
+function edit:import(edata)
+  for saveId, saveData in pairs(edata) do
+    local editorId = self.saveid[saveId]
+    if editorId and self.leditors[editorId].import then
+      self.leditors[editorId]:import(saveData)
+    end
+  end
+end
+
 function edit:encode() --Encode editors data into binary
-  local null = BinUtils.Null
+  local edata = {}
   
-  local header, hid = {}, 2
-  local chunks, cid = {}, 1
-  local largest = 0
   for k = #self.saveid, 1, -1 do
     local v = self.saveid[k]
     if v ~= -1 and self.leditors[k].encode then
+      
       local data = self.leditors[k]:encode()
-      if data then
-        local size = data:len()
-        largest = largest > size and largest or size
-        
-        header[hid] = v
-        header[hid+1] = null
-        header[hid+2] = size
-        chunks[cid] = data
-        hid, cid = hid+3, cid+1
+      if type(data) ~= "nil" then
+        edata[v] = data
       end
+      
     end
   end
   
-  largest = BinUtils.numLength(largest)
-  
-  header[1] = string.char(largest)
-  header[hid] = null
-  
-  for id, value in pairs(header) do
-    if type(value) == "number" then
-      header[id] = BinUtils.numToBin(value,largest)
-    end
-  end
-  
-  header = table.concat(header)
-  chunks = table.concat(chunks)
-  
-  return header..chunks
+  return edata
 end
 
-function edit:decode(bindata) --decode editors data from binary
-  local iter, counter = BinUtils.binIter(bindata)
-  
-  local lengthSize = iter()
-  
-  local names, nid = {}, 1
-  local lengths, lid = {}, 1
-  
-  --Read the header
-  while true do
-    local startPos = counter()+1
-    while true do
-      if iter() == 0 then
-        break
-      end
+function edit:decode(edata) --Decode editors data from binary
+  for saveId, saveData in pairs(edata) do
+    local editorId = self.saveid[saveId]
+    if editorId and self.leditors[editorId].decode then
+      self.leditors[editorId]:decode(saveData)
     end
-    local endPos = counter()-1
-    
-    local saveid = bindata:sub(startPos, endPos)
-    
-    if saveid == "" then break end
-    
-    for i=1,lengthSize do iter() end
-    
-    names[nid] = saveid
-    lengths[lid] = BinUtils.binToNum(bindata:sub(endPos+2,endPos+lengthSize+1))
-    
-    nid, lid = nid+1, lid+1
-  end
-  
-  --Read the chunks
-  local cStart = counter()+1
-  for i, len in ipairs(lengths) do
-    local id = self.saveid[names[i]]
-    if id and self.leditors[id].decode then
-      local data = bindata:sub(cStart, cStart+len-1)
-      self.leditors[id]:decode(data)
-    end
-    cStart = cStart + len
   end
 end
 
