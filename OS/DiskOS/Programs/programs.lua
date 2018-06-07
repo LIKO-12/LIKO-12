@@ -29,7 +29,7 @@ local maxWidth, wrapped = wrapText(listString,sw)
 
 flip() clearEStack()
 
-print("")
+color(11) print("Available Programs:\n")
 
 for lineNumber, line in ipairs(wrapped) do
   color(6 + lineNumber%2)
