@@ -221,47 +221,16 @@ function edit:switchEditor(neweditor)
   end
 end
 
-function edit:import()
-  
-end
-
-function edit:import(data) --Import editors data
-  data = data:gsub("\r\n","\n")
-  local savePos = {}
-  for k = #self.saveid, 1, -1 do
-    local v = self.saveid[k]
-    if v ~= -1 and self.leditors[k].import then
-      local dstart, dend = string.find(data,"___"..tostring(v).."___")
-      if dstart then
-        dstart = dend+2
-        local dend, nextstart = string.find(data,"___",dstart)
-        if dend then
-          dend = dend-2
-        else
-          dend = -2 --The end of the file ignoring the last new line
-        end
-        local save = string.sub(data,dstart,dend)
-        self.leditors[k]:import(save)
-      end
+function edit:import(edata)
+  for saveId, saveData in pairs(edata) do
+    local editorId = self.saveid[saveId]
+    if editorId and self.leditors[editorId].import then
+      self.leditors[editorId]:import(saveData)
     end
   end
 end
 
 function edit:export() --Export editors data
-  local save = ""
-  for k = #self.saveid, 1, -1 do
-    local v = self.saveid[k]
-    if v ~= -1 and self.leditors[k].export then
-      local data = self.leditors[k]:export()
-      if type(data) ~= "nil" then
-        save = save.."___"..tostring(v).."___\n"..data:gsub("___","").."\n"
-      end
-    end
-  end
-  return save
-end
-
-function edit:export()
   local edata = {}
   
   for k = #self.saveid, 1, -1 do
