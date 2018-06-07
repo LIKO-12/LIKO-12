@@ -198,13 +198,12 @@ function LK12Utils.decodeDiskGame(diskData)
     --Read the chunks
     local cStart = counter()+1
     for i, len in ipairs(lengths) do
-      local id = self.saveid[names[i]]
       local chunk = diskBody:sub(cStart, cStart+len-1)
-      edata[id] = chunk
+      edata[names[i]] = chunk
       cStart = cStart + len
     end
     
-    return edata
+    return edata, true
     
   else
     
@@ -248,7 +247,7 @@ function LK12Utils.decodeDiskGame(diskData)
       edata[saveId] = saveData
     end
     
-    return edata
+    return edata, false
   end
 end
 

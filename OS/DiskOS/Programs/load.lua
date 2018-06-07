@@ -62,9 +62,14 @@ if lk12Type ~= "OSData" then
   end
 end
 
-local eData, errMsg = LK12Utils.decodeDiskGame(lk12Data)
+local eData, binary = LK12Utils.decodeDiskGame(lk12Data)
+if not eData then return 1, binary or "Unkown Error" end
 
-eapi:import(eData)
+if binary then
+  eapi:decode(eData)
+else
+  eapi:import(eData)
+end
 
 eapi.filePath = source
 
