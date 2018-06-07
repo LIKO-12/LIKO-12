@@ -61,7 +61,7 @@ end
 
 eapi.filePath = destination
 
-local editorsData = eapi:export()
+local editorsData = (string.lower(flag) == "-b" or png) and eapi:encode() or eapi:export()
 local diskData = ""
 
 if string.lower(flag) == "-c" then
