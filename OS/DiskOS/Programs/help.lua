@@ -96,6 +96,14 @@ local function sprint(text)
         local nnchar = iter()
         printCursor(false,false,tonumber(nnchar,16))
         curX = curX - 1
+      elseif nchar == "x" then
+        local nnchars = iter()..iter()
+        local echar = tonumber(nnchars,16)
+        if echar then
+          print(string.char(echar),false)
+        else
+          curX = curX - 1
+        end
       else
         color(tonumber(nchar,16))
         curX = curX - 1
