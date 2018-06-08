@@ -92,11 +92,16 @@ local function sprint(text)
       local nchar = iter()
       if nchar == "\\" then
         print(nchar,false)
+      elseif nchar == "*" then
+        local nnchar = iter()
+        printCursor(false,false,tonumber(nnchar,16))
+        curX = curX - 1
       else
         color(tonumber(nchar,16))
         curX = curX - 1
       end
     elseif char == "`" then
+      printCursor(false,false,(codeBlockFlag and 0 or 5))
       color(codeBlockFlag and 7 or 6)
       codeBlockFlag = not codeBlockFlag
       curX = curX - 1
@@ -119,10 +124,12 @@ local function sprint(text)
           skipY = skipY - 1
         else
           pushColor() color(9)
+          local _, _, pc = printCursor()
+          printCursor(false,false,0)
           print(msg,false) flip()
           local quit = waitkey()
           for i=1,msglen do printBackspace() end
-          popColor()
+          popColor() printCursor(false,false,pc)
           if quit then return true end
         end
       end
