@@ -11,9 +11,10 @@ local tohex = bit.tohex
 local counter = 0
 
 for i=128, 255 do
- if counter == 7 then print("") counter = 0 end
- counter = counter + 1
- color(6) print(tohex(i,2):upper(),false)
- color(5) print(":",false)
- color(7) print(string.char(i).." ",false)
+  if counter == 7 then print("") counter = 0 end
+  counter = counter + 1
+  color(6) print(tohex(i,2):upper(),false)
+  color(5) print(":",false)  printCursor(false,false,5)  color(7) print(string.char(i),false)
+  printCursor(false,false,0)
+  print(" ",false)
 end
