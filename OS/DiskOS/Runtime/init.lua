@@ -1,7 +1,6 @@
 --Games runtime API
 
 local term = require("terminal")
-local eapi = require("Editors")
 
 local MainDrive = term.getMainDrive()
 
@@ -29,7 +28,7 @@ end
 
 function rt.loadGame(edata)
   
-  local edata = edata or eapi:export()
+  local edata = edata or (require("Editors"):export())
   
   local glob = _FreshGlobals()
   glob._G = glob --Magic ;)
