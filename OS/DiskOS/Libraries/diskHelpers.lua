@@ -33,11 +33,10 @@ function fget(id,n)
   if n and type(n) ~= "number" then return error("BitNumber must be a number, provided: "..type(n)) end
   local id = math.floor(id)
   local n = n; if n then n = math.floor(n) end
-  local flags = SheetFlagsData or string.char(0)
-  if type(flags) ~= "string" or flags:len() == 0 then return error("Corrupted SheetFlagsData") end
-  if id < 1 then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
-  if id > flags:len() then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
-  local flag = string.byte(flags:sub(id,id))
+  local sheet = SpriteMap
+  if id < 1 then return error("SpriteId is out of range ("..id..") expected [1,"..#sheet.quads.."]") end
+  if id > #sheet.quads then return error("SpriteId is out of range ("..id..") expected [1,"..#sheet.quads.."]") end
+  local flag = sheet:flag(id)
   if n then
     if n < 1 then return error("BitNumber is out of range ("..n..") expected [1,8]") end
     if n > 8 then return error("BitNumber is out of range ("..n..") expected [1,8]") end
@@ -55,12 +54,11 @@ function fset(id,n,v)
   if type(id) ~= "number" then return error("SpriteId must be a number, provided: "..type(id)) end
   local id = math.floor(id)
   
-  local flags = SheetFlagsData or string.char(0)
-  if type(flags) ~= "string" or flags:len() == 0 then return error("Corrupted FlagsData") end
+  local sheet = SpriteMap
   
-  if id < 1 then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
-  if id > flags:len() then return error("SpriteId is out of range ("..id..") expected [1,"..flags:len().."]") end
-  local flag = string.byte(flags:sub(id,id))
+  if id < 1 then return error("SpriteId is out of range ("..id..") expected [1,"..#sheet.quads.."]") end
+  if id > #sheet.quads then return error("SpriteId is out of range ("..id..") expected [1,"..#sheet.quads.."]") end
+  local flag = sheet:flag(id)
   
   if type(v) == "boolean" then
     if type(n) ~= "number" then return error("BitNumber must be a number, provided: "..type(n)) end
@@ -76,15 +74,13 @@ function fset(id,n,v)
       n = bit.bnot(n)
       flag = bit.band(flag,n)
     end
-    SheetFlagsData = flags:sub(0,id-1)..string.char(flag)..flags:sub(id+1,-1)
   else
     if type(n) ~= "number" then return error("FlagValue must be a number") end
     n = math.floor(n)
     if n < 1 then return error("FlagValue is out of range ("..n..") expected [1,255]") end
     if n > 255 then return error("FlagValue is out of range ("..n..") expected [1,255]") end
-    flag = string.char(n)
-    SheetFlagsData = flags:sub(0,id-1)..flag..flags:sub(id+1,-1)
   end
+  sheet:flag(id,flag)
 end
 
 --DrawX, DrawY, Top-left map cell, Top-left map cell, Map width in cells, Map height in cells, scaleX,scaleY, spritesheet
