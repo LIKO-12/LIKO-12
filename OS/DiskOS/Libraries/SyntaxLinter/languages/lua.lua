@@ -16,14 +16,14 @@ for _, list in ipairs({keywords, api, callbacks, escapable}) do
     end
 end
 
-function startState()
+local function startState()
   return {
     tokenizer = "base",
     starter = ""
   }
 end
 
-function token(stream, state)
+local function token(stream, state)
   local result = nil
 
   if state.tokenizer == "base" then
@@ -48,11 +48,11 @@ function token(stream, state)
           result = 'number'
       -- Hex
       elseif char == "0" and stream:eat("[xX]") then
-          stream:eatWhile("%x")
+          stream:eatChain("%x")
           result = "number"
       -- Ints and floats numbers
       elseif char:find('%d') then
-          stream:eatWhile("%d")
+          stream:eatChain("%d")
           stream:match("\\.%d+")
           local nextChar = stream:peek() or "" -- TODO: Do this to hex and decimals too
           if not nextChar:find("[%w_]") then
@@ -67,7 +67,7 @@ function token(stream, state)
           return "string"
       -- Keyword matching
       elseif char:find('[%w_]') then
-          stream:eatWhile('[%w_]')
+          stream:eatChain('[%w_]')
           local word = stream:current()
           if keywords[word] then
               result = "keyword"
