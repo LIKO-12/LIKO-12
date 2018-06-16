@@ -1,4 +1,4 @@
---LIKO-12's SyntaxHighligher API
+--LIKO-12's SyntaxHighligher API, by lhsazevedo
 local highlighter = {}
 
 --The parser is for parsing the syntax and identifying which is text, which is comment, which is number, etc...
