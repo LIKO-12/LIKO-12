@@ -4,7 +4,7 @@ local version = "1.0.0"
 
 local term = require("terminal")
 
-local parser = require("Libraries/parser/parser")
+local parser = require("Libraries.parser.parser")
 parser:loadParser("xshell")
 
 local args = {...}

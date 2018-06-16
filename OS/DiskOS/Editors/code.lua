@@ -40,8 +40,8 @@ local ce = {} --Code editor
 local buffer = {""} --A table containing lines of code
 
 local screenW, screenH = screenSize()
-local lume = require("Libraries/lume")
-local syntax = require("Libraries/syntax")
+local lume = require("Libraries.lume")
+local syntax = require("Libraries.syntax")
 syntax:setSyntax('lua')
 local syntaxTheme = {
   text = 7,
