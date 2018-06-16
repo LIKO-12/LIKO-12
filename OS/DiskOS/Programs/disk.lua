@@ -13,7 +13,7 @@ end
 color(8)
 
 local mode = args[1]
-if mode ~= "write" and mode ~= "read" then return 1, "Invalid disk task '"..mode.."' !" end
+if mode ~= "write" and mode ~= "read" and mode ~= "raw-write" and mode ~= "raw-read" then return 1, "Invalid disk task '"..mode.."' !" end
 
 local term = require("terminal")
 local source = term.resolve(args[2])

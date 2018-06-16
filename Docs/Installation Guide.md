@@ -28,7 +28,7 @@ sudo add-apt-repository ppa:bartbes/love-stable
 2. Install LÖVE Framework:
 ```
 sudo apt-get update
-sudo apt install love=0.10.2ppa1
+sudo apt install love
 ```
 
 3. Download the `..._Universal.love` build from [Github Releases][releases]

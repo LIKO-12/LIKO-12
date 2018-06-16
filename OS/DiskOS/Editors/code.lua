@@ -623,11 +623,9 @@ ce.keymap = {
 	end
   end,
   ["alt-up"] = function(self)
-   cprint("alt down")
    self:searchPreviousFunction()
   end,
   ["alt-down"] = function(self)
-   cprint("alt down")
    self:searchNextFunction()
   end,
   ["shift-down"] = function(self)
