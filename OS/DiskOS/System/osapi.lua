@@ -16,7 +16,7 @@ function printUsage(...)
       if toadd > 0 then
         line = string.rep(" ",toadd)..line
       else
-        line = "\n  "..line.."\n"
+        line = "\n  "..line
       end
       color(6)
       print(line)

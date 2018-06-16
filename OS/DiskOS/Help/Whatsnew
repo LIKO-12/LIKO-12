@@ -3,7 +3,7 @@
 \9V0.8.0_PRE (20/5/2018):
 \FRemarkable:\7
 1. New WIP map editor, with easier to use interface, biger view box.
-2. Added new library, `luann`, a nural network library.
+2. Added a new library, `luann`, a neural network library.
 3. Added a genetic algorithm library.
 4. New TipOfTheDay system.
 5. New colored Help system.

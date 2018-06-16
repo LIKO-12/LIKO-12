@@ -5,10 +5,17 @@ local coreg = require("Engine.coreg")
 local bit = require("bit") --Require the bit operations library for use in VRAM
 local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 
+local utf8 = require("utf8")
+
 --Localized Lua Library
 local floor = math.floor
 
 local strformat = string.format
+local strByte = string.byte
+local strChar = string.char
+
+local utf8Char = utf8.char
+local utf8Len = utf8.len
 
 local json = require("Engine.JSON") --Used to save the calibrarion values.
 
@@ -54,6 +61,14 @@ local function colorTo255(r,g,b,a)
   return r,g,b,a
 end
 
+local function escapeASCIIGSub(char)
+  return utf8Char(strByte(char))
+end
+
+local function escapeASCII(str)
+  return string.gsub(str,"[\x80-\xFF]",escapeASCIIGSub)
+end
+
 return function(config) --A function that creates a new GPU peripheral.
   
   --Load the config--
@@ -82,7 +97,11 @@ return function(config) --A function that creates a new GPU peripheral.
   local _LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
   
   local _FontW, _FontH = config._FontW or 4, config._FontH or 5 --Font character size
-  local _FontChars = config._FontChars or 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!?[](){}.,;:<>+=%#^*~/\\|$@&`"\'-_ ' --Font chars
+  
+  local _FontChars = {} --Font chars
+  for i=1,255 do _FontChars[i] = strChar(i) end
+  _FontChars = escapeASCII(table.concat(_FontChars))
+  
   local _FontPath, _FontExtraSpacing = config._FontPath or "/Peripherals/GPU/font4x5.png", config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
   
   --The colorset (PICO-8 Palette by default)
@@ -1167,6 +1186,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --Or prints at the specific pos x, y
   function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
     local t = tostring(t) --Make sure it's a string
+    t = escapeASCII(t)
     if x and y then --Print at a specific position on the screen
       --Error handelling
       x = Verify(x,"X coord","number")
@@ -1211,7 +1231,7 @@ return function(config) --A function that creates a new GPU peripheral.
         drawbackground(pc.x, pc.y, t:len()) --Draw the background.
         local gx,gy = togrid(pc.x, pc.y)
         love.graphics.print(t,gx+1+ofs.print_grid[1],gy+1+ofs.print_grid[2]) --Print the text.
-        pc.x = pc.x + t:len() --Update the x pos
+        pc.x = pc.x + utf8Len(t) --Update the x pos
         return true --It ran successfully
       end
       t = t.."\n"
@@ -1237,11 +1257,11 @@ return function(config) --A function that creates a new GPU peripheral.
       for k, line in ipairs(wrappedText) do
         local printX = 0
         if k == 1 then line = line:sub(pre_spaces:len()+1,-1); printX = pc.x end --Remove the pre_spaces
-        local linelen = line:len() --The line length
+        local linelen = utf8Len(line) --The line length
         drawbackground(printX,pc.y,linelen) --Draw the line background
         
         --Update the cursor pos
-        pc.x = printX + line:len()
+        pc.x = printX + utf8Len(line)
         if wrappedText[k+1] then pc.y = pc.y + 1 end --If there's a next line
       end
       

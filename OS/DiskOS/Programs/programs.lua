@@ -3,65 +3,65 @@ if select(1,...) and select(1,...) == "-?" then
   return
 end
 
+local sw, sh = screenSize()
+local tw, th = termSize()
+local msg = "[press any key to continue, q to quit]"
+
 local term = require("terminal")
 local PATH = term.getPATH()
 local programs = {}
 for path in string.gmatch(PATH,"(.-);") do
   if fs.exists(path) then
     local files = fs.getDirectoryItems(path)
-    for _,file in ipairs(files) do
+    for id,file in ipairs(files) do
       if file:sub(-4,-1) == ".lua" then
-        programs[file:sub(1,-5)] = true
+        programs[#programs+1] = file:sub(1,-5)
       end
     end
   end
 end
 
+table.sort(programs)
 
-palt(0,false) --Make black opaque
+local listString = table.concat(programs,", ")
 
-local peri = select(1,...)
+local maxWidth, wrapped = wrapText(listString,sw)
 
-local function waitkey()
-  while true do
-    local name, a = pullEvent()
-    if name == "keypressed" then
-      return false
-    elseif name == "textinput" then
-      if string.lower(a) == "q" then return true else return end
-    elseif name == "touchpressed" then
-      textinput(true)
-    end
-  end
-end
+flip() clearEStack()
 
-local tw, th = termSize()
-local sw, sh = screenSize()
-local msg = "[press any key to continue, q to quit]"
-local msglen = msg:len()
+color(11) print("Available Programs:\n")
 
-local function sprint(text)
+for lineNumber, line in ipairs(wrapped) do
+  color(6 + lineNumber%2)
+  print(line)
+  
   local cx, cy = printCursor()
-  if cy < th-2 then print(text.." ",false) return end
-  local tlen = text:len()+1
-  if cx+tlen+1 >= tw then
-    print("") pushColor() color(9)
-    print(msg,false) popColor()
-    flip()
-    local quit = waitkey()
-    printCursor(1,th)
-    rect(0,sh-9,sw,8,false,0)
-    if quit then return true end
-    screenshot():image():draw(0,-8)
-    printCursor(cx, th-3)
-    print(text.." ",false) return
-  else
-    print(text.." ",false) return
+  if cy == th-1 then
+    local terminate = false
+    
+    color(9) print(msg,false)
+    
+    for event, a,b,c,d,e,f in pullEvent do
+      if event == "keypressed" then
+        break
+      elseif event == "textinput" then
+        if string.lower(a) == "q" then
+          terminate = true
+          break
+        end
+      elseif event == "touchpressed" then
+        textinput(true)
+      end
+    end
+    
+    for i=1, #msg do
+      printBackspace()
+    end
+    
+    if terminate then break end
   end
-end
-
-for prog, v in pairs(programs) do
-  if sprint(prog) then break end
 end
 
 print("")
+
+flip() clearEStack()

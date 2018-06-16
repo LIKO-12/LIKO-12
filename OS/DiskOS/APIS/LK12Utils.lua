@@ -1,22 +1,22 @@
---Disk File (.lk12) Utilities.
+--(.lk12) File Utilities.
 
 --Variables.
-
+local sw, sh = screenSize()
 
 --Localized Lua Library
 
 
 --The API
-local DiskUtils = {}
+local LK12Utils = {}
 
-function DiskUtils.encodeDiskGame(edata,ctype,clvl)
+function LK12Utils.encodeDiskGame(edata,ctype,clvl)
   local edata, ctype, clvl = edata or {}, ctype or "none", clvl or 9
   
   --The disk file header, the disk body, the total disk data.
   local header = string.format("LK12;OSData;DiskOS;DiskGame;V%d;%dx%d;C:",_DiskVer,sw,sh)
   
   --Binary encoding.
-  if ctype == "bin" then
+  if ctype == "binary" then
     local null = BinUtils.Null --0x00 Character
   
     local bHeader, hid = {}, 2 --The header, contains the saveid and the data size.
@@ -68,20 +68,19 @@ else
     --Store
     else
       
-      return header.."none;CLvl:0;"..body
+      return header.."none;CLvl:0;\n"..body
     end
   end
 end
 
-function DiskUtils.identifyDiskType(diskData)
-  if not diskData:sub(0,5) == "LK12;" then return error("This is not a valid LK12 file !!") end
-  diskData = diskData:gsub("\r\n","\n")
+function LK12Utils.identifyType(lk12Data)
+  if not lk12Data:sub(0,5) == "LK12;" then return false, "This is not a valid LK12 file !!" end
+  lk12Data = lk12Data:gsub("\r\n","\n")
   
-  --LK12;OSData;OSName;DataType;Version;Compression;CompressLevel; data"
-  --local header = "LK12;OSData;DiskOS;DiskGame;V"..saveVer..";"..sw.."x"..sh..";C:"
+  --LK12;DiskType;"
   
   local datasum = 0
-  local nextargiter = string.gmatch(diskData,".")
+  local nextargiter = string.gmatch(lk12Data,".")
   local function nextarg()
     local start = datasum + 1
     while true do
@@ -90,17 +89,17 @@ function DiskUtils.identifyDiskType(diskData)
       if not char then datasum = datasum - 1; return end
       if char == ";" then break end
     end
-    return diskData:sub(start,datasum-1)
+    return lk12Data:sub(start,datasum-1)
   end
   nextarg() --Skip LK12;
   
   local filetype = nextarg()
-  if not filetype then return error("Invalid Data !") end
+  if not filetype then return false, "Invalid Data !" end
   return filetype
 end
 
-function DiskUtils.decodeDiskGame(diskData)
-  if not diskData:sub(0,5) == "LK12;" then return error("This is not a valid LK12 file !!") end
+function LK12Utils.decodeDiskGame(diskData)
+  if not diskData:sub(0,5) == "LK12;" then return false, "This is not a valid LK12 file !!" end
   diskData = diskData:gsub("\r\n","\n")
   
   --LK12;OSData;OSName;DataType;Version;Compression;CompressLevel; data"
@@ -121,50 +120,48 @@ function DiskUtils.decodeDiskGame(diskData)
   nextarg() --Skip LK12;
   
   local filetype = nextarg()
-  if not filetype then return error("Invalid Data !") end
+  if not filetype then return false, "Invalid Data !" end
   if filetype ~= "OSData" then
-    return error("Can't load '"..filetype.."' files !")
+    return false, "Can't load '"..filetype.."' files !"
   end
 
   local osname = nextarg()
-  if not osname then return error("Invalid Data !") end
-  if osname ~= "DiskOS" then return error("Can't load files from '"..osname.."' OS !") end
+  if not osname then return false, "Invalid Data !" end
+  if osname ~= "DiskOS" then return false, "Can't load files from '"..osname.."' OS !" end
 
   local datatype = nextarg()
-  if not datatype then return error("Invalid Data !") end
-  if datatype ~= "DiskGame" then return error("Can't load '"..datatype.."' from '"..osname.."' OS !") end
+  if not datatype then return false, "Invalid Data !" end
+  if datatype ~= "DiskGame" then return false, "Can't load '"..datatype.."' from '"..osname.."' OS !" end
 
   local dataver = nextarg()
-  if not dataver then return error("Invalid Data !") end
+  if not dataver then return false, "Invalid Data !" end
   dataver = tonumber(string.match(dataver,"V(%d+)"))
-  if not dataver then return error("Invalid Data !") end
-  if dataver > _DiskVer then return error("Can't load disks newer than V".._DiskVer..", provided: V"..dataver) end
-  if dataver < _MinDiskVer then return error("Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk") end
-  
-  local sw, sh = screenSize()
+  if not dataver then return false, "Invalid Data !" end
+  if dataver > _DiskVer then return false, "Can't load disks newer than V".._DiskVer..", provided: V"..dataver end
+  if dataver < _MinDiskVer then return false, "Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk" end
 
   local datares = nextarg()
-  if not datares then return error("Invalid Data !") end
+  if not datares then return false, "Invalid Data !" end
   local dataw, datah = string.match(datares,"(%d+)x(%d+)")
-  if not (dataw and datah) then return error("Invalid Data !") end dataw, datah = tonumber(dataw), tonumber(datah)
-  if dataw ~= sw or datah ~= sh then return error("This disk is made for GPUs with "..dataw.."x"..datah.." resolution, current GPU is "..sw.."x"..sh) end
+  if not (dataw and datah) then return false, "Invalid Data !" end dataw, datah = tonumber(dataw), tonumber(datah)
+  if dataw ~= sw or datah ~= sh then return false, "This disk is made for GPUs with "..dataw.."x"..datah.." resolution, current GPU is "..sw.."x"..sh end
 
   local compress = nextarg()
-  if not compress then return error("Invalid Data !") end
+  if not compress then return false, "Invalid Data !" end
   compress = string.match(compress,"C:(.+)")
-  if not compress then return error("Invalid Data !") end
+  if not compress then return false, "Invalid Data !" end
 
   if compress == "binary" then
     
     local revision = nextarg()
-    if not revision then return error("Invalid Data !") end
+    if not revision then return false, "Invalid Data !" end
     revision = string.match(revision,"Rev:(%d+)")
-    if not revision then return error("Invalid Data !") end
+    if not revision then return false, "Invalid Data !" end
     
     revision = tonumber(revision)
     
-    if revision < 1 then return error("Can't load binary saves with revision 0 or lower ("..revision..")") end
-    if revision > 1 then return error("Can't load binary saves with revision 2 or higher") end
+    if revision < 1 then return false, "Can't load binary saves with revision 0 or lower ("..revision..")" end
+    if revision > 1 then return false, "Can't load binary saves with revision 2 or higher" end
     
     local diskBody = diskData:sub(datasum+1,-1)
     local edata = {}
@@ -201,20 +198,19 @@ function DiskUtils.decodeDiskGame(diskData)
     --Read the chunks
     local cStart = counter()+1
     for i, len in ipairs(lengths) do
-      local id = self.saveid[names[i]]
       local chunk = diskBody:sub(cStart, cStart+len-1)
-      edata[id] = chunk
+      edata[names[i]] = chunk
       cStart = cStart + len
     end
     
-    return edata
+    return edata, true
     
   else
     
     local clevel = nextarg()
-    if not clevel then return error("Invalid Data !") end
+    if not clevel then return false, "Invalid Data !" end
     clevel = string.match(clevel,"CLvl:(.+)")
-    if not clevel then return error("Invalid Data !") end clevel = tonumber(clevel)
+    if not clevel then return false, "Invalid Data !" end clevel = tonumber(clevel)
 
     local diskBody = diskData:sub(datasum+2,-1)
 
@@ -227,32 +223,33 @@ function DiskUtils.decodeDiskGame(diskData)
     local edata = {}
     
     while true do
-      local _, saveIdStart = string.find(diskBody,"___")
+      local _, saveIdStart = string.find(diskBody,"___",1,true)
       if not saveIdStart then break end
       saveIdStart = saveIdStart+1
       
-      local saveIdEnd, saveDataStart = string.find(diskBody,"___")
+      local saveIdEnd, saveDataStart = string.find(diskBody,"___",saveIdStart,true)
       if not saveIdEnd then break end
       saveIdEnd, saveDataStart = saveIdEnd-1, saveDataStart+1
       
-      local saveId, saveData = diskBody:sub(saveIdStart,saveIdEnd)
+      local saveId = diskBody:sub(saveIdStart,saveIdEnd)
+      local saveData = ""
       
-      local saveDataEnd = string.find(diskBody,"___")
+      local saveDataEnd = string.find(diskBody,"___",saveDataStart,true)
       if not saveDataEnd then
-        saveData = diskBody:sub(saveDataStart,-1)
+        saveData = diskBody:sub(saveDataStart+1,-2)
         diskBody = ""
       else
         saveDataEnd = saveDataEnd-1
-        saveData = diskBody:sub(saveDataStart, saveDataEnd)
+        saveData = diskBody:sub(saveDataStart+1, saveDataEnd-1)
         diskBody = diskBody:sub(saveDataEnd+1,-1)
       end
       
       edata[saveId] = saveData
     end
     
-    return edata
+    return edata, false
   end
 end
 
---Make the diskutils a global
-_G["DiskUtils"] = DiskUtils
+--Make the LK12Utils a global
+_G["LK12Utils"] = LK12Utils

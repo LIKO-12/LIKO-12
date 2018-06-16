@@ -2,7 +2,7 @@
 local args = {...} --Get the arguments passed to this program
 if #args < 1 or args[1] == "-?" then
   printUsage(
-    "edit <file>","Open in the file editor"
+    "edit <file>","The file to edit in the text editor."
   )
   return
 end

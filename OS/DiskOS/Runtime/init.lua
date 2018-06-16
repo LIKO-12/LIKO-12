@@ -26,7 +26,9 @@ function rt.loadGlobals()
   return scripts
 end
 
-function rt.loadGame()
+function rt.loadGame(edata)
+  
+  local edata = edata or (require("Editors"):export())
   
   local glob = _FreshGlobals()
   glob._G = glob --Magic ;)
@@ -36,7 +38,7 @@ function rt.loadGame()
   
   --Execute the resources
   for i=1, #resources do
-    resources[i](glob)
+    resources[i](glob,edata)
   end
   
   --Load the lua code

@@ -1,13 +1,8 @@
 --Lua code loader
 
 local Globals = (...) or {}
+local edata = select(2,...) or {}
 
-local eapi = require("Editors")
-
-local codeid = eapi.editors.code
-
-local luacode = eapi.leditors[codeid]:export()
-
-Globals._GameCode = luacode
+Globals._GameCode = edata.luacode
 
 return Globals
