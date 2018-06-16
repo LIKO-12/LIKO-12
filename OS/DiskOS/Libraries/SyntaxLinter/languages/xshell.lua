@@ -26,12 +26,12 @@ function token(stream, state)
     elseif char == "$" then
       if stream:peek() == "(" then
       else
-        stream:eatWhile("[^"..table.concat(specials,"").."]")
+        stream:eatChain("[^"..table.concat(specials,"").."]")
         result = "assigner"
       end
     else
       result = "command"
-      stream:eatWhile("[^"..table.concat(specials,"").."]")
+      stream:eatChain("[^"..table.concat(specials,"").."]")
     end
   elseif state.tokenizer == "command" then
     char = stream:next()

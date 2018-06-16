@@ -41,9 +41,9 @@ local buffer = {""} --A table containing lines of code
 
 local screenW, screenH = screenSize()
 local lume = require("Libraries.lume")
-local syntax = require("Libraries.syntax")
-syntax:setSyntax('lua')
-local syntaxTheme = {
+local highlighter = require("Libraries.SyntaxHighlighter")
+highlighter:setSyntax("lua")
+local highlighterTheme = {
   text = 7,
   keyword = 10,
   number = 12,
@@ -54,7 +54,7 @@ local syntaxTheme = {
   selection = 6,
   escape = 12
 }
-syntax:setTheme(syntaxTheme)
+highlighter:setTheme(highlighterTheme)
 
 local editorTheme = {
   bg = 5, --Background Color
@@ -93,7 +93,7 @@ ce.touchskipinput = false
 function ce:colorPrint(tbl)
   pushColor()
   if type(tbl) == "string" then
-    color(syntaxTheme.text)
+    color(highlighterTheme.text)
     print(tbl,false,true)
   else
     for i=1, #tbl, 2 do
@@ -169,11 +169,11 @@ end
 --Draw the code on the screen
 function ce:drawBuffer()
   local vbuffer = lume.slice(buffer,self.vy,self.vy+self.th-1) --Visible buffer
-  local cbuffer = self.colorize and syntax:highlightLines(vbuffer, self.vy) or vbuffer
+  local cbuffer = self.colorize and highlighter:highlightLines(vbuffer, self.vy) or vbuffer
   rect(0,7,screenW,screenH-8*2+1,false,self.theme.bg)
   for k, l in ipairs(cbuffer) do
     if self.sxs and self.vy+k-1 >= self.sys and self.vy+k-1 <= self.sye then --Selection
-      printCursor(-(self.vx-2)-1,k,syntaxTheme.selection)
+      printCursor(-(self.vx-2)-1,k,highlighterTheme.selection)
       local linelen,skip = vbuffer[k]:len(), 0
       if self.vy+k-1 == self.sys then --Selection start
         skip = self.sxs-1
@@ -201,7 +201,7 @@ function ce:drawLine()
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   local cline, colateral
   if self.colorize then
-    cline, colateral = syntax:highlightLine(buffer[self.cy], self.cy)
+    cline, colateral = highlighter:highlightLine(buffer[self.cy], self.cy)
   end
   if not cline then cline = buffer[self.cy] end
   rect(0,(self.cy-self.vy+2)*(self.fh+2)-(self.fh+2), screenW,self.fh+2, false,self.theme.bg)

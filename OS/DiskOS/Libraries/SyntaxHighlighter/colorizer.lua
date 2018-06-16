@@ -1,3 +1,4 @@
+--The colorizer is for applying a colors theme on parser output, so it could be used for printing.
 local colorizer = {}
 
 colorizer.defaultColor = 7
@@ -7,15 +8,15 @@ function colorizer:setTheme(theme)
   self.theme = theme
 end
 
-function colorizer:applyColor(name)
-  if self.theme[name] then return self.theme[name] else return self.defaultColor end
+function colorizer:getColor(name)
+  return self.theme[name] or self.defaultColor
 end
 
 function colorizer:colorizeLine(line)
   local line = line
   for i, v in ipairs(line) do
     if i % 2 ~= 0 then
-      line[i] = self:applyColor(line[i])
+      line[i] = self:getColor(line[i])
     end
   end
   return line
