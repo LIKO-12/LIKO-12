@@ -2,7 +2,7 @@
 local highlighter = {}
 
 --The parser is for parsing the syntax and identifying which is text, which is comment, which is number, etc...
-local parser = require("Libraries.SyntaxLinter")
+local parser = require("Libraries.SyntaxParser")
 
 --The colorizer is for applying a colors theme on parser output, so it could be used for printing.
 local colorizer = require("Libraries.SyntaxHighlighter.colorizer")
