@@ -58,9 +58,8 @@ return function(streamData)
   --Read a byte/char, push the stream position by 1, and return the read char.
   function stream:next()
     if self.pos <= self.string:len() then
-      char = self.string:sub(self.pos, self.pos)
       self.pos = self.pos + 1
-      return char
+      return self.string:sub(self.pos-1, self.pos-1)
     end
   end
 
@@ -72,7 +71,7 @@ return function(streamData)
     end
   end
 
-  --Returns the character in the current stream position.
+  --Returns the characters from the stream start to the current stream position.
   function stream:current()
     return self.string:sub(self.start, self.pos-1)
   end
