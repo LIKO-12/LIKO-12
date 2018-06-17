@@ -27,7 +27,7 @@ local function token(stream, state)
   local result = nil
 
   if state.tokenizer == "base" then
-    char = stream:next()
+    local char = stream:next()
     local pos = stream.pos
     -- Comment and multiline comment matching
     if char == "-" and stream:eat('%-') then
@@ -39,7 +39,7 @@ local function token(stream, state)
         result = "comment"
       end
       -- String matching
-    elseif char == "\"" or char == "'" then
+    elseif char == '"' or char == "'" then
       state.starter = char
       state.tokenizer = "string"
       return "string" -- Return immediatelly so quotes doesn't get affected by escape sequences
@@ -80,10 +80,10 @@ local function token(stream, state)
   end
 
   if state.tokenizer == "string" then
-    char = stream:next()
+    local char = stream:next()
     result = "string"
     if char == "\\" then
-      escaped = stream:peek()
+      local escaped = stream:peek()
       if escaped and escapable[escaped] then
         stream:next()
         result = "escape"
@@ -98,10 +98,10 @@ local function token(stream, state)
     end
 
   elseif state.tokenizer == "multilineString" then
-    char = stream:next()
+    local char = stream:next()
     result = "string"
     if char == "\\" then
-      escaped = stream:peek()
+      local escaped = stream:peek()
       if escaped and escapable[escaped] then
         stream:next()
         result = "escape"

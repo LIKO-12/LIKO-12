@@ -84,7 +84,7 @@ function parser:parseLine(line, lineIndex)
   while not stream:eol() do
     local token = self.parser.token(stream, self.state)
     result[#result + 1] = token or "text"
-    result[#result + 1] = stream:current()
+    result[#result + 1] = stream:current() --The text read by the tokenizer
     stream.start = stream.pos
   end
 
