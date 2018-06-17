@@ -1,6 +1,3 @@
-local term = require("terminal")
-local MainDrive = term.getMainDrive()
-
 local newStream = require("Libraries.SyntaxParser.stream")
 
 local parser = {}
@@ -10,15 +7,7 @@ parser.cache = {}
 parser.state = nil
 
 function parser:loadParser(language)
-  -- TODO: Factory! https://github.com/luarocks/lua-style-guide#modules
-  local chunk, err = fs.load(MainDrive..":/Libraries/SyntaxParser/languages/"..language..".lua")
-  if not chunk then
-    self.parser = { token = function(stream) print(err) stream:skipToEnd() end, startState = function() return {} end } -- Default parser
-    return false
-  else
-    self.parser = chunk()
-  end
-
+  self.parser = require("Libraries.SyntaxParser.languages."..language)
 end
 
 function parser:previousState(lineIndex)
