@@ -14,6 +14,7 @@ function BuildUtils.mountSRC()
   fs.mount(BIOS.getSRC())
 end
 
+--Creates a tables tree of files in a directory, with the file content as values, and filenames as keys.
 function BuildUtils.filesTree(dir)
   if fs.isFile(dir) then return fs.read(dir) end
   
@@ -26,8 +27,12 @@ function BuildUtils.filesTree(dir)
   return tree
 end
 
+--Get the .lk12 of the game
 function BuildUtils.getSavefile()
+  local eapi = require("Editors")
+  local edata = eapi:export()
   
+  return LK12Utils.encodeDiskGame(edata)
 end
 
 --Make the buildutils a global
