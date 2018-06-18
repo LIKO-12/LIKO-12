@@ -13,12 +13,12 @@ function parser:loadParser(language)
 end
 
 function parser:previousState(lineIndex)
-  local record = 0
-  for i, state in pairs(self.cache) do
-    if i >= lineIndex then break end
-    if i > record then record = i end
+  lineIndex = lineIndex -1
+  while lineIndex > 0 do
+    if self.cache[lineIndex] then return self.cache[lineIndex] end
+    lineIndex = lineIndex -1
   end
-  if record > 0 then return self.cache[record] else return false end
+  return false
 end
 
 
