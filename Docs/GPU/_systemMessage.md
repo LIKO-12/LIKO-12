@@ -1,7 +1,5 @@
 Shows a system message: A single line message at the bottom of the screen.
 
-> **Important: ** This is a test
-
 **Important: This function is only available in the Operating System !**
 
 ---
