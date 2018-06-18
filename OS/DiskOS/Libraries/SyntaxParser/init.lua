@@ -32,12 +32,13 @@ function parser:parseLines(lines, lineIndex)
 
   -- Process lines
   local colateral = false
-  for i, line in ipairs(lines) do
+  for lineID = lineIndex, lineIndex + #lines - 1 do
+    local line = lines[lineID - #lines + 1]
     self.state = {}
 
     -- Copy previous line state table, or create a new one if needed.
     -- TODO: language should provide a copy method.
-    local tempState = self.cache[lineIndex + i - 2]
+    local tempState = self.cache[lineID - 1]
     or self:previousState(lineIndex)
     or self.parser.startState()
     for k,v in pairs(tempState) do
@@ -46,27 +47,27 @@ function parser:parseLines(lines, lineIndex)
 
     -- Backup previous state of the current line
     local previousState = {}
-    if self.cache[lineIndex + i - 1] then
-      for k,v in pairs(self.cache[lineIndex + i - 1]) do
+    if self.cache[lineID] then
+      for k,v in pairs(self.cache[lineID]) do
         previousState[k] = v
       end
     end
 
     -- Process line
-    table.insert(result, parser:parseLine(line, lineIndex + i - 1))
+    table.insert(result, parser:parseLine(line))
 
     -- Copy the processd state to cache.
     -- Also checks if this is the last line and its change is colateral.
-    self.cache[lineIndex + i - 1] = {}
+    self.cache[lineID] = {}
     for k,v in pairs(self.state) do
       if i == #lines and previousState[k] ~= self.state[k] then colateral = true end
-      self.cache[lineIndex + i - 1][k] = v
+      self.cache[lineID][k] = v
     end
   end
   return result, colateral
 end
 
-function parser:parseLine(line, lineIndex)
+function parser:parseLine(line)
   local result = {}
   local stream = newStream(line)
 
