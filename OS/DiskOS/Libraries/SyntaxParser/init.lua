@@ -21,7 +21,6 @@ function parser:previousState(lineIndex)
   return false
 end
 
-
 function parser:parseLines(lines, lineIndex)
   local result = {}
 
@@ -42,9 +41,10 @@ function parser:parseLines(lines, lineIndex)
 
     -- Copy previous line state table, or create a new one if needed.
     -- TODO: language should provide a copy method.
-    local tempState = self.cache[lineID - 1]
-    or self:previousState(lineIndex)
-    or self.parser.startState()
+    local tempState = self.cache[lineID - 1] --Pervious line
+    or self:previousState(lineIndex) --Any pervious line
+    or self.parser.startState --The start state provided by the parser
+    
     for k,v in pairs(tempState) do
       self.state[k] = v
     end
