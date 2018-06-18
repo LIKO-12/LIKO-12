@@ -7,6 +7,8 @@ parser.cache = {}
 parser.state = nil
 
 function parser:loadParser(language)
+  self.cache = {}
+  self.state = nil
   self.parser = require("Libraries.SyntaxParser.languages."..language)
 end
 
@@ -32,8 +34,10 @@ function parser:parseLines(lines, lineIndex)
 
   -- Process lines
   local colateral = false
-  for lineID = lineIndex, lineIndex + #lines - 1 do
-    local line = lines[lineID - #lines + 1]
+  for i=1, #lines do
+    local line = lines[i]
+    local lineID = lineIndex + i - 1
+    
     self.state = {}
 
     -- Copy previous line state table, or create a new one if needed.
