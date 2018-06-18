@@ -58,7 +58,7 @@ function parser:parseLines(lines, lineIndex)
     end
 
     -- Process line
-    table.insert(result, parser:parseLine(line))
+    result[#result + 1] = parser:parseLine(line)
 
     -- Copy the processd state to cache.
     -- Also checks if this is the last line and its change is colateral.
