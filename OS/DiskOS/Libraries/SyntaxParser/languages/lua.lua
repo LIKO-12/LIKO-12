@@ -25,15 +25,6 @@ for _, list in ipairs({keywords, api, callbacks, escapable}) do
   end
 end
 
---The start state of the tokenizer
-local function startState()
-  return {
-    tokenizer = "base",
-    multilen = 0, --Multiline comment/string '==' number, example: [=[ COMMENT ]=] -> 1
-    starter = ""
-  }
-end
-
 local function token(stream, state)
   if state.tokenizer == "base" then
     local char = stream:next() --Read a character from the stream
@@ -138,6 +129,10 @@ local function token(stream, state)
 end
 
 return {
-  startState = startState,
+  startState = {
+    tokenizer = "base",
+    multilen = 0, --Multiline comment/string '==' number, example: [=[ COMMENT ]=] -> 1
+    starter = ""
+  },
   token = token
 }

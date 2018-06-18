@@ -1,10 +1,3 @@
-function startState()
-  return {
-    tokenizer = "base",
-    starter = ""
-  }
-end
-
 local function contains(t, e)
   for i = 1,#t do
     if t[i] == e then return true end
@@ -14,7 +7,7 @@ end
 
 local specials = {"&",";","$"}
 
-function token(stream, state)
+local function token(stream, state)
   local result = nil
 
   if state.tokenizer == "base" then
@@ -44,6 +37,9 @@ function token(stream, state)
 end
 
 return {
-  startState = startState,
+  startState = {
+    tokenizer = "base",
+    starter = ""
+  },
   token = token
 }
