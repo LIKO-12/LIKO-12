@@ -3,7 +3,7 @@
 local Globals = (...) or {}
 local edata = select(2,...) or {}
 
-local mapobj = require("Libraries/map")
+local mapobj = require("Libraries.map")
 
 local swidth, sheight = screenSize()
 

@@ -3,7 +3,7 @@
 local Globals = (...) or {}
 local edata = select(2,...) or {}
 
-local sfxobj = require("Libraries/sfx")
+local sfxobj = require("Libraries.sfx")
 
 local sfxData = edata.sfx:gsub("\n","")
 local SFXList, SFXListPos = {}, 0
