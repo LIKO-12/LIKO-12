@@ -69,15 +69,15 @@ local mobilebnames = {
 }
 
 do --So I can hide this part in ZeroBran studio
-  local bmap = ConfigUtils.get("GamesKeymap")
+  local bmap = ConfigUtils and ConfigUtils.get("GamesKeymap") or {}
 
   if not bmap[1] then
     bmap[1] = {unpack(defaultbmap[1])}
-    ConfigUtils.saveConfig()
+    if ConfigUtils then ConfigUtils.saveConfig() end
   end
   if not bmap[2] then
     bmap[2] = {unpack(defaultbmap[2])}
-    ConfigUtils.saveConfig()
+    if ConfigUtils then ConfigUtils.saveConfig() end
   end
   
   function Globals.getBtnName(n,p)
