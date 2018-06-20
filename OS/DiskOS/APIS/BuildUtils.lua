@@ -1,6 +1,7 @@
 --Native Builds Utilities.
 
 local likoZIP = require("Libraries.liko-zip")
+local likoPE = require("Libraries.liko-pe")
 
 --Variables.
 
@@ -68,8 +69,8 @@ function BuildUtils.encodeIco(icons,transparentColor)
   local icoData = {}
   
   for i=1, #icons do
-    icoEntries[#icoEntries+1] = string.char(icons[i]:width())
-    icoEntries[#icoEntries+1] = string.char(icons[i]:height())
+    icoEntries[#icoEntries+1] = string.char(icons[i]:width()%256)
+    icoEntries[#icoEntries+1] = string.char(icons[i]:height()%256)
     icoEntries[#icoEntries+1] = "\0\0\0\0\0\0" 
     
     local pngData
@@ -89,6 +90,11 @@ function BuildUtils.encodeIco(icons,transparentColor)
   end
   
   return ico .. table.concat(icoEntries) .. table.concat(icoData)
+end
+
+function BuildUtils.patchExeIco(exe,ico)
+  local ok, newexe = likoPE.patchIcon(exe,ico)
+  return ok and newexe or exe
 end
 
 --Make the buildutils a global

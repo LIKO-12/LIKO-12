@@ -16,7 +16,8 @@ if (...) and (...) == "-?" then
 end
 
 local targets = {...}
-if #targets == 0 then targets = {"love","win","linux","osx"} end
+--if #targets == 0 then targets = {"love","win","linux","osx"} end
+if #targets == 0 then targets = {"love","win","linux"} end
 
 for i=1,#targets do targets[targets[i]] = true end --Values to Keys, easier for searching.
 
@@ -109,7 +110,7 @@ end
 
 stage("Generating the game icon")
 
-local iconImages = {} --16,32,48 (windows),64,128,256 (osx)
+local iconImages = {} --16,32,48 (windows),64,128,256
 local transparentColor = false --Opaque
 
 do
@@ -139,26 +140,27 @@ do
     selectedSprite = selectedSprite:enlarge(2)
   end
   
-  iconImages[2] = selectedSprite --32x32
-  log("made 32x32 icon")
-  
-  if targets.win then
-    local icon48 = imagedata(48,48)
-    icon48:paste(selectedSprite,8,8)
-    log("placed 32x32 in 48x48 without scaling")
-    iconImages[3] = icon48
-    log("made 48x48 icon")
-  end
-  
-  selectedSprite = selectedSprite:enlarge(2)
-  iconImages[4] = selectedSprite
-  log("made 64x64 icon")
-  
-  selectedSprite = selectedSprite:enlarge(2)
-  iconImages[5] = selectedSprite
-  log("made 128x128 icon")
-  
-  if targets.osx then
+  if targets.win or targets.osx then
+    iconImages[2] = selectedSprite --32x32
+    log("made 32x32 icon")
+    
+    if targets.win then
+      local icon48 = imagedata(48,48)
+      if transparentColor then icon48:map(function() return transparentColor end) end
+      icon48:paste(selectedSprite,8,8)
+      log("placed 32x32 in 48x48 without scaling")
+      iconImages[3] = icon48
+      log("made 48x48 icon")
+    end
+    
+    selectedSprite = selectedSprite:enlarge(2)
+    iconImages[4] = selectedSprite
+    log("made 64x64 icon")
+    
+    selectedSprite = selectedSprite:enlarge(2)
+    iconImages[5] = selectedSprite
+    log("made 128x128 icon")
+    
     selectedSprite = selectedSprite:enlarge(2)
     iconImages[6] = selectedSprite
     log("made 256x256 icon")
@@ -244,21 +246,25 @@ if targets.win then
   local winTree = BuildUtils.filesTree("ZIP:/Windows/")
   log("read successfully")
   
+  log("- Patching Icon")
+  local winIco = BuildUtils.encodeIco(iconImages,transparentColor)
+  log("encoded windows icon")
+  winTree["love.exe"] = BuildUtils.patchExeIco(winTree["love.exe"],winIco)
+  log("patched love.exe icon")
+  
   log("- Creating "..gameName..".exe")
   winTree[gameName..".exe"] = winTree["love.exe"] .. gameLove
   log("created "..gameName..".exe")
+  
+  log("- Removing useless files")
+  winTree["love.ico"] = nil
+  log("removed love.ico")
+  winTree["game.ico"] = nil
+  log("removed game.ico")
   winTree["love.exe"] = nil
   log("removed love.exe")
   winTree["lovec.exe"] = nil
   log("removed lovec.exe")
-  
-  log("- Replacing Icons")
-  local winIco = BuildUtils.encodeIco({iconImages[1],iconImages[2],iconImages[3],iconImages[4],iconImages[5]},transparentColor)
-  log("encoded windows icon")
-  winTree["love.ico"] = winIco
-  log("replaced love.ico")
-  winTree["game.ico"] = winIco
-  log("replaced game.ico")
   
   log("- Packing windows build")
   local winZip = BuildUtils.packZIP(winTree)
