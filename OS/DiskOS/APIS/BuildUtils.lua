@@ -58,5 +58,38 @@ function BuildUtils.getSavefile()
   return LK12Utils.encodeDiskGame(edata)
 end
 
+function BuildUtils.encodeIco(icons,transparentColor)
+  local ico = "\0\0\1\0"..string.char(#icons).."\0"
+  
+  local entriesSize = 16*#icons
+  local dataPos = #ico + entriesSize
+  
+  local icoEntries = {}
+  local icoData = {}
+  
+  for i=1, #icons do
+    icoEntries[#icoEntries+1] = string.char(icons[i]:width())
+    icoEntries[#icoEntries+1] = string.char(icons[i]:height())
+    icoEntries[#icoEntries+1] = "\0\0\0\0\0\0" 
+    
+    local pngData
+    if transparentColor then
+      palt(0,false) palt(transparentColor,true)
+      pngData = icons[i]:export()
+      palt()
+    else
+      pngData = icons[i]:exportOpaque()
+    end
+    
+    icoEntries[#icoEntries+1] = BinUtils.numToBin(#pngData,4)
+    icoEntries[#icoEntries+1] = BinUtils.numToBin(dataPos,4)
+    icoData[#icoData+1] = pngData
+    
+    dataPos = dataPos + #pngData
+  end
+  
+  return ico .. table.concat(icoEntries) .. table.concat(icoData)
+end
+
 --Make the buildutils a global
 _G["BuildUtils"] = BuildUtils
