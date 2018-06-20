@@ -1,6 +1,7 @@
 local term = require("terminal")
 local eapi = require("Editors")
 local json = require("Libraries.JSON")
+local lume = require("Libraries.lume")
 
 if (...) and (...) == "-?" then
   printUsage(
@@ -18,6 +19,44 @@ local targets = {...}
 if #targets == 0 then targets = {"love","win","linux","osx"} end
 
 for i=1,#targets do targets[targets[i]] = true end --Values to Keys, easier for searching.
+
+local BuildTemplates
+
+if targets.win or targets.linux or targets.osx then
+  if not fs.exists("C:/BuildTemplates.zip") then
+    color(7) print("Please download ",false)
+    color(6) print("BuildTemplates.zip ",false)
+    color(7) print("from ",false)
+    color(6) print("https://github.com/RamiLego4Game/LIKO-12-Nightly/releases")
+    color(7) print("\nThen drop them into the window here")
+    color(6) print("\nPress any key to open the webpage, or press escape to terminate the build")
+    color(7)
+    
+    for event, a,b,c,d,e,f in pullEvent do
+      if event == "keypressed" then
+        if a == "escape" then
+          return 1, "Build terminated."
+        else
+          openURL("https://github.com/RamiLego4Game/LIKO-12-Nightly/releases")
+        end
+      elseif event == "filedropped" then
+        if not b then return 1, "Failed to read file." end
+        if not fs.mountZIP(b) then return 1, "Corrupted .zip file." end
+        if not fs.exists("ZIP:/Linux") then return 1, "Invalid .zip file." end
+        if not fs.exists("ZIP:/OS_X") then return 1, "Invalid .zip file." end
+        if not fs.exists("ZIP:/Windows") then return 1, "Invalid .zip file." end
+        fs.mountZIP()
+        fs.write("C:/BuildTemplates.zip",b)
+        BuildTemplates = b
+        break
+      elseif event == "touchpressed" then
+        textinput(true)
+      end
+    end
+  else
+    BuildTemplates = fs.read("C:/BuildTemplates.zip")
+  end
+end
 
 local function ask(name,preinput)
   --if true then return "test" end
@@ -49,6 +88,14 @@ if not windowTitle then return 1, "Build terminated." end
 
 local appdataName = ask("Appdata name","liko12_"..authorName:lower():gsub(" ","_").."_"..gameName:lower():gsub(" ","_"))
 if not appdataName then return 1, "Build terminated." end
+
+local packageName
+if targets.osx then
+  packageName = ask("Package name","com."..authorName:lower():gsub(" ","_").."."..gameName:lower():gsub(" ","_"))
+  if not packageName then return 1, "Build terminated." end
+end
+
+local startTime = os.clock()
 
 local function log(...)
   local txt = table.concat({...}," ")
@@ -103,7 +150,7 @@ log("removed /OS/PoorOS")
 
 log("- Packing .love file")
 local gameLove = BuildUtils.packZIP(likosrc)
-log("done")
+log("packed successfully")
 
 local buildDir = term.resolve("./"..os.date("%y%m%d_%H%M",os.time())).."/"
 local baseName = gameName.." - "
@@ -112,7 +159,95 @@ local basePath = buildDir..baseName
 fs.newDirectory(buildDir)
 
 if targets.love then
-  stage("Writing Universal .love file")
+  stage("- Writing Universal .love file")
   fs.write(basePath.."Universal.love", gameLove)
-  log("- Wrote "..baseName.."Universal.love successfully.")
+  log("Wrote "..baseName.."Universal.love successfully.")
 end
+
+if targets.win or targets.linux or targets.osx then
+  log("mounted BuildTemplates.zip")
+  fs.mountZIP(BuildTemplates)
+end
+
+if targets.win then
+  stage("Building for windows")
+  
+  log("- Reading windows template")
+  local winTree = BuildUtils.filesTree("ZIP:/Windows/")
+  log("read successfully")
+  
+  log("- Creating "..gameName..".exe")
+  winTree[gameName..".exe"] = winTree["love.exe"] .. gameLove
+  log("created "..gameName..".exe")
+  winTree["love.exe"] = nil
+  log("removed love.exe")
+  winTree["lovec.exe"] = nil
+  log("removed lovec.exe")
+  
+  log("- Packing windows build")
+  local winZip = BuildUtils.packZIP(winTree)
+  log("packed successfully")
+  
+  log("- Writing windows .zip file")
+  fs.write(basePath.."Windows.zip", winZip)
+  log("Wrote "..baseName.."Windows.zip successfully.")
+end
+
+if targets.linux then
+  stage("Building for linux")
+  
+  log("- Reading linux template")
+  local linuxScript = fs.read("ZIP:/Linux/run.sh")
+  log("read successfully")
+  
+  log("- Adding game files")
+  local linuxTree = lume.clone(likosrc)
+  linuxTree["run.sh"] = linuxScript
+  log("added successfully")
+  
+  log("- Packing linux build")
+  local linuxZip = BuildUtils.packZIP(linuxTree)
+  log("packed successfully")
+  
+  log("- Writing linux .zip file")
+  fs.write(basePath.."Linux.zip", linuxZip)
+  log("Wrote "..baseName.."Linux.zip successfully.")
+end
+
+if targets.osx then
+  stage("Building for OSX")
+  
+  log("- Reading osx template")
+  local osxTree = BuildUtils.filesTree("ZIP:/OS_X")
+  log("read successfully")
+  
+  log("- Adding "..gameName..".love")
+  osxTree["LIKO-12.app"].Contents.Resources[gameName..".love"] = gameLove
+  log("added successfully")
+  
+  log("- Patching Info.plist")
+  osxTree["LIKO-12.app"].Contents["Info.plist"] = osxTree["LIKO-12.app"].Contents["Info.plist"]:gsub("LIKO%-12",gameName):gsub("me.ramilego4game.liko12",packageName)
+  log("patched successfully")
+  
+  log("- Renaming LIKO-12.app")
+  osxTree[gameName..".app"] = osxTree["LIKO-12.app"]
+  osxTree["LIKO-12.app"] = nil
+  log("renamed to "..gameName..".app successfully.")
+  
+  log("- Packing osx build")
+  local osxZip = BuildUtils.packZIP(osxTree)
+  log("packed successfully")
+  
+  log("- Writing osx .zip file")
+  fs.write(basePath.."OSX.zip", osxZip)
+  log("Wrote "..baseName.."OSX.zip successfully.")
+end
+
+if targets.win or targets.linux or targets.osx then
+  fs.mountZIP()
+  log("unmounted BuildTemplates.zip")
+end
+
+local endTime = os.clock()
+
+color(11) print("\nBuilt successfully in "..math.floor(endTime - startTime).."s")
