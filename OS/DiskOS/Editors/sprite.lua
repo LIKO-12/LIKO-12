@@ -124,7 +124,7 @@ local tools = {
     local qx,qy = self.SpriteMap:rect(sprsid)
     local col = (b == 2) and colsR or colsL
     local size = 8*zscale - 1
-    
+
     ImageUtils.queuedFill(data, qx+cx-1,qy+cy-1, col, qx,qy, qx+size,qy+size)
     self.SpriteMap.img = data:image()
   end,
@@ -168,9 +168,9 @@ local function transform(tnum)
   local current = extractSprite()
   local new = imagedata(current:width(),current:height())
   current:map(function(x,y,c)
-    local nx,ny,nc = tfunc(x,y,c,current:width(),current:height())
-    new:setPixel(nx or x,ny or y,nc or c)
-  end)
+      local nx,ny,nc = tfunc(x,y,c,current:width(),current:height())
+      new:setPixel(nx or x,ny or y,nc or c)
+    end)
   local x,y = se.SpriteMap:rect(sprsid)
   local data = se.SpriteMap:data()
   data:paste(new,x,y)
@@ -207,23 +207,31 @@ function se:leaved()
 end
 
 function se:getSheet()
- return self.SpriteMap
+  return self.SpriteMap
 end
 
 function se:getFlags()
- return flagsData
+  return flagsData
+end
+
+function se:getSelectedColors()
+  return colsL, colsR
+end
+
+function se:getSelectedSprite()
+  return extractSprite()
 end
 
 function se:exportImage()
- return self.SpriteMap:data():encode()
+  return self.SpriteMap:data():encode()
 end
 
 function se:exportFlags()
- local fdata = ""
- for char in string.gmatch(flagsData,".") do
-  fdata = fdata..";"..string.format("%X",string.byte(char))
- end
- return fdata
+  local fdata = ""
+  for char in string.gmatch(flagsData,".") do
+    fdata = fdata..";"..string.format("%X",string.byte(char))
+  end
+  return fdata
 end
 
 function se:export(imageonly)
@@ -278,28 +286,28 @@ end
 
 function se:paste()
   local ok, err = pcall(function()
-    local dx,dy,dw,dh = self.SpriteMap:rect(sprsid)
-    local sheetdata = self.SpriteMap:data()
-    local data = clipboard()
-    if data:sub(1,5) == "[gfx]" then -- PICO-8 Paste
-      data = data:sub(6,-7) --Remove the start and end tags
-      local width = tonumber(data:sub(1,2),16)
-      local height = tonumber(data:sub(3,4),16)
-      data = string.upper(data:sub(5,-1))
-      data = "LK12;GPUIMG;" .. width.."x"..height ..";".. string.upper(data)
-    else
-      data = data:gsub("%X","")
-      local size = math.sqrt(data:len())
-      if math.floor(size) ~= size then error("Invalid Data") end
-      if size == 0 then error("Empty Data") end
-      if size < 8 then error("Too small to paste") end
-      data = "LK12;GPUIMG;" .. size.."x"..size ..";".. string.upper(data)
-    end
-    local sprdata = imagedata(data)
-    sheetdata:paste(sprdata,dx,dy)
-    self.SpriteMap.img = sheetdata:image()
-    self:_redraw()
-  end)
+      local dx,dy,dw,dh = self.SpriteMap:rect(sprsid)
+      local sheetdata = self.SpriteMap:data()
+      local data = clipboard()
+      if data:sub(1,5) == "[gfx]" then -- PICO-8 Paste
+        data = data:sub(6,-7) --Remove the start and end tags
+        local width = tonumber(data:sub(1,2),16)
+        local height = tonumber(data:sub(3,4),16)
+        data = string.upper(data:sub(5,-1))
+        data = "LK12;GPUIMG;" .. width.."x"..height ..";".. string.upper(data)
+      else
+        data = data:gsub("%X","")
+        local size = math.sqrt(data:len())
+        if math.floor(size) ~= size then error("Invalid Data") end
+        if size == 0 then error("Empty Data") end
+        if size < 8 then error("Too small to paste") end
+        data = "LK12;GPUIMG;" .. size.."x"..size ..";".. string.upper(data)
+      end
+      local sprdata = imagedata(data)
+      sheetdata:paste(sprdata,dx,dy)
+      self.SpriteMap.img = sheetdata:image()
+      self:_redraw()
+    end)
   if not ok then
     _systemMessage("PASTE ERR: "..(err or "nil"),5)
     cprint("PASTE ERR: "..(err or "nil"))
@@ -324,381 +332,429 @@ function se:redrawSPRS() _ = nil
   rect(sprsidrect)
   color(sprsidrect[7])
   local id = ""; for i=1, maxSpriteIDCells-(tostring(sprsid):len()) do id = id .. "0" end; id = id .. tostring(sprsid)
-  print(id,sprsidrect[1]+1,sprsidrect[2]+1)
-  SpriteGroup(97,sprsbanksgrid[1],sprsbanksgrid[2],sprsbanksgrid[5],sprsbanksgrid[6],1,1,false,eapi.editorsheet)
-  eapi.editorsheet:draw(sprsbank+72,sprsbanksgrid[1]+(sprsbank-1)*8,sprsbanksgrid[2])
-end
+    print(id,sprsidrect[1]+1,sprsidrect[2]+1)
+    SpriteGroup(97,sprsbanksgrid[1],sprsbanksgrid[2],sprsbanksgrid[5],sprsbanksgrid[6],1,1,false,eapi.editorsheet)
+    eapi.editorsheet:draw(sprsbank+72,sprsbanksgrid[1]+(sprsbank-1)*8,sprsbanksgrid[2])
+  end
 
 --Redraw the sprite editing rectangle
-function se:redrawSPR()
-  rect(imgrecto)
-  self.SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],imgquad)
-  rect(revdraw[1],revdraw[2], revdraw[3],revdraw[4] ,false,0)
-  self.SpriteMap:image():draw(revdraw[1],revdraw[2], 0, 1,1, self.SpriteMap:quad(sprsid))
-end
+  function se:redrawSPR()
+    rect(imgrecto)
+    self.SpriteMap:image():draw(imgdraw[1],imgdraw[2],imgdraw[3],imgdraw[4],imgdraw[5],imgquad)
+    rect(revdraw[1],revdraw[2], revdraw[3],revdraw[4] ,false,0)
+    self.SpriteMap:image():draw(revdraw[1],revdraw[2], 0, 1,1, self.SpriteMap:quad(sprsid))
+  end
 
 --Redraw the zooming slider
-function se:redrawZSlider()
-  drawSlider(zoom,unpack(zslider))
-end
+  function se:redrawZSlider()
+    drawSlider(zoom,unpack(zslider))
+  end
 
 --Redraw the size slider
-function se:redrawSSlider()
-	sslider[5] = 120 + size
-  drawSlider(size,unpack(sslider))
-end
+  function se:redrawSSlider()
+    sslider[5] = 120 + size
+    drawSlider(size,unpack(sslider))
+  end
 
 --Redraw the tools selection bar
-function se:redrawTOOLS()
-  --Tools
-  SpriteGroup(unpack(toolsdraw))
-  eapi.editorsheet:draw((toolsdraw[1]+(stool-1))-24, toolsdraw[2]+(stool-1)*8,toolsdraw[3], 0, toolsdraw[6],toolsdraw[7])
+  function se:redrawTOOLS()
+    --Tools
+    SpriteGroup(unpack(toolsdraw))
+    eapi.editorsheet:draw((toolsdraw[1]+(stool-1))-24, toolsdraw[2]+(stool-1)*8,toolsdraw[3], 0, toolsdraw[6],toolsdraw[7])
 
-  --Transformations
-  SpriteGroup(unpack(transdraw))
-  if strans then eapi.editorsheet:draw((transdraw[1]+(strans-1))-24, transdraw[2]+(strans-1)*8,transdraw[3], 0, transdraw[6],transdraw[7]) end
-end
+    --Transformations
+    SpriteGroup(unpack(transdraw))
+    if strans then eapi.editorsheet:draw((transdraw[1]+(strans-1))-24, transdraw[2]+(strans-1)*8,transdraw[3], 0, transdraw[6],transdraw[7]) end
+  end
 
 --Redraw the flag byte circles
-function se:redrawFLAG()
-  local flags = string.byte(flagsData:sub(sprsid,sprsid))
-  for i=1,8 do --Bit number
-    if bit.band(bit.rshift(flags,i-1),1) == 1 then
-      eapi.editorsheet:draw(125+i,flagsdraw[1]+(i-1)*7,flagsdraw[2]) --It's ON
-    else
-      eapi.editorsheet:draw(125,flagsdraw[1]+(i-1)*7,flagsdraw[2])--It's OFF
+  function se:redrawFLAG()
+    local flags = string.byte(flagsData:sub(sprsid,sprsid))
+    for i=1,8 do --Bit number
+      if bit.band(bit.rshift(flags,i-1),1) == 1 then
+        eapi.editorsheet:draw(125+i,flagsdraw[1]+(i-1)*7,flagsdraw[2]) --It's ON
+      else
+        eapi.editorsheet:draw(125,flagsdraw[1]+(i-1)*7,flagsdraw[2])--It's OFF
+      end
     end
   end
-end
 
 --Redraw all the screen
-function se:_redraw()
-  self:redrawCP()
-  self:redrawSPR()
-  self:redrawSPRS()
-  self:redrawZSlider()
-  self:redrawSSlider()
-  self:redrawFLAG()
-  self:redrawTOOLS()
-end
+  function se:_redraw()
+    self:redrawCP()
+    self:redrawSPR()
+    self:redrawSPRS()
+    self:redrawZSlider()
+    self:redrawSSlider()
+    self:redrawFLAG()
+    self:redrawTOOLS()
+  end
 
 --Update some timers
-function se:update(dt)
-  if tbflag then
-    tbtimer = tbtimer + dt
-    if tbtime <= tbtimer then
-      stool = tbflag
-      tbflag = false
-      self:redrawTOOLS()
-    end
-  end
-
-  if transtimer then
-    transtimer = transtimer + dt
-    if transtimer > transtime then
-      transtimer, strans = nil, nil
-      self:redrawTOOLS()
-    end
-  end
-end
-
-function se:updateZoom()
-  zscale = 2^(zoom-1)
-
-  --Update the selection box size
-  sprssrect[3] = zscale*8 + 2
-  sprssrect[4] = zscale*8 + 2
-
-  --Update the selection box position
-  local cx, cy = (sprssrect[1]+1)/8 +1, (sprssrect[2]-sprsrecto[2])/8 +1
-  cx, cy = math.min(cx-1,sprsgrid[5]-zscale), math.min(cy-1,sprsgrid[6]-zscale)
-  sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
-  sprssrect[1] = cx*8-1
-  sprssrect[2] = sprsrecto[2]+cy*8
-
-  --Update the quad
-  imgquad:setViewport(cx*8,cy*8 + (sprsbank-1)*bsizeH,imgw*zscale,imgh*zscale)
-
-  --Update the drawing box
-  imgdraw[4], imgdraw[5] = psize/zscale, psize/zscale
-  imggrid[5], imggrid[6] = imgw*zscale, imgh*zscale
-end
-
---Mouse function of ImageDrawing
-function se:mouseImageDrawing(x,y,b,it,state)
-  if state ~= "hover" then
-    local cx, cy = whereInGrid(x,y,imggrid)
-    if cx then
-      if (not it) and state == "pressed" then mflag = true end
-      tools[stool](self,cx,cy,b)
-      self:redrawSPR() self:redrawSPRS()
-    end
-  end
-
-  --Cursor
-  if true then
-    if whereInGrid(x,y,imggrid) and stool < 3 then
-      if stool == 1 then
-        if isKDown("lshift","rshift") or isMDown(2) then
-          cursor("eraser")
-        else
-          cursor("pencil")
-        end
-      elseif stool == 2 then
-        cursor("bucket")
+  function se:update(dt)
+    if tbflag then
+      tbtimer = tbtimer + dt
+      if tbtime <= tbtimer then
+        stool = tbflag
+        tbflag = false
+        self:redrawTOOLS()
       end
-    else
-      local cur = cursor()
-      if cur == "pencil" or cur == "bucket" or cur == "eraser" then cursor("normal") end
+    end
+
+    if transtimer then
+      transtimer = transtimer + dt
+      if transtimer > transtime then
+        transtimer, strans = nil, nil
+        self:redrawTOOLS()
+      end
     end
   end
-end
 
-function se:mouseSpriteSelection(x,y,b,it,state)
-  local cx, cy = whereInGrid(x,y,sprsgrid)
-  if cx then
-    local cx, cy = math.min(cx-1,sprsgrid[5]-zscale), math.min(cy-1,sprsgrid[6]-zscale)
+  function se:updateZoom()
+    zscale = 2^(zoom-1)
+
+    --Update the selection box size
+    sprssrect[3] = zscale*8 + 2
+    sprssrect[4] = zscale*8 + 2
+
+    --Update the selection box position
+    local cx, cy = (sprssrect[1]+1)/8 +1, (sprssrect[2]-sprsrecto[2])/8 +1
+    cx, cy = math.min(cx-1,sprsgrid[5]-zscale), math.min(cy-1,sprsgrid[6]-zscale)
     sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
-    sprssrect[1] = cx*8 -1
+    sprssrect[1] = cx*8-1
     sprssrect[2] = sprsrecto[2]+cy*8
+
+    --Update the quad
     imgquad:setViewport(cx*8,cy*8 + (sprsbank-1)*bsizeH,imgw*zscale,imgh*zscale)
 
-    self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
-    if state == "pressed" then sprsmflag = true end
+    --Update the drawing box
+    imgdraw[4], imgdraw[5] = psize/zscale, psize/zscale
+    imggrid[5], imggrid[6] = imgw*zscale, imgh*zscale
   end
-end
 
-function se:mouseZoomSlider(x,y,b,it,state)
-  local cx, cy = whereInGrid(x,y,zgrid)
-  if state == "pressed" then
-    if cx then
-      zflag = "down"
-      zoom = cx; self:updateZoom()
-      cursor("handpress")
-      self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawZSlider()
+--Mouse function of ImageDrawing
+  function se:mouseImageDrawing(x,y,b,it,state)
+    if state ~= "hover" then
+      local cx, cy = whereInGrid(x,y,imggrid)
+      if cx then
+        if (not it) and state == "pressed" then mflag = true end
+        tools[stool](self,cx,cy,b)
+        self:redrawSPR() self:redrawSPRS()
+      end
     end
-  elseif state == "moved" then
+
+    --Cursor
+    if true then
+      if whereInGrid(x,y,imggrid) and stool < 3 then
+        if stool == 1 then
+          if isKDown("lshift","rshift") or isMDown(2) then
+            cursor("eraser")
+          else
+            cursor("pencil")
+          end
+        elseif stool == 2 then
+          cursor("bucket")
+        end
+      else
+        local cur = cursor()
+        if cur == "pencil" or cur == "bucket" or cur == "eraser" then cursor("normal") end
+      end
+    end
+  end
+
+  function se:mouseSpriteSelection(x,y,b,it,state)
+    local cx, cy = whereInGrid(x,y,sprsgrid)
     if cx then
-      if zflag == "down" then
+      local cx, cy = math.min(cx-1,sprsgrid[5]-zscale), math.min(cy-1,sprsgrid[6]-zscale)
+      sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
+      sprssrect[1] = cx*8 -1
+      sprssrect[2] = sprsrecto[2]+cy*8
+      imgquad:setViewport(cx*8,cy*8 + (sprsbank-1)*bsizeH,imgw*zscale,imgh*zscale)
+
+      self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
+      if state == "pressed" then sprsmflag = true end
+    end
+  end
+
+  function se:mouseZoomSlider(x,y,b,it,state)
+    local cx, cy = whereInGrid(x,y,zgrid)
+    if state == "pressed" then
+      if cx then
+        zflag = "down"
         zoom = cx; self:updateZoom()
+        cursor("handpress")
         self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawZSlider()
-      else
-        zflag = "hover"
-        cursor("handrelease")
       end
-    elseif zflag == "hover" then
-      cursor("normal")
-      zflag = "none"
-    end
-  elseif state == "released" then
-    if cx then
-      if zflag == "down" then
-        zoom = cx; self:updateZoom()
-        zflag = "hover"
-        cursor("handrelease")
-        self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawZSlider()
-      else
-        zflag = "hover"
-        cursor("handrelease")
+    elseif state == "moved" then
+      if cx then
+        if zflag == "down" then
+          zoom = cx; self:updateZoom()
+          self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawZSlider()
+        else
+          zflag = "hover"
+          cursor("handrelease")
+        end
+      elseif zflag == "hover" then
+        cursor("normal")
+        zflag = "none"
       end
-    elseif zflag ~= "none" then
-      cursor("normal")
-      zflag = "none"
+    elseif state == "released" then
+      if cx then
+        if zflag == "down" then
+          zoom = cx; self:updateZoom()
+          zflag = "hover"
+          cursor("handrelease")
+          self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawZSlider()
+        else
+          zflag = "hover"
+          cursor("handrelease")
+        end
+      elseif zflag ~= "none" then
+        cursor("normal")
+        zflag = "none"
+      end
     end
   end
-end
 
-function se:mouseSizeSlider(x,y,b,it,state)
-  local cx, cy = whereInGrid(x,y,sgrid)
-  if state == "pressed" then
-    if cx then
-      sflag = "down"
-      size = cx; self:updateZoom()
-      cursor("handpress")
-      self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawSSlider()
-    end
-  elseif state == "moved" then
-    if cx then
-      if sflag == "down" then
+  function se:mouseSizeSlider(x,y,b,it,state)
+    local cx, cy = whereInGrid(x,y,sgrid)
+    if state == "pressed" then
+      if cx then
+        sflag = "down"
         size = cx; self:updateZoom()
+        cursor("handpress")
         self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawSSlider()
-      else
-        sflag = "hover"
-        cursor("handrelease")
       end
-    elseif sflag == "hover" then
-      cursor("normal")
-      sflag = "none"
+    elseif state == "moved" then
+      if cx then
+        if sflag == "down" then
+          size = cx; self:updateZoom()
+          self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawSSlider()
+        else
+          sflag = "hover"
+          cursor("handrelease")
+        end
+      elseif sflag == "hover" then
+        cursor("normal")
+        sflag = "none"
+      end
+    elseif state == "released" then
+      if cx then
+        if sflag == "down" then
+          size = cx; self:updateZoom()
+          sflag = "hover"
+          cursor("handrelease")
+          self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawSSlider()
+        else
+          sflag = "hover"
+          cursor("handrelease")
+        end
+      elseif sflag ~= "none" then
+        cursor("normal")
+        sflag = "none"
+      end
     end
-  elseif state == "released" then
+  end
+
+  function se:mousepressed(x,y,b,it)
+    if isKDown("lshift","rshift") or isMDown(2) then b = 2 end
+
+    --Pallete Color Selection (Only in mousepressed)
+    local cx, cy = whereInGrid(x,y,palgrid)
     if cx then
-      if sflag == "down" then
-        size = cx; self:updateZoom()
-        sflag = "hover"
-        cursor("handrelease")
-        self:redrawSPRS() self:redrawSPR() self:redrawFLAG() self:redrawSSlider()
-      else
-        sflag = "hover"
-        cursor("handrelease")
+      if b == 1 then
+        colsL = ((cy-1)*4+cx)-1
+        local cx, cy = cx-1, cy-1
+        colsrectL[1] = palrecto[1] + cx*palpsize
+        colsrectL[2] = palrecto[2] + cy*palpsize
+      elseif b == 2 then
+        colsR = ((cy-1)*4+cx)-1
+        local cx, cy = cx-1, cy-1
+        colsrectR[1] = paldraw[1] + cx*palpsize
+        colsrectR[2] = paldraw[2] + cy*palpsize
       end
-    elseif sflag ~= "none" then
-      cursor("normal")
-      sflag = "none"
-    end
-  end
-end
 
-function se:mousepressed(x,y,b,it)
-  if isKDown("lshift","rshift") or isMDown(2) then b = 2 end
-
-  --Pallete Color Selection (Only in mousepressed)
-  local cx, cy = whereInGrid(x,y,palgrid)
-  if cx then
-    if b == 1 then
-      colsL = ((cy-1)*4+cx)-1
-      local cx, cy = cx-1, cy-1
-      colsrectL[1] = palrecto[1] + cx*palpsize
-      colsrectL[2] = palrecto[2] + cy*palpsize
-    elseif b == 2 then
-      colsR = ((cy-1)*4+cx)-1
-      local cx, cy = cx-1, cy-1
-      colsrectR[1] = paldraw[1] + cx*palpsize
-      colsrectR[2] = paldraw[2] + cy*palpsize
+      self:redrawCP()
     end
 
-    self:redrawCP()
+    --Bank selection (Only in mousepressed)
+    local cx = whereInGrid(x,y,sprsbanksgrid)
+    if cx then
+      sprsbank = cx
+      local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
+      if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*sheetW*bankH elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*sheetW*bankH end
+      self:updateZoom() self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
+    end
+
+    --Tool Selection (Only in mousepressed)
+    local cx, cy = whereInGrid(x,y,toolsgrid)
+    if cx then
+      if toolshold[cx] then
+        stool = cx
+        self:redrawTOOLS()
+        self:redrawSPRS() self:redrawSPR()
+      else
+        tools[cx](self)
+        tbflag, tbtimer = stool, 0
+        stool = cx
+        self:redrawSPRS() self:redrawSPR() self:redrawTOOLS()
+      end
+    end
+
+    --Transformation Selection (Only in mousepressed)
+    local cx, cy = whereInGrid(x,y,transgrid)
+    if cx and transformations[cx] then
+      transform(cx)
+    end
+
+    --Setting Flags (Only in mousepressed)
+    local cx, cy = whereInGrid(x,y,flagsgrid)
+    if cx then
+      local flags = string.byte(flagsData:sub(sprsid))
+      flags = bit.bxor(flags,bit.lshift(1,cx-1))
+      flagsData = flagsData:sub(0,sprsid-1)..string.char(flags)..flagsData:sub(sprsid+1,-1)
+      self:redrawFLAG()
+    end
+
+    --Zoom Slider
+    self:mouseZoomSlider(x,y,b,it,"pressed")
+
+    --Size Slider
+    self:mouseSizeSlider(x,y,b,it,"pressed")
+
+    --Sprite Selection
+    self:mouseSpriteSelection(x,y,b,it,"pressed")
+
+    --Image Drawing
+    self:mouseImageDrawing(x,y,b,it,"pressed")
   end
 
-  --Bank selection (Only in mousepressed)
-  local cx = whereInGrid(x,y,sprsbanksgrid)
-  if cx then
-    sprsbank = cx
-    local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
-    if idbank > sprsbank then sprsid = sprsid-(idbank-sprsbank)*sheetW*bankH elseif sprsbank > idbank then sprsid = sprsid+(sprsbank-idbank)*sheetW*bankH end
-    self:updateZoom() self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
+  function se:mousemoved(x,y,dx,dy,it)
+    local b = 1; if isKDown("lshift","rshift") or isMDown(2) then b = 2 end
+
+    --Image Drawing
+    if (not it and mflag) or it then
+      self:mouseImageDrawing(x,y,b,it,"moved")
+    else --For the cursor to update
+      self:mouseImageDrawing(x,y,b,it,"hover")
+    end
+
+    --Sprite Selection
+    if (not it and sprsmflag) or it then
+      self:mouseSpriteSelection(x,y,b,it,"moved")
+    end
+
+    --Zoom Slider
+    self:mouseZoomSlider(x,y,b,it,"moved")
+
+    --Size Slider
+    self:mouseSizeSlider(x,y,b,it,"moved")
   end
 
-  --Tool Selection (Only in mousepressed)
-  local cx, cy = whereInGrid(x,y,toolsgrid)
-  if cx then
-    if toolshold[cx] then
-      stool = cx
-      self:redrawTOOLS()
+  function se:mousereleased(x,y,b,it)
+    if isKDown("lshift","rshift") then b = 2 end
+
+    --Image Drawing
+    if (not it and mflag) or it then
+      self:mouseImageDrawing(x,y,b,it,"released")
+    end
+    mflag = false
+
+    --Sprite Selection
+    if (not it and sprsmflag) or it then
+      self:mouseSpriteSelection(x,y,b,it,"released")
+    end
+    sprsmflag = false
+
+    --Zoom Slider
+    self:mouseZoomSlider(x,y,b,it,"released")
+
+    --Size Slider
+    self:mouseSizeSlider(x,y,b,it,"released")
+  end
+
+  function se:keypressed(key,sc)
+    --Palette Switching
+    if sc == "q" or sc == "e" then
+      if isKDown("lshift","rshift") then
+        if sc == "e" then
+          colsR = colsR + 1
+          if colsR > 15 then colsR = 0 end
+        else
+          colsR = colsR - 1
+          if colsR < 0 then colsR = 15 end
+        end
+        local cx = colsR % 4
+        local cy = math.floor(colsR/4)
+
+        colsrectR[1] = paldraw[1] + cx*palpsize
+        colsrectR[2] = paldraw[2] + cy*palpsize
+      else
+        if sc == "e" then
+          colsL = colsL + 1
+          if colsL > 15 then colsL = 0 end
+        else
+          colsL = colsL - 1
+          if colsL < 0 then colsL = 15 end
+        end
+        local cx = colsL % 4
+        local cy = math.floor(colsL/4)
+
+        colsrectL[1] = palrecto[1] + cx*palpsize
+        colsrectL[2] = palrecto[2] + cy*palpsize
+      end
+
+      self:redrawCP()
+    elseif sc == "w" or sc == "a" or sc == "s" or sc == "d" then
+      local function setBank(bank)
+        local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
+        sprsbank = bank
+        if idbank > sprsbank then
+          sprsid = sprsid-(idbank-sprsbank)*sheetW*bankH
+        elseif sprsbank > idbank then
+          sprsid = sprsid+(sprsbank-idbank)*sheetW*bankH
+        end
+      end
+
+      --Update the selection box position
+      local cx, cy = (sprssrect[1]+1)/8, (sprssrect[2]-sprsrecto[2])/8
+      if sc == "a" then --Left
+        cx = cx - zscale
+      elseif sc == "d" then --Right
+        cx = cx + zscale
+      elseif sc == "w" then --Up
+        cy = cy - zscale
+      elseif sc == "s" then --Down
+        cy = cy + zscale
+      end
+      if cx < 0 then cx, cy = ((cy == 0 and sprsbank == 1) and 0 or sheetW-1), cy-zscale elseif cx >= sheetW then cx, cy = ((cy == bankH-zscale and sprsbank == 4) and sheetW-1 or 0), cy+zscale end
+      if cy < 0 then
+        if sprsbank > 1 then
+          setBank(sprsbank-1)
+          cy = bankH-1
+        else
+          cy = 0
+        end
+      elseif cy > bankH-1 then
+        if sprsbank < 4 then
+          setBank(sprsbank+1)
+          cy = 0
+        else
+          cy = bankH-1
+        end
+      end
+
+      cx, cy = math.min(cx,sprsgrid[5]-zscale), math.min(cy,sprsgrid[6]-zscale)
+      sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
+      sprssrect[1] = cx*8-1
+      sprssrect[2] = sprsrecto[2]+cy*8
+      imgquad:setViewport(cx*8,cy*8 + (sprsbank-1)*bsizeH,imgw*zscale,imgh*zscale)
       self:redrawSPRS() self:redrawSPR()
-    else
-      tools[cx](self)
-      tbflag, tbtimer = stool, 0
-      stool = cx
-      self:redrawSPRS() self:redrawSPR() self:redrawTOOLS()
     end
   end
 
-  --Transformation Selection (Only in mousepressed)
-  local cx, cy = whereInGrid(x,y,transgrid)
-  if cx and transformations[cx] then
-    transform(cx)
-  end
-
-  --Setting Flags (Only in mousepressed)
-  local cx, cy = whereInGrid(x,y,flagsgrid)
-  if cx then
-    local flags = string.byte(flagsData:sub(sprsid))
-    flags = bit.bxor(flags,bit.lshift(1,cx-1))
-    flagsData = flagsData:sub(0,sprsid-1)..string.char(flags)..flagsData:sub(sprsid+1,-1)
-    self:redrawFLAG()
-  end
-
-  --Zoom Slider
-  self:mouseZoomSlider(x,y,b,it,"pressed")
-
-	--Size Slider
-	self:mouseSizeSlider(x,y,b,it,"pressed")
-
-  --Sprite Selection
-  self:mouseSpriteSelection(x,y,b,it,"pressed")
-
-  --Image Drawing
-  self:mouseImageDrawing(x,y,b,it,"pressed")
-end
-
-function se:mousemoved(x,y,dx,dy,it)
-  local b = 1; if isKDown("lshift","rshift") or isMDown(2) then b = 2 end
-
-  --Image Drawing
-  if (not it and mflag) or it then
-    self:mouseImageDrawing(x,y,b,it,"moved")
-  else --For the cursor to update
-    self:mouseImageDrawing(x,y,b,it,"hover")
-  end
-
-  --Sprite Selection
-  if (not it and sprsmflag) or it then
-    self:mouseSpriteSelection(x,y,b,it,"moved")
-  end
-
-  --Zoom Slider
-  self:mouseZoomSlider(x,y,b,it,"moved")
-
-	--Size Slider
-	self:mouseSizeSlider(x,y,b,it,"moved")
-end
-
-function se:mousereleased(x,y,b,it)
-  if isKDown("lshift","rshift") then b = 2 end
-
-  --Image Drawing
-  if (not it and mflag) or it then
-    self:mouseImageDrawing(x,y,b,it,"released")
-  end
-  mflag = false
-
-  --Sprite Selection
-  if (not it and sprsmflag) or it then
-    self:mouseSpriteSelection(x,y,b,it,"released")
-  end
-  sprsmflag = false
-
-  --Zoom Slider
-  self:mouseZoomSlider(x,y,b,it,"released")
-
-	--Size Slider
-	self:mouseSizeSlider(x,y,b,it,"released")
-end
-
-function se:keypressed(key,sc)
-  --Palette Switching
-  if sc == "q" or sc == "e" then
-    if isKDown("lshift","rshift") then
-      if sc == "e" then
-        colsR = colsR + 1
-        if colsR > 15 then colsR = 0 end
-      else
-        colsR = colsR - 1
-        if colsR < 0 then colsR = 15 end
-      end
-      local cx = colsR % 4
-      local cy = math.floor(colsR/4)
-
-      colsrectR[1] = paldraw[1] + cx*palpsize
-      colsrectR[2] = paldraw[2] + cy*palpsize
-    else
-      if sc == "e" then
-        colsL = colsL + 1
-        if colsL > 15 then colsL = 0 end
-      else
-        colsL = colsL - 1
-        if colsL < 0 then colsL = 15 end
-      end
-      local cx = colsL % 4
-      local cy = math.floor(colsL/4)
-
-      colsrectL[1] = palrecto[1] + cx*palpsize
-      colsrectL[2] = palrecto[2] + cy*palpsize
-    end
-
-    self:redrawCP()
-  elseif sc == "w" or sc == "a" or sc == "s" or sc == "d" then
-    local function setBank(bank)
+  local bank = function(bank)
+    return function()
       local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
       sprsbank = bank
       if idbank > sprsbank then
@@ -706,71 +762,23 @@ function se:keypressed(key,sc)
       elseif sprsbank > idbank then
         sprsid = sprsid+(sprsbank-idbank)*sheetW*bankH
       end
+      se:redrawSPRS() se:redrawSPR()
     end
-
-    --Update the selection box position
-    local cx, cy = (sprssrect[1]+1)/8, (sprssrect[2]-sprsrecto[2])/8
-    if sc == "a" then --Left
-      cx = cx - zscale
-    elseif sc == "d" then --Right
-      cx = cx + zscale
-    elseif sc == "w" then --Up
-      cy = cy - zscale
-    elseif sc == "s" then --Down
-      cy = cy + zscale
-    end
-    if cx < 0 then cx, cy = ((cy == 0 and sprsbank == 1) and 0 or sheetW-1), cy-zscale elseif cx >= sheetW then cx, cy = ((cy == bankH-zscale and sprsbank == 4) and sheetW-1 or 0), cy+zscale end
-    if cy < 0 then
-      if sprsbank > 1 then
-        setBank(sprsbank-1)
-        cy = bankH-1
-      else
-        cy = 0
-      end
-    elseif cy > bankH-1 then
-      if sprsbank < 4 then
-        setBank(sprsbank+1)
-        cy = 0
-      else
-        cy = bankH-1
-      end
-    end
-
-    cx, cy = math.min(cx,sprsgrid[5]-zscale), math.min(cy,sprsgrid[6]-zscale)
-    sprsid = cy*sheetW+cx+1+(sprsbank*sheetW*bankH-sheetW*bankH)
-    sprssrect[1] = cx*8-1
-    sprssrect[2] = sprsrecto[2]+cy*8
-    imgquad:setViewport(cx*8,cy*8 + (sprsbank-1)*bsizeH,imgw*zscale,imgh*zscale)
-    self:redrawSPRS() self:redrawSPR()
   end
-end
 
-local bank = function(bank)
-  return function()
-    local idbank = math.floor((sprsid-1)/(sheetW*bankH))+1
-    sprsbank = bank
-    if idbank > sprsbank then
-      sprsid = sprsid-(idbank-sprsbank)*sheetW*bankH
-    elseif sprsbank > idbank then
-      sprsid = sprsid+(sprsbank-idbank)*sheetW*bankH
-    end
-    se:redrawSPRS() se:redrawSPR()
-  end
-end
+  se.keymap = {
+    ["ctrl-c"] = se.copy,
+    ["ctrl-v"] = se.paste,
+    ["1"] = bank(1), ["2"] = bank(2), ["3"] = bank(3), ["4"] = bank(4),
+    ["z"] = function() stool=1 se:redrawTOOLS() end,
+    ["x"] = function() stool=2 se:redrawTOOLS() end,
+    ["delete"] = function() tools[5](se) se:redrawSPRS() se:redrawSPR() end,
+    --Transformations
+    ["r"] = function() transform(1) end,
+    ["shift-r"] = function() transform(2) end,
+    ["f"] = function() transform(3) end,
+    ["shift-f"] = function() transform(4) end,
+    ["i"] = function() transform(5) end
+  }
 
-se.keymap = {
-  ["ctrl-c"] = se.copy,
-  ["ctrl-v"] = se.paste,
-  ["1"] = bank(1), ["2"] = bank(2), ["3"] = bank(3), ["4"] = bank(4),
-  ["z"] = function() stool=1 se:redrawTOOLS() end,
-  ["x"] = function() stool=2 se:redrawTOOLS() end,
-  ["delete"] = function() tools[5](se) se:redrawSPRS() se:redrawSPR() end,
-  --Transformations
-  ["r"] = function() transform(1) end,
-  ["shift-r"] = function() transform(2) end,
-  ["f"] = function() transform(3) end,
-  ["shift-f"] = function() transform(4) end,
-  ["i"] = function() transform(5) end
-}
-
-return se
+  return se

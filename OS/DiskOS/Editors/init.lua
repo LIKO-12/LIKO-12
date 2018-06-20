@@ -161,7 +161,7 @@ function edit:clearData()
   self.leditors = {}
   for k,v in ipairs(self.chunks) do
     local editor = v(self)
-    table.insert(self.leditors,k,editor)
+    self.leditors[k] = editor
   end
 end
 
