@@ -451,7 +451,7 @@ return function(Config)
     if not love.filesystem.getInfo(RootDir..from) then return error("From Path doesn't exists !") end
     
     local csize = getSizeRecursive(from)
-    if Drives[toDrive].Usage + csize > Drives[toDrive].Size then return error("No enough space !") end
+    if Drives[toDrive].Usage + csize > Drives[toDrive].Size then return error("No enough space.",2) end
     
     createPath(to)
     
@@ -594,7 +594,7 @@ return function(Config)
       fsize = fsize - info.size
     end
     
-    if Drives[drive].Usage + fsize > Drives[drive].Size then error("No enough space.") end
+    if Drives[drive].Usage + fsize > Drives[drive].Size then error("No enough space.",2) end
     
     createPath(fs.getDirectory(path))
     love.filesystem.write(RootDir..path,data,size)
@@ -615,7 +615,7 @@ return function(Config)
     if love.filesystem.getInfo(RootDir..path,"directory") then return error("Can't append data on a directory.") end
     
     local asize = size or data:len()
-    if Drives[drive].Usage + asize > Drives[drive].Size then error("No enough space.") end
+    if Drives[drive].Usage + asize > Drives[drive].Size then error("No enough space.",2) end
     
     createPath(fs.getDirectory(path))
     
