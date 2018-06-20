@@ -47,7 +47,7 @@ PA("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "A
 --Create a new virtual hdd system mounted as "HDD"
 PA("HDD","HDD",{
   Drives = {
-    GameDiskOS = 1024*1024 * 50, --Measured in bytes, equals 25 megabytes
+    GameDiskOS = 1024*1024 * 50, --Measured in bytes, equals 50 megabytes
   },
   RootDir = "/OS/"
 })
