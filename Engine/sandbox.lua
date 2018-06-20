@@ -1,6 +1,7 @@
 --A function that creates new sandboxed global environment.
 
 local bit = require("bit")
+local utf8 = require("utf8")
 
 local _LuaBCHeader = string.char(0x1B).."LJ"
 
@@ -118,6 +119,14 @@ return function(parent)
       rol=bit.rol,
       ror=bit.ror,
       bswap=bit.swap
+    },
+    utf8={
+      char=utf8.char,
+      charpattern=utf8.charpattern,
+      codes=utf8.codes,
+      codepoint=utf8.codepoint,
+      len=utf8.len,
+      offset=utf8.offset
     }
   }
   GLOB.getfenv = function(f)
