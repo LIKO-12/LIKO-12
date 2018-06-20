@@ -47,7 +47,7 @@ PA("Keyboard","Keyboard",{CPUKit = CPUKit, GPUKit = GPUKit,_Android = (_OS == "A
 PA("HDD","HDD",{
   Drives = {
     C = 1024*1024 * 25, --Measured in bytes, equals 25 megabytes
-    D = 1024*1024 * 25 --Measured in bytes, equals 25 megabytes
+    D = 1024*1024 * 50 --Measured in bytes, equals 50 megabytes
   }
 })
 
