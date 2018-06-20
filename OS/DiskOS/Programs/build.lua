@@ -146,7 +146,7 @@ do
     
     if targets.win then
       local icon48 = imagedata(48,48)
-      if transparentColor then icon48:map(function() return transparentColor end) end
+      if transparentColor and transparentColor ~= 0 then icon48:map(function() return transparentColor end) end
       icon48:paste(selectedSprite,8,8)
       log("placed 32x32 in 48x48 without scaling")
       iconImages[3] = icon48
