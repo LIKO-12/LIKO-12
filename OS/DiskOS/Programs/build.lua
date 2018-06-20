@@ -107,6 +107,64 @@ local function stage(...)
   color(12) print("\n"..table.concat({...}," ")..":\n")
 end
 
+stage("Generating the game icon")
+
+local iconImages = {} --16,32,48 (windows),64,128,256 (osx)
+local transparentColor = false --Opaque
+
+do
+  local colsL,colsR = eapi.leditors[eapi.editors.sprite]:getSelectedColors()
+  if colsR == 0 then transparentColor = colsL end
+  
+  local selectedSprite = eapi.leditors[eapi.editors.sprite]:getSelectedSprite()
+  
+  if selectedSprite:width() == 8 then
+    selectedSprite = selectedSprite:enlarge(2)
+    log("scaled up 8x8 to 16x16")
+  end
+  
+  
+  if selectedSprite:width() == 32 then
+    iconImages[1] = imagedata(16,16)
+    iconImages[1]:map(function(x,y)
+      return selectedSprite:getPixel(x*2,y*2)
+    end)
+    log("scaled down 32x32 to 16x16")
+    log("made 16x16 icon")
+  end
+  
+  if selectedSprite:width() == 16 then
+    iconImages[1] = selectedSprite --16x16
+    log("made 16x16 icon")
+    selectedSprite = selectedSprite:enlarge(2)
+  end
+  
+  iconImages[2] = selectedSprite --32x32
+  log("made 32x32 icon")
+  
+  if targets.win then
+    local icon48 = imagedata(48,48)
+    icon48:paste(selectedSprite,8,8)
+    log("placed 32x32 in 48x48 without scaling")
+    iconImages[3] = icon48
+    log("made 48x48 icon")
+  end
+  
+  selectedSprite = selectedSprite:enlarge(2)
+  iconImages[4] = selectedSprite
+  log("made 64x64 icon")
+  
+  selectedSprite = selectedSprite:enlarge(2)
+  iconImages[5] = selectedSprite
+  log("made 128x128 icon")
+  
+  if targets.osx then
+    selectedSprite = selectedSprite:enlarge(2)
+    iconImages[6] = selectedSprite
+    log("made 256x256 icon")
+  end
+end
+
 stage("Creating .love file")
 
 log("- Mounting LIKO-12 Sourcecode")
@@ -137,6 +195,16 @@ local buildJSON = json:encode_pretty({
 })
 likosrc["build.json"] = buildJSON
 log("generated successfully")
+
+log("- Replacing icon.png")
+if transparentColor then
+  palt(0,false) palt(transparentColor,true)
+  likosrc["icon.png"] = iconImages[1]:export()
+  palt()
+else
+  likosrc["icon.png"] = iconImages[1]:exportOpaque()
+end
+log("replaced successfully")
 
 log("- Removing useless files")
 likosrc.Peripherals.WEB = nil
@@ -183,6 +251,14 @@ if targets.win then
   log("removed love.exe")
   winTree["lovec.exe"] = nil
   log("removed lovec.exe")
+  
+  log("- Replacing Icons")
+  local winIco = BuildUtils.encodeIco({iconImages[1],iconImages[2],iconImages[3],iconImages[4],iconImages[5]},transparentColor)
+  log("encoded windows icon")
+  winTree["love.ico"] = winIco
+  log("replaced love.ico")
+  winTree["game.ico"] = winIco
+  log("replaced game.ico")
   
   log("- Packing windows build")
   local winZip = BuildUtils.packZIP(winTree)
