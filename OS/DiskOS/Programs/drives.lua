@@ -18,6 +18,8 @@ for drive, data in pairs(dr) do
   if data.Readonly then
     color(15) print("[Readonly]")
   else
-    color(11-math.min(math.floor(percent/25),3)) print("("..percent.."%)")
+    color(11-math.min(math.floor(percent/25),3))
+    if drive == "C" then color(6) end --The usage of the C drive doesn't matter
+    print("("..percent.."%)")
   end
 end
