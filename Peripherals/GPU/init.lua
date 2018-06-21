@@ -789,12 +789,12 @@ return function(config) --A function that creates a new GPU peripheral.
     --Reset the palettes.
     if (not c0) and (not c1) then
       for i=1, 16 do
-        if _DrawPalette[i] ~= i-1 and ((not p) or p == 1) then
+        if _DrawPalette[i] ~= i-1 and ((not p) or p == 0) then
           drawchange = true
           _DrawPalette[i] = i-1
         end
         
-        if _ImagePalette[i] ~= i-1 and ((not p) or p > 1) then
+        if _ImagePalette[i] ~= i-1 and ((not p) or p > 0) then
           imagechange = true
           _ImagePalette[i] = i-1
         end
