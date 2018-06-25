@@ -24,6 +24,7 @@
 ---
 
 * [GPU Cheatsheet](!Cheatsheets/GPU Cheatsheet.md)
+* [Other Peripherals Cheatsheet](!Cheatsheets/Other Peripherals Cheatsheet.md)
 
 ---
 
