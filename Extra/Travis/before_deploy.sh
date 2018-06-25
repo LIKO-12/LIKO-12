@@ -24,10 +24,16 @@ rm -v -f Windows_x86/love.exe
 rm -v -f Windows_x86/lovec.exe
 7z A -r -y -tzip -bd Builds/LIKO-12_Nightly_Windows.zip Windows_x86/*
 
-echo ----==== Building Linux ====----
+echo ----==== Building Linux x86_64 ====----
 
-cp -v -f -r ../LIKO-12/* ./Linux/
-7z A -r -y -tzip -bd Builds/LIKO-12_Nightly_Linux.zip Linux/*
+Linux_x86_64/Love/LIKO-12-x86_64.AppImage --appimage-extract
+cat squashfs-root/usr/bin/love LIKO-12.love > squashfs-root/usr/bin/love-fused
+rm -v -f squashfs-root/usr/bin/love
+mv -v -f squashfs-root/usr/bin/love-fused squashfs-root/usr/bin/love
+chmod a+x squashfs-root/usr/bin/love
+./appimagetool.AppImage squashfs-root
+mv -v -f LIKO-12-x86_64.AppImage Builds/LIKO-12_Nightly_Linux_x86_64.AppImage
+rm -v -f -r squashfs-root
 
 echo ----==== Building OS_X ====----
 
