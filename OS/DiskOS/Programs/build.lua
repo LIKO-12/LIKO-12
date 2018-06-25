@@ -16,8 +16,8 @@ if (...) and (...) == "-?" then
 end
 
 local targets = {...}
---if #targets == 0 then targets = {"love","win","linux","osx"} end
-if #targets == 0 then targets = {"love","win","linux"} end
+if #targets == 0 then targets = {"love","win","linux","osx"} end
+--if #targets == 0 then targets = {"love","win","linux"} end
 
 for i=1,#targets do targets[targets[i]] = true end --Values to Keys, easier for searching.
 
@@ -43,7 +43,7 @@ if targets.win or targets.linux or targets.osx then
       elseif event == "filedropped" then
         if not b then return 1, "Failed to read file." end
         if not fs.mountZIP(b) then return 1, "Corrupted .zip file." end
-        if not fs.exists("ZIP:/Linux") then return 1, "Invalid .zip file." end
+        if not fs.exists("ZIP:/Linux_x86_64") then return 1, "Invalid .zip file." end
         if not fs.exists("ZIP:/OS_X") then return 1, "Invalid .zip file." end
         if not fs.exists("ZIP:/Windows") then return 1, "Invalid .zip file." end
         fs.mountZIP()
@@ -279,12 +279,13 @@ if targets.linux then
   stage("Building for linux")
   
   log("- Reading linux template")
-  local linuxScript = fs.read("ZIP:/Linux/run.sh")
+  local linuxTree = BuildUtils.filesTree("ZIP:/Linux_x86_64/")
   log("read successfully")
   
   log("- Adding game files")
-  local linuxTree = lume.clone(likosrc)
-  linuxTree["run.sh"] = linuxScript
+  for k,v in pairs(likosrc) do
+    linuxTree[k] = v
+  end
   log("added successfully")
   
   log("- Packing linux build")
