@@ -16,5 +16,6 @@ addLibrary("Libraries/likocam.lua","likocam")
 addLibrary("Libraries/JSON.lua","JSON")
 addLibrary("Libraries/luann.lua","luann")
 addLibrary("Libraries/genetic.lua","geneticAlgo")
+addLibrary("Libraries/vector.lua","vector")
 
 return Globals
