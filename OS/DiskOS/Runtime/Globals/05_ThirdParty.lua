@@ -19,5 +19,6 @@ addLibrary(MainDrive..":/Libraries/likocam.lua","likocam")
 addLibrary(MainDrive..":/Libraries/JSON.lua","JSON")
 addLibrary(MainDrive..":/Libraries/luann.lua","luann")
 addLibrary(MainDrive..":/Libraries/genetic.lua","geneticAlgo")
+addLibrary(MainDrive..":/Libraries/vector.lua","vector")
 
 return Globals
