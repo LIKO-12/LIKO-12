@@ -306,7 +306,7 @@ local lastPX, lastPY = 0,0
 local panflag = false
 local selxf,selyf = false, false
 
-function t:mapmouse(x,y,it,state,dx,dy)
+function t:mapmouse(x,y,it,state,dx,dy,b)
   if selectedTool == 4 or isKDown("lalt","ralt") then return end
   if isInRect(x,y,mapRect) then
     
@@ -325,14 +325,17 @@ function t:mapmouse(x,y,it,state,dx,dy)
     local cx = math.floor((x-mapdx)/8)
     local cy = math.floor((y-8-mapdy)/8)
     
+    local selectedTile = hotbarTiles[selectedSlot]
+    if isMDown(2) or (b and b == 2) then selectedTile = 0 end
+    
     --Pencil
     if selectedTool == 0 then
-      Map:cell(cx,cy,hotbarTiles[selectedSlot])
+      Map:cell(cx,cy,selectedTile)
       self:drawMap()
       
     --Bucket (Fill)
     elseif selectedTool == 1 then
-      queuedFill(Map,cx,cy,hotbarTiles[selectedSlot])
+      queuedFill(Map,cx,cy,selectedTile)
       self:drawMap()
     
     --Pan (Hand)
@@ -455,9 +458,9 @@ end
 
 
 function t:mousepressed(x,y,b,it)
-  self:toolbarmouse(x,y,it,"pressed")
-  self:mapmouse(x,y,it,"pressed")
-  self:menumouse(x,y,it,"pressed")
+  self:toolbarmouse(x,y,it,"pressed",false,false,b)
+  self:mapmouse(x,y,it,"pressed",false,false,b)
+  self:menumouse(x,y,it,"pressed",false,false,b)
 end
 
 function t:mousemoved(x,y,dx,dy,it)
@@ -467,9 +470,9 @@ function t:mousemoved(x,y,dx,dy,it)
 end
 
 function t:mousereleased(x,y,b,it)
-  self:toolbarmouse(x,y,it,"released")
-  self:mapmouse(x,y,it,"released")
-  self:menumouse(x,y,it,"released")
+  self:toolbarmouse(x,y,it,"released",false,false,b)
+  self:mapmouse(x,y,it,"released",false,false,b)
+  self:menumouse(x,y,it,"released",false,false,b)
 end
 
 function t:wheelmoved(x,y)
