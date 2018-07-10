@@ -1422,8 +1422,8 @@ return function(config) --A function that creates a new GPU peripheral.
       function sb:getBufferSize() return spritebatch:getBufferSize() end
       function sb:getCount() return spritebatch:getCount() end
       function sb:add(quad,x,y,r,sx,sy,ox,oy,kx,ky)
-        x,y,r,sx,sy,ox,oy,kx,ky = x or 0, y or 0, r or 0, sx or 1, sy or sx or 0, ox or 0, oy or 0, kx or 0, ky or 0
-        if type(quad) ~= "table" then return error("Quad should be provided.") end
+        x,y,r,sx,sy,ox,oy,kx,ky = x or 0, y or 0, r or 0, sx or 1, sy or sx or 1, ox or 0, oy or 0, kx or 0, ky or 0
+        if type(quad) ~= "userdata" then return error("Quad should be provided, ("..type(quad)..") is not accepted.") end
         Verify(x,"x","number") Verify(y,"y","number")
         Verify(r,"r","number")
         Verify(sx,"sx","number") Verify(sy,"sy","number")
@@ -1432,8 +1432,8 @@ return function(config) --A function that creates a new GPU peripheral.
         return spritebatch:add(quad,x,y,r,sx,sy,ox,oy,kx,ky)
       end
       function sb:set(id,quad,x,y,r,sx,sy,ox,oy,kx,ky)
-        x,y,r,sx,sy,ox,oy,kx,ky = x or 0, y or 0, r or 0, sx or 1, sy or sx or 0, ox or 0, oy or 0, kx or 0, ky or 0
-        if type(quad) ~= "table" then return error("Quad should be provided.") end
+        x,y,r,sx,sy,ox,oy,kx,ky = x or 0, y or 0, r or 0, sx or 1, sy or sx or 1, ox or 0, oy or 0, kx or 0, ky or 0
+        if type(quad) ~= "userdata" then return error("Quad should be provided, ("..type(quad)..") is not accepted.") end
         Verify(id,"id","number")
         Verify(x,"x","number") Verify(y,"y","number")
         Verify(r,"r","number")
