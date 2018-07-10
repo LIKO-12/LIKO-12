@@ -372,7 +372,7 @@ function se:redrawSPRS() _ = nil
     local flags = string.byte(flagsData:sub(sprsid,sprsid))
     for i=1,8 do --Bit number
       if bit.band(bit.rshift(flags,8-i),1) == 1 then
-        eapi.editorsheet:draw(125+i,flagsdraw[1]+(i-1)*7,flagsdraw[2]) --It's ON
+        eapi.editorsheet:draw(125+(9-i),flagsdraw[1]+(i-1)*7,flagsdraw[2]) --It's ON
       else
         eapi.editorsheet:draw(125,flagsdraw[1]+(i-1)*7,flagsdraw[2])--It's OFF
       end
