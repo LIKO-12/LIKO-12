@@ -28,7 +28,7 @@ fset(sprid,byte)
 
 ---
 
-**Note**: The bits are currently numbered from left to right, sorry for this, will fix in the next release.
+**Note**: The bits are numbered from right to left.
 
 ---
 

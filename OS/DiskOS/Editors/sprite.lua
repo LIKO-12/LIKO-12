@@ -371,7 +371,7 @@ function se:redrawSPRS() _ = nil
   function se:redrawFLAG()
     local flags = string.byte(flagsData:sub(sprsid,sprsid))
     for i=1,8 do --Bit number
-      if bit.band(bit.rshift(flags,i-1),1) == 1 then
+      if bit.band(bit.rshift(flags,8-i),1) == 1 then
         eapi.editorsheet:draw(125+i,flagsdraw[1]+(i-1)*7,flagsdraw[2]) --It's ON
       else
         eapi.editorsheet:draw(125,flagsdraw[1]+(i-1)*7,flagsdraw[2])--It's OFF
@@ -610,6 +610,7 @@ function se:redrawSPRS() _ = nil
     --Setting Flags (Only in mousepressed)
     local cx, cy = whereInGrid(x,y,flagsgrid)
     if cx then
+      cx = 9-cx
       local flags = string.byte(flagsData:sub(sprsid))
       flags = bit.bxor(flags,bit.lshift(1,cx-1))
       flagsData = flagsData:sub(0,sprsid-1)..string.char(flags)..flagsData:sub(sprsid+1,-1)
