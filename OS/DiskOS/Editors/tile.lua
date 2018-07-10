@@ -328,6 +328,15 @@ function t:mapmouse(x,y,it,state,dx,dy,b)
     local selectedTile = hotbarTiles[selectedSlot]
     if isMDown(2) or (b and b == 2) then selectedTile = 0 end
     
+    local selectedTool = selectedTool
+    
+    if selectedTool <= 1 then
+      if isMDown(3) or (b and b == 3) then
+        selectedTool = 2
+        cursor(state == "released" and "normal" or "hand")
+      end
+    end
+    
     --Pencil
     if selectedTool == 0 then
       Map:cell(cx,cy,selectedTile)
