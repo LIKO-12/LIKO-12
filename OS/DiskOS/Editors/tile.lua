@@ -165,6 +165,8 @@ function t:drawMap()
   
   --Draw the map
   palt(0,false)
+  line(-1,math.floor(mapdy%sheight+8),swidth+1,math.floor(mapdy%sheight+8), 0)
+  line(math.floor(mapdx%swidth),-1,math.floor(mapdx%swidth), sheight+1, 0)
   Map:draw(math.floor(mapdx%8-8),math.floor(mapdy%8),-math.floor(mapdx/8)-1,-math.floor(mapdy/8)-1,MapVW+1,MapVH+1, 1,1, SpriteMap)
   palt()
   
