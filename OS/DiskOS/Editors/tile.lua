@@ -472,6 +472,14 @@ function t:mousereleased(x,y,b,it)
   self:menumouse(x,y,it,"released")
 end
 
+function t:wheelmoved(x,y)
+  if y > 0 then
+    self:selectSlot((selectedSlot-2)%10 + 1)
+  elseif y < 0 then
+    self:selectSlot((selectedSlot)%10 + 1)
+  end
+end
+
 function t:keypressed(key, sc, isrep)
   if (key == "lalt" or key == "ralt") and not isrep then
     if selectedTool ~= 4 then self:drawMenu() end
