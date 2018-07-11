@@ -8,7 +8,7 @@ cd ../BuildUtils/LIKO-12/
 
 echo ----==== Removing unnecessary files... ====----
 
-rm -v -f README.md CODE_OF_CONDUCT.md CONTRIBUTING.md mkdocs.yml .travis.yml .gitattributes .gitignore
+rm -v -f README.md CODE_OF_CONDUCT.md CONTRIBUTING.md mkdocs.yml .travis.yml .gitattributes .gitignore .nomedia
 rm -v -f -r .git Docs DLL Extra
 
 echo ----==== Packing .love file ====----
