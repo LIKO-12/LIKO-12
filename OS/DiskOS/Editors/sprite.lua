@@ -750,7 +750,7 @@ function se:redrawSPRS() _ = nil
       sprssrect[1] = cx*8-1
       sprssrect[2] = sprsrecto[2]+cy*8
       imgquad:setViewport(cx*8,cy*8 + (sprsbank-1)*bsizeH,imgw*zscale,imgh*zscale)
-      self:redrawSPRS() self:redrawSPR()
+      self:redrawSPRS() self:redrawSPR() self:redrawFLAG()
     end
   end
 
