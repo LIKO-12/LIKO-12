@@ -18,7 +18,7 @@ About the soft restart:
 
 I don't think anyone would want to edit anything in this file.
 
-==Contributers to this file==
+==Contributors to this file==
 (Add your name when contributing to this file)
 
 - Rami Sabbagh (RamiLego4Game)

@@ -50,7 +50,7 @@ The may use some api functions defined at DiskOS/System/api.lua
 
 Good luck !
 
-==Contributers to this file==
+==Contributors to this file==
 (Add your name when contributing to this file)
 
 - Rami Sabbagh (RamiLego4Game)

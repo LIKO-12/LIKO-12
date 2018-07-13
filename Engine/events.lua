@@ -31,7 +31,7 @@ How events works:
  * Calling event:group with not arguments will set to the default group which is called "Unsorted"
  * Groups name must be a string.
 
-==Contributers to this file==
+==Contributors to this file==
 (Add your name when contributing to this file)
 
 - Rami Sabbagh (RamiLego4Game)

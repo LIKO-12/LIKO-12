@@ -26,7 +26,7 @@ So you will have to self:drawBuffer() for that
 
 Be sure to read the contributing guide in Editors/init.lua
 
-==Contributers to this file==
+==Contributors to this file==
 (Add your name when contributing to this file)
 
 - Rami Sabbagh (RamiLego4Game)
