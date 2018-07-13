@@ -24,8 +24,6 @@ I don't think anyone would want to edit anything in this file.
 - Rami Sabbagh (RamiLego4Game)
 ]]
 
-love.setDeprecationOutput(false) --Disable desprecation output temporary (Until the 11.0 update is done)
-
 local package_exceptions = {
   "bit", "utf8", "ffi", "ssl.core", "ssl.context", "ssl.x209", "ssl", "https", "socket.http", "ltn12", "mime", "socket.smtp", "socket", "socket.url"
 }
