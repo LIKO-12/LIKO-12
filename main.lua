@@ -1,18 +1,18 @@
-io.stdout:setvbuf("no")
+io.stdout:setvbuf("no") --For console output to work instantly.
 local reboot, events = false
 
 --==Contribution Guide==--
 --[[
-I did create an events system for liko12, making my work more modular.
+I did create an events system for LIKO-12, making my work more modular.
 Below there is a modified love.run function which implements 4 things:
 - Instead of calling love callbacks, it triggers the events with name "love:callback", for ex: "love:mousepressed".
-- It contains a small and a nice trick which reloads all the code files (expect main.lua & conf.lua) and reboots liko12 without haveing to restart love.
+- It contains a small and a nice trick which reloads all the code files (expect main.lua & conf.lua) then reboots LIKO-12 without haveing to restart love.
 - When the love.graphics is active (usable) it triggers "love:graphics" event.
 - If any "love:quit" event returned true, the quit will be canceled.
 
 About the soft restart:
 * To do a soft restart trigger the "love:reboot" event.
-* This works by clearing package.loaded expect bit library, then calling love.graphics.reset(), and reseting the events library, and finally restarts love.run from the top (there's an extra while loop you can see).
+* This works by clearing package.loaded expect native libraries, calling love.graphics.reset(), reseting the events library, and finally restarts love.run from the top.
 * In case you changed something in main.lua or conf.lua then you can do a hard restart by calling love.event.quit("restart")
 * In DiskOS you can run 'reboot' command to do a soft reboot, or 'reboot hard' to do a hard one (by restarting love).
 
