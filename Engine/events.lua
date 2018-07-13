@@ -1,15 +1,15 @@
 --==Contribution Guide==--
 --[[
-Events System, used for wiring love events to liko12s peripherals.
+Events System, used for wiring love events to LIKO-12's peripherals.
 
 Event Name:
 * It's highly recommended to name event as "parent:funcName", for ex: "love:update".
 
-Love2D Hooks:
-* All love2d callbacks are triggered with names "love:callbackName", ex: "love:mousepressed".
-* There is 2 special love2d events:
+LOVE Hooks:
+* All love callbacks are triggered with names "love:callbackName", ex: "love:mousepressed".
+* There is 3 special love events:
 - "love:graphics" called then the love.graphics module is active and it's turn to draw in love.run.
-- "love:reboot" Trigger this event with a table of args to pass after SOFT rebooting.
+- "love:reboot" Trigger this event with a table of args to pass after SOFT rebooting (to love.load).
 - "love:quit" if any registered function returns true the quit will be cancelled.
 
 NormBIOS:
