@@ -11,7 +11,7 @@ Below there is a modified love.run function which implements 4 things:
 - If any "love:quit" event returned true, the quit will be canceled.
 
 About the soft restart:
-* To do a soft restart trigger the "love:reboot" event.
+* To do a soft restart trigger the "love:reboot" event, you can pass custom args for love.load to get after reboot.
 * This works by clearing package.loaded expect native libraries, calling love.graphics.reset(), reseting the events library, and finally restarts love.run from the top.
 * In case you changed something in main.lua or conf.lua then you can do a hard restart by calling love.event.quit("restart")
 * In DiskOS you can run 'reboot' command to do a soft reboot, or 'reboot hard' to do a hard one (by restarting love).
