@@ -1,13 +1,24 @@
---Nothing should be changed with this config expect: window size, enabling a module.
+--==Contribution Guide==--
+--[[
+This is LOVE configuration file,
+It also contains LIKO-12 version table, all other code in LIKO-12 technically references this.
+
+I don't think anyone would want to edit anything in this file, but on change the version number.
+
+==Contributors to this file==
+(Add your name when contributing to this file)
+
+- Rami Sabbagh (RamiLego4Game)
+]]
 
 --LIKO-12 Version
 _LVer = {
-	magor = 0,
+	major = 0,
 	minor = 8,
 	patch = 1,
 	tag = "DEV",
 }
-_LVERSION = string.format("V%d.%d.%d_%s",_LVer.magor,_LVer.minor,_LVer.patch,_LVer.tag)
+_LVERSION = string.format("V%d.%d.%d_%s",_LVer.major,_LVer.minor,_LVer.patch,_LVer.tag)
 
 --BuildConfig
 local build = {}
