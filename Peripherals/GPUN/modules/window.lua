@@ -70,5 +70,5 @@ end)
 events.register("love:focus",function(f) if f then RenderKit.ShouldDraw = true end end) --Window got focus.
 events.register("love:visible",function(v) if v then RenderKit.ShouldDraw = true end end) --Window got visible.
 
---==GPUKit Output==--
+--==GPUKit Exports==--
 WindowKit.LIKO_W, WindowKit.LIKO_H = _LIKO_W, _LIKO_H
