@@ -133,5 +133,3 @@ function love.errorhandler(msg)
 	end
 
 end
-
-error("test")
