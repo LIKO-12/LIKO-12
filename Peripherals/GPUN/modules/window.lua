@@ -10,11 +10,11 @@ local WindowKit = GPUKit.Window
 
 local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS" or Config._Mobile
 
-local _LIKO_W, _LIKO_H = config._LIKO_W or 192, config._LIKO_H or 128 --LIKO-12 screen dimensions.
+local _LIKO_W, _LIKO_H = Config._LIKO_W or 192, Config._LIKO_H or 128 --LIKO-12 screen dimensions.
 WindowKit.LIKO_X, WindowKit.LIKO_Y = 0,0 --LIKO-12 screen padding in the HOST screen.
 
-local _PixelPerfect = config._PixelPerfect --If the LIKO-12 screen must be scaled pixel perfect.
-WindowKit.LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
+local _PixelPerfect = Config._PixelPerfect --If the LIKO-12 screen must be scaled pixel perfect.
+WindowKit.LIKOScale = math.floor(Config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
 
 WindowKit.width, WindowKit.height = _LIKO_W*WindowKit.LIKOScale, _LIKO_H*WindowKit.LIKOScale --The host window size.
 if _Mobile then WindowKit.width, WindowKit.height = 0,0 end
@@ -29,8 +29,8 @@ if not love.window.isOpen() then
     minheight = _LIKO_H
   })
   
-  if config.title then
-    love.window.setTitle(config.title)
+  if Config.title then
+    love.window.setTitle(Config.title)
   else
     love.window.setTitle("LIKO-12 ".._LVERSION)
   end
