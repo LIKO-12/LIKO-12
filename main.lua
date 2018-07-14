@@ -38,23 +38,24 @@ function love.load(args)
   events.trigger("love:load")
 end
 
-function love.run(arg)
+function love.run()
+  arg = {love.arg.parseGameArguments(arg), arg}
+  
+  local dt = 0
+  
   local function runReset()
     events = require("Engine.events")
     events.register("love:reboot",function(args) --Code can trigger this event to do a soft restart.
-      reboot = args or {}
+      local args = args or {}
+      reboot = {love.arg.parseGameArguments(args),args}
     end)
-
-    if love.math then
-      love.math.setRandomSeed(os.time())
-    end
 
     if love.load then love.load(reboot or arg) end reboot = false
 
     -- We don't want the first frame's dt to include time taken by love.load.
     if love.timer then love.timer.step() end
 
-    local dt = 0
+    dt = 0
   end
 
   runReset() --Reset for the first time
@@ -92,6 +93,8 @@ function love.run(arg)
     if love.graphics and love.graphics.isActive() then
       events.trigger("love:graphics")
     end
+    
+    if love.timer then love.timer.sleep(0.001) end
 
     if reboot then
       for k,v in pairs(package.loaded) do
