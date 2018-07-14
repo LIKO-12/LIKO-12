@@ -45,10 +45,12 @@ if targets.win or targets.linux or targets.osx then
         if not fs.mountZIP(b) then return 1, "Corrupted .zip file." end
         if not fs.exists("ZIP:/Linux_x86_64") then return 1, "Invalid .zip file." end
         if not fs.exists("ZIP:/OS_X") then return 1, "Invalid .zip file." end
-        if not fs.exists("ZIP:/Windows") then return 1, "Invalid .zip file." end
+        if not fs.exists("ZIP:/Windows_x86") then return 1, "Invalid .zip file." end
+        if not fs.exists("ZIP:/Meta.json") then return 1, "Invalid .zip file." end
         fs.mountZIP()
         fs.write("C:/BuildTemplates.zip",b)
         BuildTemplates = b
+        color(11) print("BuildsTemplates has been installed.")
         break
       elseif event == "touchpressed" then
         textinput(true)
@@ -243,7 +245,7 @@ if targets.win then
   stage("Building for windows")
   
   log("- Reading windows template")
-  local winTree = BuildUtils.filesTree("ZIP:/Windows/")
+  local winTree = BuildUtils.filesTree("ZIP:/Windows_x86/")
   log("read successfully")
   
   log("- Patching Icon")
@@ -265,6 +267,20 @@ if targets.win then
   log("removed love.exe")
   winTree["lovec.exe"] = nil
   log("removed lovec.exe")
+  
+  log("- Removing WEB native libs")
+  winTree["libcurl.dll"] = nil
+  log("removed libcurl.dll")
+  winTree["libeay32.dll"] = nil
+  log("removed libeay32.dll")
+  winTree["ssl.dll"] = nil
+  log("removed ssl.dll")
+  winTree["ssl.dylib"] = nil
+  log("removed ssl.dylib")
+  winTree["ssleay32.dll"] = nil
+  log("removed ssleay32.dll")
+  winTree["lua/ssl.lua"] = nil
+  log("removed ssl.lua")
   
   log("- Packing windows build")
   local winZip = BuildUtils.packZIP(winTree)
