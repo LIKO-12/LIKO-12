@@ -173,12 +173,12 @@ if DevMode and love.thread then
   local FThread = love.thread.newThread("/BIOS/filethread.lua") --File tracking thread
   FThread:start()
   
-  events:register("love:reboot",function()
+  events.register("love:reboot",function()
 		local channel = love.thread.getChannel("BIOSFileThread")
 		channel:push(true) --Shutdown the thread
 	end)
 
-  events:register("love:quit",function()
+  events.register("love:quit",function()
 		local channel = love.thread.getChannel("BIOSFileThread")
 		channel:push(true) --Shutdown the thread
 		FThread:wait()

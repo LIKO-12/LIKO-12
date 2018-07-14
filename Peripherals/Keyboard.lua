@@ -3,34 +3,34 @@ local events = require("Engine.events")
 return function(config) --A function that creates a new Keyboard peripheral.
   
   if config._SpaceWalkthrough then
-    events:register("love:keypressed",function(key,sc,isrepeat)
+    events.register("love:keypressed",function(key,sc,isrepeat)
       if key == "space" then
-        events:trigger("love:textinput"," ")
+        events.trigger("love:textinput"," ")
       end
     end)
   end
   
   if config._Android then
-    events:register("love:textinput",function(t)
-      events:trigger("love:keypressed",string.lower(t),string.lower(t))
-      events:trigger("love:keyreleased",string.lower(t),string.lower(t))
+    events.register("love:textinput",function(t)
+      events.trigger("love:keypressed",string.lower(t),string.lower(t))
+      events.trigger("love:keyreleased",string.lower(t),string.lower(t))
     end)
   end
   
   if config.CPUKit then --Register Keyboard events
     local cpukit = config.CPUKit
-	   events:register("love:keypressed", function(...)
+	   events.register("love:keypressed", function(...)
 	     cpukit.triggerEvent("keypressed",...)
 	   end)
 	
-	   events:register("love:keyreleased", function(...)
+	   events.register("love:keyreleased", function(...)
 	     cpukit.triggerEvent("keyreleased",...)
     end)
     
     local gpukit = config.GPUKit
     
     --The hook the textinput for feltering characters not in the font
-    events:register("love:textinput",function(text)
+    events.register("love:textinput",function(text)
       local text_escaped = text:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1")
       if #text == 1 and ((not gpukit) or gpukit._FontChars:find(text_escaped)) then
         cpukit.triggerEvent("textinput",text)

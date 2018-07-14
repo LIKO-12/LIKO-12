@@ -22,7 +22,7 @@ return function(config)
   end
   ctunethread:start(chctune)
   
-  events:register("love:reboot", function()
+  events.register("love:reboot", function()
     for i=0,3 do
       sfxChannels[i]:clear()
       sfxChannels[i]:push("stop")
@@ -31,7 +31,7 @@ return function(config)
     chctune:push("stop")
   end)
   
-  events:register("love:quit", function()
+  events.register("love:quit", function()
     for i=0,3 do
       sfxChannels[i]:clear()
       sfxChannels[i]:push("stop")
@@ -110,7 +110,7 @@ return function(config)
     
   end
   
-  events:register("love:update", function(dt)
+  events.register("love:update", function(dt)
     
     for i=0,3 do
       local terr = sfxThreads[i]:getError()

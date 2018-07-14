@@ -12,24 +12,15 @@ LOVE Hooks:
 - "love:reboot" Trigger this event with a table of args to pass after SOFT rebooting (to love.load).
 - "love:quit" if any registered function returns true the quit will be cancelled.
 
-NormBIOS:
-* It does automatically switch the group name for each peripheral with name "peripheralName:mountName".
-* When unmounting a peripheral it does automatically unregisters the events of it.
-
-events.reg:
-- It's a table that contains table, the keys of this table is the name of register function, and the value is a table containing all the registered function with the same name.
-
-events.groups:
-- It's a table, where the index is the group name, and the value is the group table:
-- Each group table contains tables, where each index is the function name, and the value is a table which contains the ids of each registered function.
-- Inorder to find a function in the events.reg, you may do: events.reg[funcname][id]()
+local registry:
+- It's a table that contains tables, the keys of this table is the name of register function, and the value is a table containing all the registered function with the same name.
 
 How events works:
- * Registering a function: registering means adding a function to be called when a specific event is triggered.
- * Triggering an event: will call all the registered functions with a specific event name.
- * Groups are like sorting the registered events to their "owner name", so they can be registered togather instead of each one itself.
- * Calling event:group with not arguments will set to the default group which is called "Unsorted"
- * Groups name must be a string.
+ * Registering a function (events.register): registering means adding a function to be called when a specific event is triggered.
+ * Triggering an event (events.trigger): will call all the registered functions with a specific event name.
+
+events.triggerWithReturns:
+ * Returns a table containing tables of what each triggered function returned.
 
 ==Contributors to this file==
 (Add your name when contributing to this file)
@@ -37,113 +28,42 @@ How events works:
 - Rami Sabbagh (RamiLego4Game)
 ]]
 
-local events = {reg={},groups={}}
+local events = {}
+local registry = {}
 
---Adds functions when registered to a specific group.
---When called by nil it will register them unsorted.
-function events:group(name)
-  local name = name or "Unsorted"
-  if not self.groups[name] then
-    self.groups[name] = {} --Create a new group
-  end
-  self.activeGroup = self.groups[name]
-  return self
-end
-
-events:group() --Setup the Unlisted Group.
-
---Register a function to an event.
-function events:register(name,func)
+function events.register(name,func)
   if type(name) ~= "string" then return error("Name should be a string value. Passed "..type(name).." instead !") end
   if type(func) ~= "function" then return error("func should be a function value. Passed "..type(func).." instead !") end
-  if not self.reg[name] then self.reg[name] = {} end
-  if not self.activeGroup[name] then self.activeGroup[name] = {} end
-  table.insert(self.reg[name],func)
-  table.insert(self.activeGroup[name],#self.reg[name])
-  return func
+  
+  if not registry[name] then registry[name] = {} end
+  registry[name][#registry[name] + 1] = func
+  
+  return events
 end
 
---Unregister a function from the events system.
-function events:unregister(func,name) --Name is optional
-  if type(name) ~= "string" and type(name) ~= "nil" then return error("Name should be a string value. Passed "..type(name).." instead !") end
-  if type(func) ~= "function" then return error("func should be a function value. Passed "..type(func).." instead !") end
-  if name and self.reg[name] then
-    for k,v in ipairs(self.reg[name]) do
-      if v == func then
-        table.remove(self.reg[name],k)
-      end
-    end
-    --Clear the gaps
-    local newList = {}
-    local gapCount = 0
-    for k,v in ipairs(self.reg[name]) do
-      if type(v) == "nil" then
-        gapCount = gapCount+1
-      else
-        table.insert(newList,k-gapCount,v)
-      end
-    end
-    self.reg[name] = newList
-  else --Search through all events
-    for rk,rv in pairs(self.reg) do
-      for k,v in ipairs(rv) do
-        if v == func then
-          table.remove(rv,k)
-        end
-      end
-      --Clear the gaps
-      local newList = {}
-      local gapCount = 0
-      for k,v in ipairs(rv) do
-        if type(v) == "nil" then
-          gapCount = gapCount+1
-        else
-          table.insert(newList,k-gapCount,v)
-        end
-      end
-      self.reg[rk] = newList
-    end
-  end
-  return self
-end
-
-function events:unregisterGroup(gname)
-  if not self.groups[gname] then return self end
-  
-  for name,funcs in pairs(self.groups[gname]) do
-    for k,id in ipairs(funcs) do
-      if self.reg[name][id] then
-        table.remove(self.reg[name],id)
-      end
-    end
-    --Clear the gaps
-    local newList = {}
-    local gapCount = 0
-    for k,v in ipairs(self.reg[name]) do
-      if type(v) == "nil" then
-        gapCount = gapCount+1
-      else
-        table.insert(newList,k-gapCount,v)
-      end
-    end
-    self.reg[name] = newList
-  end
-  
-  self.groups[gname] = nil
-  
-  return self
-end
-
---Call an event functions
---Returns a table with the responds of the functions, with functions as the keyvalue.
-function events:trigger(name,...)
+function events.trigger(name,...)
   if type(name) ~= "string" then return error("Name should be a string value. Passed "..type(name).." instead !") end
-  if not self.reg[name] then return {} end
-  local r = {}
-  for k,f in pairs(self.reg[name]) do
-    r[f] = {f(...)}
+  local funcs = registry[name]
+  if not funcs then return end
+  
+  for i=1, #funcs do
+    funcs[i](...)
   end
-  return r
+  
+  return events
+end
+
+function events.triggerWithReturns(name,...)
+  if type(name) ~= "string" then return error("Name should be a string value. Passed "..type(name).." instead !") end
+  local funcs = registry[name]
+  if not funcs then return end
+  
+  local returns = {}
+  for i=1, #funcs do
+    returns[i] = {funcs[i](...)}
+  end
+  
+  return returns
 end
 
 return events

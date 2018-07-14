@@ -18,11 +18,11 @@ return function(config) --A function that creates a new CPU peripheral.
       end
   end
   
-  events:register("love:update", function(...) --Update event
+  events.register("love:update", function(...) --Update event
     if not sleepTimer then devkit.triggerEvent("update",...) end
   end)
   
-  events:register("love:update",function(dt) --Sleep Timer
+  events.register("love:update",function(dt) --Sleep Timer
     if sleepTimer then
       sleepTimer = sleepTimer-dt
       if sleepTimer <=0 then
@@ -114,7 +114,7 @@ return function(config) --A function that creates a new CPU peripheral.
     if hard then
       love.event.quit( "restart" )
     else
-      events:trigger("love:reboot") --Tell main.lua that we have to soft reboot.
+      events.trigger("love:reboot") --Tell main.lua that we have to soft reboot.
     end
     return 2 --I don't want the coroutine to resume while rebooting
   end

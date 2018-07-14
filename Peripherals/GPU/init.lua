@@ -158,7 +158,7 @@ return function(config) --A function that creates a new GPU peripheral.
     love.window.setIcon(love.image.newImageData("icon.png"))
   end
   
-  events:register("love:quit", function()
+  events.register("love:quit", function()
     if love.window.isOpen() then
       love.graphics.setCanvas()
       love.window.close()
@@ -177,7 +177,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local _AlwaysDrawTimer = 0 --This timer is only used on mobile devices to keep drawing the screen when the user changes the orientation.
   
   --Hook the resize function--
-  events:register("love:resize",function(w,h) --Do some calculations
+  events.register("love:resize",function(w,h) --Do some calculations
     _HOST_W, _HOST_H = w, h
     local TSX, TSY = w/_LIKO_W, h/_LIKO_H --TestScaleX, TestScaleY
     if TSX < TSY then
@@ -194,8 +194,8 @@ return function(config) --A function that creates a new GPU peripheral.
   end)
   
   --Hook to some functions to redraw (when the window is moved, got focus, etc ...)
-  events:register("love:focus",function(f) if f then _ShouldDraw = true end end) --Window got focus.
-  events:register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
+  events.register("love:focus",function(f) if f then _ShouldDraw = true end end) --Window got focus.
+  events.register("love:visible",function(v) if v then _ShouldDraw = true end end) --Window got visible.
   
   --Initialize the gpu--
   if not love.filesystem.getInfo("Shaders","directory") then
@@ -275,7 +275,7 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setCanvas{_ScreenCanvas,stencil=true} --Activate LIKO12 canvas.
   love.graphics.clear(0,0,0,1) --Clear LIKO12 screen for the first time.
   
-  events:trigger("love:resize", _HOST_W, _HOST_H) --Calculate LIKO12 scale to the host window for the first time.
+  events.trigger("love:resize", _HOST_W, _HOST_H) --Calculate LIKO12 scale to the host window for the first time.
   
   love.graphics.setFont(_Font) --Activate the default font.
   
@@ -438,7 +438,7 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   --To handle gif control buttons
-  events:register("love:keypressed", function(key,sc,isrepeat)
+  events.register("love:keypressed", function(key,sc,isrepeat)
     if love.keyboard.isDown("lshift","rshift") then return end
     if key == _GIFStartKey then
       startGifRecording()
@@ -449,7 +449,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end)
   --To save the gif before rebooting.
-  events:register("love:reboot",function(args)
+  events.register("love:reboot",function(args)
     if _GIFRec then
       _GIFRec.file:flush()
       _GIFRec.file:close()
@@ -460,7 +460,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end)
   --To save the gif before quitting.
-  events:register("love:quit", function()
+  events.register("love:quit", function()
     if _GIFRec then
       _GIFRec.file:flush()
       _GIFRec.file:close()
@@ -483,7 +483,7 @@ return function(config) --A function that creates a new GPU peripheral.
   local _CursorsCache = {}
   
   --Handle post-shader switching
-  events:register("love:keypressed", function(key,sc,isrepeat)
+  events.register("love:keypressed", function(key,sc,isrepeat)
     if not love.keyboard.isDown("lshift","rshift") then return end
     if key ~= _GIFStartKey and key ~= _GIFEndKey and key ~= _GIFPauseKey then return end
     local shaderslist = love.filesystem.getDirectoryItems("/Shaders/")
@@ -569,14 +569,14 @@ return function(config) --A function that creates a new GPU peripheral.
   end)
 
   --Post-Shader Time value
-  events:register("love:update",function(dt)
+  events.register("love:update",function(dt)
     if _PostShaderTimer then
       _PostShaderTimer = (_PostShaderTimer + dt)%10
     end
   end)
   
   --File drop hook
-  events:register("love:filedropped", function(file)
+  events.register("love:filedropped", function(file)
     file:open("r")
     local data = file:read()
     file:close()
@@ -584,44 +584,44 @@ return function(config) --A function that creates a new GPU peripheral.
   end)
   
   --Mouse Hooks (To translate them to LIKO12 screen)--
-  events:register("love:mousepressed",function(x,y,b,istouch)
+  events.register("love:mousepressed",function(x,y,b,istouch)
     local x,y = _HostToLiko(x,y)
-    events:trigger("GPU:mousepressed",x,y,b,istouch)
+    events.trigger("GPU:mousepressed",x,y,b,istouch)
     if cpukit then cpukit.triggerEvent("mousepressed",x,y,b,istouch) end
   end)
-  events:register("love:mousemoved",function(x,y,dx,dy,istouch)
+  events.register("love:mousemoved",function(x,y,dx,dy,istouch)
     local x,y = _HostToLiko(x,y)
     local dx, dy = dx/_LIKOScale, dy/_LIKOScale
-    events:trigger("GPU:mousemoved",x,y,dx,dy,istouch)
+    events.trigger("GPU:mousemoved",x,y,dx,dy,istouch)
     if cpukit then cpukit.triggerEvent("mousemoved",x,y,dx,dy,istouch) end
   end)
-  events:register("love:mousereleased",function(x,y,b,istouch)
+  events.register("love:mousereleased",function(x,y,b,istouch)
     local x,y = _HostToLiko(x,y)
-    events:trigger("GPU:mousereleased",x,y,b,istouch)
+    events.trigger("GPU:mousereleased",x,y,b,istouch)
     if cpukit then cpukit.triggerEvent("mousereleased",x,y,b,istouch) end
   end)
-  events:register("love:wheelmoved",function(x,y)
-    events:trigger("GPU:wheelmoved",x,y)
+  events.register("love:wheelmoved",function(x,y)
+    events.trigger("GPU:wheelmoved",x,y)
     if cpukit then cpukit.triggerEvent("wheelmoved",x,y) end
   end)
   
   --Touch Hooks (To translate them to LIKO12 screen)--
-  events:register("love:touchpressed",function(id,x,y,dx,dy,p)
+  events.register("love:touchpressed",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
     local dx, dy = dx/_LIKOScale, dy/_LIKOScale
-    events:trigger("GPU:touchpressed",id,x,y,dx,dy,p)
+    events.trigger("GPU:touchpressed",id,x,y,dx,dy,p)
     if cpukit then cpukit.triggerEvent("touchpressed",id,x,y,dx,dy,p) end
   end)
-  events:register("love:touchmoved",function(id,x,y,dx,dy,p)
+  events.register("love:touchmoved",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
     local dx, dy = dx/_LIKOScale, dy/_LIKOScale
-    events:trigger("GPU:touchmoved",id,x,y,dx,dy,p)
+    events.trigger("GPU:touchmoved",id,x,y,dx,dy,p)
     if cpukit then cpukit.triggerEvent("touchmoved",id,x,y,dx,dy,p) end
   end)
-  events:register("love:touchreleased",function(id,x,y,dx,dy,p)
+  events.register("love:touchreleased",function(id,x,y,dx,dy,p)
     local x,y = _HostToLiko(x,y)
     local dx, dy = dx/_LIKOScale, dy/_LIKOScale
-    events:trigger("GPU:touchreleased",id,x,y,dx,dy,p)
+    events.trigger("GPU:touchreleased",id,x,y,dx,dy,p)
     if cpukit then cpukit.triggerEvent("touchreleased",id,x,y,dx,dy,p) end
   end)
 
@@ -1682,7 +1682,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end
   
-  events:register("love:resize",function() --The new size will be calculated in the top, because events are called by the order they were registered with
+  events.register("love:resize",function() --The new size will be calculated in the top, because events are called by the order they were registered with
     if not love.mouse.isCursorSupported() then return end
     for k, cursor in pairs(_CursorsCache) do
        --Hack
@@ -1708,7 +1708,7 @@ return function(config) --A function that creates a new GPU peripheral.
   GPU.cursor(_Cursor)
   
   --Screenshot and LabelCapture keys handling.
-  events:register("love:keypressed", function(key,sc,isrepeat)
+  events.register("love:keypressed", function(key,sc,isrepeat)
     if key == _ScreenshotKey then
       local sc = GPU.screenshot()
       sc = sc:enlarge(_ScreenshotScale)
@@ -1727,7 +1727,7 @@ return function(config) --A function that creates a new GPU peripheral.
     return systemMessage(msg,time,tcol,col,hideInGif)
   end
   
-  events:register("love:update",function(dt)
+  events.register("love:update",function(dt)
     if MSGTimer > 0 then
       MSGTimer = MSGTimer - dt
       _ShouldDraw = true
@@ -1746,7 +1746,7 @@ return function(config) --A function that creates a new GPU peripheral.
   GPU.clear() --Clear the canvas for the first time.
   
   --Host to love.run when graphics is active--
-  events:register("love:graphics",function()
+  events.register("love:graphics",function()
     
     _Flipped = true --Set the flipped flag
     
@@ -1809,7 +1809,7 @@ return function(config) --A function that creates a new GPU peripheral.
       end
       
       if _DevKitDraw then
-        events:trigger("GPU:DevKitDraw")
+        events.trigger("GPU:DevKitDraw")
         love.graphics.origin()
         love.graphics.setColor(1,1,1,1)
         love.graphics.setLineStyle("rough")
@@ -1840,7 +1840,7 @@ return function(config) --A function that creates a new GPU peripheral.
     end
   end)
   
-  events:register("love:update",function(dt)
+  events.register("love:update",function(dt)
     
     if _AlwaysDrawTimer > 0 then
       _AlwaysDrawTimer = _AlwaysDrawTimer - dt

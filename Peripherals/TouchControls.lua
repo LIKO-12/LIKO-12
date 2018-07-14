@@ -80,7 +80,7 @@ return function(config)
   
   devkit.resize(love.graphics.getDimensions()) --Calculate the positions for the first time.
   
-  events:register("love:resize", devkit.resize) --Register the resize event.
+  events.register("love:resize", devkit.resize) --Register the resize event.
   
   local function isDpadPressed(id,angle)
     if not angle then return false end --If the user is not touching the dpad, then all buttons are not pressed
@@ -224,12 +224,12 @@ return function(config)
   end
   
   --Buttons Touch
-  events:register("love:touchpressed",function(id,x,y,dx,dy,p) updateButtons(id,"pressed",x,y) end)
-  events:register("love:touchmoved",function(id,x,y,dx,dy,p) updateButtons(id,"moved",x,y) end)
-  events:register("love:touchreleased",function(id,x,y,dx,dy,p) updateButtons(id,"released",x,y) end)
+  events.register("love:touchpressed",function(id,x,y,dx,dy,p) updateButtons(id,"pressed",x,y) end)
+  events.register("love:touchmoved",function(id,x,y,dx,dy,p) updateButtons(id,"moved",x,y) end)
+  events.register("love:touchreleased",function(id,x,y,dx,dy,p) updateButtons(id,"released",x,y) end)
   
   --Dpad Touch
-  events:register("love:touchpressed",function(id,x,y,dx,dy,p)
+  events.register("love:touchpressed",function(id,x,y,dx,dy,p)
     if touchids[1] then return end
     local dist = calcDistance(x,y,dpad_cx,dpad_cy)
     if dist < dpad_radius + dpad_extra then
@@ -239,21 +239,21 @@ return function(config)
     end
   end)
   
-  events:register("love:touchmoved",function(id,x,y,dx,dy,p)
+  events.register("love:touchmoved",function(id,x,y,dx,dy,p)
     if (not touchids[1]) or touchids[1] ~= id then return end
     
     touchangle = calcAngle(y - dpad_cy, x - dpad_cx)
     updateDpad()
   end)
   
-  events:register("love:touchreleased",function(id,x,y,dx,dy,p)
+  events.register("love:touchreleased",function(id,x,y,dx,dy,p)
     if (not touchids[1]) or touchids[1] ~= id then return end
     touchids[1] = false
     touchangle = false
     updateDpad()
   end)
   
-  events:register("GPU:DevKitDraw",function()
+  events.register("GPU:DevKitDraw",function()
     love.graphics.setLineStyle("smooth")
     --Buttons
     drawButtons()

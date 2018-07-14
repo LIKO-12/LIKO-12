@@ -75,9 +75,7 @@ local function P(per,m,conf)
   local conf = conf or {}
   if type(conf) ~= "table" then return false, "Configuration table should be a table, provided "..type(conf) end
   
-  events:group(per..":"..m)
   local success, API, yAPI, devkit = pcall(Peripherals[per],conf)
-  events:group()
   
   if success then
     APIS[m] = API or {} --The direct API

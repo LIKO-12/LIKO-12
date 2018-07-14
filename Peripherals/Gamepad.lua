@@ -31,11 +31,11 @@ return function(config) --A function that creates a new Gamepad peripheral.
     ["start"] = 7
   }
   
-  events:register("love:joystickadded",function(joystick)
+  events.register("love:joystickadded",function(joystick)
     print("Joystick Connected ! Gamepad: "..tostring(joystick:isGamepad())..", ID: "..joystick:getID()..", GUID: "..joystick:getGUID()..", Name: "..joystick:getName())
   end)
   
-  events:register("love:gamepadpressed",function(joystick, button)
+  events.register("love:gamepadpressed",function(joystick, button)
     if mappingState then return end
     
     local id = joystick:getID()
@@ -43,7 +43,7 @@ return function(config) --A function that creates a new Gamepad peripheral.
     CPUKit.triggerEvent("gamepad",true,map[button],id)
   end)
   
-  events:register("love:gamepadreleased",function(joystick, button)
+  events.register("love:gamepadreleased",function(joystick, button)
     if mappingState then return end
     
     local id = joystick:getID()
@@ -51,7 +51,7 @@ return function(config) --A function that creates a new Gamepad peripheral.
     CPUKit.triggerEvent("gamepad",false,map[button],id)
   end)
   
-  events:register("love:gamepadaxis",function(joystick, axis)
+  events.register("love:gamepadaxis",function(joystick, axis)
     if mappingState then return end
     
     local id = joystick:getID()
@@ -114,7 +114,7 @@ return function(config) --A function that creates a new Gamepad peripheral.
     return love.joystick.saveGamepadMappings("Misc/GamepadMapping.txt")
   end
   
-  events:register("love:joystickpressed",function(joystick,button)
+  events.register("love:joystickpressed",function(joystick,button)
     if debug then print("Joystick pressed",button) end
     if not mappingState then return end
     if mappingState.mode == "getGUID" then
@@ -129,7 +129,7 @@ return function(config) --A function that creates a new Gamepad peripheral.
     end
   end)
   
-  events:register("love:joystickaxis",function(joystick,axis,value)
+  events.register("love:joystickaxis",function(joystick,axis,value)
     if debug then print("Joystick axis",axis,value) end
     if not mappingState then return end
     if math.abs(value) < deadzone then return end
@@ -146,7 +146,7 @@ return function(config) --A function that creates a new Gamepad peripheral.
     end
   end)
   
-  events:register("love:joystickhat",function(joystick,hat,direction)
+  events.register("love:joystickhat",function(joystick,hat,direction)
     if debug then print("Joystick hat",hat,direction) end
     if not mappingState then return end
     if direction == "c" or direction:len() > 1 then return end

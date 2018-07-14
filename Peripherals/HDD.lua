@@ -658,7 +658,7 @@ return function(Config)
     end
   end
   
-  events:register("love:reboot", function()
+  events.register("love:reboot", function()
     fs.mountZIP() --Unmount the zip file.
   end)
   

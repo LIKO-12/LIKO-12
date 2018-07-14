@@ -116,7 +116,7 @@ return function(config) --A function that creates a new WEB peripheral.
     return require(submodule)
   end
   
-  events:register("love:update",function(dt)
+  events.register("love:update",function(dt)
     local result = from_channel:pop()
     if result then
       from_counter = from_counter +1
@@ -125,12 +125,12 @@ return function(config) --A function that creates a new WEB peripheral.
     end
   end)
 
-  events:register("love:reboot",function()
+  events.register("love:reboot",function()
     to_channel:clear()
     to_channel:push("shutdown")
   end)
 
-  events:register("love:quit",function()
+  events.register("love:quit",function()
     to_channel:clear()
     to_channel:push("shutdown")
     thread:wait()

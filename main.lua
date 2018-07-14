@@ -35,13 +35,13 @@ love.filesystem.load("Engine/errhand.lua")() --Apply the custom error handler.
 --Internal Callbacks--
 function love.load(args)
   love.filesystem.load("BIOS/init.lua")() --Initialize the BIOS.
-  events:trigger("love:load")
+  events.trigger("love:load")
 end
 
 function love.run(arg)
   local function runReset()
     events = require("Engine.events")
-    events:register("love:reboot",function(args) --Code can trigger this event to do a soft restart.
+    events.register("love:reboot",function(args) --Code can trigger this event to do a soft restart.
       reboot = args or {}
     end)
 
@@ -69,14 +69,14 @@ function love.run(arg)
       
       for name, a,b,c,d,e,f in love.event.poll() do
         if name == "quit" then
-          local r = events:trigger("love:quit")
+          local r = events.triggerWithReturns("love:quit")
           --If any event returns true the quit will be cancelled
-          for k,v in pairs(r) do
-            if v and v[1] then r = nil break end
+          for k=1, #r do
+            if r[k][1] then r = nil break end
           end
           if r then return a or 0 end
         else
-          events:trigger("love:"..name,a,b,c,d,e,f)
+          events.trigger("love:"..name,a,b,c,d,e,f)
         end
       end
     end
@@ -87,10 +87,10 @@ function love.run(arg)
     end
 
     -- Call update and draw
-    events:trigger("love:update",dt) -- will pass 0 if love.timer is disabled
+    events.trigger("love:update",dt) -- will pass 0 if love.timer is disabled
 
     if love.graphics and love.graphics.isActive() then
-      events:trigger("love:graphics")
+      events.trigger("love:graphics")
     end
 
     if reboot then
