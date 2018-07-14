@@ -4,6 +4,7 @@
 --By default it only tracks the DiskOS folder.
 
 require("love.system")
+require("love.timer")
 
 local reg = {}
 
@@ -69,7 +70,7 @@ while true do
 	
 	checkDir()
   
-  love.timer.sleep(1)
+  love.timer.sleep(3)
 end
 
 print("Finished File Thread")
