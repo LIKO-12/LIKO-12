@@ -9,6 +9,8 @@ return function(config) --A function that creates a new GPU peripheral.
   --DevKit: Shared data between the peripherals.
   local GPU, yGPU, GPUKit, DevKit = {}, {}, {}
   
+  GPUKit.Path = perpath
+  
   --==Basic initialization==--
   
   --Create appdata directories:
@@ -29,6 +31,7 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --==GPUKits tables creation==--
   --TODO: Sort alphabatically.
+  GPUKit.Calibration = {}
   GPUKit.Render = {}
   GPUKit.Window = {}
   
@@ -39,5 +42,6 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   loadModule("window")
+  loadModule("calibration")
   
 end
