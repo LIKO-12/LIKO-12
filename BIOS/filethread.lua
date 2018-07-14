@@ -68,6 +68,8 @@ while true do
 	if shut then break end --Finish the thread.
 	
 	checkDir()
+  
+  love.timer.sleep(1)
 end
 
 print("Finished File Thread")
