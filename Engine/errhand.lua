@@ -59,7 +59,7 @@ function love.errorhandler(msg)
 
 	local err = {}
 
-	table.insert(err, "[==[ Engine Error ]==]\n\n - Please report this to the developer !\n")
+	table.insert(err, "[==[ Engine Error ]==]\n\n - Please report this to the developer !\n   Github: http://bit.ly/liko12\n")
 	table.insert(err, sanitizedmsg)
 
 	if #sanitizedmsg ~= #msg then
@@ -133,3 +133,5 @@ function love.errorhandler(msg)
 	end
 
 end
+
+error("test")
