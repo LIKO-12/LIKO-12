@@ -203,12 +203,12 @@ options = {
     local bootchunk, err = fs.load("/boot.lua")
     if not bootchunk then error(err or "") end --Must be replaced with an error screen.
     
-    local coglob = coreg:sandbox(bootchunk)
+    local coglob = coreg.sandbox(bootchunk)
     local co = coroutine.create(bootchunk)
     
     local HandledAPIS = BIOS.HandledAPIS()
     coroutine.yield("echo",HandledAPIS)
-    coreg:setCoroutine(co,coglob) --Switch to boot.lua coroutine
+    coreg.setCoroutine(co,coglob) --Switch to boot.lua coroutine
     
     return true
   end},
@@ -223,12 +223,12 @@ options = {
     local bootchunk, err = love.filesystem.load("/OS/PoorOS/boot.lua")
     if not bootchunk then error(err or "") end --Must be replaced with an error screen.
     
-    local coglob = coreg:sandbox(bootchunk)
+    local coglob = coreg.sandbox(bootchunk)
     local co = coroutine.create(bootchunk)
     
     local HandledAPIS = BIOS.HandledAPIS()
     coroutine.yield("echo",HandledAPIS)
-    coreg:setCoroutine(co,coglob) --Switch to boot.lua coroutine
+    coreg.setCoroutine(co,coglob) --Switch to boot.lua coroutine
     
     return true
   end},

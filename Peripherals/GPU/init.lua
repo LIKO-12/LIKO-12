@@ -1835,7 +1835,7 @@ return function(config) --A function that creates a new GPU peripheral.
       GPU.popColor() --Restore the active color.
       if flip then
         flip = false
-        coreg:resumeCoroutine(true)
+        coreg.resumeCoroutine(true)
       end
     end
   end)
