@@ -3,23 +3,26 @@ local Config, GPU, yGPU, GPUKit, DevKit = ...
 
 local events = require("Engine.events")
 
+local RenderKit = GPUKit.Render
+local WindowKit = GPUKit.Window
+
 --==Local Variables==--
 
-local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS"
+local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS" or Config._Mobile
 
 local _LIKO_W, _LIKO_H = config._LIKO_W or 192, config._LIKO_H or 128 --LIKO-12 screen dimensions.
-local _LIKO_X, _LIKO_Y = 0,0 --LIKO-12 screen padding in the HOST screen.
+local WindowKit.LIKO_X, WindowKit.LIKO_Y = 0,0 --LIKO-12 screen padding in the HOST screen.
 
 local _PixelPerfect = config._PixelPerfect --If the LIKO-12 screen must be scaled pixel perfect.
-local _LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
+local WindowKit.LIKOScale = math.floor(config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
 
-local _HOST_W, _HOST_H = _LIKO_W*_LIKOScale, _LIKO_H*_LIKOScale --The host window size.
-if _Mobile then _HOST_W, _HOST_H = 0,0 end
+WindowKit.width, WindowKit.height = _LIKO_W*WindowKit.LIKOScale, _LIKO_H*WindowKit.LIKOScale --The host window size.
+if _Mobile then WindowKit.width, WindowKit.height = 0,0 end
 
 --==Window creation==--
 
 if not love.window.isOpen() then
-  love.window.setMode(_HOST_W,_HOST_H,{
+  love.window.setMode(WindowKit.width,WindowKit.height,{
     vsync = 1,
     resizable = true,
     minwidth = _LIKO_W,
@@ -34,6 +37,9 @@ if not love.window.isOpen() then
   love.window.setIcon(love.image.newImageData("icon.png"))
 end
 
+--Incase if the host operating system decided to give us different window dimensions.
+WindowKit.width, WindowKit.height = love.graphics.getDimensions()
+
 --==Window termination==--
 
 events.register("love:quit", function()
@@ -44,14 +50,25 @@ events.register("love:quit", function()
   return false
 end)
 
---Incase if the host operating system decided to give us different window dimensions.
-_HOST_W, _HOST_H = love.graphics.getDimensions()
+--==Window Events==--
+
+--Hook the resize function
+events.register("love:resize",function(w,h) --Do some calculations
+  WindowKit.width, WindowKit.height = w, h
+  local TSX, TSY = w/_LIKO_W, h/_LIKO_H --TestScaleX, TestScaleY
+  
+  WindowKit.LIKOScale = (TSX < TSY) and TSX or TSY
+  if _PixelPerfect then WindowKit.LIKOScale = math.floor(WindowKit.LIKOScale) end
+  
+  WindowKit.LIKO_X, WindowKit.LIKO_Y = (WindowKit.width-_LIKO_W*WindowKit.LIKOScale)/2, (WindowKit.height-_LIKO_H*WindowKit.LIKOScale)/2
+  if _Mobile then WindowKit.LIKO_Y, RenderKit.AlwaysDrawTimer = 0, 1 end
+  
+  RenderKit.ShouldDraw = true
+end)
+
+--Hook to some functions to redraw (when the window is moved, got focus, etc ...)
+events.register("love:focus",function(f) if f then RenderKit.ShouldDraw = true end end) --Window got focus.
+events.register("love:visible",function(v) if v then RenderKit.ShouldDraw = true end end) --Window got visible.
 
 --==GPUKit Output==--
-do
-  local WindowKit = {}
-  
-  
-  
-  GPUKit.Window = WindowKit
-end
+WindowKit.LIKO_W, WindowKit.LIKO_H = _LIKO_W, _LIKO_H
