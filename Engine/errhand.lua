@@ -14,10 +14,11 @@ function love.errorhandler(msg)
 	end
 
 	if not love.graphics.isCreated() or not love.window.isOpen() then
-		local success, status = pcall(love.window.setMode, 800, 600)
+		local success, status = pcall(love.window.setMode, 192*3, 128*3)
 		if not success or not status then
 			return
 		end
+    love.window.setTitle("LIKO-12 - Crashed")
 	end
 
 	-- Reset state.
@@ -38,13 +39,17 @@ function love.errorhandler(msg)
 	if love.audio then love.audio.stop() end
 
 	love.graphics.reset()
-	local font = love.graphics.setNewFont(14)
-
-	love.graphics.setColor(1, 1, 1, 1)
+  
+  love.graphics.setDefaultFilter("nearest","nearest")
+  local glyphs = {}; for i=1,127 do glyphs[i] = string.char(i) end; glyphs = table.concat(glyphs)
+	local font = love.graphics.newImageFont("/Peripherals/GPU/font4x5.png",glyphs,1)
+  love.graphics.setFont(font)
 
 	local trace = debug.traceback()
 
 	love.graphics.origin()
+  
+  love.graphics.setColor(1, 241/255, 233/255)
 
 	local sanitizedmsg = {}
 	for char in msg:gmatch(utf8.charpattern) do
@@ -54,7 +59,7 @@ function love.errorhandler(msg)
 
 	local err = {}
 
-	table.insert(err, "Error\n")
+	table.insert(err, "[==[ Engine Error ]==]\n\n - Please report this to the developer !\n")
 	table.insert(err, sanitizedmsg)
 
 	if #sanitizedmsg ~= #msg then
@@ -65,7 +70,7 @@ function love.errorhandler(msg)
 
 	for l in trace:gmatch("(.-)\n") do
 		if not l:match("boot.lua") then
-			l = l:gsub("stack traceback:", "Traceback\n")
+			l = l:gsub("stack traceback:", "Traceback:\n----------\n")
 			table.insert(err, l)
 		end
 	end
@@ -76,9 +81,9 @@ function love.errorhandler(msg)
 	p = p:gsub("%[string \"(.-)\"%]", "%1")
 
 	local function draw()
-		local pos = 70
-		love.graphics.clear(89/255, 157/255, 220/255)
-		love.graphics.printf(p, pos, pos, love.graphics.getWidth() - pos)
+		local pos = 15
+		love.graphics.clear(28/255, 43/255, 83/255)
+		love.graphics.printf(p, pos, pos, (love.graphics.getWidth() - pos)/2, "left", 0, 2,2)
 		love.graphics.present()
 	end
 
