@@ -178,7 +178,7 @@ bconfChunk(BuildMode)
 
 --Register yielding APIS
 for mountName, yAPI in pairs(yAPIS) do
-  coreg:register(yAPI,mountName)
+  coreg.register(yAPI,mountName)
 end
 
 --Create handled functions
@@ -206,5 +206,5 @@ end
 local POST = love.filesystem.load(BuildMode and "/BIOS/splash.lua" or "/BIOS/post.lua")
 local POSTCo = coroutine.create(POST)
 
-coreg:setCoroutine(POSTCo)
-coreg:resumeCoroutine(Handled,Devkits)
+coreg.setCoroutine(POSTCo)
+coreg.resumeCoroutine(Handled,Devkits)

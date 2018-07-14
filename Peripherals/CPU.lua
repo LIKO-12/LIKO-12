@@ -12,7 +12,7 @@ return function(config) --A function that creates a new CPU peripheral.
   function devkit.triggerEvent(name,...)
     if Instant or RawPull then
       Instant, RawPull = false, false
-      coreg:resumeCoroutine(true,name,...)
+      coreg.resumeCoroutine(true,name,...)
     else
       table.insert(EventStack,{name,...})
       end
@@ -27,7 +27,7 @@ return function(config) --A function that creates a new CPU peripheral.
       sleepTimer = sleepTimer-dt
       if sleepTimer <=0 then
         sleepTimer = nil
-        coreg:resumeCoroutine(true)
+        coreg.resumeCoroutine(true)
       end
     end
   end)

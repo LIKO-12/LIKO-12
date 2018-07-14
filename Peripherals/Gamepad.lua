@@ -135,7 +135,7 @@ return function(config) --A function that creates a new Gamepad peripheral.
     if math.abs(value) < deadzone then return end
     if mappingState.mode == "getGUID" then
       mappingState = false
-      coreg:resumeCoroutine(true,joystick:getGUID())
+      coreg.resumeCoroutine(true,joystick:getGUID())
     elseif mappingState.mode == "MapAxis" then
       local guid = joystick:getGUID()
       local bid = mappingState.id
@@ -152,7 +152,7 @@ return function(config) --A function that creates a new Gamepad peripheral.
     if direction == "c" or direction:len() > 1 then return end
     if mappingState.mode == "getGUID" then
       mappingState = false
-      coreg:resumeCoroutine(true,joystick:getGUID())
+      coreg.resumeCoroutine(true,joystick:getGUID())
     elseif mappingState.mode == "MapButton" then
       local guid = joystick:getGUID()
       local bid = mappingState.id

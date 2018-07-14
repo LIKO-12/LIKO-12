@@ -5,7 +5,7 @@ local utf8 = require("utf8")
 
 local _LuaBCHeader = string.char(0x1B).."LJ"
 
-return function(parent)
+return function(getParentCoroutine)
   local GLOB = {
     assert=assert,
     error=error,
@@ -180,7 +180,10 @@ return function(parent)
   end
   GLOB.coroutine.running = function()
     local curco = coroutine.running()
-    if parent and parent.co and curco == parent.co then return end
+    if getParentCoroutine then
+      local parentco = getParentCoroutine()
+      if parentco and curco == parentco then return end
+    end
     return curco
   end
   GLOB._G=GLOB --Mirror Mirror

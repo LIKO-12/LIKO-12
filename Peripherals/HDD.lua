@@ -556,7 +556,7 @@ return function(Config)
     local ok, chunk, err = pcall(love.filesystem.load, RootDir..path)
     if not ok then return ok, chunk end
     if not chunk then return chunk, err end
-    coreg:sandbox(chunk)
+    coreg.sandbox(chunk)
     return chunk
   end
   
