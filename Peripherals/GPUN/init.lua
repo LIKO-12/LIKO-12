@@ -7,7 +7,7 @@ return function(config) --A function that creates a new GPU peripheral.
   --yGPU: the yield APIS of the GPU.
   --GPUKit: Shared data between the GPU files.
   --DevKit: Shared data between the peripherals.
-  local GPU, yGPU, GPUKit, DevKit = {}, {}, {}
+  local GPU, yGPU, GPUKit, DevKit = {}, {}, {}, {}
   
   GPUKit.Path = perpath
   
