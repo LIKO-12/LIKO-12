@@ -21,6 +21,9 @@ ConstantValue, **DynamicValue**
 - setColor, getColor, colorTo1, colorTo255
 - Verify
 
+#ImageData:
+- PasteImage
+
 #Gif:
 - **PChanged**
 
@@ -67,6 +70,7 @@ return function(config) --A function that creates a new GPU peripheral.
   GPUKit.Palette = {}
   GPUKit.Shared = {}
   GPUKit.Gif = {}
+  GPUKit.ImageData = {}
   
   --==Modules Loading==--
   
@@ -79,6 +83,8 @@ return function(config) --A function that creates a new GPU peripheral.
   loadModule("calibration")
   loadModule("palette")
   loadModule("shared")
+  loadModule("image")
+  loadModule("imagedata")
   loadModule("gif")
   loadModule("render")
   
