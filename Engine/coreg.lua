@@ -33,7 +33,9 @@ function coreg.resumeCoroutine(...)
     
     if not args[1] then error(args[2]) end --Should have a better error handelling
     
-    if coroutine.status(likoCoroutine) == "dead" then 
+    --luacheck: push ignore 542
+    if coroutine.status(likoCoroutine) == "dead" then
+      --luacheck: pop
       
       --The coroutine finished, we hope that a new one has been set.
       
@@ -64,12 +66,15 @@ function coreg.sandbox(f)
   return GLOB
 end
 
---Register a value to a specific key.
---If the value is a table, then the values in the table will be registered at key:tableValueKey
---If the value is a function, then it will be called instantly, and it must return true as the first argument to tell that it ran successfully.
---Else, the value will be returned to the liko12 code.
+--[[
+Register a value to a specific key.
+If the value is a table, then the values in the table will be registered at key:tableValueKey
+If the value is a function, then it will be called instantly,
+  and it must return true as the first argument to tell that it ran successfully.
+Else, the value will be returned to the liko12 code.
+]]
 function coreg.register(value,key)
-  local key = key or "none"
+  key = key or "none"
   if type(value) == "table" then
     for k,v in pairs(value) do
       registry[key..":"..k] = v
@@ -78,14 +83,18 @@ function coreg.register(value,key)
   registry[key] = value
 end
 
---Trigger a value in a key.
---If the value is a function, then it will call it instant.
---Else, it will return the value.
---Notice that the first return value is a number of "did it ran successfully", if false, the second return value is the error message.
---Also the first return value could be also a number that specifies how should the coroutine resume (true boolean defaults to 1)
---Corouting resumming codes: 1: resume instantly, 2: stop resuming (Will be yeild later, like when love.update is called).
+--[[
+Trigger a value in a key.
+If the value is a function, then it will call it instant.
+Else, it will return the value.
+Notice that the first return value is a number of "did it ran successfully",
+  if false, the second return value is the error message.
+Also the first return value could be also a number that specifies how should the coroutine resume
+  (true boolean defaults to 1)
+Corouting resumming codes: 1: resume instantly, 2: stop resuming (Will be yeild later, like when love.update is called).
+]]
 function coreg.trigger(key,...)
-  local key = key or "none"
+  key = key or "none"
   if type(registry[key]) == "nil" then return false, "error, key not found !" end
   if type(registry[key]) == "function" then
     return registry[key](...)
@@ -97,7 +106,7 @@ end
 --Returns the value registered in a specific key.
 --Returns: value then the given key.
 function coreg.get(key)
-  local key = key or "none"
+  key = key or "none"
   return registry[key], key
 end
 
