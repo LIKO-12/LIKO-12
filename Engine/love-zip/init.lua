@@ -3,7 +3,7 @@ local libpath = ...
 local crc32 = require(libpath..".CRC32")
 local bit = require("bit")
 
-local bor,band,lshift,rshift,tohex = bit.bor,bit.band,bit.lshift,bit.rshift,bit.tohex
+local band,rshift = bit.band,bit.rshift
 
 --[[
 
@@ -11,22 +11,22 @@ local bor,band,lshift,rshift,tohex = bit.bor,bit.band,bit.lshift,bit.rshift,bit.
   [encryption header 1]
   [file data 1]
   [data descriptor 1]
-  . 
+  .
   .
   .
   [local file header n]
   [encryption header n]
   [file data n]
   [data descriptor n]
-  [archive decryption header] 
-  [archive extra data record] 
+  [archive decryption header]
+  [archive extra data record]
   [central directory header 1]
   .
   .
   .
   [central directory header n]
   [zip64 end of central directory record]
-  [zip64 end of central directory locator] 
+  [zip64 end of central directory locator]
   [end of central directory record]
   
 ]]
@@ -57,7 +57,7 @@ local function newStringFile(data)
     end
   end
   
-  function file:write(d,s)
+  function file:write(d)
     str = str:sub(1,pos)..d..str:sub(pos+#d+1,-1)
     
     pos = pos + #d
@@ -69,21 +69,6 @@ local function newStringFile(data)
   function file:close() end
   
   return file
-end
-
-local function decodeNumber(str,bigEndian)
-  local num = 0
-  
-  if not bigEndian then str = str:reverse() end
-  
-  for char in string.gmatch(str,".") do
-    local byte = string.byte(char)
-    
-    num = lshift(num,8)
-    num = bor(num, byte)
-  end
-  
-  return num
 end
 
 local function encodeNumber(num,len,bigEndian)
@@ -238,7 +223,7 @@ local function writeCenteralDirectory(zipFile,filesInfos)
     file comment (variable size)
   ]]
   
-  for fileID, fileInfo in pairs(filesInfos) do
+  for _, fileInfo in pairs(filesInfos) do
     
     zipFile:write("\80\75\1\2") --central file header signature - 4 bytes - (0x02014b50)
     
@@ -355,7 +340,7 @@ local zapi = {}
 
 function zapi.newZipWriter(zipFile)
   
-  local zipFile = zipFile or newStringFile()
+  zipFile = zipFile or newStringFile()
   
   local filesInfos = {}
   
@@ -404,7 +389,7 @@ function zapi.createZip(path,zipFile)
       
       writer.addFile(fileName,fileData,modTime)
     elseif dirInfo.type == "directory" then
-      for id,item in ipairs(love.filesystem.getDirectoryItems(dir)) do
+      for _,item in ipairs(love.filesystem.getDirectoryItems(dir)) do
         index(dir.."/"..item)
       end
     end

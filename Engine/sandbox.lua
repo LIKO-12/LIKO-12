@@ -168,7 +168,7 @@ return function(getParentCoroutine)
     
     return load(newiter,chunkname)
   end
-  GLOB.coroutine.sethook = function(co,...)
+  GLOB.coroutine.sethook = function()--co,...)
     --DEPRICATED--
     
     --Coroutine hooks are useless because of LuaJIT

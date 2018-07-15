@@ -13,10 +13,12 @@ LOVE Hooks:
 - "love:quit" if any registered function returns true the quit will be cancelled.
 
 local registry:
-- It's a table that contains tables, the keys of this table is the name of register function, and the value is a table containing all the registered function with the same name.
+- It's a table that contains tables, the keys of this table is the name of register function,
+  and the value is a table containing all the registered function with the same name.
 
 How events works:
- * Registering a function (events.register): registering means adding a function to be called when a specific event is triggered.
+ * Registering a function (events.register): registering means adding a function
+     to be called when a specific event is triggered.
  * Triggering an event (events.trigger): will call all the registered functions with a specific event name.
 
 events.triggerWithReturns:
