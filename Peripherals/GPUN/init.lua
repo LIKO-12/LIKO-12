@@ -1,6 +1,36 @@
 local perpath = select(1,...) --The path to the GPU folder.
 --/Peripherals/GPUN/
 
+--[[
+#GPUKITS
+
+ConstantValue, **DynamicValue**
+
+#Window:
+- LIKO_W, LIKO_H, **LIKO_X**, **LIKO_Y**, **LIKO_Scale**, **Width**, **Height**
+- HostToLiko, LikoToHost
+
+#Calibration:
+- Offsets
+
+#Palette:
+- ColorSet, DrawPalette, ImagePalette, ImageTransparent, DisplayPalette
+
+#Shared:
+- setColor, getColor, colorTo1, colorTo255
+- GetColor, GetColorID
+- EncodeTransparent, ExportImage, ExportImageOpaque
+- Verify
+
+#Render:
+- **Flipped**, **ShouldDraw**, **DevKitDraw**, **AlwaysDraw**, **AlwaysDrawTimer**
+- DrawShader, ImageShader, DisplayShader, StencilShader
+
+#Gif:
+- **PChanged**
+
+]]
+
 return function(config) --A function that creates a new GPU peripheral.
   
   --GPU: the non-yielding APIS of the GPU.
@@ -34,6 +64,9 @@ return function(config) --A function that creates a new GPU peripheral.
   GPUKit.Calibration = {}
   GPUKit.Render = {}
   GPUKit.Window = {}
+  GPUKit.Palette = {}
+  GPUKit.Shared = {}
+  GPUKit.Gif = {}
   
   --==Modules Loading==--
   
@@ -43,5 +76,8 @@ return function(config) --A function that creates a new GPU peripheral.
   
   loadModule("window")
   loadModule("calibration")
+  loadModule("palette")
+  loadModule("shared")
+  loadModule("render")
   
 end
