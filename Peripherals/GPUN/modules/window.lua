@@ -9,11 +9,13 @@ local events = require("Engine.events")
 local RenderKit = GPUKit.Render
 local WindowKit = GPUKit.Window
 
---==Localizer Lua Library==--
+--==Localized Lua Library==--
 
 local mathFloor = math.floor
 
 --==Local Variables==--
+
+local CPUKit = Config.CPUKit
 
 local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS" or Config._Mobile
 
@@ -76,6 +78,14 @@ end)
 --Hook to some functions to redraw (when the window is moved, got focus, etc ...)
 events.register("love:focus",function(f) if f then RenderKit.ShouldDraw = true end end) --Window got focus.
 events.register("love:visible",function(v) if v then RenderKit.ShouldDraw = true end end) --Window got visible.
+
+--File drop hook
+events.register("love:filedropped", function(file)
+  file:open("r")
+  local data = file:read()
+  file:close()
+  if CPUKit then CPUKit.triggerEvent("filedropped",file:getFilename(),data) end
+end)
 
 --==Graphics Initializations==--
 love.graphics.clear(0,0,0,1) --Clear the host screen.
