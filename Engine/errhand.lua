@@ -32,7 +32,7 @@ function love.errorhandler(msg)
 	end
 	if love.joystick then
 		-- Stop all joystick vibrations.
-		for i,v in ipairs(love.joystick.getJoysticks()) do
+		for _,v in ipairs(love.joystick.getJoysticks()) do
 			v:setVibration()
 		end
 	end
@@ -59,7 +59,8 @@ function love.errorhandler(msg)
 
 	local err = {}
 
-	table.insert(err, "[==[ Engine Error ]==]\n\n - Please report this to the developer !\n   Github: http://bit.ly/liko12\n")
+	table.insert(err,
+    "[==[ Engine Error ]==]\n\n - Please report this to the developer !\n   Github: http://bit.ly/liko12\n")
 	table.insert(err, sanitizedmsg)
 
 	if #sanitizedmsg ~= #msg then
@@ -102,7 +103,7 @@ function love.errorhandler(msg)
 	return function()
 		love.event.pump()
 
-		for e, a, b, c in love.event.poll() do
+		for e, a in love.event.poll() do
 			if e == "quit" then
 				return 1
 			elseif e == "keypressed" and a == "escape" then
