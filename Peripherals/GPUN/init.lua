@@ -75,9 +75,11 @@ return function(config) --A function that creates a new GPU peripheral.
   end
   
   loadModule("window")
+  loadModule("mouse")
   loadModule("calibration")
   loadModule("palette")
   loadModule("shared")
+  loadModule("gif")
   loadModule("render")
   
 end
