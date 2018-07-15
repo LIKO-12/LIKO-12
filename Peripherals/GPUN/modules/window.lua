@@ -1,5 +1,8 @@
 --GPU: Window and canvas creation.
+
+--luacheck: push ignore 211
 local Config, GPU, yGPU, GPUKit, DevKit = ...
+--luacheck: pop
 
 local events = require("Engine.events")
 
