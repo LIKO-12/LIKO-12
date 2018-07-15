@@ -131,6 +131,18 @@ if love.filesystem.getInfo("/~gifreboot.gif","file") then
   end
 end
 
+--==GPU GIF API==--
+
+GPU.startGifRecording = startGifRecording
+GPU.pauseGifRecording = pauseGifRecording
+GPU.endGifRecording = endGifRecording
+
+function GPU.isGifRecording()
+  return _GIFRec and true or false
+end
+  
+--==Recorder==--
+
 events.register("love:update",function(dt)
   if not _GIFRec then return end
   _GIFTimer = _GIFTimer + dt
