@@ -17,9 +17,10 @@ local _DrawPalette = PaletteKit.DrawPalette
 local _ImagePalette = PaletteKit.ImagePalette
 local _ImageTransparent = PaletteKit.ImageTransparent
 local _DisplayPalette = PaletteKit.DisplayPalette
+local _LIKO_W = WindowKit.LIKO_W
+local _LIKO_H = WindowKit.LIKO_H
 
 --==Kit Variables==--
-
 RenderKit.Flipped = false --This flag means that the screen has been flipped
 RenderKit.ShouldDraw = false --This flag means that the gpu has to update the screen for the user.
 RenderKit.AlwaysDraw = false --This flag means that the gpu has to always update the screen for the user.
@@ -66,6 +67,15 @@ _DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the colorset.
 
 --The pattern fill shader
 local _StencilShader = _Shaders.stencilShader
+
+--==Events==--
+
+--Always draw timer
+events.register("love:update",function(dt)
+  if RenderKit.AlwaysDrawTimer > 0 then
+    RenderKit.AlwaysDrawTimer = RenderKit.AlwaysDrawTimer - dt
+  end
+end)
 
 --==Renderer==--
 --Host to love.run when graphics is active--
@@ -168,3 +178,4 @@ RenderKit.DrawShader = _DrawShader
 RenderKit.ImageShader = _ImageShader
 RenderKit.DisplayShader = _DisplayShader
 RenderKit.StencilShader = _StencilShader
+RenderKit.ScreenCanvas = _ScreenCanvas
