@@ -20,20 +20,6 @@ ofs.polygon = {0,0} --The offset of each vertices in GPU.polygon.
 ofs.image = {-1,-1}
 ofs.quad = {-1,-1}]]
 
---Wrapper for setColor to use 0-255 values
-local function setColor(r,g,b,a)
-  local r,g,b,a = r,g,b,a
-  if type(r) == "table" then
-    r,g,b,a = unpack(r)
-  end
-  if r then r = r/255 end
-  if g then g = g/255 end
-  if b then b = b/255 end
-  if a then a = a/255 end
-  
-  love.graphics.setColor(r, g, b, a)
-end
-
 local ofs = {}
 
 local _Canvas
@@ -59,167 +45,195 @@ love.graphics.setLineWidth(1) --Set the line width to 1px.
 love.graphics.setColor(1,1,1,1)
 
 --Screen
-ofs.screen = {0,0}
+do
+  ofs.screen = {0,0}
+end
 
 --Point calibration
-canvas(8,8)
-love.graphics.points(4,4)
-imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
-  if r == 1 and g == 1 and b == 1 and a == 1 then
-    ofs.point = {4-x, 4-y}
-  end
-  return r,g,b,a
-end)
+do
+  canvas(8,8)
+  love.graphics.points(4,4)
+  imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
+    if r == 1 and g == 1 and b == 1 and a == 1 then
+      ofs.point = {4-x, 4-y}
+    end
+    return r,g,b,a
+  end)
+end
 
 --Print calibration
-ofs.print = {0,0} --The offset of GPU.print.
-ofs.print_grid = {0,0} --The offset of GPU.print with grid mode.
+do
+  ofs.print = {0,0} --The offset of GPU.print.
+  ofs.print_grid = {0,0} --The offset of GPU.print with grid mode.
+end
 
 --Lines calibration
-canvas(10,10)
-love.graphics.line(4,4, 6,4, 6,6, 4,6, 4,4)
-local xpos, ypos = 10,10
-imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
-  if r == 1 and g == 1 and b == 1 and a == 1 then
-    if x < xpos then xpos = x end
-    if y < ypos then ypos = y end
-  end
-  return r,g,b,a
-end)
-ofs.line = {4-xpos,4-ypos}
-ofs.line_start = {4-xpos,4-ypos}
+do
+  canvas(10,10)
+  love.graphics.line(4,4, 6,4, 6,6, 4,6, 4,4)
+  local xpos, ypos = 10,10
+  imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
+    if r == 1 and g == 1 and b == 1 and a == 1 then
+      if x < xpos then xpos = x end
+      if y < ypos then ypos = y end
+    end
+    return r,g,b,a
+  end)
+  ofs.line = {4-xpos,4-ypos}
+  ofs.line_start = {4-xpos,4-ypos}
+end
 
 --Circle calibration
-canvas(30,30)
-love.graphics.circle("fill",15,15,19)
-local topy, bottomy = 30,1
-local leftx, rightx = 30,1
-imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
-  if r == 1 and g == 1 and b == 1 and a == 1 then
-    if y < topy then topy = y end
-    if y > bottomy then bottomy = y end
-    if x < leftx then leftx = x end
-    if x > rightx then rightx = x end
-  end
-  return r,g,b,a
-end)
-local cx = (rightx + leftx +1)/2
-local cy = (topy + bottomy +1)/2
-ofs.circle = {15-cx,15-cy,0}
+do
+  canvas(30,30)
+  love.graphics.circle("fill",15,15,19)
+  local topy, bottomy = 30,1
+  local leftx, rightx = 30,1
+  imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
+    if r == 1 and g == 1 and b == 1 and a == 1 then
+      if y < topy then topy = y end
+      if y > bottomy then bottomy = y end
+      if x < leftx then leftx = x end
+      if x > rightx then rightx = x end
+    end
+    return r,g,b,a
+  end)
+  local cx = (rightx + leftx +1)/2
+  local cy = (topy + bottomy +1)/2
+  ofs.circle = {15-cx,15-cy,0}
+end
 
 --Circle line calibration
-canvas(30,30)
-love.graphics.circle("line",15,15,19)
-local topy, bottomy = 30,1
-local leftx, rightx = 30,1
-imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
-  if r == 1 and g == 1 and b == 1 and a == 1 then
-    if y < topy then topy = y end
-    if y > bottomy then bottomy = y end
-    if x < leftx then leftx = x end
-    if x > rightx then rightx = x end
-  end
-  return r,g,b,a
-end)
-local cx = (rightx + leftx +1)/2
-local cy = (topy + bottomy +1)/2
-ofs.circle_line = {15-cx,15-cy,0}
+do
+  canvas(30,30)
+  love.graphics.circle("line",15,15,19)
+  local topy, bottomy = 30,1
+  local leftx, rightx = 30,1
+  imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
+    if r == 1 and g == 1 and b == 1 and a == 1 then
+      if y < topy then topy = y end
+      if y > bottomy then bottomy = y end
+      if x < leftx then leftx = x end
+      if x > rightx then rightx = x end
+    end
+    return r,g,b,a
+  end)
+  local cx = (rightx + leftx +1)/2
+  local cy = (topy + bottomy +1)/2
+  ofs.circle_line = {15-cx,15-cy,0}
+end
 
 --Ellipse calibration
-canvas(30,30)
-love.graphics.ellipse("fill",15,15,19,19)
-local topy, bottomy = 30,1
-local leftx, rightx = 30,1
-imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
-  if r == 1 and g == 1 and b == 1 and a == 1 then
-    if y < topy then topy = y end
-    if y > bottomy then bottomy = y end
-    if x < leftx then leftx = x end
-    if x > rightx then rightx = x end
-  end
-  return r,g,b,a
-end)
-local cx = (rightx + leftx +1)/2
-local cy = (topy + bottomy +1)/2
-ofs.ellipse = {15-cx,15-cy,0,0}
+do
+  canvas(30,30)
+  love.graphics.ellipse("fill",15,15,19,19)
+  local topy, bottomy = 30,1
+  local leftx, rightx = 30,1
+  imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
+    if r == 1 and g == 1 and b == 1 and a == 1 then
+      if y < topy then topy = y end
+      if y > bottomy then bottomy = y end
+      if x < leftx then leftx = x end
+      if x > rightx then rightx = x end
+    end
+    return r,g,b,a
+  end)
+  local cx = (rightx + leftx +1)/2
+  local cy = (topy + bottomy +1)/2
+  ofs.ellipse = {15-cx,15-cy,0,0}
+end
 
 --Ellipse line calibration
-canvas(30,30)
-love.graphics.ellipse("line",15,15,19,19)
-local topy, bottomy = 30,1
-local leftx, rightx = 30,1
-imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
-  if r == 1 and g == 1 and b == 1 and a == 1 then
-    if y < topy then topy = y end
-    if y > bottomy then bottomy = y end
-    if x < leftx then leftx = x end
-    if x > rightx then rightx = x end
-  end
-  return r,g,b,a
-end)
-local cx = (rightx + leftx +1)/2
-local cy = (topy + bottomy +1)/2
-ofs.ellipse_line = {15-cx,15-cy,0,0}
+do
+  canvas(30,30)
+  love.graphics.ellipse("line",15,15,19,19)
+  local topy, bottomy = 30,1
+  local leftx, rightx = 30,1
+  imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
+    if r == 1 and g == 1 and b == 1 and a == 1 then
+      if y < topy then topy = y end
+      if y > bottomy then bottomy = y end
+      if x < leftx then leftx = x end
+      if x > rightx then rightx = x end
+    end
+    return r,g,b,a
+  end)
+  local cx = (rightx + leftx +1)/2
+  local cy = (topy + bottomy +1)/2
+  ofs.ellipse_line = {15-cx,15-cy,0,0}
+end
 
 --Rectangle calibration
-canvas(10,10)
-love.graphics.rectangle("fill",2,2,6,6)
-local topy, bottomy = 10,1
-local leftx, rightx = 10,1
-imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
-  if r == 1 and g == 1 and b == 1 and a == 1 then
-    if y < topy then topy = y end
-    if y > bottomy then bottomy = y end
-    if x < leftx then leftx = x end
-    if x > rightx then rightx = x end
-  end
-  return r,g,b,a
-end)
-ofs.rect = {2-leftx,2-topy}
-ofs.rectSize = {6-(rightx-leftx+1),6-(bottomy-topy+1)}
+do
+  canvas(10,10)
+  love.graphics.rectangle("fill",2,2,6,6)
+  local topy, bottomy = 10,1
+  local leftx, rightx = 10,1
+  imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
+    if r == 1 and g == 1 and b == 1 and a == 1 then
+      if y < topy then topy = y end
+      if y > bottomy then bottomy = y end
+      if x < leftx then leftx = x end
+      if x > rightx then rightx = x end
+    end
+    return r,g,b,a
+  end)
+  ofs.rect = {2-leftx,2-topy}
+  ofs.rectSize = {6-(rightx-leftx+1),6-(bottomy-topy+1)}
+end
 
 --Rectangle line calibration
-canvas(10,10)
-love.graphics.rectangle("line",2,2,6,6)
-local topy, bottomy = 10,1
-local leftx, rightx = 10,1
-imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
-  if r == 1 and g == 1 and b == 1 and a == 1 then
-    if y < topy then topy = y end
-    if y > bottomy then bottomy = y end
-    if x < leftx then leftx = x end
-    if x > rightx then rightx = x end
-  end
-  return r,g,b,a
-end)
-ofs.rect_line = {2-leftx,2-topy}
-ofs.rectSize_line = {6-(rightx-leftx+1),6-(bottomy-topy+1)}
+do
+  canvas(10,10)
+  love.graphics.rectangle("line",2,2,6,6)
+  local topy, bottomy = 10,1
+  local leftx, rightx = 10,1
+  imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
+    if r == 1 and g == 1 and b == 1 and a == 1 then
+      if y < topy then topy = y end
+      if y > bottomy then bottomy = y end
+      if x < leftx then leftx = x end
+      if x > rightx then rightx = x end
+    end
+    return r,g,b,a
+  end)
+  ofs.rect_line = {2-leftx,2-topy}
+  ofs.rectSize_line = {6-(rightx-leftx+1),6-(bottomy-topy+1)}
+end
 
 --Triangle
-ofs.triangle = {0,0} --The offset of each vertices in GPU.triangle with l as false.
-ofs.triangle_line = {0,0} --The offset of each vertices in GPU.triangle with l as true.
+do
+  ofs.triangle = {0,0} --The offset of each vertices in GPU.triangle with l as false.
+  ofs.triangle_line = {0,0} --The offset of each vertices in GPU.triangle with l as true.
+end
 
 --Polygone
-ofs.polygon = {0,0} --The offset of each vertices in GPU.polygon.
+do
+  ofs.polygon = {0,0} --The offset of each vertices in GPU.polygon.
+end
 
 --Image
-local id = love.image.newImageData(4,4)
-id:mapPixel(function() return 1,1,1,1 end)
-id = love.graphics.newImage(id)
-canvas(10,10)
-love.graphics.draw(id,4,4)
-local leftx, topy = 10,10
-imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
-  if r == 1 and g == 1 and b == 1 and a == 1 then
-    if x < leftx then leftx = x end
-    if y < topy then topy = y end
-  end
-  return r,g,b,a
-end)
-ofs.image = {4-leftx,4-topy}
+do
+  local id = love.image.newImageData(4,4)
+  id:mapPixel(function() return 1,1,1,1 end)
+  id = love.graphics.newImage(id)
+  canvas(10,10)
+  love.graphics.draw(id,4,4)
+  local leftx, topy = 10,10
+  imagedata() imgdata:mapPixel(function(x,y, r,g,b,a)
+    if r == 1 and g == 1 and b == 1 and a == 1 then
+      if x < leftx then leftx = x end
+      if y < topy then topy = y end
+    end
+    return r,g,b,a
+  end)
+  ofs.image = {4-leftx,4-topy}
+end
 
 --Quad
-ofs.quad = ofs.image
+do
+  ofs.quad = ofs.image
+end
 
 love.graphics.setCanvas()
 

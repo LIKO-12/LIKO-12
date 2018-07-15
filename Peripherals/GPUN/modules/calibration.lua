@@ -1,5 +1,8 @@
 --GPU: Calibations and graphics card info.
+
+--luacheck: push ignore 211
 local Config, GPU, yGPU, GPUKit, DevKit = ...
+--luacheck: pop
 
 local json = require("Engine.JSON")
 
