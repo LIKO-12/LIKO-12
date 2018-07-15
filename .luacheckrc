@@ -1,5 +1,8 @@
 codes = true --Enable warnings codes
 
+self = false --Ignore unused self warnings
+max_line_length = false --Disable max line length warnings.
+
 std = "luajit+love" --Lua and LuaJIT standard environment.
 
 globals = {
