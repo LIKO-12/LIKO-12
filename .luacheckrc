@@ -58,4 +58,7 @@ exclude_files = {
 	"Engine/JSON.lua",
 	"OS/DiskOS/Libraries/JSON.lua",
 	"OS/GameDiskOS/Libraries/JSON.lua",
+	
+	--LuaJIT-Request.
+	"Engine/luajit-request"
 }
