@@ -15,19 +15,19 @@ ConstantValue, **DynamicValue**
 
 #Palette:
 - ColorSet, DrawPalette, ImagePalette, ImageTransparent, DisplayPalette
+- GetColor, GetColorID
 
 #Shared:
 - setColor, getColor, colorTo1, colorTo255
-- GetColor, GetColorID
-- EncodeTransparent, ExportImage, ExportImageOpaque
 - Verify
+
+#Gif:
+- **PChanged**
 
 #Render:
 - **Flipped**, **ShouldDraw**, **DevKitDraw**, **AlwaysDraw**, **AlwaysDrawTimer**
 - DrawShader, ImageShader, DisplayShader, StencilShader
-
-#Gif:
-- **PChanged**
+- ScreenCanvas
 
 ]]
 
