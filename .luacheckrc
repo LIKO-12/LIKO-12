@@ -10,6 +10,12 @@ globals = {
 	
 	"love.arg.parseGameArguments",
 	
+	"love.data.compress",
+	"love.data.decode",
+	"love.data.decompress",
+	"love.data.encode",
+	"love.data.hash",
+	
 	"love.filesystem.getInfo",
 	
 	"love.graphics.isActive",
