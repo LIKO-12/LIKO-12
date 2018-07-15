@@ -47,6 +47,18 @@ for k,v in ipairs(_ColorSet) do
 end
 _ColorSet[16] = nil
 
+--==Helper Functions==--
+
+local function _GetColor(c) return _ColorSet[c or 0] or _ColorSet[0] end --Get the (rgba) table of a color id.
+
+local _ColorSetLookup = {}
+for k,v in ipairs(_ColorSet) do _ColorSetLookup[table.concat(v)] = k end
+local function _GetColorID(...) --Get the color id by the (rgba) table.
+  local col = {...}
+  if col[4] == 0 then return 0 end
+  return _ColorSetLookup[table.concat(col)] or 0
+end
+
 --==Shaders Palettes==--
 
 local _DrawPalette = {} --The palette mapping for all drawing opereations except image:draw (p = 1).
@@ -253,3 +265,5 @@ PaletteKit.DrawPalette = _DrawPalette
 PaletteKit.ImagePalette = _ImagePalette
 PaletteKit.ImageTransparent = _ImageTransparent
 PaletteKit.DisplayPalette = _DisplayPalette
+PaletteKit.GetColor = _GetColor
+PaletteKit.GetColorID= _GetColorID
