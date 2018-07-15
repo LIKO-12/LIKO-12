@@ -6,9 +6,16 @@ globals = {
 	"_LVer","_LVERSION", --LIKO-12 Version variables.
 	
 	--Missing love globals.
+	"love.errorhandler",
+	
 	"love.arg.parseGameArguments",
+	
+	"love.filesystem.getInfo",
+	
 	"love.graphics.isActive",
-	"love.filesystem.getInfo"
+	"love.graphics.isCreated",
+	
+	"love.mouse.isCursorSupported"
 }
 
 --The most annoying warnings
@@ -34,4 +41,12 @@ files["OS"] = {
 --Ignore long line warnings for conf.lua
 files["conf.lua"] = {
 	ignore={"631"} --Line is too long.
+}
+
+--Ignore third-part libraries, I'm not going to cleanup their shit.
+exclude_files = {
+	--JSON Library.
+	"Engine/JSON.lua",
+	"OS/DiskOS/Libraries/JSON.lua",
+	"OS/GameDiskOS/Libraries/JSON.lua",
 }
