@@ -91,7 +91,7 @@ local function endGifRecording()
 end
 
 --To handle gif control buttons
-events.register("love:keypressed", function(key,sc,isrepeat)
+events.register("love:keypressed", function(key)
   if love.keyboard.isDown("lshift","rshift") then return end
   if key == _GIFStartKey then
     startGifRecording()
@@ -102,7 +102,7 @@ events.register("love:keypressed", function(key,sc,isrepeat)
   end
 end)
 --To save the gif before rebooting.
-events.register("love:reboot",function(args)
+events.register("love:reboot",function()
   if _GIFRec then
     _GIFRec.file:flush()
     _GIFRec.file:close()
