@@ -82,7 +82,7 @@ love.graphics.clear(0,0,0,1) --Clear the host screen.
 
 events.trigger("love:resize", WindowKit.HOST_W, WindowKit.HOST_H) --Calculate LIKO12 scale to the host window for the first time.
 
---==Helper Functions for WindowKit==--
+--==Helper functions for WindowKit==--
 function WindowKit.HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
   return mathFloor((x - WindowKit.LIKO_X)/WindowKit.LIKOScale), mathFloor((y - WindowKit.LIKO_Y)/WindowKit.LIKOScale)
 end
