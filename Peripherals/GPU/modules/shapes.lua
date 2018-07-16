@@ -4,7 +4,7 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
-local lg = love.graphics
+local lg = lg
 
 local VRamKit = GPUKit.VRam
 local SharedKit = GPUKit.Shared
