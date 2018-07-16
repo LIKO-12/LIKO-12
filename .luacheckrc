@@ -30,6 +30,7 @@ globals = {
 
 --The most annoying warnings
 ignore = {
+	"213", --Unused loop variable.
 	"611", --A line consists of nothing but whitespace.
 	"613", --Trailing whitespace in a string.
 }
