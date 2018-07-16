@@ -6,6 +6,7 @@ local Config, GPU, yGPU, GPUKit, DevKit = ...
 
 local utf8 = require("utf8")
 
+local Path = GPUKit.Path
 local WindowKit = GPUKit.Window
 local SharedKit = GPUKit.Shared
 local CalibrationKit = GPUKit.Calibration
@@ -42,7 +43,7 @@ local _FontChars = {} --Font chars
 for i=1,255 do _FontChars[i] = strChar(i) end
 _FontChars = escapeASCII(table.concat(_FontChars))
 
-local _FontPath, _FontExtraSpacing = Config._FontPath or "/Peripherals/GPUN/fonts/font4x5.png", Config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
+local _FontPath, _FontExtraSpacing = Config._FontPath or Path.."fonts/font4x5.png", Config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
 
 local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
 
