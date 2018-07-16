@@ -10,10 +10,11 @@ local Path = GPUKit.Path
 local GifKit = GPUKit.Gif
 local WindowKit = GPUKit.Window
 local PaletteKit = GPUKit.Palette
-local RenderKit = GPUKit.RenderKit
+local RenderKit = GPUKit.Render
 local CalibrationKit = GPUKit.Calibration
 local MiscKit = GPUKit.MiscKit
 local CursorKit = GPUKit.Cursor
+local MatrixKit = GPUKit.Matrix
 
 --==Kits Constants==--
 local _CursorsCache = CursorKit.CursorsCache
@@ -153,13 +154,13 @@ events.register("love:update",function(dt)
     _GIFTimer = _GIFTimer % _GIFFrameTime
     love.graphics.setCanvas() --Quit the canvas and return to the host screen.
     
-    if PatternFill then
+    if MatrixKit.MatrixKit.PatternFill then
       love.graphics.setStencilTest()
     end
     
     love.graphics.push()
     love.graphics.origin() --Reset all transformations.
-    if Clip then love.graphics.setScissor() end
+    if MatrixKit.Clip then love.graphics.setScissor() end
     
     GPU.pushColor() --Push the current color to the stack.
     love.graphics.setColor(1,1,1,1) --I don't want to tint the canvas :P
@@ -198,12 +199,12 @@ events.register("love:update",function(dt)
     love.graphics.pop() --Reapply the offset.
     love.graphics.setCanvas{RenderKit.ScreenCanvas,stencil=true} --Reactivate the canvas.
     
-    if PatternFill then
-      love.graphics.stencil(PatternFill, "replace", 1)
+    if MatrixKit.MatrixKit.PatternFill then
+      love.graphics.stencil(MatrixKit.MatrixKit.PatternFill, "replace", 1)
       love.graphics.setStencilTest("greater",0)
     end
     
-    if Clip then love.graphics.setScissor(unpack(Clip)) end
+    if MatrixKit.Clip then love.graphics.setScissor(unpack(MatrixKit.Clip)) end
     GPU.popColor() --Restore the active color.
     
     if GifKit.PChanged then

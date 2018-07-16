@@ -46,6 +46,8 @@ local _FontPath, _FontExtraSpacing = Config._FontPath or "/Peripherals/GPUN/font
 
 local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
 
+love.graphics.setFont(_Font) --Activate the default font.
+
 local printCursor = {x=0,y=0,bgc=0} --The print grid cursor pos.
 local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2)) --The size of characters that the screen can fit.
 
@@ -205,3 +207,6 @@ function GPU.printBackspace(c,skpCr) UnbindVRAM()
     drawbackground(printCursor.x,printCursor.y,1)
   end
 end
+
+--==DevKit Exports==--
+DevKit._FontChars = _FontChars

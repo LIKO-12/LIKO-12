@@ -108,3 +108,10 @@ end
 
 --==GPUKit Exports==--
 WindowKit.LIKO_W, WindowKit.LIKO_H = _LIKO_W, _LIKO_H
+
+--==DevKit Exports==--
+DevKit._LIKO_W = _LIKO_W
+DevKit._LIKO_H = _LIKO_H
+function DevKit.DevKitDraw(bool)
+  RenderKit.DevKitDraw = bool
+end
