@@ -3,11 +3,13 @@ local coreg = require("Engine.coreg")
 
 local _LuaBCHeader = string.char(0x1B).."LJ"
 
+--luacheck: ignore 412
+
 --Helping functions
 --A usefull split function
 local function split(inputstr, sep)
   if sep == nil then sep = "%s" end
-  local t={} ; i=1
+  local t={} ; local i=1
   for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
     t[i] = str
     i = i + 1
@@ -18,11 +20,6 @@ end
 local function lastIndexOf(str,of)
   local lastIndex = string.find(string.reverse(str),of)
   return lastIndex and #str-lastIndex+1 or 0
-end
-
-local function indexOf(str,of)
-  local cstart,cend = string.find(str,of)
-  if cstart then return cstart else return 0 end
 end
 
 --Value, expected Type, Variable Name
@@ -77,14 +74,14 @@ return function(Config)
     
     if not wild then table.insert(specialChars,"%*") end
     
-    for k, char in ipairs(specialChars) do
+    for _, char in ipairs(specialChars) do
       path = path:gsub(char,"")
     end
     
     --Collapse the string into its component parts, removing ..'s
     local parts = split(path,"/")
     local output = {}
-    for k, part in ipairs(parts) do
+    for _, part in ipairs(parts) do
       if part:len() > 0 and part ~= "." then
         
         if part == ".." or part == "..." then
@@ -113,7 +110,7 @@ return function(Config)
   local function createPath(path)
     local parts = split(path,"/")
     local totalPath = ""
-    for k, part in ipairs(parts) do
+    for _, part in ipairs(parts) do
       totalPath = totalPath.."/"..part
       
       local info = love.filesystem.getInfo(RootDir..totalPath)
@@ -124,20 +121,6 @@ return function(Config)
         end
       else
         love.filesystem.createDirectory(RootDir..totalPath)
-      end
-    end
-  end
-  
-  local function findIn( startDrive, startDir, matches, wildPattern )
-    local list = fs.getDirectoryItems(startDrive..":/"..startDir)
-    for k, entry in ipairs(list) do
-      local entryPath = (startDir:len() == 0) and entry or startDir.."/"..entry
-      if string.match(entryPath, wildPattern) then
-        table.insert(matches,entryPath)
-      end
-      
-      if fs.isDirectory(startDrive..":/"..entryPath) then
-        findIn( startDrive, entryPath, matches, wildPattern )
       end
     end
   end
@@ -155,7 +138,7 @@ return function(Config)
       
       --Copy the source contents into it
       local files = love.filesystem.getDirectoryItems(RootDir..from)
-      for k,file in ipairs(files) do
+      for _,file in ipairs(files) do
         copyRecursive(
           fs.combine(from,file),
           fs.combine(to,file)
@@ -177,7 +160,7 @@ return function(Config)
       --Delete a directory:
       
       local files = love.filesystem.getDirectoryItems(RootDir..path)
-      for k,file in ipairs(files) do
+      for _,file in ipairs(files) do
         deleteRecursive(fs.combine(path,file))
       end
       
@@ -198,7 +181,7 @@ return function(Config)
       --Index a directory:
       local total = 0
       local files = love.filesystem.getDirectoryItems(RootDir..path)
-      for k,file in ipairs(files) do
+      for _,file in ipairs(files) do
         total = total + getSizeRecursive(path.."/"..file)
       end
       return total
@@ -213,7 +196,7 @@ return function(Config)
       --Index a directory:
       local latest = 0
       local files = love.filesystem.getDirectoryItems(RootDir..path)
-      for k,file in ipairs(files) do
+      for _,file in ipairs(files) do
         local lastMod, err = getSizeRecursive(path.."/"..file)
         if lastMod then
           if lastMod > latest then latest = lastMod end
@@ -260,7 +243,7 @@ return function(Config)
   --Returns a list of the available drives.
   function fs.drives()
     local dlist = {}
-    for k,v in pairs(Drives) do
+    for k,_ in pairs(Drives) do
       dlist[k] = {size=Drives[k].Size,usage=Drives[k].Usage,Readonly=Drives[k].Readonly}
     end
     return dlist
@@ -374,7 +357,9 @@ return function(Config)
   function fs.isReadonly(path)
     Verify(path,"string","Path")
     
+    --luacheck: push ignore 211
     local path, drive = sanitizePath(path)
+    --luacheck: pop
     
     return Drives[drive].Readonly
   end
@@ -520,7 +505,10 @@ return function(Config)
   function fs.getDrive(path)
     Verify(path,"string","path")
     
+    --luacheck: push ignore 211
     local path, drive = sanitizePath(path)
+    --luacheck: pop
+    
     return drive
   end
   
