@@ -7,6 +7,7 @@ local Config, GPU, yGPU, GPUKit, DevKit = ...
 local events = require("Engine.events")
 
 local Path = GPUKit.Path
+local VRamKit = GPUKit.VRamKit
 local RenderKit = GPUKit.Render
 local WindowKit = GPUKit.Window
 local PaletteKit = GPUKit.Palette
@@ -19,6 +20,7 @@ local _ImageTransparent = PaletteKit.ImageTransparent
 local _DisplayPalette = PaletteKit.DisplayPalette
 local _LIKO_W = WindowKit.LIKO_W
 local _LIKO_H = WindowKit.LIKO_H
+local UnbindVRAM = VRamKit.UnbindVRAM
 
 --==Kit Variables==--
 RenderKit.Flipped = false --This flag means that the screen has been flipped
@@ -31,7 +33,7 @@ RenderKit.AlwaysDrawTimer = 0 --This timer is only used on mobile devices to kee
 
 local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS" or Config._Mobile
 
-local _ClearOnRender = config._ClearOnRender --Should clear the screen when render, some platforms have glitches when this is disabled.
+local _ClearOnRender = Config._ClearOnRender --Should clear the screen when render, some platforms have glitches when this is disabled.
 if type(_ClearOnRender) == "nil" then _ClearOnRender = true end --Defaults to be enabled.
 
 local ofs = CalibrationKit.Offsets
