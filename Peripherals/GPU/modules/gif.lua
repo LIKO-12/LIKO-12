@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local events = require("Engine.events")
 
 local Path = GPUKit.Path
@@ -38,9 +40,9 @@ GifKit.PChanged = false --A flag to indicate that the palette did change while g
 
 --==Canvas Creation==--
 
-local _CanvasFormats = love.graphics.getCanvasFormats()
+local _CanvasFormats = lg.getCanvasFormats()
 
-local _GIFCanvas = love.graphics.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale,{
+local _GIFCanvas = lg.newCanvas(_LIKO_W*_GIFScale,_LIKO_H*_GIFScale,{
   format = (_CanvasFormats.r8 and "r8" or "normal"),
   dpiscale = 1
 }) --Create the gif canvas, used to apply the gif scale factor.
@@ -152,59 +154,59 @@ events.register("love:update",function(dt)
   _GIFTimer = _GIFTimer + dt
   if _GIFTimer >= _GIFFrameTime then
     _GIFTimer = _GIFTimer % _GIFFrameTime
-    love.graphics.setCanvas() --Quit the canvas and return to the host screen.
+    lg.setCanvas() --Quit the canvas and return to the host screen.
     
     if MatrixKit.MatrixKit.PatternFill then
-      love.graphics.setStencilTest()
+      lg.setStencilTest()
     end
     
-    love.graphics.push()
-    love.graphics.origin() --Reset all transformations.
-    if MatrixKit.Clip then love.graphics.setScissor() end
+    lg.push()
+    lg.origin() --Reset all transformations.
+    if MatrixKit.Clip then lg.setScissor() end
     
     GPU.pushColor() --Push the current color to the stack.
-    love.graphics.setColor(1,1,1,1) --I don't want to tint the canvas :P
+    lg.setColor(1,1,1,1) --I don't want to tint the canvas :P
     
-    love.graphics.setCanvas(_GIFCanvas)
+    lg.setCanvas(_GIFCanvas)
     
-    love.graphics.clear(0,0,0,1) --Clear the screen (Some platforms are glitching without this).
+    lg.clear(0,0,0,1) --Clear the screen (Some platforms are glitching without this).
     
-    love.graphics.setColor(1,1,1,1)
+    lg.setColor(1,1,1,1)
     
-    love.graphics.setShader()
+    lg.setShader()
     
-    love.graphics.draw(RenderKit.ScreenCanvas, ofs.screen[1], ofs.screen[2], 0, _GIFScale, _GIFScale) --Draw the canvas.
+    lg.draw(RenderKit.ScreenCanvas, ofs.screen[1], ofs.screen[2], 0, _GIFScale, _GIFScale) --Draw the canvas.
     
     if CursorKit.Cursor ~= "none" then --Draw the cursor
       local cx, cy = GPU.getMPos()
-      love.graphics.draw(_CursorsCache[CursorKit.Cursor].gifimg,(cx-_CursorsCache[CursorKit.Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[CursorKit.Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
+      lg.draw(_CursorsCache[CursorKit.Cursor].gifimg,(cx-_CursorsCache[CursorKit.Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[CursorKit.Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
     end
     
     if MiscKit.MSGTimer > 0 and MiscKit.LastMSGGif then
-      love.graphics.setColor(MiscKit.LastMSGColor/255,0,0,1)
-      love.graphics.rectangle("fill", ofs.screen[1]+ofs.rect[1], ofs.screen[2] + (_LIKO_H-8) * _GIFScale + ofs.rect[2],
+      lg.setColor(MiscKit.LastMSGColor/255,0,0,1)
+      lg.rectangle("fill", ofs.screen[1]+ofs.rect[1], ofs.screen[2] + (_LIKO_H-8) * _GIFScale + ofs.rect[2],
       _LIKO_W *_GIFScale + ofs.rectSize[1], 8*_GIFScale + ofs.rectSize[2])
-      love.graphics.setColor(MiscKit.LastMSGTColor/255,0,0,1)
-      love.graphics.push()
-      love.graphics.translate(ofs.screen[1]+ofs.print[1]+_GIFScale, ofs.screen[2] + (_LIKO_H-7) * _GIFScale + ofs.print[2])
-      love.graphics.scale(_GIFScale,_GIFScale)
-      love.graphics.print(MiscKit.LastMSG,0,0)
-      love.graphics.pop()
-      love.graphics.setColor(1,1,1,1)
+      lg.setColor(MiscKit.LastMSGTColor/255,0,0,1)
+      lg.push()
+      lg.translate(ofs.screen[1]+ofs.print[1]+_GIFScale, ofs.screen[2] + (_LIKO_H-7) * _GIFScale + ofs.print[2])
+      lg.scale(_GIFScale,_GIFScale)
+      lg.print(MiscKit.LastMSG,0,0)
+      lg.pop()
+      lg.setColor(1,1,1,1)
     end
     
-    love.graphics.setCanvas()
-    love.graphics.setShader(RenderKit.DrawShader)
+    lg.setCanvas()
+    lg.setShader(RenderKit.DrawShader)
     
-    love.graphics.pop() --Reapply the offset.
-    love.graphics.setCanvas{RenderKit.ScreenCanvas,stencil=true} --Reactivate the canvas.
+    lg.pop() --Reapply the offset.
+    lg.setCanvas{RenderKit.ScreenCanvas,stencil=true} --Reactivate the canvas.
     
     if MatrixKit.MatrixKit.PatternFill then
-      love.graphics.stencil(MatrixKit.MatrixKit.PatternFill, "replace", 1)
-      love.graphics.setStencilTest("greater",0)
+      lg.stencil(MatrixKit.MatrixKit.PatternFill, "replace", 1)
+      lg.setStencilTest("greater",0)
     end
     
-    if MatrixKit.Clip then love.graphics.setScissor(unpack(MatrixKit.Clip)) end
+    if MatrixKit.Clip then lg.setScissor(unpack(MatrixKit.Clip)) end
     GPU.popColor() --Restore the active color.
     
     if GifKit.PChanged then

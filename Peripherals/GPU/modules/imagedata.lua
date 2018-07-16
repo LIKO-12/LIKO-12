@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local SharedKit = GPUKit.Shared
 local PaletteKit = GPUKit.Palette
 local ImageDataKit = GPUKit.ImageData
@@ -121,7 +123,7 @@ function GPU.imagedata(w,h)
     return self
   end
   
-  function id:quad(x,y,qw,qh) return love.graphics.newQuad(x,y,qw or self:width(),qh or self:height(),self:width(),self:height()) end
+  function id:quad(x,y,qw,qh) return lg.newQuad(x,y,qw or self:width(),qh or self:height(),self:width(),self:height()) end
   function id:image() return GPU.image(imageData) end
   
   function id:export()

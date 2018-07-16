@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local events = require("Engine.events")
 
 local PaletteKit = GPUKit.Palette
@@ -60,12 +62,12 @@ function GPU.cursor(imgdata,name,hx,hy)
     hy = Verify(hy,"Hot Y","number",true)
     
     local enimg = imgdata:enlarge(WindowKit.LIKOScale)
-    --local img = love.graphics.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
+    --local img = lg.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
     local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
     local gifimg = love.image.newImageData(imgdata:size())
     gifimg:mapPixel(function(x,y) return imgdata:getPixel(x,y)/255,0,0,1 end)
     gifimg:mapPixel(_EncodeTransparent)
-    gifimg = love.graphics.newImage(gifimg)
+    gifimg = lg.newImage(gifimg)
     
     local hotx, hoty = hx*math.floor(WindowKit.LIKOScale), hy*math.floor(WindowKit.LIKOScale) --Converted to host scale
     local cur = love.mouse.isCursorSupported() and love.mouse.newCursor(limg,hotx,hoty) or {}

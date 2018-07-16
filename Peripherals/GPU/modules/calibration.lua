@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local json = require("Engine.JSON")
 
 local Path = GPUKit.Path
@@ -11,11 +13,11 @@ local CalibrationKit = GPUKit.Calibration
 
 --==Local Variables==--
 
-local _CanvasFormats = love.graphics.getCanvasFormats()
+local _CanvasFormats = lg.getCanvasFormats()
 
 --==Graphics card info==--
 
-local gpuName, gpuVersion, gpuVendor, gpuDevice = love.graphics.getRendererInfo() --Used to apply some device specific bugfixes.
+local gpuName, gpuVersion, gpuVendor, gpuDevice = lg.getRendererInfo() --Used to apply some device specific bugfixes.
 if not love.filesystem.getInfo("/Misc/GPUInfo.txt","file") then love.filesystem.write("/Misc/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
 
 --==Graphics card supported canvases info==--
@@ -28,7 +30,7 @@ if not love.filesystem.getInfo("/Misc/GPUCanvasFormats.txt","file") then
   table.sort(formats)
   formats = table.concat(formats,"\n")
   local rformats = {}
-  for k,v in pairs(love.graphics.getCanvasFormats(true)) do
+  for k,v in pairs(lg.getCanvasFormats(true)) do
     if v then table.insert(rformats,k) end
   end
   table.sort(rformats)

@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local events = require("Engine.events")
 local coreg = require("Engine.coreg")
 
@@ -34,6 +36,7 @@ local _HostToLiko = WindowKit.HostToLiko
 local _CursorsCache = CursorKit.CursorsCache
 
 --==Kit Variables==--
+
 RenderKit.ShouldDraw = false --This flag means that the gpu has to update the screen for the user.
 RenderKit.AlwaysDraw = false --This flag means that the gpu has to always update the screen for the user.
 RenderKit.DevKitDraw = false --This flag means that the gpu has to always update the screen for the user, set by other peripherals
@@ -53,14 +56,14 @@ local _Flipped = false --This flag means that the screen has been flipped
 
 --==Canvases Creations==--
 
-local _CanvasFormats = love.graphics.getCanvasFormats()
+local _CanvasFormats = lg.getCanvasFormats()
 
-local _ScreenCanvas = love.graphics.newCanvas(_LIKO_W, _LIKO_H,{
+local _ScreenCanvas = lg.newCanvas(_LIKO_W, _LIKO_H,{
     format = (_CanvasFormats.r8 and "r8" or "normal"),
     dpiscale = 1
   }) --Create the screen canvas.
 
-local _BackBuffer = love.graphics.newCanvas(_LIKO_W, _LIKO_H,{dpiscale=1}) --BackBuffer for post shaders.
+local _BackBuffer = lg.newCanvas(_LIKO_W, _LIKO_H,{dpiscale=1}) --BackBuffer for post shaders.
 
 --==Render Shaders==--
 
@@ -103,10 +106,10 @@ end
 
 --==Graphics Initialization==--
 
-love.graphics.setCanvas{_ScreenCanvas,stencil=true} --Activate LIKO12 canvas.
-love.graphics.clear(0,0,0,1) --Clear LIKO12 screen for the first time.
+lg.setCanvas{_ScreenCanvas,stencil=true} --Activate LIKO12 canvas.
+lg.clear(0,0,0,1) --Clear LIKO12 screen for the first time.
 
-love.graphics.setShader(_DrawShader) --Activate the drawing shader.
+lg.setShader(_DrawShader) --Activate the drawing shader.
 
 GPU.cursor(GPU.imagedata(1,1):setPixel(0,0,7),"default")
 GPU.cursor(CursorKit.Cursor)
@@ -134,83 +137,83 @@ events.register("love:graphics",function()
     UnbindVRAM(true) --Make sure that the VRAM changes are applied
 
     if MatrixKit.PatternFill then
-      love.graphics.setStencilTest()
+      lg.setStencilTest()
     end
 
-    love.graphics.setCanvas() --Quit the canvas and return to the host screen.
-    love.graphics.push()
-    love.graphics.setShader(_DisplayShader) --Activate the display shader.
-    love.graphics.origin() --Reset all transformations.
-    if MatrixKit.Clip then love.graphics.setScissor() end
+    lg.setCanvas() --Quit the canvas and return to the host screen.
+    lg.push()
+    lg.setShader(_DisplayShader) --Activate the display shader.
+    lg.origin() --Reset all transformations.
+    if MatrixKit.Clip then lg.setScissor() end
 
     GPU.pushColor() --Push the current color to the stack.
-    love.graphics.setColor(1,1,1,1) --I don't want to tint the canvas :P
-    if _ClearOnRender then love.graphics.clear((WindowKit.Height > WindowKit.Width) and {25/255,25/255,25/255,1} or {0,0,0,1}) end --Clear the screen (Some platforms are glitching without this).
+    lg.setColor(1,1,1,1) --I don't want to tint the canvas :P
+    if _ClearOnRender then lg.clear((WindowKit.Height > WindowKit.Width) and {25/255,25/255,25/255,1} or {0,0,0,1}) end --Clear the screen (Some platforms are glitching without this).
 
     if PShadersKit.ActiveShader then
       if not _Mobile then love.mouse.setVisible(false) end
-      love.graphics.setCanvas(_BackBuffer)
-      love.graphics.clear(0,0,0,0)
-      love.graphics.draw(_ScreenCanvas) --Draw the canvas.
+      lg.setCanvas(_BackBuffer)
+      lg.clear(0,0,0,0)
+      lg.draw(_ScreenCanvas) --Draw the canvas.
       if CursorKit.Cursor ~= "none" then
         local mx, my = _HostToLiko(love.mouse.getPosition())
         local hotx, hoty = _CursorsCache[CursorKit.Cursor].hx, _CursorsCache[CursorKit.Cursor].hy
-        love.graphics.draw(_CursorsCache[CursorKit.Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty)
+        lg.draw(_CursorsCache[CursorKit.Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty)
       end
       if PShadersKit.PostShaderTimer then PShadersKit.ActiveShader:send("time",math.floor(PShadersKit.PostShaderTimer*1000)) end
-      love.graphics.setShader(PShadersKit.ActiveShader)
-      love.graphics.setCanvas()
-      love.graphics.draw(_BackBuffer, WindowKit.LIKO_X+ofs.screen[1], WindowKit.LIKO_Y+ofs.screen[2], 0, WindowKit.LIKOScale, WindowKit.LIKOScale) --Draw the canvas.
-      love.graphics.setShader(_DisplayShader)
+      lg.setShader(PShadersKit.ActiveShader)
+      lg.setCanvas()
+      lg.draw(_BackBuffer, WindowKit.LIKO_X+ofs.screen[1], WindowKit.LIKO_Y+ofs.screen[2], 0, WindowKit.LIKOScale, WindowKit.LIKOScale) --Draw the canvas.
+      lg.setShader(_DisplayShader)
     else
-      love.graphics.draw(_ScreenCanvas, WindowKit.LIKO_X+ofs.screen[1], WindowKit.LIKO_Y+ofs.screen[2], 0, WindowKit.LIKOScale, WindowKit.LIKOScale) --Draw the canvas.
+      lg.draw(_ScreenCanvas, WindowKit.LIKO_X+ofs.screen[1], WindowKit.LIKO_Y+ofs.screen[2], 0, WindowKit.LIKOScale, WindowKit.LIKOScale) --Draw the canvas.
     end
 
     if CursorKit.GrappedCursor and CursorKit.Cursor ~= "none" and not PShadersKit.ActiveShader then --Must draw the cursor using the gpu
       local mx, my = _HostToLiko(love.mouse.getPosition())
       mx,my = _LikoToHost(mx,my)
       local hotx, hoty = _CursorsCache[CursorKit.Cursor].hx*WindowKit.LIKOScale, _CursorsCache[CursorKit.Cursor].hy*WindowKit.LIKOScale --Converted to host scale
-      love.graphics.draw(_CursorsCache[CursorKit.Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty,0,WindowKit.LIKOScale,WindowKit.LIKOScale)
+      lg.draw(_CursorsCache[CursorKit.Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty,0,WindowKit.LIKOScale,WindowKit.LIKOScale)
     end
 
-    love.graphics.setShader() --Deactivate the display shader.
+    lg.setShader() --Deactivate the display shader.
 
     if MiscKit.MSGTimer > 0 then
       setColor(_GetColor(MiscKit.LastMSGColor))
-      love.graphics.rectangle("fill", WindowKit.LIKO_X+ofs.screen[1]+ofs.rect[1], WindowKit.LIKO_Y+ofs.screen[2] + (_LIKO_H-8) * WindowKit.LIKOScale + ofs.rect[2],
+      lg.rectangle("fill", WindowKit.LIKO_X+ofs.screen[1]+ofs.rect[1], WindowKit.LIKO_Y+ofs.screen[2] + (_LIKO_H-8) * WindowKit.LIKOScale + ofs.rect[2],
         _LIKO_W * WindowKit.LIKOScale + ofs.rectSize[1], 8*WindowKit.LIKOScale + ofs.rectSize[2])
       setColor(_GetColor(MiscKit.LastMSGTColor))
-      love.graphics.push()
-      love.graphics.translate(WindowKit.LIKO_X+ofs.screen[1]+ofs.print[1]+WindowKit.LIKOScale, WindowKit.LIKO_Y+ofs.screen[2] + (_LIKO_H-7) * WindowKit.LIKOScale + ofs.print[2])
-      love.graphics.scale(WindowKit.LIKOScale,WindowKit.LIKOScale)
-      love.graphics.print(MiscKit.LastMSG,0,0)
-      love.graphics.pop()
-      love.graphics.setColor(1,1,1,1)
+      lg.push()
+      lg.translate(WindowKit.LIKO_X+ofs.screen[1]+ofs.print[1]+WindowKit.LIKOScale, WindowKit.LIKO_Y+ofs.screen[2] + (_LIKO_H-7) * WindowKit.LIKOScale + ofs.print[2])
+      lg.scale(WindowKit.LIKOScale,WindowKit.LIKOScale)
+      lg.print(MiscKit.LastMSG,0,0)
+      lg.pop()
+      lg.setColor(1,1,1,1)
     end
 
     if RenderKit.DevKitDraw then
       events.trigger("GPU:DevKitDraw")
-      love.graphics.origin()
-      love.graphics.setColor(1,1,1,1)
-      love.graphics.setLineStyle("rough")
-      love.graphics.setLineJoin("miter")
-      love.graphics.setPointSize(1)
-      love.graphics.setLineWidth(1)
-      love.graphics.setShader()
-      love.graphics.setCanvas()
+      lg.origin()
+      lg.setColor(1,1,1,1)
+      lg.setLineStyle("rough")
+      lg.setLineJoin("miter")
+      lg.setPointSize(1)
+      lg.setLineWidth(1)
+      lg.setShader()
+      lg.setCanvas()
     end
 
-    love.graphics.present() --Present the screen to the host & the user.
-    love.graphics.setShader(_DrawShader) --Reactivate the draw shader.
-    love.graphics.pop()
-    love.graphics.setCanvas{_ScreenCanvas,stencil=true} --Reactivate the canvas.
+    lg.present() --Present the screen to the host & the user.
+    lg.setShader(_DrawShader) --Reactivate the draw shader.
+    lg.pop()
+    lg.setCanvas{_ScreenCanvas,stencil=true} --Reactivate the canvas.
 
     if MatrixKit.PatternFill then
-      love.graphics.stencil(MatrixKit.PatternFill, "replace", 1)
-      love.graphics.setStencilTest("greater",0)
+      lg.stencil(MatrixKit.PatternFill, "replace", 1)
+      lg.setStencilTest("greater",0)
     end
 
-    if MatrixKit.Clip then love.graphics.setScissor(unpack(MatrixKit.Clip)) end
+    if MatrixKit.Clip then lg.setScissor(unpack(MatrixKit.Clip)) end
     RenderKit._ShouldDraw = false --Reset the flag.
     GPU.popColor() --Restore the active color.
     if flip then

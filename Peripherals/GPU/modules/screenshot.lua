@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local events = require("Engine.events")
 
 local Path = GPUKit.Path
@@ -32,9 +34,9 @@ function GPU.screenshot(x,y,w,h)
   y = Verify(y,"Y","number",true)
   w = Verify(w,"W","number",true)
   h = Verify(h,"H","number",true)
-  love.graphics.setCanvas()
+  lg.setCanvas()
   local imgdata = GPU.imagedata(RenderKit.ScreenCanvas:newImageData(1,1,x,y,w,h))
-  love.graphics.setCanvas{RenderKit.ScreenCanvas,stencil=true}
+  lg.setCanvas{RenderKit.ScreenCanvas,stencil=true}
   return imgdata
 end
 
@@ -67,9 +69,9 @@ events.register("love:keypressed", function(key)
     love.filesystem.write("/Screenshots/LIKO12-"..os.time()..".png",png)
     systemMessage("Screenshot has been taken successfully",2)
   elseif key == _LabelCaptureKey then
-    love.graphics.setCanvas()
+    lg.setCanvas()
     LabelImage:paste(RenderKit.ScreenCanvas:newImageData(),0,0,0,0,_LIKO_W,_LIKO_H)
-    love.graphics.setCanvas{RenderKit.ScreenCanvas,stencil=true}
+    lg.setCanvas{RenderKit.ScreenCanvas,stencil=true}
     systemMessage("Captured label image successfully !",2)
   end
 end)
