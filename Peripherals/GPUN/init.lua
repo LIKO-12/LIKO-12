@@ -19,6 +19,7 @@ ConstantValue, **DynamicValue**
 #Palette:
 - ColorSet, DrawPalette, ImagePalette, ImageTransparent, DisplayPalette
 - GetColor, GetColorID
+- PaletteStack
 
 #Shared:
 - setColor, getColor, colorTo1, colorTo255
@@ -26,6 +27,9 @@ ConstantValue, **DynamicValue**
 
 #ImageData:
 - PasteImage
+
+#Misc:
+- **LastMSG**, **LastMSGTColor**, **LastMSGColor**, **LastMSGGif**, **MSGTimer**, systemMessage
 
 #Gif:
 - **PChanged**
@@ -75,6 +79,7 @@ return function(config) --A function that creates a new GPU peripheral.
   GPUKit.Gif = {}
   GPUKit.ImageData = {}
   GPUKit.VRam = {}
+  GPUKit.Misc = {}
   
   --==Modules Loading==--
   
@@ -88,9 +93,12 @@ return function(config) --A function that creates a new GPU peripheral.
   loadModule("vram")
   loadModule("palette")
   loadModule("shared")
+  loadModule("miscellaneous")
+  loadModule("print")
   loadModule("shapes")
   loadModule("image")
   loadModule("imagedata")
+  loadModule("cursor")
   loadModule("gif")
   loadModule("render")
   
