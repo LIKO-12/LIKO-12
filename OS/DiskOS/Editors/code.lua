@@ -68,7 +68,7 @@ ce.th = ce.th-2 --Because of the top and bottom bars
 ce.vx, ce.vy = 1,1 --View postions
 --ce.sxs, ce.sys -> Selection start positions, nil when not selecting
 --ce.sxe, ce.sye -> Selection end positions, nil when not selecting
---ce.sdir -> Selection direction (true for up, false for down), nil when not selecting
+
 ce.mflag = false --Mouse flag
 
 ce.btimer = 0 --The cursor blink timer
@@ -569,7 +569,6 @@ function ce:getState()
     sys=self.sys,
     sxe=self.sxe,
     sye=self.sye,
-    sdir=self.sdir
   }
 end
 
@@ -582,7 +581,6 @@ function ce:setState(state)
   self.sys=state.sys
   self.sxe=state.sxe
   self.sye=state.sye
-  self.sdir=state.sdir
   self:checkPos()
   self:drawBuffer()
   self:drawLineNum()
@@ -664,7 +662,7 @@ ce.keymap = {
   ["shift-down"] = function(self)
     --last line check, we do not go further than buffer
     if #buffer == self.cy then
-      return;
+      return
     end
     
     if self.sxs then
@@ -687,7 +685,7 @@ ce.keymap = {
   
     --last line check, we do not go further than buffer
     if #buffer == self.cy and self.cx == #buffer[self.cy] then
-      return;
+      return
     end
     local originalcx, originalcy = self.cx, self.cy
     self.cx = self.cx + 1
@@ -717,7 +715,7 @@ ce.keymap = {
   ["shift-left"] = function(self)
     --last line check, we do not go further than buffer
     if 0 == self.cy and self.cx <= 1 then
-      return;
+      return
     end
     local originalcx, originalcy = self.cx, self.cy
     self.cx = self.cx - 1
@@ -883,7 +881,7 @@ function ce:mousepressed(x, y, button, istouch)
     self.cx = self.vx + (cx-1)
     self.cy = self.vy + (cy-1)
     
-    if self.sxs then self.sxs,self.sys,self.sxe,self.sye,self.sdir = false,false,false,false,false end --End selection
+    if self.sxs then self.sxs,self.sys,self.sxe,self.sye = false,false,false,false end --End selection
     
     self:checkPos()
     self:drawBuffer()
