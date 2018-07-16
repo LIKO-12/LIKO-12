@@ -67,7 +67,7 @@ ce.tw, ce.th = termSize() --The terminal size
 ce.th = ce.th-2 --Because of the top and bottom bars
 ce.vx, ce.vy = 1,1 --View postions
 --ce.sxs, ce.sys -> Selection start positions, nil when not selecting
---ce.sxe, ce.sye -> Selection start positions, nil when not selecting
+--ce.sxe, ce.sye -> Selection end positions, nil when not selecting
 --ce.sdir -> Selection direction (true for up, false for down), nil when not selecting
 ce.mflag = false --Mouse flag
 
@@ -172,24 +172,30 @@ function ce:drawBuffer()
   local cbuffer = self.colorize and highlighter:highlightLines(vbuffer, self.vy) or vbuffer
   rect(0,7,screenW,screenH-8*2+1,false,self.theme.bg)
   for k, l in ipairs(cbuffer) do
-    if self.sxs and self.vy+k-1 >= self.sys and self.vy+k-1 <= self.sye then --Selection
+		local sxs, sys, sxe, sye = self:getOrderedSelect()
+		
+    if sxs and self.vy+k-1 >= sys and self.vy+k-1 <= sye then --Selection
+			
       printCursor(-(self.vx-2)-1,k,highlighterTheme.selection)
+			
       local linelen,skip = vbuffer[k]:len(), 0
-      if self.vy+k-1 == self.sys then --Selection start
-        skip = self.sxs-1
+			
+      if self.vy+k-1 == sys then --Selection start
+        skip = sxs-1
         printCursor(skip-(self.vx-2)-1)
         linelen = linelen-skip
       end
       
-      if self.vy+k-1 == self.sye then --Selection end
-        linelen = self.sxe - skip
+      if self.vy+k-1 == sye then --Selection end
+        linelen = sxe - skip
       end
       
-      if self.vy+k-1 < self.sye then --Not the end of the selection
+      if self.vy+k-1 < sye then --Not the end of the selection
         linelen = linelen + 1
       end
       
       print(string.rep(" ",linelen),false,true)
+			
     end
     printCursor(-(self.vx-2)-1,k,-1)
     self:colorPrint(l)
@@ -217,6 +223,23 @@ end
 --Clear the selection just incase
 function ce:deselect()
   if self.sxs then self.sxs, self.sys, self.sxe, self.sye = nil, nil, nil, nil; self:drawBuffer() end 
+end
+
+function ce:getOrderedSelect()
+	if self.sxs then
+		if self.sye < self.sys then
+			
+			return self.sxe, self.sye, self.sxs, self.sys
+		elseif self.sye == self.sys and self.sxe<self.sxs then
+			
+			return self.sxe, self.sys, self.sxs, self.sye
+		else
+			
+			return self.sxs, self.sys, self.sxe, self.sye
+		end
+	else
+		return false
+	end
 end
 
 function ce:drawLineNum()
@@ -374,17 +397,19 @@ end
 --Will delete the current selection
 function ce:deleteSelection()
   if not self.sxs then return end --If not selection just return back.
+	local sxs, sys, sxe, sye = self:getOrderedSelect()
+	
   self:beginUndoable()
-  local lnum,slength = self.sys, self.sye+1
+  local lnum,slength = sys, sye+1
   while lnum < slength do
-    if lnum == self.sys and lnum == self.sye then --Single line selection
-      buffer[lnum] = buffer[lnum]:sub(1,self.sxs-1) .. buffer[lnum]:sub(self.sxe+1,-1)
+    if lnum == sys and lnum == sye then --Single line selection
+      buffer[lnum] = buffer[lnum]:sub(1,sxs-1) .. buffer[lnum]:sub(sxe+1,-1)
       lnum = lnum + 1
-    elseif lnum == self.sys then
-      buffer[lnum] = buffer[lnum]:sub(1, self.sxs-1)
+    elseif lnum == sys then
+      buffer[lnum] = buffer[lnum]:sub(1, sxs-1)
       lnum = lnum + 1
     elseif lnum == slength-1 then
-      buffer[lnum-1] = buffer[lnum-1] .. buffer[lnum]:sub(self.sxe+1, -1)
+      buffer[lnum-1] = buffer[lnum-1] .. buffer[lnum]:sub(sxe+1, -1)
       buffer = lume.concat(lume.slice(buffer,1,lnum-1),lume.slice(buffer,lnum+1,-1))
       slength = slength - 1
     else --Middle line
@@ -392,7 +417,7 @@ function ce:deleteSelection()
       slength = slength - 1
     end
   end
-  self.cx, self.cy = self.sxs, self.sys
+  self.cx, self.cy = sxs, sys
   self:checkPos()
   self:deselect()
   self:drawLineNum()
@@ -401,18 +426,18 @@ end
 
 --Copy selection text (Only if selecting)
 function ce:copyText()
-  if self.sxs then --If there are any selection
+	local sxs, sys, sxe, sye = self:getOrderedSelect()
+  if sxs then --If there are any selection
     local clipbuffer = {}
-    
-    for lnum = self.sys, self.sye do
+    for lnum = sys, sye do
       local line = buffer[lnum]
       
-      if lnum == self.sys and lnum == self.sye then --Single line selection
-        line = line:sub(self.sxs,self.sxe)
-      elseif lnum == self.sys then
-        line = line:sub(self.sxs,-1)
-      elseif lnum == self.sye then
-        line = line:sub(1, self.sxe)
+      if lnum == sys and lnum == sye then --Single line selection
+        line = line:sub(sxs,sxe)
+      elseif lnum == sys then
+        line = line:sub(sxs,-1)
+      elseif lnum == sye then
+        line = line:sub(1, sxe)
       end
       
       table.insert(clipbuffer,line)
@@ -571,6 +596,7 @@ ce.lastKey = ""
 ce.keymap = {
   ["return"] = function(self)
     if self.readonly then _systemMessage("The file is readonly !",1,9,4) return end
+		if self.sxs then ce:deleteSelection() end
     ce:insertNewLine()
   end,
 
@@ -606,47 +632,118 @@ ce.keymap = {
     self:drawLineNum()
   end,
   ["shift-up"] = function(self)
-	--in case we want to reduce shift selection
-	if self.cy==1 then
-	 --we stay in buffer
-	 return
-	end
-	if self.sys then
-	 --there is an existing selection to update
-      if self.sys<(self.cy-1) then
-	   self.cy=self.cy-1
-	   self.sye=self.cy
-       self:checkPos()
-       self:drawBuffer()
-	  end
-	 
-	end
+		--in case we want to reduce shift selection
+		if self.cy==1 then
+		 --we stay in buffer
+		 return
+		end
+		if self.sxs then
+		 --there is an existing selection to update
+			self.cy=self.cy-1
+			self:checkPos()
+			self.sye=self.cy
+			self.sxe=math.min(self.cx, #buffer[self.cy])
+			self:drawBuffer()
+		else
+			self.sxs = self.cx
+			self.sys = self.cy
+			self.cy=self.cy-1
+			self:checkPos()
+			self.sye=self.cy
+			self.sxe=math.min(self.cx, #buffer[self.cy])
+			self:drawBuffer()
+		end
   end,
+	
   ["alt-up"] = function(self)
    self:searchPreviousFunction()
   end,
+	
   ["alt-down"] = function(self)
    self:searchNextFunction()
   end,
+	
   ["shift-down"] = function(self)
-   
-   --last line check, we do not go further than buffer
-   if #buffer == self.cy then
-    return;
-   end
-   
-   self.sxs=0
-   self.sxe=0
-   if self.sys==nil then
-    self.sys=self.cy
-    self.sye=self.sys+1
-   else 
-    self.sye=self.sye+1
-   end
-   self.cy=self.cy+1
-   self:checkPos()
-   self:drawBuffer()
-  end,
+		--last line check, we do not go further than buffer
+		if #buffer == self.cy then
+			return;
+		end
+		
+		if self.sxs then
+			self.cy=self.cy+1
+			self:checkPos()
+			self.sye = self.cy
+			self.sxe = math.min(self.cx, #buffer[self.cy])
+		else
+			self.sxs = self.cx
+			self.sys = self.cy
+			self.cy=self.cy+1
+			self:checkPos()
+			self.sye = self.cy
+			self.sxe = math.min(self.cx, #buffer[self.cy])
+		end
+		
+		self:drawBuffer()
+	end,
+  ["shift-right"] = function(self)
+	
+		--last line check, we do not go further than buffer
+		if #buffer == self.cy and self.cx == #buffer[self.cy] then
+			return;
+		end
+		local originalcx, originalcy = self.cx, self.cy
+		self.cx = self.cx + 1
+		
+		if self.cx > buffer[self.cy]:len()+1 then
+      if buffer[self.cy+1] then
+        self.cy = self.cy + 1
+        self.cx = 1
+      end
+    end
+		self:checkPos()
+		
+		if self.sxs then
+			self.sye = self.cy
+			self.sxe = math.min(self.cx, #buffer[self.cy])
+		else
+			self.sxs = originalcx
+			self.sys = originalcy
+			self.sye = self.cy
+			self.sxe = math.min(self.cx, #buffer[self.cy])
+		end
+		
+		self:drawBuffer()
+	end,
+	
+  ["shift-left"] = function(self)
+		--last line check, we do not go further than buffer
+		if 0 == self.cy and self.cx <= 1 then
+			return;
+		end
+		local originalcx, originalcy = self.cx, self.cy
+		self.cx = self.cx - 1
+		
+    if self.cx < 1 then
+      if self.cy > 1 then
+        self.cy = self.cy -1
+        self.cx = buffer[self.cy]:len()+1
+      end
+    end
+		self:checkPos()
+		
+		if self.sxs then
+			self.sye = self.cy
+			self.sxe = math.min(self.cx, #buffer[self.cy])
+		else
+			self.sxs = originalcx
+			self.sys = originalcy
+			self.sye = self.cy
+			self.sxe = math.min(self.cx, #buffer[self.cy])
+		end
+		
+		self:drawBuffer()
+	end,
+
   ["up"] = function(self)
     self:deselect()
     self.cy = self.cy -1
@@ -691,9 +788,11 @@ ce.keymap = {
 
   ["pageup"] = function(self)
     self.vy = self.vy-self.th
-	self.cy = self.cy-self.th
+		self.cy = self.cy-self.th
+		
     if self.vy < 1 then self.vy = 1 end
     if self.cy < 1 then self.cy = 1 end
+		
     self:resetCursorBlink()
     self:drawBuffer()
     self:drawLineNum()
@@ -798,53 +897,17 @@ function ce:mousemoved(x,y,dx,dy,it)
     cx, cy = self:clampPos(cx+self.vx-1,cy+self.vy-1)
     self.bflag = false --Disable blinking
     if not self.sxs then --Start the selection
-      if self.cy > cy then
-        self.sdir = true --UP
-        self.sxs, self.sys = cx, cy
-        self.sxe, self.sye = self.cx, self.cy
-      else
-        self.sdir = false --DOWN
-        self.sxs, self.sys = self.cx, self.cy
-        self.sxe, self.sye = cx, cy
-      end
+			self.sxs, self.sys = cx, cy
+			self.sxe, self.sye = self.cx, self.cy
+			-- Note: the ordered selection is given by ce:getOrderedSelect()
+			-- This is used to avoid extra overhead.
     else
-      local function switch(s)
-        if (s and not self.sdir) then
-          self.sxe, self.sye = self.sxs, self.sys
-        elseif (self.sdir and not s) then
-          self.sxs, self.sys = self.sxe, self.sye
-        end
-        self.sdir = s
-      end
-      
-      if self.sdir then
-        if cy == self.sye and cx > self.sxe then
-          switch(false)
-        elseif cy > self.sye then
-          switch(false)
-        end
-      else
-        if cy == self.sys and cx < self.sxs then
-          switch(true)
-        elseif cy < self.sys then
-          switch(true)
-        end
-      end
-      
-      if self.sdir then
-        self.sxs, self.sys = cx, cy
-      else
-        self.sxe, self.sye = cx, cy
-      end
+			self.sxe, self.sye = cx, cy
     end
     
     self:drawBuffer()
-  elseif x > 8 and self.sxs then --Bottom bar
-    self.bflag = false --Disable blinking
-    
   elseif self.sxs then --Top bar
     self.bflag = false --Disable blinking
-    
   end
 end
 
