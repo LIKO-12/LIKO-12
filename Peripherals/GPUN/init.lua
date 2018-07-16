@@ -13,6 +13,9 @@ ConstantValue, **DynamicValue**
 #Calibration:
 - Offsets
 
+#VRam:
+- BindVRAM, UnbindVRAM
+
 #Palette:
 - ColorSet, DrawPalette, ImagePalette, ImageTransparent, DisplayPalette
 - GetColor, GetColorID
@@ -71,6 +74,7 @@ return function(config) --A function that creates a new GPU peripheral.
   GPUKit.Shared = {}
   GPUKit.Gif = {}
   GPUKit.ImageData = {}
+  GPUKit.VRam = {}
   
   --==Modules Loading==--
   
@@ -81,8 +85,10 @@ return function(config) --A function that creates a new GPU peripheral.
   loadModule("window")
   loadModule("mouse")
   loadModule("calibration")
+  loadModule("vram")
   loadModule("palette")
   loadModule("shared")
+  loadModule("shapes")
   loadModule("image")
   loadModule("imagedata")
   loadModule("gif")
