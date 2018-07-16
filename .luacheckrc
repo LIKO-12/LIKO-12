@@ -20,6 +20,7 @@ globals = {
 	"love.data.hash",
 	
 	"love.filesystem.getInfo",
+	"love.filesystem.newDirectory",
 	
 	"love.graphics.isActive",
 	"love.graphics.isCreated",
