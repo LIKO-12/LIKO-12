@@ -12,7 +12,7 @@ local WindowKit = GPUKit.Window
 local PaletteKit = GPUKit.Palette
 local RenderKit = GPUKit.Render
 local CalibrationKit = GPUKit.Calibration
-local MiscKit = GPUKit.MiscKit
+local MiscKit = GPUKit.Misc
 local CursorKit = GPUKit.Cursor
 local MatrixKit = GPUKit.Matrix
 

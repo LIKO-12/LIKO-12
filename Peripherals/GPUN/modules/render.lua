@@ -8,8 +8,8 @@ local events = require("Engine.events")
 local coreg = require("Engine.coreg")
 
 local Path = GPUKit.Path
-local MiscKit = GPUKit.MiscKit
-local VRamKit = GPUKit.VRamKit
+local MiscKit = GPUKit.Misc
+local VRamKit = GPUKit.VRam
 local CursorKit = GPUKit.Cursor
 local SharedKit = GPUKit.Shared
 local RenderKit = GPUKit.Render
@@ -145,7 +145,7 @@ events.register("love:graphics",function()
 
     GPU.pushColor() --Push the current color to the stack.
     love.graphics.setColor(1,1,1,1) --I don't want to tint the canvas :P
-    if _ClearOnRender then love.graphics.clear((WindowKit.HOST_H > WindowKit.HOST_W) and {25/255,25/255,25/255,1} or {0,0,0,1}) end --Clear the screen (Some platforms are glitching without this).
+    if _ClearOnRender then love.graphics.clear((WindowKit.Height > WindowKit.Width) and {25/255,25/255,25/255,1} or {0,0,0,1}) end --Clear the screen (Some platforms are glitching without this).
 
     if PShadersKit.ActiveShader then
       if not _Mobile then love.mouse.setVisible(false) end
