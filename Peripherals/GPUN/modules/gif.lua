@@ -12,9 +12,11 @@ local WindowKit = GPUKit.Window
 local PaletteKit = GPUKit.Palette
 local RenderKit = GPUKit.RenderKit
 local CalibrationKit = GPUKit.Calibration
+local MiscKit = GPUKit.MiscKit
 
 --==Kits Constants==--
 
+local systemMessage = MiscKit.systemMessage
 local _ColorSet = PaletteKit.ColorSet
 local ofs = CalibrationKit.Offsets
 local _LIKO_W = WindowKit.LIKO_W
@@ -176,15 +178,15 @@ events.register("love:update",function(dt)
       love.graphics.draw(_CursorsCache[_Cursor].gifimg,(cx-_CursorsCache[_Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[_Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
     end
     
-    if MSGTimer > 0 and LastMSGGif then
-      love.graphics.setColor(LastMSGColor/255,0,0,1)
+    if MiscKit.MSGTimer > 0 and MiscKit.LastMSGGif then
+      love.graphics.setColor(MiscKit.LastMSGColor/255,0,0,1)
       love.graphics.rectangle("fill", ofs.screen[1]+ofs.rect[1], ofs.screen[2] + (_LIKO_H-8) * _GIFScale + ofs.rect[2],
       _LIKO_W *_GIFScale + ofs.rectSize[1], 8*_GIFScale + ofs.rectSize[2])
-      love.graphics.setColor(LastMSGTColor/255,0,0,1)
+      love.graphics.setColor(MiscKit.LastMSGTColor/255,0,0,1)
       love.graphics.push()
       love.graphics.translate(ofs.screen[1]+ofs.print[1]+_GIFScale, ofs.screen[2] + (_LIKO_H-7) * _GIFScale + ofs.print[2])
       love.graphics.scale(_GIFScale,_GIFScale)
-      love.graphics.print(LastMSG,0,0)
+      love.graphics.print(MiscKit.LastMSG,0,0)
       love.graphics.pop()
       love.graphics.setColor(1,1,1,1)
     end
