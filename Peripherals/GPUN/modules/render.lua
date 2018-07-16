@@ -10,6 +10,7 @@ local coreg = require("Engine.coreg")
 local Path = GPUKit.Path
 local MiscKit = GPUKit.MiscKit
 local VRamKit = GPUKit.VRamKit
+local CursorKit = GPUKit.Cursor
 local SharedKit = GPUKit.Shared
 local RenderKit = GPUKit.Render
 local WindowKit = GPUKit.Window
@@ -25,9 +26,11 @@ local _LIKO_W = WindowKit.LIKO_W
 local _LIKO_H = WindowKit.LIKO_H
 local UnbindVRAM = VRamKit.UnbindVRAM
 local setColor = SharedKit.setColor
+local _GetColor = PaletteKit.GetColor
 local _GetColorID = PaletteKit.GetColorID
 local _LikoToHost = WindowKit.LikoToHost
 local _HostToLiko = WindowKit.HostToLiko
+local _CursorsCache = CursorKit.CursorsCache
 
 --==Kit Variables==--
 RenderKit.Flipped = false --This flag means that the screen has been flipped
@@ -113,10 +116,10 @@ events.register("love:graphics",function()
       love.graphics.setCanvas(_BackBuffer)
       love.graphics.clear(0,0,0,0)
       love.graphics.draw(_ScreenCanvas) --Draw the canvas.
-      if _Cursor ~= "none" then
+      if CursorKit.Cursor ~= "none" then
         local mx, my = _HostToLiko(love.mouse.getPosition())
-        local hotx, hoty = _CursorsCache[_Cursor].hx, _CursorsCache[_Cursor].hy
-        love.graphics.draw(_CursorsCache[_Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty)
+        local hotx, hoty = _CursorsCache[CursorKit.Cursor].hx, _CursorsCache[CursorKit.Cursor].hy
+        love.graphics.draw(_CursorsCache[CursorKit.Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty)
       end
       if _PostShaderTimer then _ActiveShader:send("time",math.floor(_PostShaderTimer*1000)) end
       love.graphics.setShader(_ActiveShader)
@@ -127,11 +130,11 @@ events.register("love:graphics",function()
       love.graphics.draw(_ScreenCanvas, WindowKit.LIKO_X+ofs.screen[1], WindowKit.LIKO_Y+ofs.screen[2], 0, WindowKit.LIKOScale, WindowKit.LIKOScale) --Draw the canvas.
     end
 
-    if _GrappedCursor and _Cursor ~= "none" and not _ActiveShader then --Must draw the cursor using the gpu
+    if CursorKit.GrappedCursor and CursorKit.Cursor ~= "none" and not _ActiveShader then --Must draw the cursor using the gpu
       local mx, my = _HostToLiko(love.mouse.getPosition())
       mx,my = _LikoToHost(mx,my)
-      local hotx, hoty = _CursorsCache[_Cursor].hx*WindowKit.LIKOScale, _CursorsCache[_Cursor].hy*WindowKit.LIKOScale --Converted to host scale
-      love.graphics.draw(_CursorsCache[_Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty,0,WindowKit.LIKOScale,WindowKit.LIKOScale)
+      local hotx, hoty = _CursorsCache[CursorKit.Cursor].hx*WindowKit.LIKOScale, _CursorsCache[CursorKit.Cursor].hy*WindowKit.LIKOScale --Converted to host scale
+      love.graphics.draw(_CursorsCache[CursorKit.Cursor].gifimg, ofs.image[1]+mx-hotx, ofs.image[2]+my-hoty,0,WindowKit.LIKOScale,WindowKit.LIKOScale)
     end
 
     love.graphics.setShader() --Deactivate the display shader.

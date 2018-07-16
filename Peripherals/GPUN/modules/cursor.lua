@@ -9,7 +9,8 @@ local events = require("Engine.events")
 local PaletteKit = GPUKit.Palette
 local RenderKit = GPUKit.Render
 local SharedKit = GPUKit.Shared
-local WindowKit = GPUKit.WindowKit
+local WindowKit = GPUKit.Window
+local CursorKit = GPUKit.Cursor
 
 --==Kits Constants==--
 local _ImageTransparent = PaletteKit.ImageTransparent
@@ -24,25 +25,28 @@ local function _EncodeTransparent(_,_, r,g,b,a)
   return r,g,b,a
 end
 
+--==Kit Variables==--
+
+CursorKit.GrappedCursor = false --If the cursor must be drawed by the GPU (not using a system cursor)
+CursorKit.Cursor = "none"
+
 --==Local Variables==--
 
-local _GrappedCursor = false --If the cursor must be drawed by the GPU (not using a system cursor)
-local _Cursor = "none"
 local _CursorsCache = {}
 
 --==GPU Cursor API==--
 function GPU.cursor(imgdata,name,hx,hy)
   if type(imgdata) == "string" then --Set the current cursor
-    if _GrappedCursor then if not name then RenderKit.AlwaysDraw = false; RenderKit.ShouldDraw = true end elseif name then RenderKit.AlwaysDraw = true end
-    if _Cursor == imgdata and not ((_GrappedCursor and not name) or (name and not _GrappedCursor)) then return end
-    _GrappedCursor = name
+    if CursorKit.GrappedCursor then if not name then RenderKit.AlwaysDraw = false; RenderKit.ShouldDraw = true end elseif name then RenderKit.AlwaysDraw = true end
+    if CursorKit.Cursor == imgdata and not ((CursorKit.GrappedCursor and not name) or (name and not CursorKit.GrappedCursor)) then return end
+    CursorKit.GrappedCursor = name
     if (not _CursorsCache[imgdata]) and (imgdata ~= "none") then return error("Cursor doesn't exists: "..imgdata) end
-    _Cursor = imgdata
-    if _Cursor == "none" or _GrappedCursor then
+    CursorKit.Cursor = imgdata
+    if CursorKit.Cursor == "none" or CursorKit.GrappedCursor then
       love.mouse.setVisible(false)
     elseif love.mouse.isCursorSupported() then
       love.mouse.setVisible(true)
-      love.mouse.setCursor(_CursorsCache[_Cursor].cursor)
+      love.mouse.setCursor(_CursorsCache[CursorKit.Cursor].cursor)
     end
   elseif type(imgdata) == "table" then --Create a new cursor from an image.
     if not( imgdata.enlarge and imgdata.export and imgdata.type ) then return error("Invalied image") end
@@ -71,10 +75,10 @@ function GPU.cursor(imgdata,name,hx,hy)
     end
     _CursorsCache[name] = {cursor=cur,imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy,palt=palt}
   elseif type(imgdata) == "nil" then
-    if _Cursor == "none" then
-      return _Cursor
+    if CursorKit.Cursor == "none" then
+      return CursorKit.Cursor
     else
-      return _Cursor, _CursorsCache[_Cursor].imgdata, _CursorsCache[_Cursor].hx+1, _CursorsCache[_Cursor].hy+1
+      return CursorKit.Cursor, _CursorsCache[CursorKit.Cursor].imgdata, _CursorsCache[CursorKit.Cursor].hx+1, _CursorsCache[CursorKit.Cursor].hy+1
     end
   else --Invalied
     return error("The first argument must be a string, image or nil")
@@ -99,6 +103,9 @@ events.register("love:resize",function() --The new size will be calculated in th
     _CursorsCache[k].cursor = cur
     GPU.popPalette()
   end
-  local cursor = _Cursor; _Cursor = "none" --Force the cursor to update.
-  GPU.cursor(cursor,_GrappedCursor)
+  local cursor = CursorKit.Cursor; CursorKit.Cursor = "none" --Force the cursor to update.
+  GPU.cursor(cursor,CursorKit.GrappedCursor)
 end)
+
+--==GPUKit Exports==--
+CursorKit.CursorsCache = _CursorsCache

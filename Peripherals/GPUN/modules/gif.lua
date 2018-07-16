@@ -13,9 +13,10 @@ local PaletteKit = GPUKit.Palette
 local RenderKit = GPUKit.RenderKit
 local CalibrationKit = GPUKit.Calibration
 local MiscKit = GPUKit.MiscKit
+local CursorKit = GPUKit.Cursor
 
 --==Kits Constants==--
-
+local _CursorsCache = CursorKit.CursorsCache
 local systemMessage = MiscKit.systemMessage
 local _ColorSet = PaletteKit.ColorSet
 local ofs = CalibrationKit.Offsets
@@ -173,9 +174,9 @@ events.register("love:update",function(dt)
     
     love.graphics.draw(RenderKit.ScreenCanvas, ofs.screen[1], ofs.screen[2], 0, _GIFScale, _GIFScale) --Draw the canvas.
     
-    if _Cursor ~= "none" then --Draw the cursor
+    if CursorKit.Cursor ~= "none" then --Draw the cursor
       local cx, cy = GPU.getMPos()
-      love.graphics.draw(_CursorsCache[_Cursor].gifimg,(cx-_CursorsCache[_Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[_Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
+      love.graphics.draw(_CursorsCache[CursorKit.Cursor].gifimg,(cx-_CursorsCache[CursorKit.Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[CursorKit.Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
     end
     
     if MiscKit.MSGTimer > 0 and MiscKit.LastMSGGif then
