@@ -1,6 +1,5 @@
 require("love.system")
 
-local args = {}
 require("love.thread")
 
 local to_channel = select(1,...)
