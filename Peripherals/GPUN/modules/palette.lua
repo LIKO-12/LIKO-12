@@ -267,3 +267,4 @@ PaletteKit.ImageTransparent = _ImageTransparent
 PaletteKit.DisplayPalette = _DisplayPalette
 PaletteKit.GetColor = _GetColor
 PaletteKit.GetColorID= _GetColorID
+PaletteKit.PaletteStack = PaletteStack
