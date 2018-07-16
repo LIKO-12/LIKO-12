@@ -1,4 +1,4 @@
---GPU: Shapes Drawing.
+--GPU: Video Ram.
 
 --luacheck: push ignore 211
 local Config, GPU, yGPU, GPUKit, DevKit = ...
