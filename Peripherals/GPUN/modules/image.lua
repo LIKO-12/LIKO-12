@@ -7,10 +7,12 @@ local Config, GPU, yGPU, GPUKit, DevKit = ...
 local SharedKit = GPUKit.Shared
 local RenderKit = GPUKit.Render
 local CalibrationKit = GPUKit.Calibration
+local VRamKit = GPUKit.VRam
 
 --==Kits Constants==--
 local Verify = SharedKit.Verify
 local ofs = CalibrationKit.Offsets
+local UnbindVRAM = VRamKit.UnbindVRAM
 
 --==GPU Image API==--
 
