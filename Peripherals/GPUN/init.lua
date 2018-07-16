@@ -31,6 +31,9 @@ ConstantValue, **DynamicValue**
 #Misc:
 - **LastMSG**, **LastMSGTColor**, **LastMSGColor**, **LastMSGGif**, **MSGTimer**, systemMessage
 
+#Cursor:
+- **GrappedCursor**, **Cursor**, CursorsCache
+
 #Gif:
 - **PChanged**
 
@@ -80,6 +83,7 @@ return function(config) --A function that creates a new GPU peripheral.
   GPUKit.ImageData = {}
   GPUKit.VRam = {}
   GPUKit.Misc = {}
+  GPUKit.Cursor = {}
   
   --==Modules Loading==--
   
