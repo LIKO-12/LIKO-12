@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local SharedKit = GPUKit.Shared
 
 --==Localized Lua Library==--

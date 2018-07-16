@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local SharedKit = GPUKit.Shared
 local RenderKit = GPUKit.Render
 local WindowKit = GPUKit.Window
@@ -31,19 +33,19 @@ function GPU.cam(mode,a,b)
   
   if mode then
     if mode == "translate" then
-      love.graphics.translate(a or 0,b or 0)
+      lg.translate(a or 0,b or 0)
     elseif mode == "scale" then
-      love.graphics.scale(a or 1, b or 1)
+      lg.scale(a or 1, b or 1)
     elseif mode == "rotate" then
-      love.graphics.rotate(a or 0)
+      lg.rotate(a or 0)
     elseif mode == "shear" then
-      love.graphics.shear(a or 0, b or 0)
+      lg.shear(a or 0, b or 0)
     else
       return error("Unknown mode: "..mode)
     end
   else
     GPU.pushColor()
-    love.graphics.origin()
+    lg.origin()
     GPU.popColor()
   end
 end
@@ -52,7 +54,7 @@ local MatrixStack = 0
 
 function GPU.clearMatrixStack()
   for _=1, MatrixStack do
-    love.graphics.pop()
+    lg.pop()
   end
   
   MatrixStack = 0
@@ -63,7 +65,7 @@ function GPU.pushMatrix()
     return error("Maximum stack depth reached, More pushes than pops ?")
   end
   MatrixStack = MatrixStack + 1
-  local ok, err = pcall(love.graphics.push)
+  local ok, err = pcall(lg.push)
   if not ok then return error(err) end
 end
 
@@ -72,7 +74,7 @@ function GPU.popMatrix()
     return error("The stack is empty, More pops than pushes ?")
   end
   MatrixStack = MatrixStack - 1
-  local ok, err = pcall(love.graphics.pop)
+  local ok, err = pcall(lg.pop)
   if not ok then return error(err) end
 end
 
@@ -86,23 +88,23 @@ function GPU.patternFill(img)
     IMG:paste(ImageDataKit.PasteImage,0,0)
     ImageDataKit.PasteImage = nil
     
-    IMG = love.graphics.newImage(IMG)
+    IMG = lg.newImage(IMG)
     
     local QUAD = img:quad(0,0,_LIKO_W,_LIKO_H)
     
     MatrixKit.PatternFill = function()
-      love.graphics.setShader(RenderKit.StencilShader)
+      lg.setShader(RenderKit.StencilShader)
       
-      love.graphics.draw(IMG, QUAD, 0,0)
+      lg.draw(IMG, QUAD, 0,0)
       
-      love.graphics.setShader(RenderKit.DrawShader)
+      lg.setShader(RenderKit.DrawShader)
     end
     
-    love.graphics.stencil(MatrixKit.PatternFill, "replace", 1)
-    love.graphics.setStencilTest("greater",0)
+    lg.stencil(MatrixKit.PatternFill, "replace", 1)
+    lg.setStencilTest("greater",0)
   else
     MatrixKit.PatternFill = nil
-    love.graphics.setStencilTest()
+    lg.setStencilTest()
   end
 end
 
@@ -118,11 +120,11 @@ function GPU.clip(x,y,w,h)
     Verify(h,"H","number")
     
     MatrixKit.Clip = {x,y,w,h}
-    love.graphics.setScissor(unpack(MatrixKit.Clip))
+    lg.setScissor(unpack(MatrixKit.Clip))
   else
     local oldClip = MatrixKit.Clip
     MatrixKit.Clip = false
-    love.graphics.setScissor()
+    lg.setScissor()
     
     return oldClip
   end

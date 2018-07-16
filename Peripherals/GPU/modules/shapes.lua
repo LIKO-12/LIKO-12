@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local VRamKit = GPUKit.VRam
 local SharedKit = GPUKit.Shared
 local RenderKit = GPUKit.Render
@@ -21,7 +23,7 @@ function GPU.clear(c) UnbindVRAM()
   c = c or 0
   c = Verify(c,"The color id","number",true)
   if c > 15 or c < 0 then return error("The color id is out of range.") end --Error
-  love.graphics.clear(c/255,0,0,1) RenderKit.ShouldDraw = true
+  lg.clear(c/255,0,0,1) RenderKit.ShouldDraw = true
 end
 
 --Draws a point/s at specific location/s, accepts the colorid as the last args, x and y of points must be provided before the colorid.
@@ -31,7 +33,7 @@ function GPU.points(...) UnbindVRAM()
   if not (#args % 2 == 0) then GPU.color(args[#args]) table.remove(args,#args) end --Extract the colorid (if exists) from the args and apply it.
   for k,v in ipairs(args) do Verify(v,"Arg #"..k,"number") end --Error
   for k,v in ipairs(args) do if (k % 2 == 1) then args[k] = v + ofs.point[1] else args[k] = v + ofs.point[2] end end --Apply the offset.
-  love.graphics.points(unpack(args)) RenderKit.ShouldDraw = true --Draw the points and tell that changes has been made.
+  lg.points(unpack(args)) RenderKit.ShouldDraw = true --Draw the points and tell that changes has been made.
   GPU.popColor() --Pop the last color in the stack.
 end
 GPU.point = GPU.points --Just an alt name :P.
@@ -45,7 +47,7 @@ function GPU.lines(...) UnbindVRAM()
   if #args < 4 then return false, "Need at least two vertices to draw a line." end --Error
   args[1], args[2] = args[1] + ofs.line_start[1], args[2] + ofs.line_start[2]
   for k=3, #args do if (k % 2 == 1) then args[k] = args[k] + ofs.line[1] else args[k] = args[k] + ofs.line[2] end end --Apply the offset.
-  love.graphics.line(unpack(args)) RenderKit.ShouldDraw = true --Draw the lines and tell that changes has been made.
+  lg.line(unpack(args)) RenderKit.ShouldDraw = true --Draw the lines and tell that changes has been made.
   GPU.popColor() --Pop the last color in the stack.
 end
 GPU.line = GPU.lines --Just an alt name :P.
@@ -82,7 +84,7 @@ function GPU.rect(x,y,w,h,l,c) UnbindVRAM()
     w,h = w+ofs.rectSize[1], h+ofs.rectSize[2] --Size
   end
   
-  love.graphics.rectangle(l and "line" or "fill",x,y,w,h) RenderKit.ShouldDraw = true --Draw and tell that changes has been made.
+  lg.rectangle(l and "line" or "fill",x,y,w,h) RenderKit.ShouldDraw = true --Draw and tell that changes has been made.
   
   if c then GPU.popColor() end --Restore the color from the stack.
 end
@@ -116,7 +118,7 @@ function GPU.circle(x,y,r,l,c,s) UnbindVRAM()
     x,y,r = x+ofs.circle[1], y+ofs.circle[2], r+ofs.circle[3]
   end
   
-  love.graphics.circle(l and "line" or "fill",x,y,r,s) RenderKit.ShouldDraw = true --Draw and tell that changes has been made.
+  lg.circle(l and "line" or "fill",x,y,r,s) RenderKit.ShouldDraw = true --Draw and tell that changes has been made.
   
   if c then GPU.popColor() end --Restore the color from the stack.
 end
@@ -147,7 +149,7 @@ function GPU.triangle(x1,y1,x2,y2,x3,y3,l,col) UnbindVRAM()
     x1,y1,x2,y2,x3,y3 = x1 + ofs.triangle[1], y1 + ofs.triangle[2], x2 + ofs.triangle[1], y2 + ofs.triangle[2], x3 + ofs.triangle[1], y3 + ofs.triangle[2]
   end
   
-  love.graphics.polygon(l and "line" or "fill", x1,y1,x2,y2,x3,y3)
+  lg.polygon(l and "line" or "fill", x1,y1,x2,y2,x3,y3)
   
   if col then GPU.popColor() end
 end
@@ -160,7 +162,7 @@ function GPU.polygon(...) UnbindVRAM()
   for k,v in ipairs(args) do Verify(v,"Arg #"..k,"number") end --Error
   if #args < 6 then return error("Need at least three vertices to draw a polygon.") end --Error
   for k,v in ipairs(args) do if (k % 2 == 0) then args[k] = v + ofs.polygon[2] else args[k] = v + ofs.polygon[1] end end --Apply the offset.
-  love.graphics.polygon("fill",unpack(args)) RenderKit.ShouldDraw = true --Draw the lines and tell that changes has been made.
+  lg.polygon("fill",unpack(args)) RenderKit.ShouldDraw = true --Draw the lines and tell that changes has been made.
   GPU.popColor() --Pop the last color in the stack.
 end
 
@@ -193,7 +195,7 @@ function GPU.ellipse(x,y,rx,ry,l,c,s) UnbindVRAM()
     x,y,rx,ry = x+ofs.ellipse[1], y+ofs.ellipse[2], rx+ofs.ellipse[3], ry+ofs.ellipse[4]
   end
   
-  love.graphics.ellipse(l and "line" or "fill",x,y,rx,ry,s) RenderKit.ShouldDraw = true --Draw and tell that changes has been made.
+  lg.ellipse(l and "line" or "fill",x,y,rx,ry,s) RenderKit.ShouldDraw = true --Draw and tell that changes has been made.
   
   if c then GPU.popColor() end --Restore the color from the stack.
 end

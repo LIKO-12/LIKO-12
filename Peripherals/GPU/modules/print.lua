@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local utf8 = require("utf8")
 
 local Path = GPUKit.Path
@@ -45,9 +47,9 @@ _FontChars = escapeASCII(table.concat(_FontChars))
 
 local _FontPath, _FontExtraSpacing = Config._FontPath or Path.."fonts/font4x5.png", Config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
 
-local _Font = love.graphics.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
+local _Font = lg.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
 
-love.graphics.setFont(_Font) --Activate the default font.
+lg.setFont(_Font) --Activate the default font.
 
 local printCursor = {x=0,y=0,bgc=0} --The print grid cursor pos.
 local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2)) --The size of characters that the screen can fit.
@@ -108,9 +110,9 @@ function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
     
     --Print to the screen
     if limit then --Wrapped
-      love.graphics.printf(t,x+ofs.print[1],y+ofs.print[2],limit,align,r,sx,sy,ox,oy,kx,ky) RenderKit.ShouldDraw = true
+      lg.printf(t,x+ofs.print[1],y+ofs.print[2],limit,align,r,sx,sy,ox,oy,kx,ky) RenderKit.ShouldDraw = true
     else
-      love.graphics.print(t,x+ofs.print[1],y+ofs.print[2],r,sx,sy,ox,oy,kx,ky) RenderKit.ShouldDraw = true
+      lg.print(t,x+ofs.print[1],y+ofs.print[2],r,sx,sy,ox,oy,kx,ky) RenderKit.ShouldDraw = true
     end
   else --Print to terminal pos
     local pc = printCursor --Shortcut
@@ -130,7 +132,7 @@ function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
     if y then
       drawbackground(pc.x, pc.y, t:len()) --Draw the background.
       local gx,gy = togrid(pc.x, pc.y)
-      love.graphics.print(t,gx+1+ofs.print_grid[1],gy+1+ofs.print_grid[2]) --Print the text.
+      lg.print(t,gx+1+ofs.print_grid[1],gy+1+ofs.print_grid[2]) --Print the text.
       pc.x = pc.x + utf8Len(t) --Update the x pos
       return true --It ran successfully
     end
@@ -165,7 +167,7 @@ function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
       if wrappedText[k+1] then pc.y = pc.y + 1 end --If there's a next line
     end
     
-    love.graphics.printf(pre_spaces..t,1+ofs.print_grid[1],drawY*(_FontH+2)+1+ofs.print_grid[2],sw) RenderKit.ShouldDraw = true --Print the text
+    lg.printf(pre_spaces..t,1+ofs.print_grid[1],drawY*(_FontH+2)+1+ofs.print_grid[2],sw) RenderKit.ShouldDraw = true --Print the text
   end
 end
 

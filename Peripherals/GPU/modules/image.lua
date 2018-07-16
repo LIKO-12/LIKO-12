@@ -4,6 +4,8 @@
 local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
+local lg = love.graphics
+
 local SharedKit = GPUKit.Shared
 local RenderKit = GPUKit.Render
 local CalibrationKit = GPUKit.Calibration
