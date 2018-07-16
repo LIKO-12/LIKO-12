@@ -5,7 +5,6 @@ local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 local floor = math.floor
 
 local function convertColor(r,g,b,a)
-  local r,g,b,a = r,g,b,a
   if type(r) == "table" then r,g,b,a = unpack(r) end
   if r then r = r/255 end
   if g then g = g/255 end
@@ -27,10 +26,10 @@ return function(config)
   local ColorSet = {}
   
   for i=0,15 do
-    local r,g,b,a = unpack(GPUKit._ColorSet[i])
-    r,g,b,a = band(r,252), band(g,252), band(b,252), 252
-    ColorSet[i] = {r,g,b,a}
-    ColorSet[r*10^9 + g*10^6 + b*10^3 + a] = i
+    local r,g,b = unpack(GPUKit._ColorSet[i])
+    r,g,b = band(r,252), band(g,252), band(b,252)
+    ColorSet[i] = {r,g,b,252}
+    ColorSet[r*10^9 + g*10^6 + b*10^3 + 252] = i
   end
   
   --The label image
@@ -38,13 +37,13 @@ return function(config)
   local LabelX, LabelY, LabelW, LabelH = 32,120, GPUKit._LIKO_W, GPUKit._LIKO_H
   
   --DiskCleanupMapper
-  local function _CleanUpDisk(x,y,r,g,b,a)
+  local function _CleanUpDisk(_,_,r,g,b,a)
     return band(floor(r*255),252)/255, band(floor(g*255),252)/255, band(floor(b*255),252)/255, band(floor(a*255),252)/255
   end
   
   --DiskWriteMapper
   local WritePos = 0
-  local function _WriteDisk(x,y,r,g,b,a)
+  local function _WriteDisk(_,_,r,g,b,a)
     local byte = RAM.peek(FRAMAddress+WritePos)
     r = bor(floor(r*255), band( rshift(byte ,6), 3) )
     g = bor(floor(g*255), band( rshift(byte ,4), 3) )
@@ -56,7 +55,7 @@ return function(config)
   
   --DiskReadMapper
   local ReadPos = 0
-  local function _ReadDisk(x,y,r,g,b,a)
+  local function _ReadDisk(_,_,r,g,b,a)
     local r2 = lshift( band(floor(r*255), 3), 6)
     local g2 = lshift( band(floor(g*255), 3), 4)
     local b2 = lshift( band(floor(b*255), 3), 2)
@@ -75,19 +74,19 @@ return function(config)
   
   --LabelScanMapper
   local function _ScanLabel(x,y,r,g,b,a)
-    local r,g,b,a = band(floor(r*255),252), band(floor(g*255),252), band(floor(b*255),252), band(floor(a*255),252)
+    r,g,b,a = band(floor(r*255),252), band(floor(g*255),252), band(floor(b*255),252), band(floor(a*255),252)
     local code = r*10^9 + g*10^6 + b*10^3 + a
     local id = ColorSet[code] or 0
     LabelImage:setPixel(x,y,id/255,0,0,1)
   end
   
   --The API starts here--
-  local fapi, yfapi = {}, {}
+  local fapi = {}
   
   --Create a new floppy disk and mount it
   --tname -> template name, without the .png extension
   function fapi.newDisk(tname)
-    local tname = tname or "Blue"
+    tname = tname or "Blue"
     if type(tname) ~= "string" then return error("Disk template name must be a string or a nil, provided: "..type(tname)) end
     if not love.filesystem.getInfo(perpath..tname..".png","file") then return error("Disk template '"..tname.."' doesn't exist !") end
     
