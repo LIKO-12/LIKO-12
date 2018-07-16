@@ -6,6 +6,10 @@ local perpath = select(1,...) --The path to the GPU folder.
 
 ConstantValue, **DynamicValue**
 
+#Shared:
+- setColor, getColor, colorTo1, colorTo255
+- Verify
+
 #Window:
 - LIKO_W, LIKO_H, **LIKO_X**, **LIKO_Y**, **LIKO_Scale**, **Width**, **Height**
 - HostToLiko, LikoToHost
@@ -20,10 +24,6 @@ ConstantValue, **DynamicValue**
 - ColorSet, DrawPalette, ImagePalette, ImageTransparent, DisplayPalette
 - GetColor, GetColorID
 - PaletteStack
-
-#Shared:
-- setColor, getColor, colorTo1, colorTo255
-- Verify
 
 #Misc:
 - **LastMSG**, **LastMSGTColor**, **LastMSGColor**, **LastMSGGif**, **MSGTimer**, systemMessage
@@ -105,12 +105,12 @@ return function(config) --A function that creates a new GPU peripheral.
     love.filesystem.load(perpath.."modules/"..name..".lua")(config, GPU, yGPU, GPUKit, DevKit)
   end
   
+  loadModule("shared")
   loadModule("window")
   loadModule("mouse")
   loadModule("calibration")
   loadModule("vram")
   loadModule("palette")
-  loadModule("shared")
   loadModule("miscellaneous")
   loadModule("matrix")
   loadModule("postShaders")
@@ -122,5 +122,7 @@ return function(config) --A function that creates a new GPU peripheral.
   loadModule("cursor")
   loadModule("gif")
   loadModule("render")
+  
+  return GPU, yGPU, DevKit
   
 end

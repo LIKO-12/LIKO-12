@@ -271,3 +271,4 @@ PaletteKit.PaletteStack = PaletteStack
 
 --==DevKit Exports==--
 DevKit._GetColor = _GetColor
+DevKit._ColorSet = _ColorSet

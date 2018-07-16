@@ -10,7 +10,7 @@ local WindowKit = GPUKit.Window
 local SharedKit = GPUKit.Shared
 local CalibrationKit = GPUKit.Calibration
 local VRamKit = GPUKit.VRam
-local RenderKit = GPUKit.RenderKit
+local RenderKit = GPUKit.Render
 
 --==Localized Lua Library==--
 local strByte = string.byte

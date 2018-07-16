@@ -9,11 +9,11 @@ local events = require("Engine.events")
 local Path = GPUKit.Path
 local MiscKit = GPUKit.Misc
 local WindowKit = GPUKit.Window
-local RenderKit = GPUKit.RenderKit
-local SharedKit = GPUKit.SharedKit
+local RenderKit = GPUKit.Render
+local SharedKit = GPUKit.Shared
 
 --==Kits Constants==--
-local _LIKO_W, _LIKO_H = WindowKit.LIKO_W, WindowKit._LIKO_H
+local _LIKO_W, _LIKO_H = WindowKit.LIKO_W, WindowKit.LIKO_H
 local systemMessage = MiscKit.systemMessage
 local Verify = SharedKit.Verify
 

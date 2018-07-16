@@ -90,7 +90,7 @@ end)
 --==Graphics Initializations==--
 love.graphics.clear(0,0,0,1) --Clear the host screen.
 
-events.trigger("love:resize", WindowKit.HOST_W, WindowKit.HOST_H) --Calculate LIKO12 scale to the host window for the first time.
+events.trigger("love:resize", WindowKit.Width, WindowKit.Height) --Calculate LIKO12 scale to the host window for the first time.
 
 --==GPU Window API==--
 function GPU.screenSize() return _LIKO_W, _LIKO_H end
