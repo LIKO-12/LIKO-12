@@ -5,9 +5,12 @@ local Config, GPU, yGPU, GPUKit, DevKit = ...
 --luacheck: pop
 
 local events = require("Engine.events")
+local coreg = require("Engine.coreg")
 
 local Path = GPUKit.Path
+local MiscKit = GPUKit.MiscKit
 local VRamKit = GPUKit.VRamKit
+local SharedKit = GPUKit.Shared
 local RenderKit = GPUKit.Render
 local WindowKit = GPUKit.Window
 local PaletteKit = GPUKit.Palette
@@ -21,6 +24,10 @@ local _DisplayPalette = PaletteKit.DisplayPalette
 local _LIKO_W = WindowKit.LIKO_W
 local _LIKO_H = WindowKit.LIKO_H
 local UnbindVRAM = VRamKit.UnbindVRAM
+local setColor = SharedKit.setColor
+local _GetColorID = PaletteKit.GetColorID
+local _LikoToHost = WindowKit.LikoToHost
+local _HostToLiko = WindowKit.HostToLiko
 
 --==Kit Variables==--
 RenderKit.Flipped = false --This flag means that the screen has been flipped
@@ -129,15 +136,15 @@ events.register("love:graphics",function()
 
     love.graphics.setShader() --Deactivate the display shader.
 
-    if MSGTimer > 0 then
-      setColor(_GetColor(LastMSGColor))
+    if MiscKit.MSGTimer > 0 then
+      setColor(_GetColor(MiscKit.LastMSGColor))
       love.graphics.rectangle("fill", WindowKit.LIKO_X+ofs.screen[1]+ofs.rect[1], WindowKit.LIKO_Y+ofs.screen[2] + (_LIKO_H-8) * WindowKit.LIKOScale + ofs.rect[2],
         _LIKO_W * WindowKit.LIKOScale + ofs.rectSize[1], 8*WindowKit.LIKOScale + ofs.rectSize[2])
-      setColor(_GetColor(LastMSGTColor))
+      setColor(_GetColor(MiscKit.LastMSGTColor))
       love.graphics.push()
       love.graphics.translate(WindowKit.LIKO_X+ofs.screen[1]+ofs.print[1]+WindowKit.LIKOScale, WindowKit.LIKO_Y+ofs.screen[2] + (_LIKO_H-7) * WindowKit.LIKOScale + ofs.print[2])
       love.graphics.scale(WindowKit.LIKOScale,WindowKit.LIKOScale)
-      love.graphics.print(LastMSG,0,0)
+      love.graphics.print(MiscKit.LastMSG,0,0)
       love.graphics.pop()
       love.graphics.setColor(1,1,1,1)
     end
