@@ -268,3 +268,6 @@ PaletteKit.DisplayPalette = _DisplayPalette
 PaletteKit.GetColor = _GetColor
 PaletteKit.GetColorID= _GetColorID
 PaletteKit.PaletteStack = PaletteStack
+
+--==DevKit Exports==--
+DevKit._GetColor = _GetColor

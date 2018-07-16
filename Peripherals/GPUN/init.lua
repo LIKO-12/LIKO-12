@@ -25,11 +25,17 @@ ConstantValue, **DynamicValue**
 - setColor, getColor, colorTo1, colorTo255
 - Verify
 
-#ImageData:
-- PasteImage
-
 #Misc:
 - **LastMSG**, **LastMSGTColor**, **LastMSGColor**, **LastMSGGif**, **MSGTimer**, systemMessage
+
+#Matrix:
+- **Clip**, **PatternFill**
+
+#PShaders:
+- **ActiveShader**, **_PostShaderTimer**
+
+#ImageData:
+- PasteImage
 
 #Cursor:
 - **GrappedCursor**, **Cursor**, CursorsCache
@@ -71,6 +77,12 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --Set the scaling filter to the nearest pixel.
   love.graphics.setDefaultFilter("nearest","nearest")
+  love.graphics.setLineStyle("rough") --Set the line style.
+  
+  --Some graphics settings.
+  love.graphics.setLineJoin("miter") --Set the line join style.
+  love.graphics.setPointSize(1) --Set the point size to 1px.
+  love.graphics.setLineWidth(1) --Set the line width to 1px.
   
   --==GPUKits tables creation==--
   --TODO: Sort alphabatically.
@@ -84,6 +96,8 @@ return function(config) --A function that creates a new GPU peripheral.
   GPUKit.VRam = {}
   GPUKit.Misc = {}
   GPUKit.Cursor = {}
+  GPUKit.PShaders = {}
+  GPUKit.Matrix = {}
   
   --==Modules Loading==--
   
@@ -98,10 +112,13 @@ return function(config) --A function that creates a new GPU peripheral.
   loadModule("palette")
   loadModule("shared")
   loadModule("miscellaneous")
+  loadModule("matrix")
+  loadModule("postShaders")
   loadModule("print")
   loadModule("shapes")
   loadModule("image")
   loadModule("imagedata")
+  loadModule("screenshot")
   loadModule("cursor")
   loadModule("gif")
   loadModule("render")
