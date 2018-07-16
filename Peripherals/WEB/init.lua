@@ -40,15 +40,13 @@ return function(config) --A function that creates a new WEB peripheral.
   local CPUKit = config.CPUKit
   if not CPUKit then error("WEB Peripheral can't work without the CPUKit passed") end
   
-  local indirect = {} --List of functions that requires custom coroutine.resume
-  
   local devkit = {}
   
   local WEB, yWEB = {}, {}
   
   function WEB.send(url,args)
     if type(url) ~= "string" then return error("URL must be a string, provided: "..type(url)) end
-    local args = args or {}
+    args = args or {}
     if type(args) ~= "table" then return error("Args Must be a table or nil, provided: "..type(args)) end
     
     clearFuncsFromTable(args) --Since JSON can't encode functions !
@@ -73,7 +71,7 @@ return function(config) --A function that creates a new WEB peripheral.
         return string.format("%%%02X", n)
       else
         -- Non-ASCII (encode as UTF-8)
-        return string.format("%%%02X", 192 + bit.band( bit.arshift(n,6), 31 )) .. 
+        return string.format("%%%02X", 192 + bit.band( bit.arshift(n,6), 31 )) ..
                string.format("%%%02X", 128 + bit.band( n, 63 ))
       end
     end)
@@ -116,7 +114,7 @@ return function(config) --A function that creates a new WEB peripheral.
     return require(submodule)
   end
   
-  events.register("love:update",function(dt)
+  events.register("love:update",function()
     local result = from_channel:pop()
     if result then
       from_counter = from_counter +1
