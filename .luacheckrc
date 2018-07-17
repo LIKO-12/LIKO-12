@@ -9,9 +9,10 @@ globals = {
 	"_LVer","_LVERSION", --LIKO-12 Version variables.
 	
 	--Missing love globals.
-	"love.errorhandler",
 	
 	"love.arg.parseGameArguments",
+	
+	"love.audio.newQueueableSource",
 	
 	"love.data.compress",
 	"love.data.decode",
@@ -19,11 +20,16 @@ globals = {
 	"love.data.encode",
 	"love.data.hash",
 	
+	"love.errorhandler",
+	
 	"love.filesystem.getInfo",
 	"love.filesystem.newDirectory",
 	
 	"love.graphics.isActive",
 	"love.graphics.isCreated",
+	
+	"love.keyboard.getKeyRepeat",
+	"love.keyboard.getTextInput",
 	
 	"love.mouse.isCursorSupported"
 }
