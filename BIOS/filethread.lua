@@ -14,8 +14,8 @@ local dpath = "/drives/C/" --Destination Path
 local channel = love.thread.getChannel("BIOSFileThread") --Stop the thread when needed.
 
 local function checkDir(dir,r)
-	local dir = dir or ""
-	local r = r or reg
+	dir = dir or ""
+	r = r or reg
 	local path = tpath..dir
 	local items = love.filesystem.getDirectoryItems(path)
 	for k, file in ipairs(items) do if file:sub(1,1) ~= "." then
@@ -27,7 +27,7 @@ local function checkDir(dir,r)
 				fupdate = true
 			else --Check old file
         local info = love.filesystem.getInfo(fpath)
-				local modtime, merr = info and info.modtime, ""
+				local modtime = info and info.modtime
 				if modtime then
 					if r[file] then --It's registered
 						if modtime > r[file] then --It has been edited !
@@ -37,7 +37,7 @@ local function checkDir(dir,r)
 						r[file] = info.modtime --Register it.
 					end
 				else
-					print("Error: failed to get modification time,",modtime)
+					print("Error: failed to get modification time.")
 				end
 			end
 			

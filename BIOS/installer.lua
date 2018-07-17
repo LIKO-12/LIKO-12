@@ -4,7 +4,7 @@ local devmode = (love.filesystem.getInfo("/Misc/devmode.txt") and true or false)
 
 local HandledAPIS, osName, update = ...
 
-local Title = ""
+local Title
 if update then
   Title = "=--------< Updating "..osName.." >--------="
 else
@@ -13,12 +13,10 @@ else
 end
 
 local GPU = HandledAPIS.GPU
-local CPU = HandledAPIS.CPU
 local fs = HandledAPIS.HDD
 
 local sw,sh = GPU.screenSize()
-local tw,th = GPU.termSize()
-local fw,fh = GPU.fontSize()
+local fh = GPU.fontHeight()
 
 --Draws the progress bar, takes a value between 0 and 1, nil for no progress bar.
 local function drawProgress(float)
@@ -66,8 +64,8 @@ if update and false then --Temporary disable this thing.
   display("Indexing Files")
   
   local function index(path, list)
-    local path = path or "/OS/DiskOS/"
-    local list = list or {}
+    path = path or "/OS/DiskOS/"
+    list = list or {}
 
     local items = love.filesystem.getDirectoryItems(path)
     for id, item in ipairs(items) do
@@ -118,8 +116,8 @@ else ---INSTALL--------------------------------------------
   display("Indexing Files")
   
   local function index(path, list)
-    local path = path or "/OS/DiskOS/"
-    local list = list or {}
+    path = path or "/OS/DiskOS/"
+    list = list or {}
 
     local items = love.filesystem.getDirectoryItems(path)
     for id, item in ipairs(items) do
