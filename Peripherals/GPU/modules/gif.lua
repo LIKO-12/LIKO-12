@@ -156,7 +156,7 @@ events.register("love:update",function(dt)
     _GIFTimer = _GIFTimer % _GIFFrameTime
     lg.setCanvas() --Quit the canvas and return to the host screen.
     
-    if MatrixKit.MatrixKit.PatternFill then
+    if MatrixKit.PatternFill then
       lg.setStencilTest()
     end
     
@@ -201,8 +201,8 @@ events.register("love:update",function(dt)
     lg.pop() --Reapply the offset.
     lg.setCanvas{RenderKit.ScreenCanvas,stencil=true} --Reactivate the canvas.
     
-    if MatrixKit.MatrixKit.PatternFill then
-      lg.stencil(MatrixKit.MatrixKit.PatternFill, "replace", 1)
+    if MatrixKit.PatternFill then
+      lg.stencil(MatrixKit.PatternFill, "replace", 1)
       lg.setStencilTest("greater",0)
     end
     

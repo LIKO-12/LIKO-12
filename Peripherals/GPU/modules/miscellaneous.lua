@@ -48,4 +48,4 @@ events.register("love:update",function(dt)
   end
 end)
 
-GPUKit.systemMessage = systemMessage
+MiscKit.systemMessage = systemMessage
