@@ -1,3 +1,4 @@
+--luacheck: ignore
 --[[
 LuaJIT-cURL
 Lucien Greathouse

@@ -1,3 +1,5 @@
+--luacheck: ignore
+
 -- -*- coding: utf-8 -*-
 --
 -- Simple JSON encoding and decoding in pure Lua.
