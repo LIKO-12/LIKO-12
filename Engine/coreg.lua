@@ -33,9 +33,7 @@ function coreg.resumeCoroutine(...)
     
     if not args[1] then error(args[2]) end --Should have a better error handelling
     
-    --luacheck: push ignore 542
     if coroutine.status(likoCoroutine) == "dead" then
-      --luacheck: pop
       
       --The coroutine finished, we hope that a new one has been set.
       
