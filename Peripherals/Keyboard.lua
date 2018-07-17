@@ -69,7 +69,7 @@ return function(config) --A function that creates a new Keyboard peripheral.
   
   function KB.scancodetokey(scancode)
     if type(scancode) ~= "string" then return false, "Scancode must be a string, provided: "..type(scancode) end --Error
-    local ok, err = pcall(love.keyboard.getKeyFromScancode, key)
+    local ok, err = pcall(love.keyboard.getKeyFromScancode, scancode)
     if ok then
       return err
     else

@@ -54,7 +54,7 @@ Disk META:
 8. Licensed Under CC0.
 ]]
 
-local coreg = require("Engine.coreg") --Require the coroutine registry.
+--luacheck: ignore 421 422
 
 return function(config)
   local ramsize = 0 --The current size of the ram
@@ -277,10 +277,10 @@ return function(config)
     for k,h in ipairs(handlers) do
       if endAddress >= h.startAddr then
         if address <= h.endAddr then
-          local sa, ea, d = address, endAddress, data
+          local sa, ea = address, endAddress
           if sa < h.startAddr then sa = h.startAddr end
           if ea > h.endAddr then ea = h.endAddr end
-          d = data:sub(sa-address+1,ea-address+1)
+          local d = data:sub(sa-address+1,ea-address+1)
           h.handler("memset",h.startAddr,sa,d)
         end
       end
@@ -314,7 +314,7 @@ return function(config)
             if ea2 > h2.endAddr then ea2 = h2.endAddr end
             
             local sa1 = sa1 + (sa2 - to_address)
-            local ea1 = sa1 + (ea2 - to_end)
+            --local ea1 = sa1 + (ea2 - to_end)
             
             if h1.handler == h2.handler then --Direct Copy
               h1.handler("memcpy",h1.startAddr,sa1,sa2,ea2-sa2+1)

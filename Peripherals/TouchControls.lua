@@ -4,7 +4,6 @@ local onMobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS
 
 --Wrapper for setColor to use 0-255 values
 local function setColor(r,g,b,a)
-  local r,g,b,a = r,g,b,a
   if type(r) == "table" then
     r,g,b,a = unpack(r)
   end
@@ -35,7 +34,7 @@ return function(config)
   --DPAD Variables
   local dpad_radius = 160/2 --The radius of the depad circle
   local dpad_extra = 16 --The extra detection zone around the dpad
-  local dpad_cx, dpad_cy = 100 --The dpad center position 
+  local dpad_cx, dpad_cy = 100 --The dpad center position
   local dpad_line = math.sin(math.pi/4)*dpad_radius --The position of a point in pi/4 (For the cross line to draw)
   local touchangle --Touch variable
   
