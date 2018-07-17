@@ -1,7 +1,5 @@
 local perpath = select(1,...) --The path to the Audio folder
 
-local json = require("Engine.JSON")
-local coreg = require("Engine.coreg")
 local events = require("Engine.events")
 
 return function(config)
@@ -97,7 +95,7 @@ return function(config)
       sendSFX[k] = v
     end
     
-    local chn = chn or 0
+    chn = chn or 0
     
     if type(chn) ~= "number" then return error("Channel should be a number or a nil, provided: "..type(chn)) end
     

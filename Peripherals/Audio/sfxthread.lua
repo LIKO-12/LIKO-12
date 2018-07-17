@@ -6,7 +6,7 @@ require("love.system")
 local onMobile = (love.system.getOS() == "Android")
 
 --Store math functions in locals to optamize speed.
-local min, max, floor, ceil, sin, abs, random = math.min, math.max, math.floor, math.ceil, math.sin, math.abs, math.random
+local min, max, floor, sin, abs, random = math.min, math.max, math.floor, math.sin, math.abs, math.random
 
 --The chunnel to recieve orders from
 local chIn = ...
@@ -34,11 +34,11 @@ local qs = love.audio.newQueueableSource(rate,bitdepth,1,buffers_cache_amount)
 local amp = 0 --The soundwave cycle amplitude.
 local tamp = 0 --The target amplitude.
 local amp_slide_samples = floor(rate*0.02) --How many samples to reach the wanted amp.
-local amp_slide_time = amp_slide_samples/rate --How much time does it take to slide the amp
+--local amp_slide_time = amp_slide_samples/rate --How much time does it take to slide the amp
 local amp_slide = 1/amp_slide_samples --How much to increase/decrease the amplitude to reach the target amplitude.
 
 local wave = 0 --The wave to generate.
-local freq = 440 --The frequency to generate the sound at.
+--local freq = 440 --The frequency to generate the sound at.
 local gen --An iterator which generates samples.
 
 local sfxdata = {} --The list of waves to play and for how long.
@@ -92,12 +92,12 @@ end
 --Pulse
 waveforms[2] = function(samples)
   local c = 0
-  local qs = samples/4
+  local qsp = samples/4
   
   return function()
     c = c + 1
     if c == samples then c = 0 end
-    if c < qs then
+    if c < qsp then
       return amp
     else
       return -amp
@@ -169,7 +169,7 @@ local function nextWave()
   else --New wave
     gen = waveforms[nwave](nfreq)
     wave = nwave
-    freq = nfreq
+    --freq = nfreq
     tamp = namp
   end
 end
@@ -238,8 +238,8 @@ while true do
       
       local sfxEnd = false
       
-      for i=0,buffer_size-1 do
-        setSample(sounddata,i,gen())
+      for i2=0,buffer_size-1 do
+        setSample(sounddata,i2,gen())
         
         samplesToNextWave = samplesToNextWave - 1
         
@@ -280,6 +280,7 @@ while true do
   if sleeptime > 0 then
     love.timer.sleep(sleeptime) --ZzZzZzZzZzZzZzZzZzzzz.
     StartTime = love.timer.getTime() --Skip the time spent while sleeping..
+    
   else --Well, we're not generating enough
     
     --TODO: Lower the sample rate.

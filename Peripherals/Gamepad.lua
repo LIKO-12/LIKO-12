@@ -2,7 +2,7 @@ local events = require("Engine.events")
 local coreg = require("Engine.coreg")
 
 return function(config) --A function that creates a new Gamepad peripheral.
-  local GP, yGP, devkit = {}, {}
+  local GP, yGP = {}, {}
   
   local CPUKit = config.CPUKit
   if not CPUKit then error("The gamepad peripheral can't work without the CPUKit passed !") end
@@ -162,5 +162,5 @@ return function(config) --A function that creates a new Gamepad peripheral.
     end
   end)
   
-  return GP, yGP, devkit
+  return GP, yGP
 end

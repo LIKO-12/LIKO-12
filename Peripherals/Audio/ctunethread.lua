@@ -39,7 +39,7 @@ local amp_slide_time = amp_slide_samples/rate --How much time does it take to sl
 
 local wave = 0 --The wave to generate.
 local freq = 440 --The frequency to generate the sound at.
-local generator --An iterator which generates samples.
+local gen --An iterator which generates samples.
 
 local generated_time = 0 --How long the sound has been generated for.
 
@@ -226,7 +226,7 @@ while true do
       
         local setSample = sounddata.setSample
         
-        for i=0,buffer_size-1 do
+        for i2=0,buffer_size-1 do
           setSample(sounddata,i,gen())
           
           if tamp > amp then --We have to increase the amplitude.
@@ -257,6 +257,7 @@ while true do
   if sleeptime > 0 then
     love.timer.sleep(sleeptime) --ZzZzZzZzZzZzZzZzZzzzz.
     StartTime = love.timer.getTime() --Skip the time spent while sleeping..
+    
   else --Well, we're not generating enough
     
     --TODO: Lower the sample rate.
