@@ -71,7 +71,7 @@ function BuildUtils.encodeIco(icons,transparentColor)
   for i=1, #icons do
     icoEntries[#icoEntries+1] = string.char(icons[i]:width()%256)
     icoEntries[#icoEntries+1] = string.char(icons[i]:height()%256)
-    icoEntries[#icoEntries+1] = "\0\0\0\0\0\0" 
+    icoEntries[#icoEntries+1] = "\0\0\0\0\0\0"
     
     local pngData
     if transparentColor then

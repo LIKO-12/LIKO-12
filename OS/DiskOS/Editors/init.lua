@@ -28,7 +28,7 @@ Be sure to call eapi:drawUI() here to clear the screen
 The first argument is the table of the new editor
 You can return values that are passed to editor:entered() [see above]
 
-* editor:export() is called when the editors are saving the data to a disk, you must 
+* editor:export() is called when the editors are saving the data to a disk, you must
 pass a string of the editor data that may be loaded later at editor:import see down V
 
 * editor:import(data) is called when the editors are loading from a disk, you will be passed the data string the editor passed in editor:export

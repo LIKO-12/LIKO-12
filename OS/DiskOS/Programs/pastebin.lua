@@ -81,7 +81,7 @@ if command == "put" then
   -- POST the contents to pastebin
   color(9) print("Connecting to pastebin.com...") color(7) flip()
   local key = "e31065c6df5a451f3df3fdf5f4c2be61"
-  local response, err = request("https://pastebin.com/api/api_post.php", 
+  local response, err = request("https://pastebin.com/api/api_post.php",
     "api_option=paste&"..
     "api_dev_key="..key.."&"..
     (name:sub(-4,-1) == ".lua" and "api_paste_format=lua&" or "")..

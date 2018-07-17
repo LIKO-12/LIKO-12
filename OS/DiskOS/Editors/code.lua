@@ -32,7 +32,8 @@ Be sure to read the contributing guide in Editors/init.lua
 - Rami Sabbagh (RamiLego4Game)
 - Fernando Carmona Varo (Ferk)
 - Lucas Henrique (lhs_azevedo)
-- trabitboy 
+- trabitboy
+- Hachem (hachem2001)
 ]]
 
 local ce = {} --Code editor
@@ -223,7 +224,7 @@ end
 
 --Clear the selection just incase
 function ce:deselect()
-  if self.sxs then self.sxs, self.sys, self.sxe, self.sye = nil, nil, nil, nil; self:drawBuffer() end 
+  if self.sxs then self.sxs, self.sys, self.sxe, self.sye = nil, nil, nil, nil; self:drawBuffer() end
 end
 
 function ce:getOrderedSelect()
@@ -812,17 +813,17 @@ ce.keymap = {
     self:textinput(" ")
   end,
   ["ctrl-i"] = function(self)
-   if self.incsearch==nil or self.incsearch==false then 
+   if self.incsearch==nil or self.incsearch==false then
     self.incsearch=true
   self:drawIncSearchState()
-   else    
+   else
     self.incsearch=false
   self.searchtxt=""
     self:drawLineNum()
    end
   end,
   ["ctrl-k"] = function(self)
-   if self.incsearch==true then 
+   if self.incsearch==true then
   self:searchTextAndNavigate(self.cy)
    end
   end,

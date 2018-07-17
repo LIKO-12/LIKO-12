@@ -11,7 +11,7 @@ end
 
 local term = require("terminal") --Require the terminal api.
 local path = term.getpath() --Get the current active directory.
-local dir = select(1,...) 
+local dir = select(1,...)
 
 if dir then
 	local newpath, exists = term.resolve(dir)

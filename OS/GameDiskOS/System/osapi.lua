@@ -2,11 +2,11 @@ local tw, th = termSize()
 
 function printUsage(...)
   local t = {...}
-  color(9) 
+  color(9)
   if #t > 2 then print("Usages:") else print("Usage:") end
   for k, line in ipairs(t) do
     if k%2 == 1 then
-      color(7) 
+      color(7)
       print(line,false)
     else
       local pre = t[k-1]
