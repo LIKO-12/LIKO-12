@@ -1,12 +1,10 @@
 --The BIOS should control the system of LIKO-12 and load the peripherals--
 --For now it's just a simple BIOS to get LIKO-12 working.
-local DevMode = love.filesystem.getInfo("Misc/devmode.txt") and true or false
 local BuildMode = love.filesystem.getInfo("build.json") and true or false
 
 local json = require("Engine.JSON")
 
 if BuildMode then
-  DevMode = false
   BuildMode = json:decode(love.filesystem.read("build.json"))
 end
 
@@ -25,7 +23,6 @@ else
 end
 
 --Require the engine libraries--
-local events = require("Engine.events")
 local coreg = require("Engine.coreg")
 
 local function splitFilePath(path) return path:match("(.-)([^\\/]-%.?([^%.\\/]*))$") end --A function to split path to path, name, extension.
@@ -48,7 +45,9 @@ local function indexPeripherals(path)
         Peripherals[filename] = chunk(path..filename.."/") end
       end
     else
+      --luacheck: push ignore 211
       local p, n, e = splitFilePath(path..filename)
+      --luacheck: pop
       if e == "lua" then
         local chunk, err = love.filesystem.load(path..n)
         if not chunk then Peripherals[n:sub(0,-5)] = "Err: "..tostring(err) else
@@ -68,11 +67,11 @@ local function P(per,m,conf)
   if not Peripherals[per] then return false, "'"..per.."' Peripheral doesn't exists" end
   if type(Peripherals[per]) == "string" then return false, "Compile "..Peripherals[per] end
   
-  local m = m or per
+  m = m or per
   if type(m) ~= "string" then return false, "Mounting name should be a string, provided "..type(m) end
   if Mounted[m] then return false, "Mounting name '"..m.."' is already taken" end
   
-  local conf = conf or {}
+  conf = conf or {}
   if type(conf) ~= "table" then return false, "Configuration table should be a table, provided "..type(conf) end
   
   local success, API, yAPI, devkit = pcall(Peripherals[per],conf)
@@ -100,7 +99,7 @@ local function PA(...)
 end
 
 --BIOS APIS--
-do 
+do
   
   Mounted.BIOS = "BIOS"
   APIS.BIOS = {}

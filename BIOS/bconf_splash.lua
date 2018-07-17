@@ -1,6 +1,9 @@
 --The bios configuration file.
 --per ,err = P(peripheral,mountedName,configTable)
 
+--Ignore unused variables for this file, and set the globals.
+--luacheck: globals P PA _OS Build, ignore 211
+
 --Create a new cpu mounted as "CPU"
 local CPU, yCPU, CPUKit = PA("CPU")
 

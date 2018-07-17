@@ -1,15 +1,10 @@
 --The BIOS Post Screen !
 
-local Config = love.filesystem.read("build.json")
-
-local json = require("Engine.JSON")
-
-Config = json:decode(Config)
-
-local events = require("Engine.events")
 local coreg = require("Engine.coreg")
 
+--luacheck: push ignore 211
 local Handled, Devkits = ... --It has been passed by the BIOS :)
+--luacheck: pop
 
 local BIOS = Handled.BIOS
 local GPU = Handled.GPU

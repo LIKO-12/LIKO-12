@@ -1,6 +1,8 @@
 --BIOS Setup Screen
 
+--luacheck: push ignore 211
 local Handled, Devkits = ... --Handled is passed by BIOS POST
+--luacheck: pop
 
 --Engine parts
 local coreg = require("Engine.coreg")
@@ -10,12 +12,10 @@ local BIOS = Handled.BIOS
 local GPU = Handled.GPU
 local CPU = Handled.CPU
 local fs = Handled.HDD
-local KB = Handled.Keyboard
 local TC = Handled.TC
 
 --Constants
 local sw,sh = GPU.screenSize()
-local tw,th = GPU.termSize()
 local fw,fh = GPU.fontSize()
 
 local checkboard = GPU.imagedata("LK12;GPUIMG;2x2;7007")

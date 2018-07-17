@@ -129,7 +129,7 @@ else
   GPU.print("Main CPU: LuaJIT 5.1")
 end
 
-if ram then GPU.print("RAM: "..(ramkit.ramsize/1024).." Kilo-Bytes ("..ramkit.ramsize.." Bytes)") end
+if RAMKit then GPU.print("RAM: "..(RAMKit.ramsize/1024).." Kilo-Bytes ("..RAMKit.ramsize.." Bytes)") end
 GPU.print("GPU: "..sw.."x"..sh.." 4-Bit (16 Color Palette)")
 GPU.print("")
 GPU.print("Harddisks: ")
