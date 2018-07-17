@@ -60,17 +60,3 @@ files["OS"] = {
 files["conf.lua"] = {
 	ignore={"631"} --Line is too long.
 }
-
---Ignore third-part libraries, I'm not going to cleanup their shit.
-exclude_files = {
-	--JSON Library.
-	"Engine/JSON.lua",
-	"OS/DiskOS/Libraries/JSON.lua",
-	"OS/GameDiskOS/Libraries/JSON.lua",
-	
-	--LuaJIT-Request.
-	"Engine/luajit-request",
-	
-	--LuaSec.
-	"Peripherals/WEB/https.lua"
-}
