@@ -6,7 +6,7 @@ local base = require(path..".base")
 local textbox = class("DiskOS.GUI.textbox",base)
 
 --Default Values:
-textbox.static.text = "Text"   
+textbox.static.text = "Text"
 textbox.static.align = "left"
 
 --Create a new text object:

@@ -60,7 +60,7 @@ end
 
 print("Press a button from the joystick to remap")
 
-if not getGUID() then 
+if not getGUID() then
   color(8) print("Joystick remapping canceled !")
   return
 end

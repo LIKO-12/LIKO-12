@@ -11,22 +11,22 @@ local bor,band,lshift,rshift,tohex = bit.bor,bit.band,bit.lshift,bit.rshift,bit.
   [encryption header 1]
   [file data 1]
   [data descriptor 1]
-  . 
+  .
   .
   .
   [local file header n]
   [encryption header n]
   [file data n]
   [data descriptor n]
-  [archive decryption header] 
-  [archive extra data record] 
+  [archive decryption header]
+  [archive extra data record]
   [central directory header 1]
   .
   .
   .
   [central directory header n]
   [zip64 end of central directory record]
-  [zip64 end of central directory locator] 
+  [zip64 end of central directory locator]
   [end of central directory record]
   
 ]]

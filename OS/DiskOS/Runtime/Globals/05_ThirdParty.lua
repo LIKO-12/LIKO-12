@@ -8,7 +8,7 @@ local Globals = (...) or {}
 local function addLibrary(path,name)
   local lib, err = fs.load(path)
   if not lib then error("Failed to load library ("..name.."): "..err) end
-  setfenv(lib,Globals) 
+  setfenv(lib,Globals)
   Globals[name] = lib()
 end
 

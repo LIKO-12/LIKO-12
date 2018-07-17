@@ -6,7 +6,7 @@ local base = require(path..".base")
 local button = class("DiskOS.GUI.button",base)
 
 --Default Values:
-button.static.text = "Button"   
+button.static.text = "Button"
 button.static.align = "center"
 
 --Callbacks

@@ -68,7 +68,7 @@ local function newStringFile(data)
   function file:seek(p) pos = p end
   function file:tell() return pos end
   function file:read(bytes)
-    if bytes then   
+    if bytes then
       local substr = str:sub(pos+1,pos+bytes)
       bytes = #substr
       
@@ -366,16 +366,11 @@ local function buildResourcesDirectoryTable(ResourcesTree,VirtualAddress)
 end
 
 local function getAnyKey(t)
-  for k,v in pairs(t) do
-    return k
-  end
+  return (pairs(t)())
 end
 
-
 local function getAnyValue(t)
-  for k,v in pairs(t) do
-    return v
-  end
+  return select(2,pairs(t)())
 end
 
 local function extractGroupIcon(ResourcesTree,GroupID)

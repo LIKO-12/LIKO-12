@@ -16,7 +16,7 @@ return function (...)
   g.mutationRate = config[5] or 0.005
   g.crossoverRate = config[6] or 0.98
 
-  function g.crossover(a, b) 
+  function g.crossover(a, b)
     if newRand() > g.crossoverRate then return a end
     local cut = newRand(a:len()-1)
     return a:sub(1,cut) .. b:sub(cut+1, -1)
@@ -80,11 +80,11 @@ return function (...)
     for sp = 1, length do
       if newRand() < 0.5 then s[sp] = "0"
       else s[sp] = "1" end
-    end 
+    end
     return table.concat(s)
   end
 
-  function g.getBest(currentBest, population, fitnesses) 	
+  function g.getBest(currentBest, population, fitnesses)
     local bestScore = currentBest==nil and 0 or g.fitness(currentBest)
     local best = currentBest
     for i=1, #fitnesses do
@@ -115,11 +115,11 @@ return function (...)
       -- update best
       bestString = g.getBest(bestString, population, fitnesses)
       -- select
-      local tmpPop = g.selection(population, fitnesses)		
+      local tmpPop = g.selection(population, fitnesses)
       -- reproduce
       population = g.reproduce(tmpPop)
       --printf(">gen %d, best cost=%d [%s]\n", i, fitness(bestString), bestString)
-    end	
+    end
     return bestString
   end
   
