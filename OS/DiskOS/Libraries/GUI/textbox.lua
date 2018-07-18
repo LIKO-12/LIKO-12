@@ -52,7 +52,7 @@ function textbox:setText(t,nodraw)
   local maxlen, wt = wrapText(t,cw-x)
   
   self:setWidth(maxlen+1,true)
-  self:setHeight(#wt*(fh+2)+1,true)
+  self:setHeight(#wt*(fh+1)+1,true)
 
   if not nodraw then
     self:draw() --Update the button

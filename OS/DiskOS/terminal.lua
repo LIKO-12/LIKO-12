@@ -41,7 +41,7 @@ local function checkCursor()
   if cy > th then cy = th end
   if cy < 0 then cy = 0 end
   printCursor(cx,cy,0)
-  rect(cx*(fw+1)+1,blink and cy*(fh+2)+1 or cy*(fh+2),fw+1,blink and fh or fh+3,false,blink and 4 or 0) --The blink
+  rect(cx*(fw+1)+1,blink and cy*(fh+1)+1 or cy*(fh+1),fw+1,blink and fh-1 or fh+2,false,blink and 4 or 0) --The blink
   if inputPos <= buffer:len() then
     printCursor(cx,cy,-1)
     print(buffer:sub(inputPos,inputPos),false)
@@ -69,7 +69,7 @@ function term.init()
   SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
   printCursor(0,1,0)
   color(_LIKO_DEV and 8 or 9) print(_LIKO_TAG,5*8+1,3) flip() sleep(0.125)
-  cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  ".._LIKO_BUILD) editor.editorsheet:draw(60,(fw+1)*6+1,fh+2) flip() sleep(0.125) cam()
+  cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  ".._LIKO_BUILD) editor.editorsheet:draw(60,(fw+1)*6+1,fh+1) flip() sleep(0.125) cam()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
 
   flip() sleep(0.0625)

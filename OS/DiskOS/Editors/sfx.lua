@@ -85,7 +85,7 @@ function se:drawSlot()
   pal()
   
   color(13)
-  rect(sw-21,15,fontWidth()*2+3,fontHeight()+2, false, 6)
+  rect(sw-21,15,fontWidth()*2+3,fontHeight()+1, false, 6)
   print(selectedSlot, sw-20,16, fontWidth()*2+2, "right")
   
   if slotRightDown then pal(9,4) end
@@ -104,7 +104,7 @@ function se:drawSpeed()
   pal()
   
   color(13)
-  rect(sw-20,27,fontWidth()*2+3,fontHeight()+2, false, 6)
+  rect(sw-20,27,fontWidth()*2+3,fontHeight()+1, false, 6)
   print(speed/0.25, sw-19,28, fontWidth()*2+2, "right")
   
   if speedRightDown then pal(9,4) end

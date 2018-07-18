@@ -167,7 +167,7 @@ function ce:drawBlink()
   if self.sxs then return end
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   if self.bflag then
-    rect((self.cx-self.vx+1)*(self.fw+1)-4,(self.cy-self.vy+1)*(self.fh+2)+1, self.fw+1,self.fh, false, self.theme.cursor)
+    rect((self.cx-self.vx+1)*(self.fw+1)-4,(self.cy-self.vy+1)*(self.fh+1)+1, self.fw+1,self.fh-1, false, self.theme.cursor)
   end
 end
 
@@ -212,7 +212,7 @@ function ce:drawLine()
     cline, colateral = highlighter:highlightLine(buffer[self.cy], self.cy)
   end
   if not cline then cline = buffer[self.cy] end
-  rect(0,(self.cy-self.vy+2)*(self.fh+2)-(self.fh+2), screenW,self.fh+2, false,self.theme.bg)
+  rect(0,(self.cy-self.vy+1)*(self.fh+1), screenW,self.fh+1, false,self.theme.bg)
   printCursor(-(self.vx-2)-1,(self.cy-self.vy+1),self.theme.bg)
   if not colateral then
     self:colorPrint(cline)
@@ -244,7 +244,7 @@ end
 function ce:drawLineNum()
   eapi:drawBottomBar()
   local linestr = "LINE "..tostring(self.cy).."/"..tostring(#buffer).."  CHAR "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len())
-  color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-2)
+  color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-3)
 end
 
 function ce:drawIncSearchState()
@@ -253,7 +253,7 @@ function ce:drawIncSearchState()
   if self.searchtxt then
    linestr=linestr..self.searchtxt
   end
-  color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-2)
+  color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-3)
 end
 
 
