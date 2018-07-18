@@ -39,7 +39,7 @@ local function eventLoop(evlist)
 end
 
 local function printBG(text,x,y,tc,bc)
-  local bgw, bgh = #text*(fw+1)+1, fh+2
+  local bgw, bgh = #text*(fw+1)+1, fh+1
   GPU.rect(x-1,y-1,bgw,bgh,false,bc)
   GPU.color(tc)
   GPU.print(text,x,y)
@@ -66,12 +66,12 @@ local function drawUI()
   
   --Options
   for id, option in ipairs(options) do
-    local txty = 14+(id-1)*(fh+3)
+    local txty = 14+(id-1)*(fh+2)
     
     local selected = (id == selectedOption)
     
     --Selection Rect
-    GPU.rect(1,txty-1,sw-2,fh+2,false, selected and 6 or 5)
+    GPU.rect(1,txty-1,sw-2,fh+1,false, selected and 6 or 5)
     
     GPU.color(selected and 7 or 6)
     GPU.print(option[1],2,txty)
@@ -129,7 +129,7 @@ local function showAppdata()
     
     --Appdata path
     GPU.color(7)
-    GPU.print(CPU.getSaveDirectory().."/",0,sh*0.45-fh/2,sw,"center")
+    GPU.print(CPU.getSaveDirectory().."/",0,sh*0.45-(fh-1)/2,sw,"center")
     
     printCenterBG("Press the green button to return back",sh*0.66,6,5)
   end
@@ -167,7 +167,7 @@ local function showGPUInfo()
     
     --Appdata path
     GPU.color(7)
-    GPU.print(encoded,0,sh*0.26-fh/2,sw,"center")
+    GPU.print(encoded,0,sh*0.26-(fh-1)/2,sw,"center")
     if CPU.isMobile() then
       printCenterBG("Press the green button to go back",sh*0.75,6,5)
     else

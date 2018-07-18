@@ -51,11 +51,11 @@ local function display(text)
   if devmode then return end
   
   --Push the text up
-  GPU.screenshot(0,9+fh+2,sw,sh-9-fh-2-9):image():draw(0,9)
+  GPU.screenshot(0,9+fh+1,sw,sh-9-fh-3-9):image():draw(0,9)
   --Clear the last line
-  GPU.rect(0,sh-8-fh-3,sw,fh+2,false,5)
+  GPU.rect(0,sh-8-fh-4,sw,fh+1,false,5)
   --Display the new message
-  GPU.color(6) GPU.print(tostring(text),1,sh-9-fh-2)
+  GPU.color(6) GPU.print(tostring(text),1,sh-9-fh-3)
   --Make sure that it's shown to the user
   GPU.flip()
 end

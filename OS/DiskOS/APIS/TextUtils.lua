@@ -27,7 +27,7 @@ function TextUtils.textInput(historyTable,preinput)
     if cy > th then cy = th end
     if cy < 0 then cy = 0 end
     printCursor(cx,cy,0)
-    rect(cx*(fw+1)+1,blink and cy*(fh+2)+1 or cy*(fh+2),fw+1,blink and fh or fh+3,false,blink and 4 or 0) --The blink
+    rect(cx*(fw+1)+1,blink and cy*(fh+1)+1 or cy*(fh+1),fw+1,blink and fh-1 or fh+2,false,blink and 4 or 0) --The blink
     if inputPos <= buffer:len() then
       printCursor(cx,cy,-1)
       print(buffer:sub(inputPos,inputPos),false)
