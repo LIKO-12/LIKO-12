@@ -39,20 +39,20 @@ end
 
 --==Local Variables==--
 
-local _FontW, _FontH = Config._FontW or 4, Config._FontH or 5 --Font character size
+local _FontW, _FontH = Config._FontW or 4, Config._FontH or 6 --Font character size
   
 local _FontChars = {} --Font chars
 for i=1,255 do _FontChars[i] = strChar(i) end
 _FontChars = escapeASCII(table.concat(_FontChars))
 
-local _FontPath, _FontExtraSpacing = Config._FontPath or Path.."fonts/font4x5.png", Config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
+local _FontPath, _FontExtraSpacing = Config._FontPath or Path.."fonts/font4x6.png", Config._FontExtraSpacing or 1 --Font image path, and how many extra spacing pixels between every character.
 
 local _Font = lg.newImageFont(_FontPath, _FontChars, _FontExtraSpacing) --Create the default liko12 font.
 
 lg.setFont(_Font) --Activate the default font.
 
 local printCursor = {x=0,y=0,bgc=0} --The print grid cursor pos.
-local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+2)) --The size of characters that the screen can fit.
+local TERM_W, TERM_H = math.floor(_LIKO_W/(_FontW+1)), math.floor(_LIKO_H/(_FontH+1)) --The size of characters that the screen can fit.
 
 --==GPU Printing Dimensions API==--
 
@@ -118,14 +118,14 @@ function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
     local pc = printCursor --Shortcut
     
     local function togrid(gx,gy) --Covert to grid cordinates
-      return math.floor(gx*(_FontW+1)), math.floor(gy*(_FontH+2))
+      return math.floor(gx*(_FontW+1)), math.floor(gy*(_FontH+1))
     end
     
     --A function to draw the background rectangle
     local function drawbackground(gx,gy,gw)
       if pc.bgc == -1 or gw < 1 then return end --No need to draw the background
       gx,gy = togrid(gx,gy)
-      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, pc.bgc)
+      GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+2, false, pc.bgc)
     end
     
     --Draw directly without formatting nor updating the cursor pos.
@@ -148,7 +148,7 @@ function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
       local extra = linesNum - (TERM_H-pc.y) --The extra lines that will draw out of the screen.
       local sc = GPU.screenshot() --Take a screenshot
       GPU.clear(0) --Clear the screen
-      sc:image():draw(0, -extra*(_FontH+2)) --Draw the screen shifted up
+      sc:image():draw(0, -extra*(_FontH+1)) --Draw the screen shifted up
       pc.y = pc.y-extra --Update the cursor pos.
       GPU.popPalette() --Restore the palette.
     end
@@ -167,7 +167,7 @@ function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
       if wrappedText[k+1] then pc.y = pc.y + 1 end --If there's a next line
     end
     
-    lg.printf(pre_spaces..t,1+ofs.print_grid[1],drawY*(_FontH+2)+1+ofs.print_grid[2],sw) RenderKit.ShouldDraw = true --Print the text
+    lg.printf(pre_spaces..t,1+ofs.print_grid[1],drawY*(_FontH+1)+1+ofs.print_grid[2],sw) RenderKit.ShouldDraw = true --Print the text
   end
 end
 
@@ -183,17 +183,17 @@ end
 function GPU.printBackspace(c,skpCr) UnbindVRAM()
   c = c or printCursor.bgc
   c = Verify(c,"Color","number",true)
-  local function cr() local s = GPU.screenshot():image() GPU.clear() s:draw(1,_FontH+2) end
+  local function cr() local s = GPU.screenshot():image() GPU.clear() s:draw(1,_FontH+1) end
   
   local function togrid(gx,gy) --Covert to grid cordinates
-    return math.floor(gx*(_FontW+1)), math.floor(gy*(_FontH+2))
+    return math.floor(gx*(_FontW+1)), math.floor(gy*(_FontH+1))
   end
   
   --A function to draw the background rectangle
   local function drawbackground(gx,gy,gw)
     if c == -1 or gw < 1 then return end --No need to draw the background
     gx,gy = togrid(gx,gy)
-    GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+3, false, c)
+    GPU.rect(gx,gy, gw*(_FontW+1)+1,_FontH+2, false, c)
   end
     
   if printCursor.x > 0 then

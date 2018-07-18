@@ -42,7 +42,7 @@ function love.errorhandler(msg)
   
   love.graphics.setDefaultFilter("nearest","nearest")
   local glyphs = {}; for i=1,127 do glyphs[i] = string.char(i) end; glyphs = table.concat(glyphs)
-	local font = love.graphics.newImageFont("/Peripherals/GPU/fonts/font4x5.png",glyphs,1)
+	local font = love.graphics.newImageFont("/Peripherals/GPU/fonts/font4x6.png",glyphs,1)
   love.graphics.setFont(font)
 
 	local trace = debug.traceback()
