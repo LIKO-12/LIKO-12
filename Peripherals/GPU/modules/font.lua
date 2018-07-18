@@ -27,7 +27,7 @@ function GPU.fontdata(cw,ch)
   ch = Verify(ch,"characterHeight","number")
   
   local fontImageWidth = (cw+1)*255
-  local fontImageHeight = ch+1
+  local fontImageHeight = ch
   
   local fontImage = love.image.newImageData(fontImageWidth, fontImageHeight)
   
