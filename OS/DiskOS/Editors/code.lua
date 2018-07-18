@@ -244,7 +244,7 @@ end
 function ce:drawLineNum()
   eapi:drawBottomBar()
   local linestr = "LINE "..tostring(self.cy).."/"..tostring(#buffer).."  CHAR "..tostring(self.cx-1).."/"..tostring(buffer[self.cy]:len())
-  color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-3)
+  color(eapi.flavorBack) print(linestr,1, self.sh-self.fh-1)
 end
 
 function ce:drawIncSearchState()
