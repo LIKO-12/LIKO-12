@@ -114,6 +114,7 @@ return function(config) --A function that creates a new GPU peripheral.
   loadModule("miscellaneous")
   loadModule("matrix")
   loadModule("postShaders")
+  loadModule("font")
   loadModule("print")
   loadModule("shapes")
   loadModule("image")
