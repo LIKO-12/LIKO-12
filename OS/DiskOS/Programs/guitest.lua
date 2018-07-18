@@ -21,7 +21,6 @@ local closeIcon = image(
 1A111A1
 1111111]]
 )
-
 local terminateFlag = false
 
 local closeButton = topBar:newObject("imageButton",-7,0)
