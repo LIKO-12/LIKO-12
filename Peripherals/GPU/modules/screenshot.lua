@@ -78,3 +78,4 @@ end)
 
 --==DevKit Exports==--
 DevKit.LIMGHandler = LIMGHandler
+DevKit.LabelImage = LabelImage
