@@ -161,11 +161,11 @@ local function InstallOS(update)
 end
 
 if not fs.exists("/boot.lua") then _LIKO_Old = false; InstallOS()
-elseif DevMode or _LVer.tag == "DEV" then InstallOS(true) end
+elseif (DevMode or _LVer.tag == "DEV") and not fs.exists("/.noupdate") then InstallOS(true) end
 
 --Update the operating system
 if _LIKO_Old then
-  InstallOS(true)
+  if not fs.exists("/.noupdate") then InstallOS(true) end
   love.filesystem.write("Misc/.version",tostring(_LIKO_Version)) --Update the .version file
 end
 
