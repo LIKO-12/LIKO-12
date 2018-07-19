@@ -169,7 +169,7 @@ if _LIKO_Old then
   love.filesystem.write("Misc/.version",tostring(_LIKO_Version)) --Update the .version file
 end
 
-if DevMode and love.thread then
+if DevMode and love.thread and not fs.exists("/.noupdate") then
   local FThread = love.thread.newThread("/BIOS/filethread.lua") --File tracking thread
   FThread:start()
   
