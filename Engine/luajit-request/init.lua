@@ -111,6 +111,7 @@ request = {
 			- headers_raw: A raw string containing the actual headers the server sent back. Will not exist if header_stream_callback is defined above.
 			- set_cookies: A dictionary of cookies given by the "Set-Cookie" header from the server. Will not exist if the server did not set any cookies.
 
+		If an error occured, false will be returned along with a curl error code and a message.
 	]]
 	send = function(url, args)
 		local handle = curl.curl_easy_init()
@@ -126,6 +127,26 @@ request = {
 		curl.curl_easy_setopt(handle, curl.CURLOPT_SSL_VERIFYPEER, 1)
 		curl.curl_easy_setopt(handle, curl.CURLOPT_SSL_VERIFYHOST, 2)
 
+		if (args.data and type(args.data) ~= "table") then
+			local default_content_type = "application/octet-stream"
+			if (not args.headers) then
+				args.headers = {
+					["content-type"] = default_content_type
+				}
+			else
+				local has_content_type = false
+				for header_name, _ in pairs(args.headers) do
+					if header_name:lower() == "content-type" then
+						has_content_type = true
+						break
+					end
+				end
+				if not has_content_type then
+					args.headers["content-type"] = default_content_type
+				end
+			end
+		end
+
 		if (args.method) then
 			local method = string.upper(tostring(args.method))
 
@@ -133,6 +154,7 @@ request = {
 				curl.curl_easy_setopt(handle, curl.CURLOPT_HTTPGET, 1)
 			elseif (method == "POST") then
 				curl.curl_easy_setopt(handle, curl.CURLOPT_POST, 1)
+				args.data = args.data or "" -- https://github.com/curl/curl/issues/1625#issuecomment-312456910
 			else
 				curl.curl_easy_setopt(handle, curl.CURLOPT_CUSTOMREQUEST, method)
 			end
@@ -296,8 +318,20 @@ request = {
 			local headers, status, parsed_headers, raw_cookies, set_cookies
 
 			if (headers_buffer) then
-				headers = table.concat(headers_buffer)
-				status = headers:match("%s+(%d+)%s+")
+				-- In case we got multiple responses (e.g. 100 - Continue or 302 Redirects)
+				-- we want to only return the last response
+				local start_index = 1
+				for i, resp_line in ipairs(headers_buffer) do
+					if resp_line:match("^HTTP/(.-)%s+(%d+)%s+(.+)\r\n$") then
+						start_index = i
+					end
+				end
+				local last_request_headers = {}
+				for i = start_index, #headers_buffer do
+					table.insert(last_request_headers, headers_buffer[i])
+				end
+				headers = table.concat(last_request_headers)
+				status = tonumber(headers:match("%s+(%d+)%s+"))
 
 				parsed_headers = {}
 
