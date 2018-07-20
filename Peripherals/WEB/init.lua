@@ -8,9 +8,6 @@ local events = require("Engine.events")
 local has_libcurl = pcall(require,"Engine.luajit-request")
 local has_luasec = pcall(require,"ssl")
 
---Require some luasocket libraries
-local ls_url = require("socket.url")
-
 --Constants
 local auth_types = { none=true, basic=true, digest=true, negotiate=true }
 local requestFields = {"method","headers","data","cookies","allow_redirects","auth_type","username","password"}
@@ -73,9 +70,9 @@ return function(config)
     
     if lib then
       if lib == "libcurl" then
-        if not has_libcurl then return error("Libcurl is not available.") end
+        if not has_libcurl then return error("LibCurl is not available.") end
       elseif lib == "luasec" then
-        if not has_luasec then return error("Luasec is not available.") end
+        if not has_luasec then return error("LuaSec is not available.") end
       elseif lib ~= "luasocket" then
         return error("Invalid library: "..lib)
       end
@@ -105,7 +102,8 @@ return function(config)
     end
     
     if not nrequest.headers then nrequest.headers = {} end
-    nrequest.headers["User-Agent"] = nrequest.headers["User-Agent"] or "LIKO-12"
+    nrequest.headers["user-agent"] = nrequest.headers["user-agent"] or "LIKO-12"
+    nrequest.header["content-type"] = nrequest.header["content-type"] or "application/x-www-form-urlencoded"
     
     nrequest.url = url
     nrequest.lib = lib
