@@ -22,7 +22,7 @@ _LVERSION = string.format("V%d.%d.%d_%s",_LVer.major,_LVer.minor,_LVer.patch,_LV
 
 --BuildConfig
 local build = {}
-if love.filesystem.getInfo then love.filesystem.getInfo("build.json", "file") then
+if love.filesystem.getInfo and love.filesystem.getInfo("build.json", "file") then
   build = love.filesystem.read("build.json")
   build = require("Engine.JSON"):decode(build)
 end
