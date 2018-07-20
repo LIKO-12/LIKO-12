@@ -1,17 +1,18 @@
 --WEB Peripheral Thread
 
-print("WEB Peripheral started")
+print("------------------------------")
 
 --Thread communication channels
 local web_channel, peripheral_path = ...
 
 --Check if we have libcurl and/or luasec
 local has_libcurl = pcall(require,"Engine.luajit-request")
-local has_luasec = pcall(require,"Engine.luasec")
-print(has_libcurl and "libcurl is available" or "libcurl is not available")
-print(has_luasec and "luasec is available" or "luasec is not available")
-print((has_libcurl or has_luasec) and (has_luasec and "using luasec for https" or "using libcurl for http") or "https is not possible")
+local has_luasec = pcall(require,"ssl")
+print(has_libcurl and "- libcurl is available" or "- libcurl is not available")
+print(has_luasec and "- luasec is available" or "- luasec is not available")
+print((has_libcurl or has_luasec) and (has_luasec and "- using luasec for https" or "- using libcurl for https") or "- https is not available")
 
+print("------------------------------")
 
 --Load the libraries
 
