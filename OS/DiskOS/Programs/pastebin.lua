@@ -20,9 +20,8 @@ if not WEB then
   return 1, "Pastebin requires WEB peripheral\nEdit /bios/bconf.lua and make sure that the WEB peripheral exists"
 end
 
-local function getName(str)
-  local path, name, ext = string.match(str, "(.-)([^\\/]-%.?([^%.\\/]*))$")
-  return name
+if not WEB.hasHTTPS() then
+  return 1, "Pastebin requires HTTPS, please install libcurl, or install luasec (a lua library) on your system."
 end
 
 local function request(url,postdata,headers,method)
@@ -39,7 +38,7 @@ local function request(url,postdata,headers,method)
     end
   end
   
-  return body, data
+  return body, data, data2
 end
 
 local args = { ... }
@@ -50,14 +49,20 @@ end
 
 local function getPaste(paste)
   color(9) print("Connecting to pastebin.com...") flip() color(7)
-  local response, err = request("https://pastebin.com/raw/"..WEB.urlEncode(paste))
+  local response, err, respond = request("https://pastebin.com/raw/"..http.urlEscape(paste))
   
   if response then
     color(11) print( "Success." ) color(7) flip() sleep(0.01)
     
     return response
   else
-    return 1, "Failed: "..tostring(err)
+    if tostring(respond.code) == "404" then
+      return false, "Paste not found."
+    elseif err then
+      return false, "Failed, "..tostring(err)
+    else
+      return false, "Failed"
+    end
   end
 end
 
@@ -73,7 +78,7 @@ if command == "put" then
   end
   
   -- Read in the file
-  local name = getName(path:gsub("///","/"))
+  local name = fs.getName(path)
   local size = fs.getSize(path)
   if size > 512*1024 then color(8) print("File too large to upload,\nuse 'save <game> -c' when saving.") color(7) end
   local text = fs.read(path)
@@ -85,8 +90,8 @@ if command == "put" then
     "api_option=paste&"..
     "api_dev_key="..key.."&"..
     (name:sub(-4,-1) == ".lua" and "api_paste_format=lua&" or "")..
-    "api_paste_name="..WEB.urlEncode(name).."&"..
-    "api_paste_code="..WEB.urlEncode(text)
+    "api_paste_name="..http.urlEscape(name).."&"..
+    "api_paste_code="..http.urlEscape(text)
   )
   
   if response then
@@ -122,13 +127,13 @@ elseif command == "get" then
   end
   
   -- Downloads the  pastebin
-  local result = getPaste(pasteCode)
+  local result, gerr = getPaste(pasteCode)
   if result then
     fs.write(path,result)
     
     color(12) print("Downloaded as "..file) sleep(0.01) color(7)
   else
-    return 1, "Failed"
+    return 1, gerr or "Failed"
   end
 elseif command == "run" then
   -- Run a file from pastebin.com
@@ -141,12 +146,12 @@ elseif command == "run" then
   local pasteCode = args[2]
   
   -- Downloads the  pastebin
-  local result = getPaste(pasteCode)
+  local result, gerr = getPaste(pasteCode)
   if result then
     fs.write("C:/.temp/"..pasteCode..".lua",result)
     term.executeFile("C:/.temp/"..pasteCode..".lua")
   else
-    return 1, "Failed"
+    return 1, gerr or "Failed"
   end
 else
   printPBUsage()
