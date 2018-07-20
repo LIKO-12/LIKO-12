@@ -5,6 +5,9 @@
 --Localized LIKO-12 Peripherals
 local web = WEB
 
+--Luasocket libraries
+local ls_url = web.luasocket("socket.url")
+
 --The API
 local http = {}
 
@@ -27,29 +30,26 @@ function http.request(url, postData, headers, method)
   args.method = method or args.method
   
   --Send the web request
-  local ticket = WEB.send(url,args)
+  local ticket = WEB.request(url,args)
   
   --Wait for it to arrived
-  for event, id, url, data, errnum, errmsg, errline in pullEvent do
+  for event, id, data in pullEvent do
     
-    --Here it is !
-    if event == "webrequest" then
+    if event == "HTTP_Respond" then --Here it is !
       --Yes, this is the correct package !
       if id == ticket then
+        data.code = tonumber(data.code)
         
-        if data then
-          data.code = tonumber(data.code)
-          
-          if data.code < 200 or data.code >= 300 then --Too bad...
-            cprint("HTTP Failed Request Body: "..tostring(data.body))
-            return false, "HTTP Error: "..data.code, data
-          end
-          
-          return data.body, data --Yay
-        else --Oh, no, it failed
-          return false, errmsg
+        if data.code < 200 or data.code >= 300 then --Too bad...
+          --cprint("HTTP Failed Request Body: "..tostring(data.body))
+          return false, "HTTP Error: "..data.code, data
         end
         
+        return data.body, data --Yay
+      end
+    elseif event == "HTTP_Failed" then
+      if id == ticket then
+        return false, data
       end
     elseif event == "keypressed" then
       
@@ -74,8 +74,7 @@ function http.post(url, postData, headers)
 end
 
 function http.urlEscape(str)
-  if not web then return url end
-  return web.urlEncode(str)
+  return ls_url.escape(tostring(str))
 end
 
 function http.urlEncode(data)
