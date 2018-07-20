@@ -73,4 +73,4 @@ PA("FDD","FDD",{
   FRAMAddress = 0x6000
 })
 
-local _, WEB, yWEB, WEBKit = P("WEB","WEB",{CPUKit = CPUKit})
+local WEB, yWEB, WEBKit = PA("WEB","WEB",{CPUKit = CPUKit})
