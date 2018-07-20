@@ -64,9 +64,10 @@ while true do
     local url = request.url
     request.url = nil
     
+    request.timeout = 1
     request.body_stream_callback = lj_body_stream
     
-    local respond, _, message = lj_request(url,request)
+    local respond, _, message = lj_request.send(url,request)
     
     if respond then
       web_channel:push("respond")
