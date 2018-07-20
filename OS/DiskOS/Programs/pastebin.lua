@@ -89,7 +89,6 @@ if command == "put" then
   --devkey, api_option, paste name, paste format, pastedata
   local pasteFormat = name:sub(-4,-1) == ".lua" and "lua" or "text"
   local pasteInfo = string.format("api_dev_key=%s&api_option=%s&api_paste_name=%s&api_paste_format=%s&api_paste_code=%s",key,"paste",http.urlEscape(name),pasteFormat,http.urlEscape(text))
-  cprint("pasteInfo",#pasteInfo,pasteInfo)
   
   local response, err = request("https://pastebin.com/api/api_post.php",pasteInfo)
   
