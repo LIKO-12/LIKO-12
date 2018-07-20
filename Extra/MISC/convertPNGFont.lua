@@ -1,7 +1,8 @@
+--luacheck: ignore
+
 local pngData = fs.read("D:/font4x6.png")
 local imgData = imagedata(pngData)
 local fontData = fontdata(4,6)
-
 
 imgData:map(function(x,y,c)
  local cb = math.floor(x/5)+1
