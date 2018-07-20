@@ -34,7 +34,7 @@ local tls_params = {
   protocol = "any",
   options  = {"all", "no_sslv2", "no_sslv3"},
   verify   = "none",
-  mode = "client"
+  mode     = "client"
 }
 
 -----------------------------------------------------------------------------
