@@ -181,10 +181,15 @@ request = {
 		end
 
 		if (args.body_stream_callback) then
+      out_buffer = {}
+      
 			local callback = ffi.cast("curl_callback", function(data, size, nmeb, user)
-				args.body_stream_callback(ffi.string(data, size * nmeb))
+        local ffistr = ffi.string(data, size * nmeb)
+        table.insert(out_buffer, ffistr)
+				args.body_stream_callback(ffistr)
 				return size * nmeb
 			end)
+      
 
 			table.insert(callbacks, callback)
 
