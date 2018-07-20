@@ -33,12 +33,15 @@ end
 local ls_https
 if has_luasec then
   ls_https = require(peripheral_path.."https")
+  ls_https.USERAGENT = "LIKO-12"
 end
 
 --LuaSocket
 local ls_http = require("socket.http")
 local ls_ltn12 = require("ltn12")
 local ls_url = require("socket.url")
+
+ls_http.USERAGENT = "LIKO-12"
 
 local ls_body --Set later when requesting to an empty table
 local function ls_sink(chunk)
@@ -102,7 +105,7 @@ while true do
     
     if request.data then
       http_req.source = ls_ltn12.source.string(request.data)
-      http_req.headers["Content-Length"] = http_req.headers["Content-Length"] or #request.data
+      http_req.headers["content-length"] = http_req.headers["content-length"] or #request.data
     end
     
     if type(request.allow_redirects) ~= "nil" then
@@ -110,12 +113,14 @@ while true do
     end
     
     if request.cookies then
-      http_req.headers["Cookie"] = request.cookies
+      http_req.headers["cookie"] = request.cookies
     end
     
     http.TIMEOUT = (request.timeout or 1)*60
     
+    --luacheck: push ignore 211
     local success,statuscode, headers, statusline = http.request(http_req)
+    --luacheck: pop
     ls_body = table.concat(ls_body)
     
     if success then
@@ -125,8 +130,8 @@ while true do
         headers = headers
       }
       
-      if headers["Set-Cookie"] then
-        respond.set_cookies = headers["Set-Cookie"]
+      if headers["set-cookie"] then
+        respond.set_cookies = headers["set-cookie"]
       end
       
       web_channel:push("respond")
