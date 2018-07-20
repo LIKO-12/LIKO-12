@@ -42,10 +42,9 @@ return function(config)
   
   local thread = love.thread.newThread(perpath.."webthread.lua")
   local web_channel = love.thread.newChannel()
-  local shutdown_channel = love.thread.newChannel()
+  local idle_channel = love.thread.newChannel()
   
-  thread:start(web_channel,shutdown_channel,perpath)
-  if thread:getError() then error("WEB Thread: "..thread:getError()) end
+  thread:start(web_channel,idle_channel,perpath)
   
   --==Thread State Variables==--
   
@@ -105,6 +104,9 @@ return function(config)
       nrequest[v] = request[v]
     end
     
+    if not nrequest.headers then nrequest.headers = {} end
+    nrequest.headers["User-Agent"] = nrequest.headers["User-Agent"] or "LIKO-12"
+    
     nrequest.url = url
     nrequest.lib = lib
     
@@ -112,7 +114,7 @@ return function(config)
     if not currentRequestID then
       --Put the request instantly into the thread.
       nrequest.lib = nil
-      web_channel:push(lib)
+      idle_channel:push(lib)
       web_channel:push(nrequest)
       currentRequestID = nextRequestID
     end
@@ -149,6 +151,10 @@ return function(config)
     return has_libcurl and true or false
   end
   
+  function WEB.hasHTTPS()
+    return (has_libcurl or has_luasec) and true or false
+  end
+  
   function WEB.luasec(submodule)
     if not has_luasec then return error("LuaSec is not available on this device.") end
     
@@ -170,7 +176,7 @@ return function(config)
     local progress = web_channel:pop()
     if progress then
       local triggerData = web_channel:demand()
-      local triggerName = "HTTP_"..string.upper(progress:sub(1,1))..progress(2,-1)
+      local triggerName = "HTTP_"..string.upper(progress:sub(1,1))..progress:sub(2,-1)
       local triggerID = currentRequestID
       
       if progress == "respond" or progress == "failed" then
@@ -182,7 +188,7 @@ return function(config)
           local lib = request.lib
           request.lib = nil
           
-          web_channel:push(lib)
+          idle_channel:push(lib)
           web_channel:push(request)
         end
       end
@@ -192,13 +198,11 @@ return function(config)
   end)
   
   events.register("love:reboot",function()
-    shutdown_channel:push(true)
-    web_channel:push("shutdown")
+    idle_channel:push("shutdown")
   end)
 
   events.register("love:quit",function()
-    shutdown_channel:push(true)
-    web_channel:push("shutdown")
+    idle_channel:push("shutdown")
     thread:wait()
   end)
   

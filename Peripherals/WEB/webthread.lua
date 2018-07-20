@@ -3,7 +3,7 @@
 print("------------------------------")
 
 --Thread communication channels
-local web_channel, shutdown_channel, peripheral_path = ...
+local web_channel, idle_channel, peripheral_path = ...
 
 --Check if we have libcurl and/or luasec
 local has_libcurl = pcall(require,"Engine.luajit-request")
@@ -53,10 +53,9 @@ local function ls_sink(chunk)
 end
 
 while true do
-  if shutdown_channel:pop() then return end
+  local specifiedLibrary = idle_channel:demand()
+  if type(specifiedLibrary) == "string" and specifiedLibrary == "shutdown" then break end
   
-  local specifiedLibrary = web_channel:demand()
-  if specifiedLibrary and specifiedLibrary == "shutdown" then break end
   local request = web_channel:demand()
   
   --Use LuaJIT-Request if LuaSec is not available
