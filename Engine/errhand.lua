@@ -1,3 +1,7 @@
+function love.threaderror(thread, errorstr)
+  print("Thread error!\n"..errorstr)
+end
+
 local utf8 = require("utf8")
 
 local function error_printer(msg, layer)
