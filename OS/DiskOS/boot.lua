@@ -93,9 +93,5 @@ dofile(MainDrive..":/System/osapi.lua") --Load DiskOS OS APIs
 
 local terminal = require("terminal")
 
-if not GameDiskOS then
-  require("PackagesManager") --Initialize the packages manager
-end
-
 terminal.init() --Initialize the terminal
 terminal.loop()
