@@ -1,3 +1,10 @@
+--luacheck: ignore
+
+-----------------------------------------------------------------------------
+-- This is a modified version of luasocket http module to support https.
+-- Modified by: RamiLego4Game
+-----------------------------------------------------------------------------
+
 -----------------------------------------------------------------------------
 -- HTTP/1.1 client support for the Lua language.
 -- LuaSocket toolkit.
@@ -6,7 +13,8 @@
 
 -----------------------------------------------------------------------------
 -- Declare module and import dependencies
--------------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+local ssl = require("ssl")
 local socket = require("socket")
 local url = require("socket.url")
 local ltn12 = require("ltn12")
@@ -19,6 +27,17 @@ socket.http = {}
 local _M = socket.http
 
 -----------------------------------------------------------------------------
+-- TLS configuration
+-----------------------------------------------------------------------------
+
+local tls_params = {
+  protocol = "any",
+  options  = {"all", "no_sslv2", "no_sslv3"},
+  verify   = "none",
+  mode = "client"
+}
+
+-----------------------------------------------------------------------------
 -- Program constants
 -----------------------------------------------------------------------------
 -- connection timeout in seconds
@@ -27,9 +46,10 @@ _M.TIMEOUT = 60
 _M.USERAGENT = socket._VERSION
 
 -- supported schemes
-local SCHEMES = { ["http"] = true }
+local SCHEMES = { ["http"] = true, ["https"] = true }
 -- default port for document retrieval
-local PORT = 80
+local HTTP_PORT = 80
+local HTTPS_PORT = 443
 
 -----------------------------------------------------------------------------
 -- Reads MIME headers from a connection, unfolding where needed
@@ -109,7 +129,7 @@ end
 -----------------------------------------------------------------------------
 local metat = { __index = {} }
 
-function _M.open(host, port, create)
+function _M.open(host, port, create, nreqt)
     -- create socket with user connect function, or with default
     local c = socket.try((create or socket.tcp)())
     local h = base.setmetatable({ c = c }, metat)
@@ -117,7 +137,13 @@ function _M.open(host, port, create)
     h.try = socket.newtry(function() h:close() end)
     -- set timeout before connecting
     h.try(c:settimeout(_M.TIMEOUT))
-    h.try(c:connect(host, port or PORT))
+    if nreqt.scheme == "https" then
+      h.try(c:connect(host, port or HTTPS_PORT))
+      c = h.try(ssl.wrap(c, tls_params)); h.c = c
+      h.try(c:dohandshake())
+    else
+      h.try(c:connect(host, port or HTTP_PORT))
+    end
     -- here everything worked
     return h
 end
@@ -244,7 +270,7 @@ end
 -- default url parts
 local default = {
     host = "",
-    port = PORT,
+    --port = HTTP_PORT,
     path ="/",
     scheme = "http"
 }
@@ -254,7 +280,13 @@ local function adjustrequest(reqt)
     local nreqt = reqt.url and url.parse(reqt.url, default) or {}
     -- explicit components override url
     for i,v in base.pairs(reqt) do nreqt[i] = v end
-    if nreqt.port == "" then nreqt.port = PORT end
+    if nreqt.port == "" then
+      if nreqt.scheme == "https" then
+        nreqt.port = HTTPS_PORT
+      else
+        nreqt.port = HTTP_PORT
+      end
+    end
     if not (nreqt.host and nreqt.host ~= "") then
         socket.try(nil, "invalid host '" .. base.tostring(nreqt.host) .. "'")
     end
@@ -312,7 +344,7 @@ end
     -- we loop until we get what we want, or
     -- until we are sure there is no way to get it
     local nreqt = adjustrequest(reqt)
-    local h = _M.open(nreqt.host, nreqt.port, nreqt.create)
+    local h = _M.open(nreqt.host, nreqt.port, nreqt.create, nreqt)
     -- send request line and headers
     h:sendrequestline(nreqt.method, nreqt.uri)
     h:sendheaders(nreqt.headers)
