@@ -49,12 +49,12 @@ end
 
 local function getPaste(paste)
   color(9) print("Connecting to pastebin.com...") flip() color(7)
-  local response, err, respond = request("https://pastebin.com/raw/"..http.urlEscape(paste))
+  local data, err, respond = request("https://pastebin.com/raw/"..http.urlEscape(paste))
   
-  if response then
-    color(11) print( "Success." ) color(7) flip() sleep(0.01)
+  if data then
+    color(11) print( "Success." ) color(7) flip()
     
-    return response
+    return data
   else
     if tostring(respond.code) == "404" then
       return false, "Paste not found."
@@ -80,19 +80,18 @@ if command == "put" then
   -- Read in the file
   local name = fs.getName(path)
   local size = fs.getSize(path)
-  if size > 512*1024 then color(8) print("File too large to upload,\nuse 'save <game> -c' when saving.") color(7) end
+  if size > 512*1024 then return 1, "File too large to upload,\nuse 'save <game> -c' when saving." end
   local text = fs.read(path)
   
   -- POST the contents to pastebin
   color(9) print("Connecting to pastebin.com...") color(7) flip()
   local key = "e31065c6df5a451f3df3fdf5f4c2be61"
-  local response, err = request("https://pastebin.com/api/api_post.php",
-    "api_option=paste&"..
-    "api_dev_key="..key.."&"..
-    (name:sub(-4,-1) == ".lua" and "api_paste_format=lua&" or "")..
-    "api_paste_name="..http.urlEscape(name).."&"..
-    "api_paste_code="..http.urlEscape(text)
-  )
+  --devkey, api_option, paste name, paste format, pastedata
+  local pasteFormat = name:sub(-4,-1) == ".lua" and "lua" or "text"
+  local pasteInfo = string.format("api_dev_key=%s&api_option=%s&api_paste_name=%s&api_paste_format=%s&api_paste_code=%s",key,"paste",http.urlEscape(name),pasteFormat,http.urlEscape(text))
+  cprint("pasteInfo",#pasteInfo,pasteInfo)
+  
+  local response, err = request("https://pastebin.com/api/api_post.php",pasteInfo)
   
   if response then
     color(11) print("Success.") flip() sleep(0.01) color(7)
@@ -131,7 +130,7 @@ elseif command == "get" then
   if result then
     fs.write(path,result)
     
-    color(12) print("Downloaded as "..file) sleep(0.01) color(7)
+    color(12) print("Downloaded as "..file) color(7)
   else
     return 1, gerr or "Failed"
   end
