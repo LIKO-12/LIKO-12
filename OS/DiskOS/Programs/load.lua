@@ -62,7 +62,7 @@ if lk12Type ~= "OSData" then
   end
 end
 
-local eData, binary = LK12Utils.decodeDiskGame(lk12Data)
+local eData, binary, apiVer = LK12Utils.decodeDiskGame(lk12Data)
 if not eData then return 1, binary or "Unkown Error" end
 
 if binary then
@@ -72,5 +72,12 @@ else
 end
 
 eapi.filePath = source
+eapi.apiVersion = apiVer
+
+if apiVer < _APIVer then
+  color(9) print("Applied compatiblity layer for API v"..apiVer)
+  color(6) print("Newer APIs are not available")
+  color(9) print("Use ",false) color(10) print("setapi",false) color(9) print(" command to upgrade to API ".._APIVer.."\n")
+end
 
 color(11) print("Loaded successfully")

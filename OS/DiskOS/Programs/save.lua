@@ -67,14 +67,15 @@ end
 eapi.filePath = destination
 
 local editorsData = (string.lower(flag) == "-b" or png) and eapi:encode() or eapi:export()
+local apiVersion = eapi.apiVersion
 local diskData = ""
 
 if string.lower(flag) == "-c" then
-  diskData = LK12Utils.encodeDiskGame(editorsData,ctype,clvl)
+  diskData = LK12Utils.encodeDiskGame(editorsData,ctype,clvl,apiVersion)
 elseif string.lower(flag) == "-b" or png then
-  diskData = LK12Utils.encodeDiskGame(editorsData,"binary")
+  diskData = LK12Utils.encodeDiskGame(editorsData,"binary",false,apiVersion)
 else
-  diskData = LK12Utils.encodeDiskGame(editorsData)
+  diskData = LK12Utils.encodeDiskGame(editorsData,false,false,apiVersion)
 end
 
 if string.lower(flag) == "-color" and png then
