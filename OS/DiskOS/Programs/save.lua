@@ -40,6 +40,11 @@ if destination ~= "@clip" and fs.isReadonly(destination) then
   return 1, "Destination is readonly !"
 end
 
+local backup
+if destination ~= "@clip" and fs.exists(destination) then
+  backup = fs.read(destination)
+end
+
 local sw, sh = screenSize()
 
 if string.lower(flag) == "--sheet" then --Sheet export
@@ -87,6 +92,10 @@ elseif png then
   fs.write(destination, FDD.exportDisk())
 else
   fs.write(destination,diskData)
+end
+
+if backup then
+  fs.write("C:/_backup.lk12", backup)
 end
 
 color(11) print(destination == "@clip" and "Saved to clipboard successfully" or "Saved successfully")
