@@ -26,9 +26,10 @@ function rt.loadGlobals()
   return scripts
 end
 
-function rt.loadGame(edata)
+function rt.loadGame(edata,apiver)
   
-  local edata = edata or (require("Editors"):export())
+  apiver = apiver or (edata and 1 or require("Editors").apiVersion)
+  edata = edata or (require("Editors"):export())
   
   local glob = _FreshGlobals()
   glob._G = glob --Magic ;)
@@ -63,6 +64,15 @@ function rt.loadGame(edata)
   --Execute the globals constructors
   for i=1, #globals do
     globals[i](glob,co)
+  end
+  
+  --Apply compatiblity layers if needed
+  if apiver < _APIVer then
+    for a=apiver, _APIVer-1 do
+      if fs.exists(MainDrive..":/Runtime/Compatibility/v"..a..".lua") then
+        fs.load(MainDrive..":/Runtime/Compatibility/v"..a..".lua")(glob,co)
+      end
+    end
   end
   
   return glob, co, chunk

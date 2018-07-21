@@ -101,6 +101,8 @@ function edit:initialize()
   self.modeGridFlag = false
   self.modeGridHover = false
   self:loadCursors()
+  
+  self.apiVersion = 1 --The used API
 end
 
 function edit:addEditor(code, name, saveid, icon)
