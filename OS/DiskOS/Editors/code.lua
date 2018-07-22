@@ -29,6 +29,7 @@ Be sure to read the contributing guide in Editors/init.lua
 ==Contributors to this file==
 (Add your name when contributing to this file)
 
+- technomancy
 - Rami Sabbagh (RamiLego4Game)
 - Fernando Carmona Varo (Ferk)
 - Lucas Henrique (lhs_azevedo)
