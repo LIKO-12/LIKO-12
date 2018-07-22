@@ -10,9 +10,11 @@ local GameDiskOS = (MainDrive == "GameDiskOS")
 local PATH = "D:/Programs/;C:/Programs/;" --The system PATH variable, used by the terminal to search for programs.
 local curdrive, curdir, curpath = "D", "/", "D:/" --The current active path in the terminal.
 
-if GameDiskOS then
-  PATH = "GameDiskOS:/Programs/;"
-  curdrive, curpath = "GameDiskOS", "GameDiskOS:/"
+--Add the sub-directories.
+for id, dirName in ipairs(fs.getDirectoryItems("C:/Programs/")) do
+  if fs.isDirectory("C:/Programs/"..dirName) then
+    PATH = PATH.."C:/Programs/"..dirName.."/;"
+  end
 end
 
 local editor --The editors api, will be loaded later in term.init()
