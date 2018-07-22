@@ -5,6 +5,7 @@ local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local PaletteVars = GPUVars.Palette
+local CursorVars = GPUVars.Cursor
 local SharedVars = GPUVars.Shared
 local RenderVars = GPUVars.Render
 local GifVars = GPUVars.Gif
@@ -108,6 +109,7 @@ function GPU.colorPalette(id,r,g,b)
     RenderVars.DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
     RenderVars.ShouldDraw = true
     GifVars.PChanged = true
+    CursorVars.rebuildCursors()
   else
     return unpack(_ColorSet[id])
   end
