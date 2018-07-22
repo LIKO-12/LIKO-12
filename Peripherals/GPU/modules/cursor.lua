@@ -1,23 +1,23 @@
 --GPU: Mouse Cursor.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local lg = love.graphics
 
 local events = require("Engine.events")
 
-local PaletteKit = GPUKit.Palette
-local RenderKit = GPUKit.Render
-local SharedKit = GPUKit.Shared
-local WindowKit = GPUKit.Window
-local CursorKit = GPUKit.Cursor
+local PaletteVars = GPUVars.Palette
+local RenderVars = GPUVars.Render
+local SharedVars = GPUVars.Shared
+local WindowVars = GPUVars.Window
+local CursorVars = GPUVars.Cursor
 
---==Kits Constants==--
-local _ImageTransparent = PaletteKit.ImageTransparent
-local PaletteStack = PaletteKit.PaletteStack
-local Verify = SharedKit.Verify
+--==Varss Constants==--
+local _ImageTransparent = PaletteVars.ImageTransparent
+local PaletteStack = PaletteVars.PaletteStack
+local Verify = SharedVars.Verify
 
 --==Local Functions==--
 
@@ -27,10 +27,10 @@ local function _EncodeTransparent(_,_, r,g,b,a)
   return r,g,b,a
 end
 
---==Kit Variables==--
+--==Vars Variables==--
 
-CursorKit.GrappedCursor = false --If the cursor must be drawed by the GPU (not using a system cursor)
-CursorKit.Cursor = "none"
+CursorVars.GrappedCursor = false --If the cursor must be drawed by the GPU (not using a system cursor)
+CursorVars.Cursor = "none"
 
 --==Local Variables==--
 
@@ -39,16 +39,16 @@ local _CursorsCache = {}
 --==GPU Cursor API==--
 function GPU.cursor(imgdata,name,hx,hy)
   if type(imgdata) == "string" then --Set the current cursor
-    if CursorKit.GrappedCursor then if not name then RenderKit.AlwaysDraw = false; RenderKit.ShouldDraw = true end elseif name then RenderKit.AlwaysDraw = true end
-    if CursorKit.Cursor == imgdata and not ((CursorKit.GrappedCursor and not name) or (name and not CursorKit.GrappedCursor)) then return end
-    CursorKit.GrappedCursor = name
+    if CursorVars.GrappedCursor then if not name then RenderVars.AlwaysDraw = false; RenderVars.ShouldDraw = true end elseif name then RenderVars.AlwaysDraw = true end
+    if CursorVars.Cursor == imgdata and not ((CursorVars.GrappedCursor and not name) or (name and not CursorVars.GrappedCursor)) then return end
+    CursorVars.GrappedCursor = name
     if (not _CursorsCache[imgdata]) and (imgdata ~= "none") then return error("Cursor doesn't exists: "..imgdata) end
-    CursorKit.Cursor = imgdata
-    if CursorKit.Cursor == "none" or CursorKit.GrappedCursor then
+    CursorVars.Cursor = imgdata
+    if CursorVars.Cursor == "none" or CursorVars.GrappedCursor then
       love.mouse.setVisible(false)
     elseif love.mouse.isCursorSupported() then
       love.mouse.setVisible(true)
-      love.mouse.setCursor(_CursorsCache[CursorKit.Cursor].cursor)
+      love.mouse.setCursor(_CursorsCache[CursorVars.Cursor].cursor)
     end
   elseif type(imgdata) == "table" then --Create a new cursor from an image.
     if not( imgdata.enlarge and imgdata.export and imgdata.type ) then return error("Invalied image") end
@@ -61,7 +61,7 @@ function GPU.cursor(imgdata,name,hx,hy)
     hx = Verify(hx,"Hot X","number",true)
     hy = Verify(hy,"Hot Y","number",true)
     
-    local enimg = imgdata:enlarge(WindowKit.LIKOScale)
+    local enimg = imgdata:enlarge(WindowVars.LIKOScale)
     --local img = lg.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
     local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
     local gifimg = love.image.newImageData(imgdata:size())
@@ -69,7 +69,7 @@ function GPU.cursor(imgdata,name,hx,hy)
     gifimg:mapPixel(_EncodeTransparent)
     gifimg = lg.newImage(gifimg)
     
-    local hotx, hoty = hx*math.floor(WindowKit.LIKOScale), hy*math.floor(WindowKit.LIKOScale) --Converted to host scale
+    local hotx, hoty = hx*math.floor(WindowVars.LIKOScale), hy*math.floor(WindowVars.LIKOScale) --Converted to host scale
     local cur = love.mouse.isCursorSupported() and love.mouse.newCursor(limg,hotx,hoty) or {}
     local palt = {}
     for i=1, 16 do
@@ -77,10 +77,10 @@ function GPU.cursor(imgdata,name,hx,hy)
     end
     _CursorsCache[name] = {cursor=cur,imgdata=imgdata,gifimg=gifimg,hx=hx,hy=hy,palt=palt}
   elseif type(imgdata) == "nil" then
-    if CursorKit.Cursor == "none" then
-      return CursorKit.Cursor
+    if CursorVars.Cursor == "none" then
+      return CursorVars.Cursor
     else
-      return CursorKit.Cursor, _CursorsCache[CursorKit.Cursor].imgdata, _CursorsCache[CursorKit.Cursor].hx+1, _CursorsCache[CursorKit.Cursor].hy+1
+      return CursorVars.Cursor, _CursorsCache[CursorVars.Cursor].imgdata, _CursorsCache[CursorVars.Cursor].hx+1, _CursorsCache[CursorVars.Cursor].hy+1
     end
   else --Invalied
     return error("The first argument must be a string, image or nil")
@@ -98,16 +98,16 @@ events.register("love:resize",function() --The new size will be calculated in th
     end
     GPU.popPalette()
     
-    local enimg = cursor.imgdata:enlarge(WindowKit.LIKOScale)
+    local enimg = cursor.imgdata:enlarge(WindowVars.LIKOScale)
     local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
-    local hotx, hoty = cursor.hx*math.floor(WindowKit.LIKOScale), cursor.hy*math.floor(WindowKit.LIKOScale) --Converted to host scale
+    local hotx, hoty = cursor.hx*math.floor(WindowVars.LIKOScale), cursor.hy*math.floor(WindowVars.LIKOScale) --Converted to host scale
     local cur = love.mouse.newCursor(limg,hotx,hoty)
     _CursorsCache[k].cursor = cur
     GPU.popPalette()
   end
-  local cursor = CursorKit.Cursor; CursorKit.Cursor = "none" --Force the cursor to update.
-  GPU.cursor(cursor,CursorKit.GrappedCursor)
+  local cursor = CursorVars.Cursor; CursorVars.Cursor = "none" --Force the cursor to update.
+  GPU.cursor(cursor,CursorVars.GrappedCursor)
 end)
 
---==GPUKit Exports==--
-CursorKit.CursorsCache = _CursorsCache
+--==GPUVars Exports==--
+CursorVars.CursorsCache = _CursorsCache

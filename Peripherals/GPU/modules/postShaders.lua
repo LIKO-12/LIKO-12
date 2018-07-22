@@ -1,17 +1,17 @@
 --GPU: Post Shaders.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local events = require("Engine.events")
 
-local MiscKit = GPUKit.Misc
-local CursorKit = GPUKit.Cursor
-local PShadersKit = GPUKit.PShaders
+local MiscVars = GPUVars.Misc
+local CursorVars = GPUVars.Cursor
+local PShadersVars = GPUVars.PShaders
 
---==Kits Constants==--
-local systemMessage = MiscKit.systemMessage
+--==Varss Constants==--
+local systemMessage = MiscVars.systemMessage
 
 --==Local Variables==--
 
@@ -42,28 +42,28 @@ events.register("love:keypressed", function(key)
       
       _ActiveShaderID = _ActiveShaderID + 1
       _ActiveShaderName = nextShader
-      PShadersKit.ActiveShader = shader
-      PShadersKit.PostShaderTimer = nil
+      PShadersVars.ActiveShader = shader
+      PShadersVars.PostShaderTimer = nil
       
-      if PShadersKit.ActiveShader then
-        local warnings = PShadersKit.ActiveShader:getWarnings()
+      if PShadersVars.ActiveShader then
+        local warnings = PShadersVars.ActiveShader:getWarnings()
         if warnings ~= "vertex shader:\npixel shader:\n" then
           print("Shader Warnings:")
           print(warnings)
         end
         
-        if PShadersKit.ActiveShader:hasUniform("time") then
-          PShadersKit.PostShaderTimer = 0
+        if PShadersVars.ActiveShader:hasUniform("time") then
+          PShadersVars.PostShaderTimer = 0
         end
       else
-        love.mouse.setVisible(not CursorKit.GrappedCursor)
+        love.mouse.setVisible(not CursorVars.GrappedCursor)
       end
     else
       _ActiveShaderID = 0
       _ActiveShaderName = "None"
-      PShadersKit.ActiveShader = nil
-      PShadersKit.PostShaderTimer = nil
-      love.mouse.setVisible(not CursorKit.GrappedCursor)
+      PShadersVars.ActiveShader = nil
+      PShadersVars.PostShaderTimer = nil
+      love.mouse.setVisible(not CursorVars.GrappedCursor)
     end
   elseif key == _GIFStartKey then --Prev Shader
     local nextID = _ActiveShaderID - 1; if nextID < 0 then nextID = #shaderslist end
@@ -78,35 +78,35 @@ events.register("love:keypressed", function(key)
       
       _ActiveShaderID = nextID
       _ActiveShaderName = nextShader
-      PShadersKit.ActiveShader = shader
-      PShadersKit.PostShaderTimer = nil
+      PShadersVars.ActiveShader = shader
+      PShadersVars.PostShaderTimer = nil
       
-      if PShadersKit.ActiveShader then
-        local warnings = PShadersKit.ActiveShader:getWarnings()
+      if PShadersVars.ActiveShader then
+        local warnings = PShadersVars.ActiveShader:getWarnings()
         if warnings ~= "vertex shader:\npixel shader:\n" then
           print("Shader Warnings:")
           print(warnings)
         end
         
-        if PShadersKit.ActiveShader:hasUniform("time") then
-          PShadersKit.PostShaderTimer = 0
+        if PShadersVars.ActiveShader:hasUniform("time") then
+          PShadersVars.PostShaderTimer = 0
         end
       else
-        love.mouse.setVisible(not CursorKit.GrappedCursor)
+        love.mouse.setVisible(not CursorVars.GrappedCursor)
       end
     else
       _ActiveShaderID = 0
       _ActiveShaderName = "None"
-      PShadersKit.ActiveShader = nil
-      PShadersKit.PostShaderTimer = nil
-      love.mouse.setVisible(not CursorKit.GrappedCursor)
+      PShadersVars.ActiveShader = nil
+      PShadersVars.PostShaderTimer = nil
+      love.mouse.setVisible(not CursorVars.GrappedCursor)
     end
   elseif key == _GIFPauseKey then --None Shader
     _ActiveShaderID = 0
     _ActiveShaderName = "None"
-    PShadersKit.ActiveShader = nil
-    PShadersKit.PostShaderTimer = nil
-    love.mouse.setVisible(not CursorKit.GrappedCursor)
+    PShadersVars.ActiveShader = nil
+    PShadersVars.PostShaderTimer = nil
+    love.mouse.setVisible(not CursorVars.GrappedCursor)
   end
   
   systemMessage("Shader: ".._ActiveShaderName,2,false,false,true)
@@ -114,7 +114,7 @@ end)
 
 --Post-Shader Time value
 events.register("love:update",function(dt)
-  if PShadersKit.PostShaderTimer then
-    PShadersKit.PostShaderTimer = (PShadersKit.PostShaderTimer + dt)%10
+  if PShadersVars.PostShaderTimer then
+    PShadersVars.PostShaderTimer = (PShadersVars.PostShaderTimer + dt)%10
   end
 end)

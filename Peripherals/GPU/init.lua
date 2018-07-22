@@ -2,7 +2,7 @@ local perpath = select(1,...) --The path to the GPU folder.
 --/Peripherals/GPUN/
 
 --[[
-#GPUKITS
+#GPUVARS
 
 ConstantValue, **DynamicValue**
 
@@ -54,11 +54,11 @@ return function(config) --A function that creates a new GPU peripheral.
   
   --GPU: the non-yielding APIS of the GPU.
   --yGPU: the yield APIS of the GPU.
-  --GPUKit: Shared data between the GPU files.
+  --GPUVars: Shared data between the GPU files.
   --DevKit: Shared data between the peripherals.
-  local GPU, yGPU, GPUKit, DevKit = {}, {}, {}, {}
+  local GPU, yGPU, GPUVars, DevKit = {}, {}, {}, {}
   
-  GPUKit.Path = perpath
+  GPUVars.Path = perpath
   
   --==Basic initialization==--
   
@@ -84,25 +84,25 @@ return function(config) --A function that creates a new GPU peripheral.
   love.graphics.setPointSize(1) --Set the point size to 1px.
   love.graphics.setLineWidth(1) --Set the line width to 1px.
   
-  --==GPUKits tables creation==--
+  --==GPUVarss tables creation==--
   --TODO: Sort alphabatically.
-  GPUKit.Calibration = {}
-  GPUKit.Render = {}
-  GPUKit.Window = {}
-  GPUKit.Palette = {}
-  GPUKit.Shared = {}
-  GPUKit.Gif = {}
-  GPUKit.ImageData = {}
-  GPUKit.VRam = {}
-  GPUKit.Misc = {}
-  GPUKit.Cursor = {}
-  GPUKit.PShaders = {}
-  GPUKit.Matrix = {}
+  GPUVars.Calibration = {}
+  GPUVars.Render = {}
+  GPUVars.Window = {}
+  GPUVars.Palette = {}
+  GPUVars.Shared = {}
+  GPUVars.Gif = {}
+  GPUVars.ImageData = {}
+  GPUVars.VRam = {}
+  GPUVars.Misc = {}
+  GPUVars.Cursor = {}
+  GPUVars.PShaders = {}
+  GPUVars.Matrix = {}
   
   --==Modules Loading==--
   
   local function loadModule(name)
-    love.filesystem.load(perpath.."modules/"..name..".lua")(config, GPU, yGPU, GPUKit, DevKit)
+    love.filesystem.load(perpath.."modules/"..name..".lua")(config, GPU, yGPU, GPUVars, DevKit)
   end
   
   loadModule("shared")

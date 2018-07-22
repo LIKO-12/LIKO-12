@@ -1,13 +1,13 @@
 --GPU: Window and canvas creation.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local events = require("Engine.events")
 
-local RenderKit = GPUKit.Render
-local WindowKit = GPUKit.Window
+local RenderVars = GPUVars.Render
+local WindowVars = GPUVars.Window
 
 --==Localized Lua Library==--
 
@@ -15,23 +15,23 @@ local mathFloor = math.floor
 
 --==Local Variables==--
 
-local CPUKit = Config.CPUKit
+local CPUVars = Config.CPUVars
 
 local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS" or Config._Mobile
 
 local _LIKO_W, _LIKO_H = Config._LIKO_W or 192, Config._LIKO_H or 128 --LIKO-12 screen dimensions.
-WindowKit.LIKO_X, WindowKit.LIKO_Y = 0,0 --LIKO-12 screen padding in the HOST screen.
+WindowVars.LIKO_X, WindowVars.LIKO_Y = 0,0 --LIKO-12 screen padding in the HOST screen.
 
 local _PixelPerfect = Config._PixelPerfect --If the LIKO-12 screen must be scaled pixel perfect.
-WindowKit.LIKOScale = mathFloor(Config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
+WindowVars.LIKOScale = mathFloor(Config._LIKOScale or 3) --The LIKO12 screen scale to the host screen scale.
 
-WindowKit.Width, WindowKit.Height = _LIKO_W*WindowKit.LIKOScale, _LIKO_H*WindowKit.LIKOScale --The host window size.
-if _Mobile then WindowKit.Width, WindowKit.Height = 0,0 end
+WindowVars.Width, WindowVars.Height = _LIKO_W*WindowVars.LIKOScale, _LIKO_H*WindowVars.LIKOScale --The host window size.
+if _Mobile then WindowVars.Width, WindowVars.Height = 0,0 end
 
 --==Window creation==--
 
 if not love.window.isOpen() then
-  love.window.setMode(WindowKit.Width,WindowKit.Height,{
+  love.window.setMode(WindowVars.Width,WindowVars.Height,{
     vsync = 1,
     resizable = true,
     minwidth = _LIKO_W,
@@ -47,7 +47,7 @@ if not love.window.isOpen() then
 end
 
 --Incase if the host operating system decided to give us different window dimensions.
-WindowKit.Width, WindowKit.Height = love.graphics.getDimensions()
+WindowVars.Width, WindowVars.Height = love.graphics.getDimensions()
 
 --==Window termination==--
 
@@ -63,55 +63,55 @@ end)
 
 --Hook the resize function
 events.register("love:resize",function(w,h) --Do some calculations
-  WindowKit.Width, WindowKit.Height = w, h
+  WindowVars.Width, WindowVars.Height = w, h
   local TSX, TSY = w/_LIKO_W, h/_LIKO_H --TestScaleX, TestScaleY
   
-  WindowKit.LIKOScale = (TSX < TSY) and TSX or TSY
-  if _PixelPerfect then WindowKit.LIKOScale = mathFloor(WindowKit.LIKOScale) end
+  WindowVars.LIKOScale = (TSX < TSY) and TSX or TSY
+  if _PixelPerfect then WindowVars.LIKOScale = mathFloor(WindowVars.LIKOScale) end
   
-  WindowKit.LIKO_X, WindowKit.LIKO_Y = (WindowKit.Width-_LIKO_W*WindowKit.LIKOScale)/2, (WindowKit.Height-_LIKO_H*WindowKit.LIKOScale)/2
-  if _Mobile then WindowKit.LIKO_Y, RenderKit.AlwaysDrawTimer = 0, 1 end
+  WindowVars.LIKO_X, WindowVars.LIKO_Y = (WindowVars.Width-_LIKO_W*WindowVars.LIKOScale)/2, (WindowVars.Height-_LIKO_H*WindowVars.LIKOScale)/2
+  if _Mobile then WindowVars.LIKO_Y, RenderVars.AlwaysDrawTimer = 0, 1 end
   
-  RenderKit.ShouldDraw = true
+  RenderVars.ShouldDraw = true
 end)
 
 --Hook to some functions to redraw (when the window is moved, got focus, etc ...)
-events.register("love:focus",function(f) if f then RenderKit.ShouldDraw = true end end) --Window got focus.
-events.register("love:visible",function(v) if v then RenderKit.ShouldDraw = true end end) --Window got visible.
+events.register("love:focus",function(f) if f then RenderVars.ShouldDraw = true end end) --Window got focus.
+events.register("love:visible",function(v) if v then RenderVars.ShouldDraw = true end end) --Window got visible.
 
 --File drop hook
 events.register("love:filedropped", function(file)
   file:open("r")
   local data = file:read()
   file:close()
-  if CPUKit then CPUKit.triggerEvent("filedropped",file:getFilename(),data) end
+  if CPUVars then CPUVars.triggerEvent("filedropped",file:getFilename(),data) end
 end)
 
 --==Graphics Initializations==--
 love.graphics.clear(0,0,0,1) --Clear the host screen.
 
-events.trigger("love:resize", WindowKit.Width, WindowKit.Height) --Calculate LIKO12 scale to the host window for the first time.
+events.trigger("love:resize", WindowVars.Width, WindowVars.Height) --Calculate LIKO12 scale to the host window for the first time.
 
 --==GPU Window API==--
 function GPU.screenSize() return _LIKO_W, _LIKO_H end
 function GPU.screenWidth() return _LIKO_W end
 function GPU.screenHeight() return _LIKO_H end
 
---==Helper functions for WindowKit==--
-function WindowKit.HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
-  return mathFloor((x - WindowKit.LIKO_X)/WindowKit.LIKOScale), mathFloor((y - WindowKit.LIKO_Y)/WindowKit.LIKOScale)
+--==Helper functions for WindowVars==--
+function WindowVars.HostToLiko(x,y) --Convert a position from HOST screen to LIKO12 screen.
+  return mathFloor((x - WindowVars.LIKO_X)/WindowVars.LIKOScale), mathFloor((y - WindowVars.LIKO_Y)/WindowVars.LIKOScale)
 end
 
-function WindowKit.LikoToHost(x,y) --Convert a position from LIKO12 screen to HOST
-  return mathFloor(x*WindowKit.LIKOScale + WindowKit.LIKO_X), mathFloor(y*WindowKit.LIKOScale + WindowKit.LIKO_Y)
+function WindowVars.LikoToHost(x,y) --Convert a position from LIKO12 screen to HOST
+  return mathFloor(x*WindowVars.LIKOScale + WindowVars.LIKO_X), mathFloor(y*WindowVars.LIKOScale + WindowVars.LIKO_Y)
 end
 
---==GPUKit Exports==--
-WindowKit.LIKO_W, WindowKit.LIKO_H = _LIKO_W, _LIKO_H
+--==GPUVars Exports==--
+WindowVars.LIKO_W, WindowVars.LIKO_H = _LIKO_W, _LIKO_H
 
 --==DevKit Exports==--
 DevKit._LIKO_W = _LIKO_W
 DevKit._LIKO_H = _LIKO_H
 function DevKit.DevKitDraw(bool)
-  RenderKit.DevKitDraw = bool
+  RenderVars.DevKitDraw = bool
 end

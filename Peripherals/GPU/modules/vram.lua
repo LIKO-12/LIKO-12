@@ -1,18 +1,18 @@
 --GPU: Video Ram.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
-local Path = GPUKit.Path
-local RenderKit = GPUKit.Render
-local WindowKit = GPUKit.Window
-local CalibrationKit = GPUKit.Calibration
-local VRamKit = GPUKit.VRam
+local Path = GPUVars.Path
+local RenderVars = GPUVars.Render
+local WindowVars = GPUVars.Window
+local CalibrationVars = GPUVars.Calibration
+local VRamVars = GPUVars.VRam
 
---==Kits Constants==--
-local _LIKO_W, _LIKO_H = WindowKit.LIKO_W, WindowKit.LIKO_H
-local ofs = CalibrationKit.Offsets
+--==Varss Constants==--
+local _LIKO_W, _LIKO_H = WindowVars.LIKO_W, WindowVars.LIKO_H
+local ofs = CalibrationVars.Offsets
 
 --==Local Variables==--
 
@@ -25,8 +25,8 @@ local VRAMImg
 local function BindVRAM()
   if VRAMBound then return end
   love.graphics.setCanvas()
-  VRAMImg = RenderKit.ScreenCanvas:newImageData()
-  love.graphics.setCanvas{RenderKit.ScreenCanvas,stencil=true}
+  VRAMImg = RenderVars.ScreenCanvas:newImageData()
+  love.graphics.setCanvas{RenderVars.ScreenCanvas,stencil=true}
   VRAMBound = true
 end
 
@@ -40,7 +40,7 @@ local function UnbindVRAM(keepbind)
   love.graphics.setShader()
   love.graphics.clear(0,0,0,1)
   love.graphics.draw(Img,ofs.image[1],ofs.image[2])
-  love.graphics.setShader(RenderKit.DrawShader)
+  love.graphics.setShader(RenderVars.DrawShader)
   love.graphics.pop()
   GPU.popColor()
   if not keepbind then
@@ -50,15 +50,15 @@ local function UnbindVRAM(keepbind)
 end
 
 local VRAMHandler; VRAMHandler = newImageHandler(_LIKO_W,_LIKO_H,function()
-  RenderKit.ShouldDraw = true
+  RenderVars.ShouldDraw = true
 end,function()
   BindVRAM()
   VRAMHandler("setImage",0,0,VRAMImg)
 end)
 
---==GPUKit Exports==--
-VRamKit.BindVRAM = BindVRAM
-VRamKit.UnbindVRAM = UnbindVRAM
+--==GPUVars Exports==--
+VRamVars.BindVRAM = BindVRAM
+VRamVars.UnbindVRAM = UnbindVRAM
 
 --==DevKit Exports==--
 DevKit.VRAMHandler = VRAMHandler

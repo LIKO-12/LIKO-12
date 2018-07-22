@@ -1,18 +1,18 @@
 --GPU: Image Object.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
-local SharedKit = GPUKit.Shared
-local RenderKit = GPUKit.Render
-local CalibrationKit = GPUKit.Calibration
-local VRamKit = GPUKit.VRam
+local SharedVars = GPUVars.Shared
+local RenderVars = GPUVars.Render
+local CalibrationVars = GPUVars.Calibration
+local VRamVars = GPUVars.VRam
 
---==Kits Constants==--
-local Verify = SharedKit.Verify
-local ofs = CalibrationKit.Offsets
-local UnbindVRAM = VRamKit.UnbindVRAM
+--==Varss Constants==--
+local Verify = SharedVars.Verify
+local ofs = CalibrationVars.Offsets
+local UnbindVRAM = VRamVars.UnbindVRAM
 
 --==GPU Image API==--
 
@@ -44,16 +44,16 @@ function GPU.image(data)
   function i:draw(x,y,r,sx,sy,quad) UnbindVRAM()
     x, y, r, sx, sy = x or 0, y or 0, r or 0, sx or 1, sy or 1
     GPU.pushColor()
-    love.graphics.setShader(RenderKit.ImageShader)
+    love.graphics.setShader(RenderVars.ImageShader)
     love.graphics.setColor(1,1,1,1)
     if quad then
       love.graphics.draw(Image,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,sx,sy)
     else
       love.graphics.draw(Image,math.floor(x+ofs.image[1]),math.floor(y+ofs.image[2]),r,sx,sy)
     end
-    love.graphics.setShader(RenderKit.DrawShader)
+    love.graphics.setShader(RenderVars.DrawShader)
     GPU.popColor()
-    RenderKit.ShouldDraw = true
+    RenderVars.ShouldDraw = true
     return self
   end
   
@@ -119,16 +119,16 @@ function GPU.image(data)
     function sb:draw(x,y,r,sx,sy,quad) UnbindVRAM()
       x, y, r, sx, sy = x or 0, y or 0, r or 0, sx or 1, sy or 1
       GPU.pushColor()
-      love.graphics.setShader(RenderKit.ImageShader)
+      love.graphics.setShader(RenderVars.ImageShader)
       love.graphics.setColor(1,1,1,1)
       if quad then
         love.graphics.draw(spritebatch,quad,math.floor(x+ofs.quad[1]),math.floor(y+ofs.quad[2]),r,sx,sy)
       else
         love.graphics.draw(spritebatch,math.floor(x+ofs.image[1]),math.floor(y+ofs.image[2]),r,sx,sy)
       end
-      love.graphics.setShader(RenderKit.DrawShader)
+      love.graphics.setShader(RenderVars.DrawShader)
       GPU.popColor()
-      RenderKit.ShouldDraw = true
+      RenderVars.ShouldDraw = true
       return self
     end
     

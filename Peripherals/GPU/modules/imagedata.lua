@@ -1,28 +1,28 @@
 --GPU: ImageData Object.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local lg = love.graphics
 
-local SharedKit = GPUKit.Shared
-local PaletteKit = GPUKit.Palette
-local ImageDataKit = GPUKit.ImageData
+local SharedVars = GPUVars.Shared
+local PaletteVars = GPUVars.Palette
+local ImageDataVars = GPUVars.ImageData
 
---==Kits Constants==--
-local _ImageTransparent = PaletteKit.ImageTransparent
-local _ColorSet = PaletteKit.ColorSet
-local _GetColorID = PaletteKit.GetColorID
-local colorTo1 = SharedKit.colorTo1
-local colorTo255 = SharedKit.colorTo255
+--==Varss Constants==--
+local _ImageTransparent = PaletteVars.ImageTransparent
+local _ColorSet = PaletteVars.ColorSet
+local _GetColorID = PaletteVars.GetColorID
+local colorTo1 = SharedVars.colorTo1
+local colorTo255 = SharedVars.colorTo255
 
 --==Localized Lua Library==--
 local mathFloor = math.floor
 local strFormat = string.format
 
---==Kit Variables==--
-ImageDataKit.PasteImage = false --A walkthrough to avoide exporting the image to png and reloading it.
+--==Vars Variables==--
+ImageDataVars.PasteImage = false --A walkthrough to avoide exporting the image to png and reloading it.
 
 --==Helper Functions==--
 
@@ -113,13 +113,13 @@ function GPU.imagedata(w,h)
   end
   function id:height() return imageData:getHeight() end
   function id:width() return imageData:getWidth() end
-  function id:___pushimgdata() ImageDataKit.PasteImage = imageData end --An internal function used when pasting images.
+  function id:___pushimgdata() ImageDataVars.PasteImage = imageData end --An internal function used when pasting images.
   
   function id:paste(imgData,dx,dy,sx,sy,sw,sh)
     if type(imgData) ~= "table" then return error("ImageData must be a table, got '"..type(imageData).."'") end
     if not (imgData.typeOf and imgData.typeOf("GPU.imageData")) then return error("Invalid ImageData Object") end
-    ImageDataKit.PasteImage = false; imgData:___pushimgdata(); if not ImageDataKit.PasteImage then return error("Fake ImageData Object") end
-    imageData:paste(ImageDataKit.PasteImage,dx or 0,dy or 0,sx or 0,sy or 0,sw or ImageDataKit.PasteImage:getWidth(), sh or ImageDataKit.PasteImage:getHeight())
+    ImageDataVars.PasteImage = false; imgData:___pushimgdata(); if not ImageDataVars.PasteImage then return error("Fake ImageData Object") end
+    imageData:paste(ImageDataVars.PasteImage,dx or 0,dy or 0,sx or 0,sy or 0,sw or ImageDataVars.PasteImage:getWidth(), sh or ImageDataVars.PasteImage:getHeight())
     return self
   end
   

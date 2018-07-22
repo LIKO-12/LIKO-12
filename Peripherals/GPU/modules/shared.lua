@@ -1,10 +1,10 @@
 --GPU: Shared Functions.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
-local SharedKit = GPUKit.Shared
+local SharedVars = GPUVars.Shared
 
 --==Localized Lua Library==--
 local mathFloor = math.floor
@@ -63,9 +63,9 @@ local function Verify(value,name,etype,allowNil)
   end
 end
 
---==GPUKit Exports==--
-SharedKit.setColor = setColor
-SharedKit.getColor = getColor
-SharedKit.colorTo1 = colorTo1
-SharedKit.colorTo255 = colorTo255
-SharedKit.Verify = Verify
+--==GPUVars Exports==--
+SharedVars.setColor = setColor
+SharedVars.getColor = getColor
+SharedVars.colorTo1 = colorTo1
+SharedVars.colorTo255 = colorTo255
+SharedVars.Verify = Verify
