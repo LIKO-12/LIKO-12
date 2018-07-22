@@ -87,27 +87,30 @@ function GPU.cursor(imgdata,name,hx,hy)
   end
 end
 
-events.register("love:resize",function() --The new size will be calculated in the top, because events are called by the order they were registered with
-    if not love.mouse.isCursorSupported() then return end
-    for k, cursor in pairs(_CursorsCache) do
-      --Hack
-      GPU.pushPalette()
-      GPU.pushPalette()
-      for i=1, 16 do
-        PaletteStack[#PaletteStack].trans[i] = cursor.palt[i]
-      end
-      GPU.popPalette()
-
-      local enimg = cursor.imgdata:enlarge(WindowVars.LIKOScale)
-      local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
-      local hotx, hoty = cursor.hx*math.floor(WindowVars.LIKOScale), cursor.hy*math.floor(WindowVars.LIKOScale) --Converted to host scale
-      local cur = love.mouse.newCursor(limg,hotx,hoty)
-      _CursorsCache[k].cursor = cur
-      GPU.popPalette()
+local function rebuildCursors() --The new size will be calculated in the top, because events are called by the order they were registered with
+  if not love.mouse.isCursorSupported() then return end
+  for k, cursor in pairs(_CursorsCache) do
+    --Hack
+    GPU.pushPalette()
+    GPU.pushPalette()
+    for i=1, 16 do
+      PaletteStack[#PaletteStack].trans[i] = cursor.palt[i]
     end
-    local cursor = CursorVars.Cursor; CursorVars.Cursor = "none" --Force the cursor to update.
-    GPU.cursor(cursor,CursorVars.GrappedCursor)
-  end)
+    GPU.popPalette()
+
+    local enimg = cursor.imgdata:enlarge(WindowVars.LIKOScale)
+    local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
+    local hotx, hoty = cursor.hx*math.floor(WindowVars.LIKOScale), cursor.hy*math.floor(WindowVars.LIKOScale) --Converted to host scale
+    local cur = love.mouse.newCursor(limg,hotx,hoty)
+    _CursorsCache[k].cursor = cur
+    GPU.popPalette()
+  end
+  local cursor = CursorVars.Cursor; CursorVars.Cursor = "none" --Force the cursor to update.
+  GPU.cursor(cursor,CursorVars.GrappedCursor)
+end
+
+events.register("love:resize",rebuildCursors)
 
 --==GPUVars Exports==--
 CursorVars.CursorsCache = _CursorsCache
+CursorVars.rebuildCursors = rebuildCursors
