@@ -28,4 +28,4 @@ for path in string.gmatch(PATH,"(.-);") do
   end
 end
 
-return 1, "Can't find command '"..program.."'"
+color(8) print("Can't find command '"..program.."'")
