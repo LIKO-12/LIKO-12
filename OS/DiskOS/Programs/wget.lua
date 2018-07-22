@@ -23,36 +23,27 @@ local filename = args[2]
 
 if address ~= nil then
   print("Downloading " .. address .. "...")
-  local request = WEB.send(address)
-  for event, id, url, data, errnum, errmsg, errline in pullEvent do
-    if event == "webrequest" then
-      if id == request then
-        if data then
-          if tonumber(data.code) ~= 200 then
-            return 1, "Request error, HTTP Error code: " .. data.code
-          else
-            if not filename then
-              local tokens = split(address, '/')
-              filename = tokens[#tokens]
-            end
-            if fs.exists(filename) then
-              return 1, "File called " .. filename .. " already exists!"
-            else
-              print("Saving to '" .. filename .. "'")
-              fs.write(filename, data.body)
-              print("File saved!")
-            end
+  local body, data, data2 = http.request(address)
 
-            return 0
-          end
-        else
-          return 1, "The request did not return any data"
-        end
+  if data then
+    if tonumber(data.code) ~= 200 then
+      return 1, "Request error, HTTP Error code: " .. data.code
+    else
+      if not filename then
+        local tokens = split(address, '/')
+        filename = tokens[#tokens]
       end
-    elseif event == "keypressed" then
-      if id == "escape" then
-        return 1, "Request Canceled"
+      if fs.exists(filename) then
+        return 1, "File called " .. filename .. " already exists!"
+      else
+        print("Saving to '" .. filename .. "'")
+        fs.write(filename, body)
+        print("File saved!")
       end
+
+      return 0
     end
+  else
+    return 1, "The request did not return any data"
   end
 end
