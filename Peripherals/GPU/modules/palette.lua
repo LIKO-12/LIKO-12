@@ -1,17 +1,17 @@
 --GPU: Colors palettes.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
-local PaletteKit = GPUKit.Palette
-local SharedKit = GPUKit.Shared
-local RenderKit = GPUKit.Render
-local GifKit = GPUKit.Gif
+local PaletteVars = GPUVars.Palette
+local SharedVars = GPUVars.Shared
+local RenderVars = GPUVars.Render
+local GifVars = GPUVars.Gif
 
---==Kits Constants==--
+--==Varss Constants==--
 
-local Verify = SharedKit.Verify
+local Verify = SharedVars.Verify
 
 --==Localized Lua Library==--
 
@@ -86,9 +86,9 @@ function GPU.colorPalette(id,r,g,b)
       _ColorSet[i] = {r,g,b,255}
       _DisplayPalette[i+1] = _ColorSet[i]
     end
-    RenderKit.DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
-    RenderKit.ShouldDraw = true
-    GifKit.PChanged = true
+    RenderVars.DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
+    RenderVars.ShouldDraw = true
+    GifVars.PChanged = true
     return
   end
   
@@ -105,9 +105,9 @@ function GPU.colorPalette(id,r,g,b)
     if b < 0 or b > 255 then return error("Blue value out of range ("..b..") Must be [0,255]") end
     _ColorSet[id] = {r,g,b,255}
     _DisplayPalette[id+1] = _ColorSet[id]
-    RenderKit.DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
-    RenderKit.ShouldDraw = true
-    GifKit.PChanged = true
+    RenderVars.DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
+    RenderVars.ShouldDraw = true
+    GifVars.PChanged = true
   else
     return unpack(_ColorSet[id])
   end
@@ -175,8 +175,8 @@ function GPU.pal(c0,c1,p)
     end
   end
   --If changes has been made then upload the data to the shaders.
-  if drawchange then RenderKit.DrawShader:send('palette',unpack(_DrawPalette)) end
-  if imagechange then RenderKit.ImageShader:send('palette',unpack(_ImagePalette)) end
+  if drawchange then RenderVars.DrawShader:send('palette',unpack(_DrawPalette)) end
+  if imagechange then RenderVars.ImageShader:send('palette',unpack(_ImagePalette)) end
 end
 
 function GPU.palt(c,t)
@@ -201,7 +201,7 @@ function GPU.palt(c,t)
       _ImageTransparent[1] = 0
     end
   end
-  if changed then RenderKit.ImageShader:send('transparent', unpack(_ImageTransparent)) end
+  if changed then RenderVars.ImageShader:send('transparent', unpack(_ImageTransparent)) end
 end
 
 --==Palettes Stacks==--
@@ -253,21 +253,21 @@ function GPU.popPalette()
       _ImageTransparent[i] = pal.trans[i]
     end
   end
-  if drawchange then RenderKit.DrawShader:send('palette',unpack(_DrawPalette)) end
-  if imgchange then RenderKit.ImageShader:send('palette',unpack(_ImagePalette)) end
-  if transchange then RenderKit.ImageShader:send('transparent', unpack(_ImageTransparent)) end
+  if drawchange then RenderVars.DrawShader:send('palette',unpack(_DrawPalette)) end
+  if imgchange then RenderVars.ImageShader:send('palette',unpack(_ImagePalette)) end
+  if transchange then RenderVars.ImageShader:send('transparent', unpack(_ImageTransparent)) end
   table.remove(PaletteStack,#PaletteStack)
 end
 
---==GPUKit Exports==--
-PaletteKit.ColorSet = _ColorSet
-PaletteKit.DrawPalette = _DrawPalette
-PaletteKit.ImagePalette = _ImagePalette
-PaletteKit.ImageTransparent = _ImageTransparent
-PaletteKit.DisplayPalette = _DisplayPalette
-PaletteKit.GetColor = _GetColor
-PaletteKit.GetColorID= _GetColorID
-PaletteKit.PaletteStack = PaletteStack
+--==GPUVars Exports==--
+PaletteVars.ColorSet = _ColorSet
+PaletteVars.DrawPalette = _DrawPalette
+PaletteVars.ImagePalette = _ImagePalette
+PaletteVars.ImageTransparent = _ImageTransparent
+PaletteVars.DisplayPalette = _DisplayPalette
+PaletteVars.GetColor = _GetColor
+PaletteVars.GetColorID= _GetColorID
+PaletteVars.PaletteStack = PaletteStack
 
 --==DevKit Exports==--
 DevKit._GetColor = _GetColor

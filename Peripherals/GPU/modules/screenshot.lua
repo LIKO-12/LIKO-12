@@ -1,23 +1,23 @@
 --GPU: Screenshot and Label image.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local lg = love.graphics
 
 local events = require("Engine.events")
 
-local Path = GPUKit.Path
-local MiscKit = GPUKit.Misc
-local WindowKit = GPUKit.Window
-local RenderKit = GPUKit.Render
-local SharedKit = GPUKit.Shared
+local Path = GPUVars.Path
+local MiscVars = GPUVars.Misc
+local WindowVars = GPUVars.Window
+local RenderVars = GPUVars.Render
+local SharedVars = GPUVars.Shared
 
---==Kits Constants==--
-local _LIKO_W, _LIKO_H = WindowKit.LIKO_W, WindowKit.LIKO_H
-local systemMessage = MiscKit.systemMessage
-local Verify = SharedKit.Verify
+--==Varss Constants==--
+local _LIKO_W, _LIKO_H = WindowVars.LIKO_W, WindowVars.LIKO_H
+local systemMessage = MiscVars.systemMessage
+local Verify = SharedVars.Verify
 
 --==Local Variables==--
 
@@ -35,8 +35,8 @@ function GPU.screenshot(x,y,w,h)
   w = Verify(w,"W","number",true)
   h = Verify(h,"H","number",true)
   lg.setCanvas()
-  local imgdata = GPU.imagedata(RenderKit.ScreenCanvas:newImageData(1,1,x,y,w,h))
-  lg.setCanvas{RenderKit.ScreenCanvas,stencil=true}
+  local imgdata = GPU.imagedata(RenderVars.ScreenCanvas:newImageData(1,1,x,y,w,h))
+  lg.setCanvas{RenderVars.ScreenCanvas,stencil=true}
   return imgdata
 end
 
@@ -70,8 +70,8 @@ events.register("love:keypressed", function(key)
     systemMessage("Screenshot has been taken successfully",2)
   elseif key == _LabelCaptureKey then
     lg.setCanvas()
-    LabelImage:paste(RenderKit.ScreenCanvas:newImageData(),0,0,0,0,_LIKO_W,_LIKO_H)
-    lg.setCanvas{RenderKit.ScreenCanvas,stencil=true}
+    LabelImage:paste(RenderVars.ScreenCanvas:newImageData(),0,0,0,0,_LIKO_W,_LIKO_H)
+    lg.setCanvas{RenderVars.ScreenCanvas,stencil=true}
     systemMessage("Captured label image successfully !",2)
   end
 end)

@@ -1,20 +1,20 @@
 --GPU: Mouse/Touch Input.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local events = require("Engine.events")
 
-local WindowKit = GPUKit.Window
-local SharedKit = GPUKit.Shared
+local WindowVars = GPUVars.Window
+local SharedVars = GPUVars.Shared
 
---==Kits Constants==--
-local _HostToLiko = WindowKit.HostToLiko
-local Verify = SharedKit.Verify
+--==Varss Constants==--
+local _HostToLiko = WindowVars.HostToLiko
+local Verify = SharedVars.Verify
 
 --==Local Variables==--
-local CPUKit = Config.CPUKit
+local CPUVars = Config.CPUVars
 
 --==GPU Mouse API==--
 
@@ -35,40 +35,40 @@ end
 events.register("love:mousepressed",function(x,y,b,istouch)
   x,y = _HostToLiko(x,y)
   events.trigger("GPU:mousepressed",x,y,b,istouch)
-  if CPUKit then CPUKit.triggerEvent("mousepressed",x,y,b,istouch) end
+  if CPUVars then CPUVars.triggerEvent("mousepressed",x,y,b,istouch) end
 end)
 events.register("love:mousemoved",function(x,y,dx,dy,istouch)
   x,y = _HostToLiko(x,y)
-  dx, dy = dx/WindowKit.LIKOScale, dy/WindowKit.LIKOScale
+  dx, dy = dx/WindowVars.LIKOScale, dy/WindowVars.LIKOScale
   events.trigger("GPU:mousemoved",x,y,dx,dy,istouch)
-  if CPUKit then CPUKit.triggerEvent("mousemoved",x,y,dx,dy,istouch) end
+  if CPUVars then CPUVars.triggerEvent("mousemoved",x,y,dx,dy,istouch) end
 end)
 events.register("love:mousereleased",function(x,y,b,istouch)
   x,y = _HostToLiko(x,y)
   events.trigger("GPU:mousereleased",x,y,b,istouch)
-  if CPUKit then CPUKit.triggerEvent("mousereleased",x,y,b,istouch) end
+  if CPUVars then CPUVars.triggerEvent("mousereleased",x,y,b,istouch) end
 end)
 events.register("love:wheelmoved",function(x,y)
   events.trigger("GPU:wheelmoved",x,y)
-  if CPUKit then CPUKit.triggerEvent("wheelmoved",x,y) end
+  if CPUVars then CPUVars.triggerEvent("wheelmoved",x,y) end
 end)
 
 --Touch Hooks (To translate them to LIKO12 screen)--
 events.register("love:touchpressed",function(id,x,y,dx,dy,p)
   x,y = _HostToLiko(x,y)
-  dx, dy = dx/WindowKit.LIKOScale, dy/WindowKit.LIKOScale
+  dx, dy = dx/WindowVars.LIKOScale, dy/WindowVars.LIKOScale
   events.trigger("GPU:touchpressed",id,x,y,dx,dy,p)
-  if CPUKit then CPUKit.triggerEvent("touchpressed",id,x,y,dx,dy,p) end
+  if CPUVars then CPUVars.triggerEvent("touchpressed",id,x,y,dx,dy,p) end
 end)
 events.register("love:touchmoved",function(id,x,y,dx,dy,p)
   x,y = _HostToLiko(x,y)
-  dx, dy = dx/WindowKit.LIKOScale, dy/WindowKit.LIKOScale
+  dx, dy = dx/WindowVars.LIKOScale, dy/WindowVars.LIKOScale
   events.trigger("GPU:touchmoved",id,x,y,dx,dy,p)
-  if CPUKit then CPUKit.triggerEvent("touchmoved",id,x,y,dx,dy,p) end
+  if CPUVars then CPUVars.triggerEvent("touchmoved",id,x,y,dx,dy,p) end
 end)
 events.register("love:touchreleased",function(id,x,y,dx,dy,p)
   x,y = _HostToLiko(x,y)
-  dx, dy = dx/WindowKit.LIKOScale, dy/WindowKit.LIKOScale
+  dx, dy = dx/WindowVars.LIKOScale, dy/WindowVars.LIKOScale
   events.trigger("GPU:touchreleased",id,x,y,dx,dy,p)
-  if CPUKit then CPUKit.triggerEvent("touchreleased",id,x,y,dx,dy,p) end
+  if CPUVars then CPUVars.triggerEvent("touchreleased",id,x,y,dx,dy,p) end
 end)

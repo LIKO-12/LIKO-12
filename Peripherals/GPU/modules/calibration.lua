@@ -1,15 +1,15 @@
 --GPU: Calibations and graphics card info.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local lg = love.graphics
 
 local json = require("Engine.JSON")
 
-local Path = GPUKit.Path
-local CalibrationKit = GPUKit.Calibration
+local Path = GPUVars.Path
+local CalibrationVars = GPUVars.Calibration
 
 --==Local Variables==--
 
@@ -61,5 +61,5 @@ if gpuVersion == "OpenGL ES 3.1 v1.r7p0-03rel0.b8759509ece0e6dda5325cb53763bcf0"
   ofs.screen = {0,-1}
 end
 
---==GPUKit Exports==--
-CalibrationKit.Offsets = ofs
+--==GPUVars Exports==--
+CalibrationVars.Offsets = ofs

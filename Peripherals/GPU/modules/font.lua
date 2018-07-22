@@ -1,13 +1,13 @@
 --GPU: ImageData Object.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
-local SharedKit = GPUKit.Shared
+local SharedVars = GPUVars.Shared
 
---==Kits Constants==--
-local Verify = SharedKit.Verify
+--==Varss Constants==--
+local Verify = SharedVars.Verify
 
 function GPU.fontdata(cw,ch)
   
