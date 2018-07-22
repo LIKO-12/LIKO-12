@@ -15,7 +15,7 @@ local mathFloor = math.floor
 
 --==Local Variables==--
 
-local CPUVars = Config.CPUVars
+local CPUKit = Config.CPUKit
 
 local _Mobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS" or Config._Mobile
 
@@ -84,7 +84,7 @@ events.register("love:filedropped", function(file)
   file:open("r")
   local data = file:read()
   file:close()
-  if CPUVars then CPUVars.triggerEvent("filedropped",file:getFilename(),data) end
+  if CPUKit then CPUKit.triggerEvent("filedropped",file:getFilename(),data) end
 end)
 
 --==Graphics Initializations==--
