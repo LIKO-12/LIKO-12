@@ -169,11 +169,8 @@ function ce:drawBlink()
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   if self.bflag then
     local bx,by,bw,bh = (self.cx-self.vx+1)*(self.fw+1)-4,(self.cy-self.vy+1)*(self.fh+1)+1, self.fw+1,self.fh
-    local bgimg = screenshot(bx,by,bw,bh+1)
     rect(bx,by,bw,bh, false, self.theme.cursor)
-    palt(5,true)
-    bgimg:image():draw(bx,by-1)
-    palt(5,false)
+    color(5) print(buffer[self.cy]:sub(self.cx,self.cx),bx,by)
   end
 end
 
