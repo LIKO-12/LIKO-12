@@ -53,14 +53,14 @@ function GPU.cursor(imgdata,name,hx,hy)
   elseif type(imgdata) == "table" then --Create a new cursor from an image.
     if not( imgdata.enlarge and imgdata.export and imgdata.type ) then return error("Invalied image") end
     if imgdata:type() ~= "GPU.imageData" then return error("Invalied image object") end
-    
+
     name = name or "default"
     Verify(name,"Name","string")
-    
+
     hx, hy = hx or 0, hy or 0
     hx = Verify(hx,"Hot X","number",true)
     hy = Verify(hy,"Hot Y","number",true)
-    
+
     local enimg = imgdata:enlarge(WindowVars.LIKOScale)
     --local img = lg.newImage(love.filesystem.newFileData(imgdata:export(),"cursor.png"))
     local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
@@ -68,7 +68,7 @@ function GPU.cursor(imgdata,name,hx,hy)
     gifimg:mapPixel(function(x,y) return imgdata:getPixel(x,y)/255,0,0,1 end)
     gifimg:mapPixel(_EncodeTransparent)
     gifimg = lg.newImage(gifimg)
-    
+
     local hotx, hoty = hx*math.floor(WindowVars.LIKOScale), hy*math.floor(WindowVars.LIKOScale) --Converted to host scale
     local cur = love.mouse.isCursorSupported() and love.mouse.newCursor(limg,hotx,hoty) or {}
     local palt = {}
@@ -88,26 +88,26 @@ function GPU.cursor(imgdata,name,hx,hy)
 end
 
 events.register("love:resize",function() --The new size will be calculated in the top, because events are called by the order they were registered with
-  if not love.mouse.isCursorSupported() then return end
-  for k, cursor in pairs(_CursorsCache) do
-     --Hack
-    GPU.pushPalette()
-    GPU.pushPalette()
-    for i=1, 16 do
-      PaletteStack[#PaletteStack].trans[i] = cursor.palt[i]
+    if not love.mouse.isCursorSupported() then return end
+    for k, cursor in pairs(_CursorsCache) do
+      --Hack
+      GPU.pushPalette()
+      GPU.pushPalette()
+      for i=1, 16 do
+        PaletteStack[#PaletteStack].trans[i] = cursor.palt[i]
+      end
+      GPU.popPalette()
+
+      local enimg = cursor.imgdata:enlarge(WindowVars.LIKOScale)
+      local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
+      local hotx, hoty = cursor.hx*math.floor(WindowVars.LIKOScale), cursor.hy*math.floor(WindowVars.LIKOScale) --Converted to host scale
+      local cur = love.mouse.newCursor(limg,hotx,hoty)
+      _CursorsCache[k].cursor = cur
+      GPU.popPalette()
     end
-    GPU.popPalette()
-    
-    local enimg = cursor.imgdata:enlarge(WindowVars.LIKOScale)
-    local limg = love.image.newImageData(love.filesystem.newFileData(enimg:export(),"cursor.png")) --Take it out to love image object
-    local hotx, hoty = cursor.hx*math.floor(WindowVars.LIKOScale), cursor.hy*math.floor(WindowVars.LIKOScale) --Converted to host scale
-    local cur = love.mouse.newCursor(limg,hotx,hoty)
-    _CursorsCache[k].cursor = cur
-    GPU.popPalette()
-  end
-  local cursor = CursorVars.Cursor; CursorVars.Cursor = "none" --Force the cursor to update.
-  GPU.cursor(cursor,CursorVars.GrappedCursor)
-end)
+    local cursor = CursorVars.Cursor; CursorVars.Cursor = "none" --Force the cursor to update.
+    GPU.cursor(cursor,CursorVars.GrappedCursor)
+  end)
 
 --==GPUVars Exports==--
 CursorVars.CursorsCache = _CursorsCache
