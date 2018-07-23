@@ -108,7 +108,7 @@ if _LIKO_Old or not love.filesystem.getInfo("/Misc/LIKO-12_Source.love") then
 end
 
 GPU.printCursor(0,3,0)
-GPU.print(string.format("NormBIOS Revision %d%d%d-017",_LVer.major,_LVer.minor,_LVer.patch))
+GPU.print(string.format("NormBIOS Revision %d%d%d-018",_LVer.major,_LVer.minor,_LVer.patch))
 if DevMode then GPU.color(6) GPU.print("# Devmode Enabled #") GPU.color(7) end
 GPU.print("")
 
@@ -169,7 +169,7 @@ if _LIKO_Old then
   love.filesystem.write("Misc/.version",tostring(_LIKO_Version)) --Update the .version file
 end
 
-if DevMode and love.thread and not fs.exists("/.noupdate") then
+if DevMode and love.thread and not fs.exists("/.noupdate") and not enterSetup then
   local FThread = love.thread.newThread("/BIOS/filethread.lua") --File tracking thread
   FThread:start()
   

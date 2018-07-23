@@ -1,15 +1,15 @@
 --GPU: Calibations and graphics card info.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local lg = love.graphics
 
 local json = require("Engine.JSON")
 
-local Path = GPUKit.Path
-local CalibrationKit = GPUKit.Calibration
+local Path = GPUVars.Path
+local CalibrationVars = GPUVars.Calibration
 
 --==Local Variables==--
 
@@ -18,7 +18,8 @@ local _CanvasFormats = lg.getCanvasFormats()
 --==Graphics card info==--
 
 local gpuName, gpuVersion, gpuVendor, gpuDevice = lg.getRendererInfo() --Used to apply some device specific bugfixes.
-if not love.filesystem.getInfo("/Misc/GPUInfo.txt","file") then love.filesystem.write("/Misc/GPUInfo.txt",gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice) end
+local gpuInfo = gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice
+if not love.filesystem.getInfo("/Misc/GPUInfo.txt","file") then love.filesystem.write("/Misc/GPUInfo.txt",gpuInfo) end
 
 --==Graphics card supported canvases info==--
 
@@ -40,17 +41,19 @@ end
 
 --==Calibration Process==--
 
-local calibVersion,ofs = 1.4
+local calibVersion,ofs = 1.5
 if love.filesystem.getInfo("/Misc/GPUCalibration.json","file") then
   ofs = json:decode(love.filesystem.read("/Misc/GPUCalibration.json"))
-  if ofs.version < calibVersion then --Redo calibration
+  if ofs.version < calibVersion or ofs.info ~= gpuInfo then --Redo calibration
     ofs = love.filesystem.load(Path.."scripts/calibrate.lua")()
     ofs.version = calibVersion
+    ofs.info = gpuInfo
     love.filesystem.write("/Misc/GPUCalibration.json",json:encode_pretty(ofs))
   end
 else
   ofs = love.filesystem.load(Path.."scripts/calibrate.lua")()
   ofs.version = calibVersion
+  ofs.info = gpuInfo
   love.filesystem.write("/Misc/GPUCalibration.json",json:encode_pretty(ofs))
 end
 
@@ -61,5 +64,5 @@ if gpuVersion == "OpenGL ES 3.1 v1.r7p0-03rel0.b8759509ece0e6dda5325cb53763bcf0"
   ofs.screen = {0,-1}
 end
 
---==GPUKit Exports==--
-CalibrationKit.Offsets = ofs
+--==GPUVars Exports==--
+CalibrationVars.Offsets = ofs

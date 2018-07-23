@@ -1,4 +1,4 @@
-LK12;OSData;DiskOS;DiskGame;V3;192x128;C:none;CLvl:0;
+LK12;OSData;DiskOS;DiskGame;V4;API_1;192x128;C:none;CLvl:0;
 ___luacode___
 --Snake Game V1.1 by RamiLego4Game--
 --Map Size = 24x16
@@ -29,7 +29,7 @@ bgimg = bgimg:image()
 local TMap, headx, heady, headid, headrot
 local tail, tails, tailid, newrot
 local state = 0 --Start, Play, End
-local speedup, timer, tick = 0.1
+local speedup, timer, tick = 0.01
 
 --Helping functions--
 --Center Print
@@ -77,7 +77,8 @@ function _init()
  tailid = 1
  timer, tick = 0, 0.35
  
- --Add a fruit
+ --Add 2 fruits
+ newFruit()
  newFruit()
 end
 
@@ -147,7 +148,7 @@ function _update(dt)
  else --Fine
   if htile >= 18 then --Fruit
    tail = tail + 1
-   tick = tick - tick*speedup
+   tick = tick - speedup
    newFruit() --Place new fruit
   end
  end

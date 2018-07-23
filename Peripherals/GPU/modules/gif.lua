@@ -1,30 +1,30 @@
 --GPU: Gif recording.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local lg = love.graphics
 
 local events = require("Engine.events")
 
-local Path = GPUKit.Path
-local GifKit = GPUKit.Gif
-local WindowKit = GPUKit.Window
-local PaletteKit = GPUKit.Palette
-local RenderKit = GPUKit.Render
-local CalibrationKit = GPUKit.Calibration
-local MiscKit = GPUKit.Misc
-local CursorKit = GPUKit.Cursor
-local MatrixKit = GPUKit.Matrix
+local Path = GPUVars.Path
+local GifVars = GPUVars.Gif
+local WindowVars = GPUVars.Window
+local PaletteVars = GPUVars.Palette
+local RenderVars = GPUVars.Render
+local CalibrationVars = GPUVars.Calibration
+local MiscVars = GPUVars.Misc
+local CursorVars = GPUVars.Cursor
+local MatrixVars = GPUVars.Matrix
 
---==Kits Constants==--
-local _CursorsCache = CursorKit.CursorsCache
-local systemMessage = MiscKit.systemMessage
-local _ColorSet = PaletteKit.ColorSet
-local ofs = CalibrationKit.Offsets
-local _LIKO_W = WindowKit.LIKO_W
-local _LIKO_H = WindowKit.LIKO_H
+--==Varss Constants==--
+local _CursorsCache = CursorVars.CursorsCache
+local systemMessage = MiscVars.systemMessage
+local _ColorSet = PaletteVars.ColorSet
+local ofs = CalibrationVars.Offsets
+local _LIKO_W = WindowVars.LIKO_W
+local _LIKO_H = WindowVars.LIKO_H
 
 --==Local Variables==--
 local _GIFScale = math.floor(Config._GIFScale or 2) --The gif scale factor (must be int).
@@ -36,7 +36,7 @@ local _GIFTimer, _GIFRec = 0
 local _GIFPStart --The gif starting palette compairing string.
 local _GIFPal --The gif palette string, should be 16*3 bytes long.
 
-GifKit.PChanged = false --A flag to indicate that the palette did change while gif recording
+GifVars.PChanged = false --A flag to indicate that the palette did change while gif recording
 
 --==Canvas Creation==--
 
@@ -55,13 +55,13 @@ local function startGifRecording()
   if love.filesystem.getInfo("/~gifrec.gif","file") then
     _GIFRec = _GIF.continue("/~gifrec.gif")
     _GIFPStart = love.filesystem.read("/~gifrec.pal")
-    GifKit.PChanged = true --To check if it's the same palette
+    GifVars.PChanged = true --To check if it's the same palette
     _GIFPal = false
     systemMessage("Resumed gif recording",1,false,false,true)
     return
   end
   _GIFRec = _GIF.new("/~gifrec.gif",_ColorSet)
-  GifKit.PChanged = false
+  GifVars.PChanged = false
   _GIFPStart = ""
   for i=0,15 do
     local p = _ColorSet[i]
@@ -156,13 +156,13 @@ events.register("love:update",function(dt)
     _GIFTimer = _GIFTimer % _GIFFrameTime
     lg.setCanvas() --Quit the canvas and return to the host screen.
     
-    if MatrixKit.PatternFill then
+    if MatrixVars.PatternFill then
       lg.setStencilTest()
     end
     
     lg.push()
     lg.origin() --Reset all transformations.
-    if MatrixKit.Clip then lg.setScissor() end
+    if MatrixVars.Clip then lg.setScissor() end
     
     GPU.pushColor() --Push the current color to the stack.
     lg.setColor(1,1,1,1) --I don't want to tint the canvas :P
@@ -175,41 +175,41 @@ events.register("love:update",function(dt)
     
     lg.setShader()
     
-    lg.draw(RenderKit.ScreenCanvas, ofs.screen[1], ofs.screen[2], 0, _GIFScale, _GIFScale) --Draw the canvas.
+    lg.draw(RenderVars.ScreenCanvas, ofs.screen[1], ofs.screen[2], 0, _GIFScale, _GIFScale) --Draw the canvas.
     
-    if CursorKit.Cursor ~= "none" then --Draw the cursor
+    if CursorVars.Cursor ~= "none" then --Draw the cursor
       local cx, cy = GPU.getMPos()
-      lg.draw(_CursorsCache[CursorKit.Cursor].gifimg,(cx-_CursorsCache[CursorKit.Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[CursorKit.Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
+      lg.draw(_CursorsCache[CursorVars.Cursor].gifimg,(cx-_CursorsCache[CursorVars.Cursor].hx)*_GIFScale-1,(cy-_CursorsCache[CursorVars.Cursor].hy)*_GIFScale-1,0,_GIFScale,_GIFScale)
     end
     
-    if MiscKit.MSGTimer > 0 and MiscKit.LastMSGGif then
-      lg.setColor(MiscKit.LastMSGColor/255,0,0,1)
+    if MiscVars.MSGTimer > 0 and MiscVars.LastMSGGif then
+      lg.setColor(MiscVars.LastMSGColor/255,0,0,1)
       lg.rectangle("fill", ofs.screen[1]+ofs.rect[1], ofs.screen[2] + (_LIKO_H-8) * _GIFScale + ofs.rect[2],
       _LIKO_W *_GIFScale + ofs.rectSize[1], 8*_GIFScale + ofs.rectSize[2])
-      lg.setColor(MiscKit.LastMSGTColor/255,0,0,1)
+      lg.setColor(MiscVars.LastMSGTColor/255,0,0,1)
       lg.push()
       lg.translate(ofs.screen[1]+ofs.print[1]+_GIFScale, ofs.screen[2] + (_LIKO_H-7) * _GIFScale + ofs.print[2])
       lg.scale(_GIFScale,_GIFScale)
-      lg.print(MiscKit.LastMSG,0,0)
+      lg.print(MiscVars.LastMSG,0,0)
       lg.pop()
       lg.setColor(1,1,1,1)
     end
     
     lg.setCanvas()
-    lg.setShader(RenderKit.DrawShader)
+    lg.setShader(RenderVars.DrawShader)
     
     lg.pop() --Reapply the offset.
-    lg.setCanvas{RenderKit.ScreenCanvas,stencil=true} --Reactivate the canvas.
+    lg.setCanvas{RenderVars.ScreenCanvas,stencil=true} --Reactivate the canvas.
     
-    if MatrixKit.PatternFill then
-      lg.stencil(MatrixKit.PatternFill, "replace", 1)
+    if MatrixVars.PatternFill then
+      lg.stencil(MatrixVars.PatternFill, "replace", 1)
       lg.setStencilTest("greater",0)
     end
     
-    if MatrixKit.Clip then lg.setScissor(unpack(MatrixKit.Clip)) end
+    if MatrixVars.Clip then lg.setScissor(unpack(MatrixVars.Clip)) end
     GPU.popColor() --Restore the active color.
     
-    if GifKit.PChanged then
+    if GifVars.PChanged then
       _GIFPal = ""
       for i=0,15 do
         local p = _ColorSet[i]
@@ -220,8 +220,8 @@ events.register("love:update",function(dt)
       end
     end
     
-    _GIFRec:frame(_GIFCanvas:newImageData(),_GIFPal,GifKit.PChanged)
+    _GIFRec:frame(_GIFCanvas:newImageData(),_GIFPal,GifVars.PChanged)
     
-    GifKit.PChanged = false
+    GifVars.PChanged = false
   end
 end)

@@ -1,17 +1,17 @@
 --GPU: Mouse/Touch Input.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local events = require("Engine.events")
 
-local WindowKit = GPUKit.Window
-local SharedKit = GPUKit.Shared
+local WindowVars = GPUVars.Window
+local SharedVars = GPUVars.Shared
 
---==Kits Constants==--
-local _HostToLiko = WindowKit.HostToLiko
-local Verify = SharedKit.Verify
+--==Varss Constants==--
+local _HostToLiko = WindowVars.HostToLiko
+local Verify = SharedVars.Verify
 
 --==Local Variables==--
 local CPUKit = Config.CPUKit
@@ -39,7 +39,7 @@ events.register("love:mousepressed",function(x,y,b,istouch)
 end)
 events.register("love:mousemoved",function(x,y,dx,dy,istouch)
   x,y = _HostToLiko(x,y)
-  dx, dy = dx/WindowKit.LIKOScale, dy/WindowKit.LIKOScale
+  dx, dy = dx/WindowVars.LIKOScale, dy/WindowVars.LIKOScale
   events.trigger("GPU:mousemoved",x,y,dx,dy,istouch)
   if CPUKit then CPUKit.triggerEvent("mousemoved",x,y,dx,dy,istouch) end
 end)
@@ -56,19 +56,19 @@ end)
 --Touch Hooks (To translate them to LIKO12 screen)--
 events.register("love:touchpressed",function(id,x,y,dx,dy,p)
   x,y = _HostToLiko(x,y)
-  dx, dy = dx/WindowKit.LIKOScale, dy/WindowKit.LIKOScale
+  dx, dy = dx/WindowVars.LIKOScale, dy/WindowVars.LIKOScale
   events.trigger("GPU:touchpressed",id,x,y,dx,dy,p)
   if CPUKit then CPUKit.triggerEvent("touchpressed",id,x,y,dx,dy,p) end
 end)
 events.register("love:touchmoved",function(id,x,y,dx,dy,p)
   x,y = _HostToLiko(x,y)
-  dx, dy = dx/WindowKit.LIKOScale, dy/WindowKit.LIKOScale
+  dx, dy = dx/WindowVars.LIKOScale, dy/WindowVars.LIKOScale
   events.trigger("GPU:touchmoved",id,x,y,dx,dy,p)
   if CPUKit then CPUKit.triggerEvent("touchmoved",id,x,y,dx,dy,p) end
 end)
 events.register("love:touchreleased",function(id,x,y,dx,dy,p)
   x,y = _HostToLiko(x,y)
-  dx, dy = dx/WindowKit.LIKOScale, dy/WindowKit.LIKOScale
+  dx, dy = dx/WindowVars.LIKOScale, dy/WindowVars.LIKOScale
   events.trigger("GPU:touchreleased",id,x,y,dx,dy,p)
   if CPUKit then CPUKit.triggerEvent("touchreleased",id,x,y,dx,dy,p) end
 end)

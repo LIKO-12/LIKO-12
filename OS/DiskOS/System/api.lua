@@ -1,6 +1,7 @@
 --Build DiskOS APIs--
-_DiskVer = 3 --It's a global
+_DiskVer = 4 --It's a global
 _MinDiskVer = 2
+_APIVer = 1
 
 function input()
   local t = ""

@@ -1,27 +1,27 @@
 --GPU: Screenshot and Label image.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local lg = love.graphics
 
-local SharedKit = GPUKit.Shared
-local RenderKit = GPUKit.Render
-local WindowKit = GPUKit.Window
-local ImageDataKit = GPUKit.ImageData
-local MatrixKit = GPUKit.Matrix
+local SharedVars = GPUVars.Shared
+local RenderVars = GPUVars.Render
+local WindowVars = GPUVars.Window
+local ImageDataVars = GPUVars.ImageData
+local MatrixVars = GPUVars.Matrix
 
---==Kits Constants==--
+--==Varss Constants==--
 
-local Verify = SharedKit.Verify
-local _LIKO_W = WindowKit.LIKO_W
-local _LIKO_H = WindowKit.LIKO_H
+local Verify = SharedVars.Verify
+local _LIKO_W = WindowVars.LIKO_W
+local _LIKO_H = WindowVars.LIKO_H
 
 --==Local Variables==--
 
-MatrixKit.Clip = false --The current active clipping region.
-MatrixKit.PatternFill = false --The pattern stencil function.
+MatrixVars.Clip = false --The current active clipping region.
+MatrixVars.PatternFill = false --The pattern stencil function.
 
 --==GPU Matrix API==--
 
@@ -85,25 +85,25 @@ function GPU.patternFill(img)
     
     local IMG = love.image.newImageData(img:size())
     img:___pushimgdata()
-    IMG:paste(ImageDataKit.PasteImage,0,0)
-    ImageDataKit.PasteImage = nil
+    IMG:paste(ImageDataVars.PasteImage,0,0)
+    ImageDataVars.PasteImage = nil
     
     IMG = lg.newImage(IMG)
     
     local QUAD = img:quad(0,0,_LIKO_W,_LIKO_H)
     
-    MatrixKit.PatternFill = function()
-      lg.setShader(RenderKit.StencilShader)
+    MatrixVars.PatternFill = function()
+      lg.setShader(RenderVars.StencilShader)
       
       lg.draw(IMG, QUAD, 0,0)
       
-      lg.setShader(RenderKit.DrawShader)
+      lg.setShader(RenderVars.DrawShader)
     end
     
-    lg.stencil(MatrixKit.PatternFill, "replace", 1)
+    lg.stencil(MatrixVars.PatternFill, "replace", 1)
     lg.setStencilTest("greater",0)
   else
-    MatrixKit.PatternFill = nil
+    MatrixVars.PatternFill = nil
     lg.setStencilTest()
   end
 end
@@ -119,11 +119,11 @@ function GPU.clip(x,y,w,h)
     Verify(w,"W","number")
     Verify(h,"H","number")
     
-    MatrixKit.Clip = {x,y,w,h}
-    lg.setScissor(unpack(MatrixKit.Clip))
+    MatrixVars.Clip = {x,y,w,h}
+    lg.setScissor(unpack(MatrixVars.Clip))
   else
-    local oldClip = MatrixKit.Clip
-    MatrixKit.Clip = false
+    local oldClip = MatrixVars.Clip
+    MatrixVars.Clip = false
     lg.setScissor()
     
     return oldClip

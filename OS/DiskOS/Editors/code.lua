@@ -29,6 +29,7 @@ Be sure to read the contributing guide in Editors/init.lua
 ==Contributors to this file==
 (Add your name when contributing to this file)
 
+- technomancy
 - Rami Sabbagh (RamiLego4Game)
 - Fernando Carmona Varo (Ferk)
 - Lucas Henrique (lhs_azevedo)
@@ -167,7 +168,9 @@ function ce:drawBlink()
   if self.sxs then return end
   if self.cy-self.vy < 0 or self.cy-self.vy > self.th-1 then return end
   if self.bflag then
-    rect((self.cx-self.vx+1)*(self.fw+1)-4,(self.cy-self.vy+1)*(self.fh+1)+1, self.fw+1,self.fh-1, false, self.theme.cursor)
+    local bx,by,bw,bh = (self.cx-self.vx+1)*(self.fw+1)-4,(self.cy-self.vy+1)*(self.fh+1)+1, self.fw+1,self.fh
+    rect(bx,by,bw,bh, false, self.theme.cursor)
+    color(5) print(buffer[self.cy]:sub(self.cx,self.cx),bx,by)
   end
 end
 
