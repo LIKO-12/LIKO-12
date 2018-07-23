@@ -10,6 +10,7 @@ local DevMode = love.filesystem.getInfo("/Misc/devmode.txt") and true or false
 local coreg = require("Engine.coreg")
 
 --Peripherals
+local Keyboard = Handled.Keyboard
 local BIOS = Handled.BIOS
 local GPU = Handled.GPU
 local CPU = Handled.CPU
@@ -175,8 +176,22 @@ tabs[1] = {"Info",{
     {"GPU: ",select(4,love.graphics.getRendererInfo()).." - "..love.graphics.getRendererInfo()},
     {""},
     {"Power State:      ",function() return love.system.getPowerInfo() end},
-    {"Battery Charge:   ",function() return select(2,love.system.getPowerInfo()) or "-" end},
-    {"Remaining Time:   ",function() return select(3,love.system.getPowerInfo()) or "-" end},
+    {"Battery Charge:   ",function()
+      local _, precent = love.system.getPowerInfo()
+      if precent then
+        return precent.."%"
+      else
+        return "-"
+      end
+    end},
+    {"Remaining Time:   ",function()
+      local _,_,time = love.system.getPowerInfo()
+      if time then
+        return math.floor(time/60).."m"
+      else
+        return "-"
+      end
+    end},
     {""},
     {"Host Info:     ","[Deselect]"},
   },
@@ -210,9 +225,6 @@ tabs[2] = {"Peripherals",defaultEvents}
 tabs[3] = {"Boot",defaultEvents}
 tabs[4] = {"Tools",defaultEvents}
 
+TC.setInput(true)
+Keyboard.keyrepeat(true)
 eventLoop()
-
---[[local mainEvents = {}
-mainEvents.update = drawUI
-
-eventLoop(mainEvents)]]
