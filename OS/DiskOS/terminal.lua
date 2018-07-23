@@ -10,9 +10,11 @@ local GameDiskOS = (MainDrive == "GameDiskOS")
 local PATH = "D:/Programs/;C:/Programs/;" --The system PATH variable, used by the terminal to search for programs.
 local curdrive, curdir, curpath = "D", "/", "D:/" --The current active path in the terminal.
 
-if GameDiskOS then
-  PATH = "GameDiskOS:/Programs/;"
-  curdrive, curpath = "GameDiskOS", "GameDiskOS:/"
+--Add the sub-directories.
+for id, dirName in ipairs(fs.getDirectoryItems("C:/Programs/")) do
+  if fs.isDirectory("C:/Programs/"..dirName) then
+    PATH = PATH.."C:/Programs/"..dirName.."/;"
+  end
 end
 
 local editor --The editors api, will be loaded later in term.init()
@@ -101,6 +103,12 @@ end
 
 --Reload the system
 function term.reload()
+  --Backup the loaded game and the active editor
+  local game_data = editor:export()
+  local api_version = editor.apiVersion
+  local game_path = editor.filePath
+  local active_editor = editor.active
+  
   package.loaded = {} --Reset the package system
   package.loaded[MainDrive..":/terminal.lua"] = term --Restore the current terminal instance
 
@@ -110,6 +118,12 @@ function term.reload()
   end
 
   editor = require("Editors") --Re initialize the editors
+  
+  --Restore the loaded game and the active editor
+  editor:import(game_data)
+  editor.apiVersion = api_version
+  editor.filePath = game_path
+  editor.active = active_editor
 end
 
 function term.setdrive(d)

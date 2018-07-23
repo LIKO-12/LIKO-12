@@ -40,6 +40,11 @@ if destination ~= "@clip" and fs.isReadonly(destination) then
   return 1, "Destination is readonly !"
 end
 
+local backup
+if destination ~= "@clip" and fs.exists(destination) then
+  backup = fs.read(destination)
+end
+
 local sw, sh = screenSize()
 
 if string.lower(flag) == "--sheet" then --Sheet export
@@ -47,12 +52,12 @@ if string.lower(flag) == "--sheet" then --Sheet export
   if destination == "@clip" then clipboard(data) else fs.write(destination,data) end
   color(11) print("Exported Spritesheet successfully")
   return
-elseif string.lower(flag) == "--map" then --Sheet export
+elseif string.lower(flag) == "--map" then --TileMap export
   local data = eapi.leditors[eapi.editors.tile]:export(true)
   if destination == "@clip" then clipboard(data) else fs.write(destination,data) end
   color(11) print("Exported Spritesheet successfully")
   return
-elseif string.lower(flag) == "--code" then
+elseif string.lower(flag) == "--code" then --Lua code export
   local data = eapi.leditors[eapi.editors.code]:export(true)
   if destination == "@clip" then clipboard(data) else fs.write(destination:sub(1,-6)..".lua",data) end
   color(11) print("Exported Lua code successfully")
@@ -62,14 +67,15 @@ end
 eapi.filePath = destination
 
 local editorsData = (string.lower(flag) == "-b" or png) and eapi:encode() or eapi:export()
+local apiVersion = eapi.apiVersion
 local diskData = ""
 
 if string.lower(flag) == "-c" then
-  diskData = LK12Utils.encodeDiskGame(editorsData,ctype,clvl)
+  diskData = LK12Utils.encodeDiskGame(editorsData,ctype,clvl,apiVersion)
 elseif string.lower(flag) == "-b" or png then
-  diskData = LK12Utils.encodeDiskGame(editorsData,"binary")
+  diskData = LK12Utils.encodeDiskGame(editorsData,"binary",false,apiVersion)
 else
-  diskData = LK12Utils.encodeDiskGame(editorsData)
+  diskData = LK12Utils.encodeDiskGame(editorsData,false,false,apiVersion)
 end
 
 if string.lower(flag) == "-color" and png then
@@ -87,6 +93,10 @@ elseif png then
   fs.write(destination, FDD.exportDisk())
 else
   fs.write(destination,diskData)
+end
+
+if backup then
+  fs.write("C:/_backup.lk12", backup)
 end
 
 color(11) print(destination == "@clip" and "Saved to clipboard successfully" or "Saved successfully")

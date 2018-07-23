@@ -20,3 +20,4 @@ There's a public github repository for LIKO-12 disk: https://ramilego4game.githu
 LIKO-12 can use post shader, check https://github.com/RamiLego4Game/LIKO-12-Shaders
 Don't forget to give a star in LIKO-12 Github https://github.com/RamiLego4Game/LIKO-12
 LIKO-12 Nightly-Builds are available at https://ramilego4game.github.io/LIKO-12-Nightly
+A backup of the .lk12 is created when saving at C:/_backup.lk12

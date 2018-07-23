@@ -1,19 +1,19 @@
 --GPU: Printing.
 
 --luacheck: push ignore 211
-local Config, GPU, yGPU, GPUKit, DevKit = ...
+local Config, GPU, yGPU, GPUVars, DevKit = ...
 --luacheck: pop
 
 local lg = love.graphics
 
 local utf8 = require("utf8")
 
-local Path = GPUKit.Path
-local WindowKit = GPUKit.Window
-local SharedKit = GPUKit.Shared
-local CalibrationKit = GPUKit.Calibration
-local VRamKit = GPUKit.VRam
-local RenderKit = GPUKit.Render
+local Path = GPUVars.Path
+local WindowVars = GPUVars.Window
+local SharedVars = GPUVars.Shared
+local CalibrationVars = GPUVars.Calibration
+local VRamVars = GPUVars.VRam
+local RenderVars = GPUVars.Render
 
 --==Localized Lua Library==--
 local strByte = string.byte
@@ -22,11 +22,11 @@ local strChar = string.char
 local utf8Char = utf8.char
 local utf8Len = utf8.len
 
---==Kits Constants==--
-local _LIKO_W, _LIKO_H = WindowKit.LIKO_W, WindowKit.LIKO_H
-local Verify = SharedKit.Verify
-local ofs = CalibrationKit.Offsets
-local UnbindVRAM = VRamKit.UnbindVRAM
+--==Varss Constants==--
+local _LIKO_W, _LIKO_H = WindowVars.LIKO_W, WindowVars.LIKO_H
+local Verify = SharedVars.Verify
+local ofs = CalibrationVars.Offsets
+local UnbindVRAM = VRamVars.UnbindVRAM
 
 --==Local Functions==--
 local function escapeASCIIGSub(char)
@@ -110,9 +110,9 @@ function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
     
     --Print to the screen
     if limit then --Wrapped
-      lg.printf(t,x+ofs.print[1],y+ofs.print[2],limit,align,r,sx,sy,ox,oy,kx,ky) RenderKit.ShouldDraw = true
+      lg.printf(t,x+ofs.print[1],y+ofs.print[2],limit,align,r,sx,sy,ox,oy,kx,ky) RenderVars.ShouldDraw = true
     else
-      lg.print(t,x+ofs.print[1],y+ofs.print[2],r,sx,sy,ox,oy,kx,ky) RenderKit.ShouldDraw = true
+      lg.print(t,x+ofs.print[1],y+ofs.print[2],r,sx,sy,ox,oy,kx,ky) RenderVars.ShouldDraw = true
     end
   else --Print to terminal pos
     local pc = printCursor --Shortcut
@@ -167,7 +167,7 @@ function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
       if wrappedText[k+1] then pc.y = pc.y + 1 end --If there's a next line
     end
     
-    lg.printf(pre_spaces..t,1+ofs.print_grid[1],drawY*(_FontH+1)+1+ofs.print_grid[2],sw) RenderKit.ShouldDraw = true --Print the text
+    lg.printf(pre_spaces..t,1+ofs.print_grid[1],drawY*(_FontH+1)+1+ofs.print_grid[2],sw) RenderVars.ShouldDraw = true --Print the text
   end
 end
 
