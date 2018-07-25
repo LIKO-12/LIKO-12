@@ -266,7 +266,7 @@ tabs[4] = {"Tools",{
 
 --Open Appdata
 tools[1] = function()
-  if CPU.isMobile() or true then
+  if CPU.isMobile() then
     systemMessage("Can't open AppData on Android yet.",5)
   else
     CPU.openAppData("/")
