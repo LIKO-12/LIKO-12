@@ -199,12 +199,11 @@ tabs[1] = {"Info",{
   update = function(self,dt)
     drawUI()
     
-    drawOptions(self.options,self.selectedOption)
-    
     --Host information
     if self.selectedOption == #self.options then
-      GPU.rect(0,17,sw,sh-26,false,5)
       drawOptions(self.hostOptions,#self.hostOptions)
+    else --Info Data
+      drawOptions(self.options,self.selectedOption)
     end
   end,
   
