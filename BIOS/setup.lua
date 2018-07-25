@@ -27,6 +27,7 @@ local checkboard = GPU.imagedata("LK12;GPUIMG;2x2;7007")
 --Setup Variables
 local selectedTab = 1
 local tabs = {}
+local tools = {}
 
 --Touch to Keyboard
 local TMap = {"left","right","up","down","z","x","c"}
@@ -54,6 +55,10 @@ local function eventLoop(evlist)
 end
 
 --Graphics
+local function systemMessage(msg,time,textC,bgC,hideInGif)
+  GPU._systemMessage(msg,time,textC or 1, bgC or 12, hideInGif)
+end
+
 local function printBG(text,x,y,tc,bc,et)
   et = et or 0
   local bgw, bgh = #text*(fw+1)+1+et*2, fh+2
@@ -124,12 +129,12 @@ local function drawOptions(tree,selectedOption)
     
     if name ~= "" then
       if type(value) == "function" then
-        value = value()
+        value = value(i,selectedOption)
       end
       
       local tc --The option name color.
       if selectedOption == i then
-        tc, name = 7, "\xE0"..name
+        tc, name = 7, "\xD1"..name
       else
         tc, name = 6, " "..name
       end
@@ -222,7 +227,65 @@ local defaultEvents = {
 
 tabs[2] = {"Peripherals",defaultEvents}
 tabs[3] = {"Boot",defaultEvents}
-tabs[4] = {"Tools",defaultEvents}
+
+local function arrowSelected(id,selectedID)
+  if id == selectedID then
+    return "\xDC\x88\x88" -- <--
+  else
+    return ""
+  end
+end
+
+tabs[4] = {"Tools",{
+  selectedOption = 1,
+  
+  options = {
+    {"Open appdata. ",arrowSelected},
+    {"Show appdata path. ",arrowSelected},
+    {"Wipe a drive. ",arrowSelected},
+    {"Toggle Devmode. ",arrowSelected},
+  },
+  
+  update = function(self,dt)
+    drawUI() drawOptions(self.options,self.selectedOption)
+  end,
+  
+  keypressed = function(self,key,sc,isrepeat)
+    if keypressTabs(key,sc,isrepeat) then return end
+    
+    local newSel = keypressOptions(key,self.options,self.selectedOption)
+    if newSel then self.selectedOption = newSel; return end
+    
+    if key == "return" and tools[self.selectedOption] then
+      tools[self.selectedOption]()
+    end
+  end
+}}
+
+--==Tools==--
+
+--Open Appdata
+tools[1] = function()
+  if CPU.isMobile() or true then
+    systemMessage("Can't open AppData on Android yet.",5)
+  else
+    CPU.openAppData("/")
+    systemMessage("Openned Successfully.")
+  end
+end
+
+--Toggle Devmode
+tools[4] = function()
+  if love.filesystem.getInfo("Misc/devmode.txt","file") then
+    love.filesystem.remove("Misc/devmode.txt")
+    systemMessage("Disabled DEVMODE")
+  else
+    love.filesystem.write("Misc/devmode.txt","")
+    systemMessage("Enabled DEVMODE")
+  end
+end
+
+--==Execution==--
 
 TC.setInput(true)
 Keyboard.keyrepeat(true)
