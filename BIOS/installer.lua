@@ -136,6 +136,7 @@ else ---INSTALL--------------------------------------------
   local OSPathLen = OSPath:len()
   
   local OSFiles = index("/OS/"..osName.."/")
+  local hasBoot = false
   drawProgress(0)
   
   for k, path in ipairs(OSFiles) do
@@ -143,12 +144,22 @@ else ---INSTALL--------------------------------------------
     if love.filesystem.getInfo(path,"directory") then
       fs.newDirectory(HDDPath)
       display("Directory: "..HDDPath)
-    else
+    elseif HDDPath ~= "C:/boot.lua" then
       local data = love.filesystem.read(path)
       fs.write(HDDPath,data)
       display("File: "..HDDPath)
+    else
+      hasBoot = {path,HDDPath}
     end
-    drawProgress(k/#OSFiles)
+    drawProgress(math.max(k-1,0)/#OSFiles)
+  end
+  
+  if hasBoot then
+    local data = love.filesystem.read(hasBoot[1])
+    fs.write(hasBoot[2],data)
+    display("File: "..hasBoot[2])
+    
+    drawProgress(1)
   end
 end
 
