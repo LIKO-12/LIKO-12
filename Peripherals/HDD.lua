@@ -243,8 +243,8 @@ return function(Config)
   --Returns a list of the available drives.
   function fs.drives()
     local dlist = {}
-    for k,_ in pairs(Drives) do
-      dlist[k] = {size=Drives[k].Size,usage=Drives[k].Usage,Readonly=Drives[k].Readonly}
+    for k,v in pairs(Drives) do
+      dlist[k] = {size=v.Size,usage=v.Usage,Readonly=v.Readonly}
     end
     return dlist
   end
