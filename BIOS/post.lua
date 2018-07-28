@@ -21,7 +21,7 @@ local Mobile = CPU.isMobile()
 
 local sw,sh = GPU.screenSize()
 
-local enterSetup = true --Delete/Escape has been pressed, enter setup.
+local enterSetup = false --Delete/Escape has been pressed, enter setup.
 
 local function wait(timeout, required) --Wait for 'delete' or 'escape' keypress.
   if DevMode and not required then return end
