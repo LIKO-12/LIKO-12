@@ -2,7 +2,9 @@
 
 local devmode = (love.filesystem.getInfo("/Misc/devmode.txt") and true or false) or (_LVer.tag == "DEV")
 
-local HandledAPIS, osName, update = ...
+local HandledAPIS, osName, update, osDrive = ...
+
+osDrive = osDrive or "C"
 
 local Title
 if update then
@@ -88,7 +90,7 @@ if update and false then --Temporary disable this thing.
   display("Updating Files...")
   
   for k, path in ipairs(OSFiles) do
-    local HDDPath = "C:/"..path:sub(OSPathLen+1,-1)
+    local HDDPath = osDrive..":/"..path:sub(OSPathLen+1,-1)
     if fs.exists(HDDPath) then
       local info = love.filesystem.getInfo(path,"file")
       if info then
@@ -140,11 +142,11 @@ else ---INSTALL--------------------------------------------
   drawProgress(0)
   
   for k, path in ipairs(OSFiles) do
-    local HDDPath = "C:/"..path:sub(OSPathLen+1,-1)
+    local HDDPath = osDrive..":/"..path:sub(OSPathLen+1,-1)
     if love.filesystem.getInfo(path,"directory") then
       fs.newDirectory(HDDPath)
       display("Directory: "..HDDPath)
-    elseif HDDPath ~= "C:/boot.lua" then
+    elseif HDDPath ~= osDrive..":/boot.lua" then
       local data = love.filesystem.read(path)
       fs.write(HDDPath,data)
       display("File: "..HDDPath)
