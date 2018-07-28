@@ -35,7 +35,7 @@ if type(giveApi) == "boolean" then --Requesting HELP api
   return api
 end
 
-helpPATH = require("Programs.help",true).getHelpPATH() --A smart way to keep the helpPath
+helpPATH = require("Programs.Terminal.help",true).getHelpPATH() --A smart way to keep the helpPath
 
 palt(0,false) --Make black opaque
 
