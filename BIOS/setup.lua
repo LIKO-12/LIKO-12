@@ -280,6 +280,7 @@ tabs[4] = {"Tools",{
     {"Open appdata. ",arrowSelected},
     {"Show appdata path. ",arrowSelected},
     {"Wipe a drive. ",arrowSelected},
+    {"OS Installer.",arrowSelected},
     {"Toggle Devmode. ",arrowSelected},
   },
   
@@ -380,8 +381,56 @@ tools[3] = function()
   eventLoop(wipeADriveEvents)
 end
 
---Toggle Devmode
+--OS Installer
+local osInstallerEvents = {
+  options = {
+    {"Operating System: ","DiskOS [Change]"},
+    {""},
+    {"Destination Drive: ","C [Change]"},
+    {""},
+    {"Wipe drive: ","\xCC [Change]"},
+    {""},
+    {"Start Installation ",arrowSelected}
+  },
+  selectedOption = 1,
+  
+  update = function(self)
+    drawUI("@=- OS Installer -=@")
+    
+    --Warning box
+    GPU.rect(0,8,sw,8,false,2)
+    GPU.line(-1,8,sw+1,8,1)
+    GPU.color(8) GPU.print("\xE3!\xE2 WARNING: THIS CANNOT BE REVERTED !",1,10)
+    GPU.line(-1,16,sw+1,16,0)
+    
+    drawOptions(self.options,self.selectedOption)
+    
+    printBG("\xC2 THIS TOOL IS WORK IN PROGRESS.",2,sh-16-(fh+2)*2,0)
+    printBG("\xC3 It's suggested to wipe the drive.",2,sh-16-fh-2,0)
+    printBG("\xC2 Press "..(mobile and "the green button" or "escape").." to return back",2,sh-16,0)
+  end,
+  
+  keypressed = function(self,key,_,isrepeat)
+    local newSel = keypressOptions(key,self.options,self.selectedOption)
+    if newSel then self.selectedOption = newSel; return end
+    
+    if key == "return" and not isrepeat then
+      
+    elseif key == "escape" then
+      return true
+    end
+  end
+}
+--[[for _,osname in ipairs(love.filesystem.getDirectoryItems("/OS/")) do
+  if osname ~= "GameDiskOS" then table.insert(osInstallerEvents.options,{"Install "..osname..". ",arrowSelected}) end
+end]]
+
 tools[4] = function()
+  eventLoop(osInstallerEvents)
+end
+
+--Toggle Devmode
+tools[5] = function()
   if love.filesystem.getInfo("Misc/devmode.txt","file") then
     love.filesystem.remove("Misc/devmode.txt")
     systemMessage("Disabled DEVMODE")
