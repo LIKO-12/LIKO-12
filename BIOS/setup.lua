@@ -337,7 +337,7 @@ local wipeADriveEvents = {
     self.selectedOption = 1
     
     for name,info in pairs(fs.drives()) do
-      local subinfo = info.readonly and "[ReadOnly]" or string.format("[%s/%s]",storageSize(info.usage),storageSize(info.size))
+      local subinfo = info.ReadOnly and "[ReadOnly]" or string.format("[%s/%s]",storageSize(info.usage),storageSize(info.size))
       
       self.options[#self.options + 1] = {
         "Wipe drive ("..name..")"..string.rep(" ",tw-13-#name-#subinfo-2),
@@ -365,12 +365,16 @@ local wipeADriveEvents = {
     if newSel then self.selectedOption = newSel; return end
     
     if key == "return" and not isrepeat then
-      local driveName = self.options[self.selectedOption][1]:sub(13,-1):gsub(" ",""):sub(1,-2)
-      systemMessage("Wiping drive ("..driveName..")...",100)
-      GPU.flip()
-      fs.delete(driveName..":/")
-      systemMessage("Wiped drive ("..driveName..") successfully.",1,1,12)
-      GPU.flip()
+      if self.options[self.selectedOption][2] == "[ReadOnly]" then
+        systemMessage("Can't wipe a readonly drive !",4)
+      else
+        local driveName = self.options[self.selectedOption][1]:sub(13,-1):gsub(" ",""):sub(1,-2)
+        systemMessage("Wiping drive ("..driveName..")...",100)
+        GPU.flip()
+        fs.delete(driveName..":/")
+        systemMessage("Wiped drive ("..driveName..") successfully.",2)
+        GPU.flip()
+      end
     elseif key == "escape" then
       return true
     end
@@ -382,19 +386,53 @@ tools[3] = function()
 end
 
 --OS Installer
-local osInstallerEvents = {
-  options = {
-    {"Operating System: ","DiskOS [Change]"},
+local osInstallerEvents = {}
+do
+  local install_os = "DiskOS"
+  local install_drive = "C"
+  local install_wipe = true
+  
+  local function osOption() return install_os.." [Change]" end
+  local function osDrive() return install_drive.." [Change]" end
+  local function osWipe() return install_wipe and "YES [Toggle]" or "NO  [Toggle]" end
+  
+  local selected_main
+  local options_main = {
+    {"Operating System: ",osOption},
     {""},
-    {"Destination Drive: ","C [Change]"},
+    {"Destination Drive: ",osDrive},
     {""},
-    {"Wipe drive: ","\xCC [Change]"},
+    {"Wipe drive: ",osWipe},
     {""},
     {"Start Installation ",arrowSelected}
-  },
-  selectedOption = 1,
+  }
   
-  update = function(self)
+  local selected_os
+  local options_os = {}
+  for _,osname in ipairs(love.filesystem.getDirectoryItems("/OS/")) do
+    if osname ~= "GameDiskOS" then options_os[#options_os+1] = {"- "..osname..". ",arrowSelected} end
+  end
+  
+  local selected_drive
+  local options_drive = {}
+  local function updateDrivesList()
+    options_drive = {}
+    for driveName, info in pairs(fs.drives()) do
+      if not info.readonly then options_drive[#options_drive + 1] = {"- Drive ("..driveName.."). ",arrowSelected} end
+    end
+  end
+  
+  function osInstallerEvents:selected()
+    install_os = "DiskOS"
+    install_drive = "C"
+    install_wipe = true
+    
+    selected_main = 1
+    
+    updateDrivesList()
+  end
+  
+  function osInstallerEvents:update()
     drawUI("@=- OS Installer -=@")
     
     --Warning box
@@ -403,29 +441,72 @@ local osInstallerEvents = {
     GPU.color(8) GPU.print("\xE3!\xE2 WARNING: THIS CANNOT BE REVERTED !",1,10)
     GPU.line(-1,16,sw+1,16,0)
     
-    drawOptions(self.options,self.selectedOption)
+    if selected_os then
+      drawOptions(options_os,selected_os)
+    elseif selected_drive then
+      drawOptions(options_drive,selected_drive)
+    else
+      drawOptions(options_main,selected_main)
+    end
     
-    printBG("\xC2 THIS TOOL IS WORK IN PROGRESS.",2,sh-16-(fh+2)*2,0)
-    printBG("\xC3 It's suggested to wipe the drive.",2,sh-16-fh-2,0)
+    printBG("\xC3 Some operating systems won't work",2,sh-16-(fh+2)*2,0)
+    printBG("  if not installed on drive C.",2,sh-16-fh-2,0)
     printBG("\xC2 Press "..(mobile and "the green button" or "escape").." to return back",2,sh-16,0)
-  end,
+  end
   
-  keypressed = function(self,key,_,isrepeat)
-    local newSel = keypressOptions(key,self.options,self.selectedOption)
-    if newSel then self.selectedOption = newSel; return end
-    
-    if key == "return" and not isrepeat then
+  function osInstallerEvents:keypressed(key,_,isrepeat)
+    if selected_os then
+      local newSel = keypressOptions(key,options_os,selected_os)
+      if newSel then selected_os = newSel; return end
       
-    elseif key == "escape" then
-      return true
+      if key == "return" and not isrepeat then
+        install_os = options_os[selected_os][1]:sub(3,-3)
+        selected_os = nil
+      elseif key == "escape" then
+        selected_os = nil
+      end
+    elseif selected_drive then
+      local newSel = keypressOptions(key,options_drive,selected_drive)
+      if newSel then selected_drive = newSel; return end
+      
+      if key == "return" and not isrepeat then
+        install_drive = options_drive[selected_drive][1]:sub(10,-4)
+        selected_drive = nil
+      elseif key == "escape" then
+        selected_drive = nil
+      end
+    else
+      local newSel = keypressOptions(key,options_main,selected_main)
+      if newSel then selected_main = newSel; return end
+      
+      if key == "return" and not isrepeat then
+        if selected_main == 1 then --OS Selection
+          selected_os = 1
+        elseif selected_main == 3 then --Drive Selection
+          selected_drive = 1
+        elseif selected_main == 5 then --Wipe Toggle
+          install_wipe = not install_wipe
+        elseif selected_main == 7 then --Installation
+          if install_wipe then
+            systemMessage("Wiping drive ("..install_drive..")...",100)
+            GPU.flip()
+            fs.delete(install_drive..":/")
+            systemMessage("Started Installation",0)
+            GPU.flip()
+          end
+          
+          love.filesystem.load("BIOS/installer.lua")(Handled,install_os,false,install_drive)
+          systemMessage("Installed Successfully",1)
+        end
+      elseif key == "escape" then
+        return true
+      end
     end
   end
-}
---[[for _,osname in ipairs(love.filesystem.getDirectoryItems("/OS/")) do
-  if osname ~= "GameDiskOS" then table.insert(osInstallerEvents.options,{"Install "..osname..". ",arrowSelected}) end
-end]]
+end
 
 tools[4] = function()
+  osInstallerEvents:selected()
   eventLoop(osInstallerEvents)
 end
 
