@@ -21,7 +21,7 @@ local Mobile = CPU.isMobile()
 
 local sw,sh = GPU.screenSize()
 
-local enterSetup = false --Delete/Escape has been pressed, enter setup.
+local enterSetup = true --Delete/Escape has been pressed, enter setup.
 
 local function wait(timeout, required) --Wait for 'delete' or 'escape' keypress.
   if DevMode and not required then return end
@@ -157,7 +157,7 @@ wait(0.2)
 fs.drive("C") --Switch to the C drive.
 
 local function InstallOS(update)
-  love.filesystem.load("BIOS/installer.lua")(Handled,"DiskOS",update)
+  love.filesystem.load("BIOS/installer.lua")(Handled,"DiskOS",update,"C")
 end
 
 if not fs.exists("/boot.lua") then _LIKO_Old = false; InstallOS()
