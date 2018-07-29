@@ -50,6 +50,14 @@ echo ----==== Downloading Deployment Tools ====----
 echo Downloading gothub
 go get github.com/itchio/gothub
 
+echo Downloading butler
+
+mkdir ~/bin && \
+curl https://dl.itch.ovh/butler/linux-amd64/head/butler --output ~/bin/butler && \
+chmod 755 ~/bin/butler
+
+ENV PATH="$PATH:~/bin"
+
 echo ----==== Done ====----
 
 cd ../LIKO-12/
