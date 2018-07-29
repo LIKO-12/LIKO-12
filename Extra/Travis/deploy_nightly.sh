@@ -11,7 +11,7 @@ gothub edit \
   --repo LIKO-12-Nightly \
   --tag TRAVIS \
   --name "Build #$TRAVIS_BUILD_NUMBER" \
-  --description "[$TRAVIS_COMMIT]: $TRAVIS_COMMIT_MESSAGE" \
+  --description "[`$TRAVIS_COMMIT`]: `$TRAVIS_COMMIT_MESSAGE`" \
   --pre-release
 
 echo ----==== Uploading the builds ====----

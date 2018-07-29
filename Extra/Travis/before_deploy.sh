@@ -47,6 +47,7 @@ cp -v -f LIKO-12.love Builds/LIKO-12_Nightly_Universal.love
 
 echo ----==== Downloading Deployment Tools ====----
 
+echo Downloading gothub
 go get github.com/itchio/gothub
 
 echo ----==== Done ====----
