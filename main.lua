@@ -25,7 +25,6 @@ I don't think anyone would want to edit anything in this file.
 
 - Rami Sabbagh (RamiLego4Game)
 ]]
---trigger travis
 
 local package_exceptions = {
   "bit", "utf8", "ffi", --LuaJIT
