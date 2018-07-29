@@ -14,8 +14,8 @@ I don't think anyone would want to edit anything in this file, but on change the
 --LIKO-12 Version
 _LVer = {
 	major = 0,
-	minor = 8,
-	patch = 1,
+	minor = 9,
+	patch = 0,
 	tag = "DEV",
 }
 _LVERSION = string.format("V%d.%d.%d_%s",_LVer.major,_LVer.minor,_LVer.patch,_LVer.tag)
