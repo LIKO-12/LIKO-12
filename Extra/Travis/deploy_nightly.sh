@@ -3,8 +3,7 @@
 echo -----------------------------------------
 echo ----==== Deploying Nightly Build ====----
 echo -----------------------------------------
-echo
-echo ----==== Editing existing release ====----
+echo - Editing existing TRAVIS release
 
 gothub edit \
   --user RamiLego4Game \
