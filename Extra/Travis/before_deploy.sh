@@ -2,6 +2,7 @@
 
 echo ----==== Copying files into other directory ====----
 
+mkdir ../BuildUtils/Builds
 mkdir ../BuildUtils/LIKO-12
 cp -v -f -r ./* ../BuildUtils/LIKO-12/
 cd ../BuildUtils/LIKO-12/
@@ -43,6 +44,10 @@ cp -v -f LIKO-12.love OS_X/LIKO-12.app/Contents/Resources/LIKO-12.love
 echo ----==== Copying Universal... ====----
   
 cp -v -f LIKO-12.love Builds/LIKO-12_Nightly_Universal.love
+
+echo ----==== Downloading Deployment Tools ====----
+
+go get github.com/itchio/gothub
 
 echo ----==== Done ====----
 

@@ -1,0 +1,55 @@
+#!/bin/bash
+
+echo -----------------------------------------
+echo ----==== Deploying Nightly Build ====----
+echo -----------------------------------------
+echo
+echo ----==== Editing existing release ====----
+
+gothub edit \
+  --user RamiLego4Game \
+  --repo LIKO-12-Nightly \
+  --tag TRAVIS \
+  --name "Build #$TRAVIS_BUILD_NUMBER" \
+  --description "[$TRAVIS_COMMIT]: $TRAVIS_COMMIT_MESSAGE" \
+  --pre-release
+
+echo ----==== Uploading the builds ====----
+
+echo - Uploading windows build
+
+gothub upload \
+  --user RamiLego4Game \
+  --repo LIKO-12-Nightly \
+  --tag TRAVIS \
+  --name "LIKO-12_Nightly_Windows.zip" \
+  --file ../BuildUtils/Builds/LIKO-12_Nightly_Windows.zip
+
+echo - Uploading linux build
+
+gothub upload \
+  --user RamiLego4Game \
+  --repo LIKO-12-Nightly \
+  --tag TRAVIS \
+  --name "LIKO-12_Nightly_Linux_x86_64.AppImage" \
+  --file ../BuildUtils/Builds/LIKO-12_Nightly_Linux_x86_64.AppImage
+
+echo - Uploading mac build
+
+gothub upload \
+  --user RamiLego4Game \
+  --repo LIKO-12-Nightly \
+  --tag TRAVIS \
+  --name "LIKO-12_Nightly_Mac.zip" \
+  --file ../BuildUtils/Builds/LIKO-12_Nightly_Mac.zip
+
+echo - Uploading universal build
+
+gothub upload \
+  --user RamiLego4Game \
+  --repo LIKO-12-Nightly \
+  --tag TRAVIS \
+  --name "LIKO-12_Nightly_Universal.love" \
+  --file ../BuildUtils/Builds/LIKO-12_Nightly_Universal.love
+
+echo ----==== Done ====----

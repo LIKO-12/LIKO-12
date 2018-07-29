@@ -1,4 +1,7 @@
-language: cpp
+language: go
+
+go:
+  - "1.10"
 
 sudo: required
 
@@ -16,12 +19,16 @@ script: ./Extra/Travis/script.sh
 before_deploy: ./Extra/Travis/before_deploy.sh
 
 deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN
-  keep-history: true
-  on:
-    branch: master
-  local-dir: ../BuildUtils/Builds/
-  repo: RamiLego4Game/LIKO-12-Nightly
-    
+  # Deploy a nightly build.
+  - provider: script
+    script: bash ./Extra/Travis/deploy_nightly.sh
+    skip-cleanup: true
+    on:
+      branch: master
+  # Deploy a new LIKO-12 release.
+  - provider: script
+    script: bash ./Extra/Travis/deploy_release.sh
+    skip-cleanup: true
+    on:
+      branch: master
+      tags: true
