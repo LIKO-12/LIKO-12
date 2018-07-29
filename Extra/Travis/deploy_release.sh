@@ -55,18 +55,22 @@ gothub upload \
   --file ../BuildUtils/Builds/LIKO-12_Nightly_Universal.love \
   --replace
 
-echo ----==== Done ====----
-
 echo -----------------------------------------
 echo ----==== Deploying To itch.io ====----
 echo -----------------------------------------
-echo - Renaming the builds
+echo 
+echo ----==== Renaming the builds ====----
 
 mv -v -f "../BuildUtils/Builds/LIKO-12_Nightly_Windows.zip" "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Windows.zip"
 mv -v -f "../BuildUtils/Builds/LIKO-12_Nightly_Linux_x86_64.AppImage" "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Linux_x86_64.AppImage"
 mv -v -f "../BuildUtils/Builds/LIKO-12_Nightly_Mac.zip" "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Mac.zip"
 mv -v -f "../BuildUtils/Builds/LIKO-12_Nightly_Universal.love" "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Universal.love"
 
-echo testing butler
+echo ----=== Uploading the builds ====----
 
-butler
+butler push "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Windows.zip" ramilego4game/liko12:windows
+butler push "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Linux_x86_64.AppImage" ramilego4game/liko12:linux
+butler push "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Mac.zip" ramilego4game/liko12:osx
+butler push "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Universal.love" ramilego4game/liko12:src
+
+echo ----==== Done ====----
