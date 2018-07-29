@@ -23,7 +23,8 @@ gothub upload \
   --repo LIKO-12-Nightly \
   --tag TRAVIS \
   --name "LIKO-12_Nightly_Windows.zip" \
-  --file ../BuildUtils/Builds/LIKO-12_Nightly_Windows.zip
+  --file ../BuildUtils/Builds/LIKO-12_Nightly_Windows.zip \
+  --replace
 
 echo - Uploading linux build
 
@@ -32,7 +33,8 @@ gothub upload \
   --repo LIKO-12-Nightly \
   --tag TRAVIS \
   --name "LIKO-12_Nightly_Linux_x86_64.AppImage" \
-  --file ../BuildUtils/Builds/LIKO-12_Nightly_Linux_x86_64.AppImage
+  --file ../BuildUtils/Builds/LIKO-12_Nightly_Linux_x86_64.AppImage \
+  --replace
 
 echo - Uploading mac build
 
@@ -41,7 +43,8 @@ gothub upload \
   --repo LIKO-12-Nightly \
   --tag TRAVIS \
   --name "LIKO-12_Nightly_Mac.zip" \
-  --file ../BuildUtils/Builds/LIKO-12_Nightly_Mac.zip
+  --file ../BuildUtils/Builds/LIKO-12_Nightly_Mac.zip \
+  --replace
 
 echo - Uploading universal build
 
@@ -50,6 +53,7 @@ gothub upload \
   --repo LIKO-12-Nightly \
   --tag TRAVIS \
   --name "LIKO-12_Nightly_Universal.love" \
-  --file ../BuildUtils/Builds/LIKO-12_Nightly_Universal.love
+  --file ../BuildUtils/Builds/LIKO-12_Nightly_Universal.love \
+  --replace
 
 echo ----==== Done ====----
