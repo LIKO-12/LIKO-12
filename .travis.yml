@@ -5,9 +5,6 @@ go:
 
 sudo: required
 
-git:
-  depth: false
-
 branches:
   only:
   - master
