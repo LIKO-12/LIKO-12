@@ -103,7 +103,7 @@ if _LIKO_Old or not love.filesystem.getInfo("/Misc/LIKO-12_Source.love") then
   
   CPU.clearEStack()
   
-  GPU._systemMessage()
+  GPU._systemMessage("",0)
   GPU.flip()
 end
 
