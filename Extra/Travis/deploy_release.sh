@@ -61,4 +61,12 @@ echo -----------------------------------------
 echo ----==== Deploying To itch.io ====----
 echo -----------------------------------------
 echo - Renaming the builds
-cp -v -f "../BuildUtils/Builds/LIKO-12_Nightly_*" "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_*"
+
+mv -v -f "../BuildUtils/Builds/LIKO-12_Nightly_Windows.zip" "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Windows.zip"
+mv -v -f "../BuildUtils/Builds/LIKO-12_Nightly_Linux_x86_64.AppImage" "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Linux_x86_64.AppImage"
+mv -v -f "../BuildUtils/Builds/LIKO-12_Nightly_Mac.zip" "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Mac.zip"
+mv -v -f "../BuildUtils/Builds/LIKO-12_Nightly_Universal.love" "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_Universal.love"
+
+echo testing butler
+
+butler
