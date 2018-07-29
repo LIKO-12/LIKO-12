@@ -1,10 +1,9 @@
 #!/bin/bash
 
-echo -----------------------------------------
-echo ----==== Deploying Release Build ====----
-echo -----------------------------------------
-echo
-echo ----==== Creating the new release ====----
+echo ----------------------------------------------
+echo ----==== Deploying To Github Releases ====----
+echo ----------------------------------------------
+echo - Creating the new release
 
 gothub release \
   --user RamiLego4Game \
@@ -57,3 +56,9 @@ gothub upload \
   --replace
 
 echo ----==== Done ====----
+
+echo -----------------------------------------
+echo ----==== Deploying To itch.io ====----
+echo -----------------------------------------
+echo - Renaming the builds
+cp -v -f "../BuildUtils/Builds/LIKO-12_Nightly_*" "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_PRE_*"
