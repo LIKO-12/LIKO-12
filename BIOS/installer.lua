@@ -117,7 +117,9 @@ if update and false then --Temporary disable this thing.
 else ---INSTALL--------------------------------------------
   display("Indexing Files")
   
-  local function index(path, list)
+  local removeBoot = false
+  
+  local function index(path, list, sub)
     path = path or "/OS/DiskOS/"
     list = list or {}
 
@@ -125,8 +127,9 @@ else ---INSTALL--------------------------------------------
     for id, item in ipairs(items) do
       if love.filesystem.getInfo(path..item,"directory") then
         table.insert(list,path..item)
-        index(path..item.."/", list)
+        index(path..item.."/", list, true)
       else
+        if item == "boot.lua" and sub then removeBoot = true end
         table.insert(list,path..item)
       end
     end
@@ -141,7 +144,7 @@ else ---INSTALL--------------------------------------------
   local hasBoot = false
   drawProgress(0)
   
-  if fs.exists(osDrive..":/boot.lua") then
+  if fs.exists(osDrive..":/boot.lua") and removeBoot then
     fs.delete(osDrive..":/boot.lua")
   end
   
