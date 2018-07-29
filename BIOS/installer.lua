@@ -141,6 +141,10 @@ else ---INSTALL--------------------------------------------
   local hasBoot = false
   drawProgress(0)
   
+  if fs.exists(osDrive..":/boot.lua") then
+    fs.delete(osDrive..":/boot.lua")
+  end
+  
   for k, path in ipairs(OSFiles) do
     local HDDPath = osDrive..":/"..path:sub(OSPathLen+1,-1)
     if love.filesystem.getInfo(path,"directory") then
