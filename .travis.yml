@@ -27,5 +27,4 @@ deploy:
     script: bash ./Extra/Travis/deploy_release.sh
     skip-cleanup: true
     on:
-      branch: master
       tags: true
