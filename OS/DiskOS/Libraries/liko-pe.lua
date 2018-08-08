@@ -366,11 +366,11 @@ local function buildResourcesDirectoryTable(ResourcesTree,VirtualAddress)
 end
 
 local function getAnyKey(t)
-  return (pairs(t)())
+  return (pairs(t)(t))
 end
 
 local function getAnyValue(t)
-  return select(2,pairs(t)())
+  return select(2,pairs(t)(t))
 end
 
 local function extractGroupIcon(ResourcesTree,GroupID)
