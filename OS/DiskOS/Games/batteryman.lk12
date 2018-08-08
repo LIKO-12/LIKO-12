@@ -1,4 +1,4 @@
-LK12;OSData;DiskOS;DiskGame;V3;192x128;C:none;CLvl:0;
+LK12;OSData;DiskOS;DiskGame;V4;API_1;192x128;C:none;CLvl:0;
 ___luacode___
 --BatteryMan Game for LudumDare 39: https://ldjam.com/events/ludum-dare/39/batteryman
 --"Once a day, you woke up, and found yourself in a maze with an electronic heart instead of the natural one, then, a robot comes to you and tells you have been put into tests, you have to finish each level to recharge your heart before it runs out of power"
