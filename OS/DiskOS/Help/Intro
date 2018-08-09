@@ -7,7 +7,7 @@ It provides a \6programming environment\7 inside of a \6virtual computer\7 that 
 
 When \DiskOS\7 boots, it will show you a \6terminal\7, which is waiting for you to input commands in.
 
-But not only that, DiskOS also comes with \6user-friendly editors\7 for editing \6Code\7,\6Sprites\7,\6Map\7,\6SFX\7 and \6Music\7 of your games !
+\DiskOS\7 also comes with \6user-friendly editors\7 for editing \6Code\7,\6Sprites\7,\6Map\7,\6SFX\7 and \6Music\7 of your games.
 
 You can access those editors be pressing \Cescape/back\7.
 
