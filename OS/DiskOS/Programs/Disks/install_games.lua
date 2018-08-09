@@ -5,9 +5,9 @@ if select(1,...) == "-?" then
   return
 end
 
-fs.newDirectory("D://Games/")
+fs.newDirectory("D:/Games/")
 for k,v in ipairs(fs.getDirectoryItems("C:/Games/")) do
   local data = fs.read("C:/Games/"..v)
-  fs.write("D://Games/"..v, data)
+  fs.write("D:/Games/"..v, data)
 end
-color(11) print("Installed to D://Games/")
+color(11) print("Installed to D:/Games/")
