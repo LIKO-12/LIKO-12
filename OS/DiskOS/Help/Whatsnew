@@ -22,16 +22,17 @@
 3. LIKO-12's appdata folder is now organized in folders, much cleaner, please backup your appdata files, and wipe it, then put your files back into the new folders.
 4. New extended ASCII characters support, type `charmap` in DiskOS to view most of them.
 5. D Drive space has been increased to 50mb (Because 25 builds can be instantly filled with native builds).
-6. New spritebatches support, can be used to optimize map rendering.
-7. Optimized the engine files (`events.lua` and `coreg.lua`), should improve the performance.
-8. The GPU peripheral has been split into multiple files (instead of 1500 line file), and some optimization has been done.
-9. Cleared trailing whitespace from LIKO-12's code.
-10. WIP Custom fonts support, currently only fontData object has been made.
-11. fontSize() now returns 4,6.
-12. The WEB peripheral has been written, with http requests using luasec support, and progressive download events.
-13. The WEB peripheral supports https when libcurl or luasec are available (prefers luasec when both available), and could do normal http requests even if https is not available.
-14. Libcurl is no longer included in Android builds.
-15. GPU calibration when the graphics card/drive is changed.
+6. C Drive space has been increased to 50mb (So the native builds templates can fit in).
+7. New spritebatches support, can be used to optimize map rendering.
+8. Optimized the engine files (`events.lua` and `coreg.lua`), should improve the performance.
+9. The GPU peripheral has been split into multiple files (instead of 1500 line file), and some optimization has been done.
+10. Cleared trailing whitespace from LIKO-12's code.
+11. WIP Custom fonts support, currently only fontData object has been made.
+12. fontSize() now returns 4,6.
+13. The WEB peripheral has been written, with http requests using luasec support, and progressive download events.
+14. The WEB peripheral supports https when libcurl or luasec are available (prefers luasec when both available), and could do normal http requests even if https is not available.
+15. Libcurl is no longer included in Android builds.
+16. GPU calibration when the graphics card/drive is changed.
 
 \FBIOS:\7
 1. The post screen now shows a `Generating internal file...` whenever LIKO-12's version changes, the BIOS internally generates a .zip of LIKO-12's source code, used for integrated native builds system.
