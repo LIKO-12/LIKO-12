@@ -264,7 +264,7 @@ tabs[1] = {"Info",{
 }}
 
 local defaultEvents = {
-  update=function(self,dt) drawUI() end,
+  update=function(self,dt) drawUI() GPU.color(7) GPU.print("Comming Soon...",3,20) end,
   keypressed = function(self,...) keypressTabs(...) end
 }
 
