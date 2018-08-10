@@ -1,6 +1,10 @@
-LK12;OSData;DiskOS;DiskGame;V4;API_1;192x128;C:none;CLvl:0;
+LK12;OSData;DiskOS;DiskGame;V4;API_2;192x128;C:none;CLvl:0;
 ___luacode___
 --BUMP DEMO
+
+local class = Library("class")
+local bump = Library("bump")
+
 local sw,sh = screenSize()
 local lvlw, lvlh = sw/8, sh/8
 local mapW, mapH = sw*0.75, sh
