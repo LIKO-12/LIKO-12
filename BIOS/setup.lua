@@ -104,6 +104,14 @@ local function drawBars(title)
   end
 end
 
+local function arrowSelected(id,selectedID)
+  if id == selectedID then
+    return "\xDC\x88\x88" -- <--
+  else
+    return ""
+  end
+end
+
 --==User Interface==--
 
 --Draw the basic UI.
@@ -261,17 +269,37 @@ local defaultEvents = {
 }
 
 tabs[2] = {"Peripherals",defaultEvents}
-tabs[3] = {"Boot",defaultEvents}
+
+--##Boot Tab##--
+
+tabs[3] = {"Boot",{
+  selectedOption = 1,
+  
+  options = {
+    {"Reboot. ",arrowSelected},
+  },
+  
+  update = function(self,dt)
+    drawUI()
+    
+    drawOptions(self.options,self.selectedOption)
+  end,
+  
+  keypressed = function(self,key,sc,isrepeat)
+    if keypressTabs(key,sc,isrepeat) then return end
+    
+    local newSel = keypressOptions(key,self.options,self.selectedOption)
+    if newSel then self.selectedOption = newSel; return end
+    
+    if key == "return" then
+      if self.selectedOption == 1 then --Reboot
+        CPU.reboot()
+      end
+    end
+  end
+}}
 
 --##Tools Tab##--
-
-local function arrowSelected(id,selectedID)
-  if id == selectedID then
-    return "\xDC\x88\x88" -- <--
-  else
-    return ""
-  end
-end
 
 tabs[4] = {"Tools",{
   selectedOption = 1,
@@ -380,6 +408,7 @@ local wipeADriveEvents = {
     end
   end
 }
+
 tools[3] = function()
   wipeADriveEvents.selected(wipeADriveEvents)
   eventLoop(wipeADriveEvents)
