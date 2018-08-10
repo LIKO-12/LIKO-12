@@ -13,7 +13,7 @@ function LK12Utils.encodeDiskGame(edata,ctype,clvl)
   local edata, ctype, clvl = edata or {}, ctype or "none", clvl or 9
   
   --The disk file header, the disk body, the total disk data.
-  local header = string.format("LK12;OSData;DiskOS;DiskGame;V%d;%dx%d;C:",_DiskVer,sw,sh)
+  local header = string.format("LK12;OSData;DiskOS;DiskGame;V%d;%dx%d;C:",LK12Utils.DiskVer,sw,sh)
   
   --Binary encoding.
   if ctype == "binary" then
@@ -137,8 +137,8 @@ function LK12Utils.decodeDiskGame(diskData)
   if not dataver then return false, "Invalid Data !" end
   dataver = tonumber(string.match(dataver,"V(%d+)"))
   if not dataver then return false, "Invalid Data !" end
-  if dataver > _DiskVer then return false, "Can't load disks newer than V".._DiskVer..", provided: V"..dataver end
-  if dataver < _MinDiskVer then return false, "Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk" end
+  if dataver > LK12Utils.DiskVer then return false, "Can't load disks newer than V"..LK12Utils.DiskVer..", provided: V"..dataver end
+  if dataver < LK12Utils.MinDiskVer then return false, "Can't load disks older than V"..LK12Utils.DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk" end
 
   local datares = nextarg()
   if not datares then return false, "Invalid Data !" end

@@ -12,7 +12,8 @@ if #args < 1 or args[1] == "-?" then
   
   printUsage(
     "setapi","Show this information.",
-    "setapi <apiVer>","Sets the currently loaded disk API version."
+    "setapi <apiVer>","Sets the currently loaded disk API version.",
+    "help API_<apiVer>","Show the list of changes since the previous API version."
   )
   
   return
@@ -21,7 +22,8 @@ end
 local uV = tonumber(args[1])
 if not uV then return 1, "Invalid API version: "..uV end
 if uV ~= math.floor(uV) or uV < 1 then return 1, "Invalid API version: "..uV end
-if uV > _APIVer*2 then return 1, "Current LIKO-12 version doesn't support API v"..uV end
+if uV > _APIVer then return 1, "Current LIKO-12 version doesn't support API v"..uV end
 
 eapi.apiVersion = uV
 color(11) print("API has been successfully set to v"..uV)
+color(6) print("Type 'help API_"..uV.."' for the API changes list.")

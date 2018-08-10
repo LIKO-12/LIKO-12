@@ -88,8 +88,7 @@ for k, file in ipairs(fs.getDirectoryItems(MainDrive..":/APIS/")) do
   dofile(MainDrive..":/APIS/"..file)
 end
 
-dofile(MainDrive..":/System/api.lua") --Load DiskOS APIs
-dofile(MainDrive..":/System/osapi.lua") --Load DiskOS OS APIs
+dofile(MainDrive..":/System/globals.lua") --Load DiskOS Globals.
 
 local terminal = require("terminal")
 

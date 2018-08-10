@@ -1,3 +1,5 @@
+local class = require("Libraries.middleclass")
+
 --Base object class
 local base = class("DiskOS.GUI.base")
 

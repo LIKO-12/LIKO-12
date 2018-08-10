@@ -1,6 +1,6 @@
 --Build DiskOS APIs--
-_DiskVer = 3 --It's a global
-_MinDiskVer = 2
+LK12Utils.DiskVer = 3 --It's a global
+LK12Utils.MinDiskVer = 2
 
 function input()
   local t = ""

@@ -5,7 +5,9 @@ local MainDrive = term.getMainDrive()
 
 local Globals = (...) or {}
 
-local apiloader = fs.load(MainDrive..":/System/api.lua")
-setfenv(apiloader,Globals) apiloader()
+Globals.SpriteGroup = SpriteGroup
+Globals.isInRect = isInRect
+Globals.whereInGrid = whereInGrid
+Globals.input = TextUtils.textInput
 
 return Globals

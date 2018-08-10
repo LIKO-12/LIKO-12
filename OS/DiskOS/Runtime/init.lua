@@ -68,12 +68,14 @@ function rt.loadGame(edata,apiver)
   
   --Apply compatiblity layers if needed
   if apiver < _APIVer then
-    for a=apiver, _APIVer-1 do
+    for a=_APIVer-1, apiver, -1 do
       if fs.exists(MainDrive..":/Runtime/Compatibility/v"..a..".lua") then
         fs.load(MainDrive..":/Runtime/Compatibility/v"..a..".lua")(glob,co)
       end
     end
   end
+  
+  glob._APIVer = apiver --The api version the game is running under.
   
   return glob, co, chunk
 end

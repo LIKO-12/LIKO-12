@@ -42,7 +42,7 @@ local dataver = nextarg()
 if not dataver then return 1, "Invalid Data !" end
 dataver = tonumber(string.match(dataver,"V(%d+)"))
 if not dataver then return 1, "Invalid Data !" end
-if dataver == _DiskVer then color(8) print("Disk is already up to date !") return 0 end
+if dataver == LK12Utils.DiskVer then color(8) print("Disk is already up to date !") return 0 end
 if dataver > 1 then return 1, "Can't update disks newer than V1, provided: V"..dataver end
 if dataver < 1 then return 1, "Can't update disks older than V1, provided: V"..dataver end
 
@@ -97,4 +97,4 @@ end
 
 term.execute("save")
 
-color(11) print("Updated to Disk V".._DiskVer.." Successfully")
+color(11) print("Updated to Disk V"..LK12Utils.DiskVer.." Successfully")
