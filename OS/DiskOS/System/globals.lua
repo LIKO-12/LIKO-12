@@ -43,8 +43,7 @@ do
     end
   end
   
-  add("dofile","printUsage","getAPI")
-  add("bump","class","lume","JSON","luann","geneticAlgo","vector")
+  add("dofile","printUsage","_APIVer","Library")
   add("Sprite","fget","fset","map","eventLoop","pget","pset","sget","sset","mget","mset","Controls","SFX","SaveID","SaveData","LoadData")
   add("SpriteMap","SheetFlagsData","TileMap","MapObj","SFXS","SfxObj","_GameCode","btn","btnp","__BTNUpdate","__BTNKeypressed","__BTNTouchControl","_BTNGamepad","_DISABLE_PAUSE")
 end
