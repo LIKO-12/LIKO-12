@@ -90,6 +90,7 @@ function GPU.colorPalette(id,r,g,b)
     RenderVars.DisplayShader:send('palette', unpack(_DisplayPalette)) --Upload the new colorset.
     RenderVars.ShouldDraw = true
     GifVars.PChanged = true
+    CursorVars.rebuildCursors()
     return
   end
   
