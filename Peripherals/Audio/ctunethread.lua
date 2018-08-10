@@ -227,7 +227,7 @@ while true do
         local setSample = sounddata.setSample
         
         for i2=0,buffer_size-1 do
-          setSample(sounddata,i,gen())
+          setSample(sounddata,i2,gen())
           
           if tamp > amp then --We have to increase the amplitude.
             amp = min(amp + amp_slide,1)
