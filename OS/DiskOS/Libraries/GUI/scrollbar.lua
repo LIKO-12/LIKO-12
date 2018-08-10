@@ -1,4 +1,5 @@
 local path = select(1,...):sub(1,-(string.len("scrollbar")+1))
+local class = require("Libraries.middleclass")
 
 local base = require(path..".base")
 local container = require(path..".container")

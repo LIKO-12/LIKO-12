@@ -2,6 +2,8 @@
 local term = require("terminal")
 local MainDrive = term.getMainDrive()
 
+local SpriteSheet = require("Libraries.spritesheet")
+
 local edit = {}
 
 --=Contributing Guide=--
@@ -102,7 +104,7 @@ function edit:initialize()
   self.modeGridHover = false
   self:loadCursors()
   
-  self.apiVersion = 1 --The used API
+  self.apiVersion = _APIVer --The used API
 end
 
 function edit:addEditor(code, name, saveid, icon)

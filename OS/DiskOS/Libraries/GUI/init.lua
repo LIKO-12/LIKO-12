@@ -1,4 +1,5 @@
 --DiskOS LIKO-12 GUI Library
+local class = require("Libraries.middleclass")
 local term = require("terminal")
 local MainDrive = term.getMainDrive()
 

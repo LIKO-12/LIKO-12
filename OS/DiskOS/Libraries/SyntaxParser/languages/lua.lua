@@ -12,7 +12,7 @@ local keywords = {
 local escapable = {"a", "b", "f", "n", "r", "t", "v", "\\", '"', "'"}
 
 --LIKO-12 API Functions
-local api = getAPI()
+local api = _APIList
 
 --LIKO-12 Callbacks
 local callbacks = {"_draw","_draw30","_draw60","_init","_keypressed","_keyreleased","_mousemoved","_mousepressed","_mousereleased","_textinput","_touchcontrol","_touchmoved","_touchpressed","_touchreleased","_update","_update30","_update60","_wheelmoved","_filedropped","self"}

@@ -1,5 +1,7 @@
 local eapi = select(1,...) --The editor library is provided as an argument
 
+local SpriteSheet = require("Libraries.spritesheet")
+
 local se = {} --Sprite Editor
 
 local imgw, imgh = 8, 8 --The sprite size (MUST NOT CHANGE)

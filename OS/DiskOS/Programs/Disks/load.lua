@@ -77,7 +77,7 @@ eapi.apiVersion = apiVer
 if apiVer < _APIVer then
   color(9) print("Applied compatiblity layer for API v"..apiVer)
   color(6) print("Newer APIs are not available")
-  color(9) print("Use ",false) color(10) print("setapi",false) color(9) print(" command to upgrade to API ".._APIVer.."\n")
+  color(9) print("Use ",false) color(10) print("setapi",false) color(9) print(" command to upgrade to API v".._APIVer.."\n")
 end
 
 color(11) print("Loaded successfully")

@@ -3,17 +3,19 @@
 --Variables.
 local sw, sh = screenSize()
 
---Localized Lua Library
-
-
 --The API
 local LK12Utils = {}
 
+--Contants
+LK12Utils.DiskVer = 4
+LK12Utils.MinDiskVer = 2
+
+--Methods
 function LK12Utils.encodeDiskGame(edata,ctype,clvl,apiver)
   edata, ctype, clvl, apiver = edata or {}, ctype or "none", clvl or 9, apiver or 1
   
   --The disk file header, the disk body, the total disk data.
-  local header = string.format("LK12;OSData;DiskOS;DiskGame;V%d;API_%d;%dx%d;C:",_DiskVer,apiver,sw,sh)
+  local header = string.format("LK12;OSData;DiskOS;DiskGame;V%d;API_%d;%dx%d;C:",LK12Utils.DiskVer,apiver,sw,sh)
   
   --Binary encoding.
   if ctype == "binary" then
@@ -137,8 +139,8 @@ function LK12Utils.decodeDiskGame(diskData)
   if not dataver then return false, "Invalid Data !" end
   dataver = tonumber(string.match(dataver,"V(%d+)"))
   if not dataver then return false, "Invalid Data !" end
-  if dataver > _DiskVer then return false, "Can't load disks newer than V".._DiskVer..", provided: V"..dataver end
-  if dataver < _MinDiskVer then return false, "Can't load disks older than V".._DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk" end
+  if dataver > LK12Utils.DiskVer then return false, "Can't load disks newer than V"..LK12Utils.DiskVer..", provided: V"..dataver end
+  if dataver < LK12Utils.MinDiskVer then return false, "Can't load disks older than V"..LK12Utils.DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk" end
   
   local apiver = 1
   if dataver > 3 then

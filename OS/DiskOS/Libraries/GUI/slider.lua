@@ -1,4 +1,5 @@
 local path = select(1,...):sub(1,-(string.len("slider")+1))
+local class = require("Libraries.middleclass")
 
 local base = require(path..".base")
 
