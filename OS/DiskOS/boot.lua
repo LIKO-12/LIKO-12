@@ -89,7 +89,11 @@ end
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
-local terminal = require("terminal")
+if GameDiskOS then
+  dofile("System/faketerminal.lua")
+else
+  local terminal = require("terminal")
 
-terminal.init() --Initialize the terminal
-terminal.loop()
+  terminal.init() --Initialize the terminal
+  terminal.loop()
+end
