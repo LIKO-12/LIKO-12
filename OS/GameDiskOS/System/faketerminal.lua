@@ -1,17 +1,17 @@
+--This is a fake terminal used by GameDiskOS (fused game mode).
+
 local _LIKO_Version, _LIKO_Old = BIOS.getVersion()
 local _LIKO_TAG = _LIKO_Version:sub(-3,-1)
 local _LIKO_DEV = (_LIKO_TAG == "DEV")
 local _LIKO_BUILD = _LIKO_Version:sub(3,-5)
 
-local editorsheet = SpriteSheet(image(fs.read("editorsheet.lk12")),24,16)
-
 local fw, fh = fontSize()
 
 clear()
-SpriteGroup(25,1,1,5,1,1,1,0,editorsheet)
+SpriteGroup(25,1,1,5,1,1,1,0,_SystemSheet)
 printCursor(0,1,0)
 color(_LIKO_DEV and 8 or 9) print(_LIKO_TAG,5*8+1,3) flip() sleep(0.125)
-cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  ".._LIKO_BUILD) editorsheet:draw(60,(fw+1)*6+1,fh+1) flip() sleep(0.125) cam()
+cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  ".._LIKO_BUILD) _SystemSheet:draw(60,(fw+1)*6+1,fh+1) flip() sleep(0.125) cam()
 color(6) print("\nhttp://github.com/ramilego4game/liko12")
 
 flip() sleep(0.0625)

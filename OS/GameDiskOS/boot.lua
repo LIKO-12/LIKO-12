@@ -34,6 +34,29 @@ for peripheral,funcs in pairs(HandledAPIS) do
   end
 end
 
+local SystemDrive = fs.drive()
+local GameDiskOS = (SystemDrive == "GameDiskOS")
+
+--Temp folder
+local function rm(path)
+  local files = fs.getDirectoryItems(path)
+  for k, file in ipairs(files) do
+    if fs.isFile(path..file) then
+      fs.delete(path..file)
+    else
+      rm(path..file.."/")
+      fs.delete(path..file)
+    end
+  end
+end
+
+if not GameDiskOS then
+  if fs.exists(SystemDrive..":/.temp") then
+    rm(SystemDrive..":/.temp/")
+  end
+  fs.newDirectory(SystemDrive..":/.temp/")
+end
+
 --Create dofile function
 function dofile(path,...)
   local chunk, err = fs.load(path)
@@ -54,19 +77,23 @@ function split(inputstr, sep)
   return t
 end
 
---Create the package system--
-dofile("System/package.lua")
+dofile(SystemDrive..":/System/package.lua") --Create the package system
+dofile(SystemDrive..":/System/globals.lua") --Load DiskOS globals.
+dofile(SystemDrive..":/System/cursors.lua") --Load DiskOS cursors.
+
+--Load APIS
+for k, file in ipairs(fs.getDirectoryItems(SystemDrive..":/APIS/")) do
+  dofile(SystemDrive..":/APIS/"..file)
+end
 
 keyrepeat(true) --Enable keyrepeat
 textinput(true) --Show the keyboard on mobile devices
 
---Load APIS
-for k, file in ipairs(fs.getDirectoryItems("APIS/")) do
-  dofile("APIS/"..file)
+if GameDiskOS then
+  dofile("System/faketerminal.lua")
+else
+  local terminal = require("terminal")
+
+  terminal.init() --Initialize the terminal
+  terminal.loop()
 end
-
-dofile("System/api.lua") --Load DiskOS APIs
-dofile("System/osapi.lua") --Load DiskOS OS APIs
-dofile("System/cursors.lua") --Load DiskOS Cursors"System/cursors.lua"
-
-dofile("System/faketerminal.lua")

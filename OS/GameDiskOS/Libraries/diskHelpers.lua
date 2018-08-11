@@ -27,7 +27,7 @@ function SFX(id,chn)
 end
 
 --Flags API
---SpriteID, [bit number] (Note: currently bits are numbered from left to right)
+--SpriteID, [bit number]
 function fget(id,n)
   if type(id) ~= "number" then return error("SpriteId must be a number, provided: "..type(id)) end
   if n and type(n) ~= "number" then return error("BitNumber must be a number, provided: "..type(n)) end
@@ -48,7 +48,7 @@ function fget(id,n)
   end
 end
 
---SpriteID, bit number (Note: currently bits are numbered from left to right), new value
+--SpriteID, bit number new value
 --SpriteID, new byte value
 function fset(id,n,v)
   if type(id) ~= "number" then return error("SpriteId must be a number, provided: "..type(id)) end

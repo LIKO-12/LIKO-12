@@ -3,17 +3,19 @@
 --Variables.
 local sw, sh = screenSize()
 
---Localized Lua Library
-
-
 --The API
 local LK12Utils = {}
 
-function LK12Utils.encodeDiskGame(edata,ctype,clvl)
-  local edata, ctype, clvl = edata or {}, ctype or "none", clvl or 9
+--Contants
+LK12Utils.DiskVer = 4
+LK12Utils.MinDiskVer = 2
+
+--Methods
+function LK12Utils.encodeDiskGame(edata,ctype,clvl,apiver)
+  edata, ctype, clvl, apiver = edata or {}, ctype or "none", clvl or 9, apiver or 1
   
   --The disk file header, the disk body, the total disk data.
-  local header = string.format("LK12;OSData;DiskOS;DiskGame;V%d;%dx%d;C:",LK12Utils.DiskVer,sw,sh)
+  local header = string.format("LK12;OSData;DiskOS;DiskGame;V%d;API_%d;%dx%d;C:",LK12Utils.DiskVer,apiver,sw,sh)
   
   --Binary encoding.
   if ctype == "binary" then
@@ -103,7 +105,7 @@ function LK12Utils.decodeDiskGame(diskData)
   diskData = diskData:gsub("\r\n","\n")
   
   --LK12;OSData;OSName;DataType;Version;Compression;CompressLevel; data"
-  --local header = "LK12;OSData;DiskOS;DiskGame;V"..saveVer..";"..sw.."x"..sh..";C:"
+  --local header = "LK12;OSData;DiskOS;DiskGame;V"..saveVer..";"..sw.."x"..sh..";API_"..apiVer..";C:"
   
   local datasum = 0
   local nextargiter = string.gmatch(diskData,".")
@@ -139,13 +141,21 @@ function LK12Utils.decodeDiskGame(diskData)
   if not dataver then return false, "Invalid Data !" end
   if dataver > LK12Utils.DiskVer then return false, "Can't load disks newer than V"..LK12Utils.DiskVer..", provided: V"..dataver end
   if dataver < LK12Utils.MinDiskVer then return false, "Can't load disks older than V"..LK12Utils.DiskVer..", provided: V"..dataver..", Use 'update_disk' command to update the disk" end
+  
+  local apiver = 1
+  if dataver > 3 then
+    apiver = nextarg()
+    if not apiver then return false, "Invalid Data !" end
+    apiver = tonumber(string.match(apiver,"API_(%d+)"))
+    if not apiver then return false, "Invalid Data !" end
+  end
 
   local datares = nextarg()
   if not datares then return false, "Invalid Data !" end
   local dataw, datah = string.match(datares,"(%d+)x(%d+)")
   if not (dataw and datah) then return false, "Invalid Data !" end dataw, datah = tonumber(dataw), tonumber(datah)
   if dataw ~= sw or datah ~= sh then return false, "This disk is made for GPUs with "..dataw.."x"..datah.." resolution, current GPU is "..sw.."x"..sh end
-
+  
   local compress = nextarg()
   if not compress then return false, "Invalid Data !" end
   compress = string.match(compress,"C:(.+)")
@@ -203,7 +213,7 @@ function LK12Utils.decodeDiskGame(diskData)
       cStart = cStart + len
     end
     
-    return edata, true
+    return edata, true, apiver
     
   else
     
@@ -247,7 +257,7 @@ function LK12Utils.decodeDiskGame(diskData)
       edata[saveId] = saveData
     end
     
-    return edata, false
+    return edata, false, apiver
   end
 end
 
