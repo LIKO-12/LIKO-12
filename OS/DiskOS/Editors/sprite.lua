@@ -48,7 +48,7 @@ local flagsgrid = {swidth-(8*7+1),revdraw[2]-8-1, 8*7,6, 8,1} --The sprite flags
 local flagsdraw = {flagsgrid[1]-1,flagsgrid[2]-1} --The position of the first (leftmost) flag
 
 --Tools Selection--
-local toolsdraw = {104, 2,revdraw[2]-1, 5,1, 1,1,false, eapi.editorsheet} --Tools draw arguments
+local toolsdraw = {104, 2,revdraw[2]-1, 5,1, 1,1,false, _SystemSheet} --Tools draw arguments
 local toolsgrid = {toolsdraw[2],toolsdraw[3], toolsdraw[4]*8,toolsdraw[5]*8, toolsdraw[4],toolsdraw[5]} --Tools Selection Grid
 local stool = 1 --Current selected tool id
 
@@ -57,7 +57,7 @@ local tbtime = 0.1125 --The blink time
 local tbflag = false --Is the blink timer activated ?
 
 --Transformations Selection--
-local transdraw = {109, toolsdraw[2] + toolsdraw[4]*8 + 3,toolsdraw[3], 5,1, 1,1,false, eapi.editorsheet} --Transformations draw arguments
+local transdraw = {109, toolsdraw[2] + toolsdraw[4]*8 + 3,toolsdraw[3], 5,1, 1,1,false, _SystemSheet} --Transformations draw arguments
 local transgrid = {transdraw[2],transdraw[3], transdraw[4]*8, transdraw[5]*8, transdraw[4], transdraw[5]} --Transformations Selection Grid
 local strans --Selected Transformation
 
@@ -183,19 +183,19 @@ end
 local function drawSlider(pos,x,y,steps,vertical,icon)
   palt(0,false)
   pos = math.floor(pos)
-  if icon then eapi.editorsheet:draw(icon,x,y) end
+  if icon then _SystemSheet:draw(icon,x,y) end
   if vertical then
 
   else
     for sx=1,steps do
       local sprite = 188
       if sx == 1 then sprite = 187 elseif sx == steps then sprite = 189 end
-      eapi.editorsheet:draw(sprite,x+sx*8,y)
+      _SystemSheet:draw(sprite,x+sx*8,y)
     end
 
     palt()
 
-    eapi.editorsheet:draw(185,x+pos*8,y)
+    _SystemSheet:draw(185,x+pos*8,y)
   end
 end
 
@@ -335,8 +335,8 @@ function se:redrawSPRS() _ = nil
   color(sprsidrect[7])
   local id = ""; for i=1, maxSpriteIDCells-(tostring(sprsid):len()) do id = id .. "0" end; id = id .. tostring(sprsid)
     print(id,sprsidrect[1]+1,sprsidrect[2]+1)
-    SpriteGroup(97,sprsbanksgrid[1],sprsbanksgrid[2],sprsbanksgrid[5],sprsbanksgrid[6],1,1,false,eapi.editorsheet)
-    eapi.editorsheet:draw(sprsbank+72,sprsbanksgrid[1]+(sprsbank-1)*8,sprsbanksgrid[2])
+    SpriteGroup(97,sprsbanksgrid[1],sprsbanksgrid[2],sprsbanksgrid[5],sprsbanksgrid[6],1,1,false,_SystemSheet)
+    _SystemSheet:draw(sprsbank+72,sprsbanksgrid[1]+(sprsbank-1)*8,sprsbanksgrid[2])
   end
 
 --Redraw the sprite editing rectangle
@@ -362,11 +362,11 @@ function se:redrawSPRS() _ = nil
   function se:redrawTOOLS()
     --Tools
     SpriteGroup(unpack(toolsdraw))
-    eapi.editorsheet:draw((toolsdraw[1]+(stool-1))-24, toolsdraw[2]+(stool-1)*8,toolsdraw[3], 0, toolsdraw[6],toolsdraw[7])
+    _SystemSheet:draw((toolsdraw[1]+(stool-1))-24, toolsdraw[2]+(stool-1)*8,toolsdraw[3], 0, toolsdraw[6],toolsdraw[7])
 
     --Transformations
     SpriteGroup(unpack(transdraw))
-    if strans then eapi.editorsheet:draw((transdraw[1]+(strans-1))-24, transdraw[2]+(strans-1)*8,transdraw[3], 0, transdraw[6],transdraw[7]) end
+    if strans then _SystemSheet:draw((transdraw[1]+(strans-1))-24, transdraw[2]+(strans-1)*8,transdraw[3], 0, transdraw[6],transdraw[7]) end
   end
 
 --Redraw the flag byte circles
@@ -374,9 +374,9 @@ function se:redrawSPRS() _ = nil
     local flags = string.byte(flagsData:sub(sprsid,sprsid))
     for i=1,8 do --Bit number
       if bit.band(bit.rshift(flags,8-i),1) == 1 then
-        eapi.editorsheet:draw(125+(9-i),flagsdraw[1]+(i-1)*7,flagsdraw[2]) --It's ON
+        _SystemSheet:draw(125+(9-i),flagsdraw[1]+(i-1)*7,flagsdraw[2]) --It's ON
       else
-        eapi.editorsheet:draw(125,flagsdraw[1]+(i-1)*7,flagsdraw[2])--It's OFF
+        _SystemSheet:draw(125,flagsdraw[1]+(i-1)*7,flagsdraw[2])--It's OFF
       end
     end
   end

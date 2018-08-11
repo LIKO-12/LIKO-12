@@ -1,8 +1,5 @@
 --DiskOS API Loader
 
-local term = require("terminal")
-local MainDrive = term.getMainDrive()
-
 local Globals = (...) or {}
 
 Globals.SpriteGroup = SpriteGroup

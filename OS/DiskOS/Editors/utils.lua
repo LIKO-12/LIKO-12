@@ -9,7 +9,6 @@ local swidth, sheight = screenSize()
 function utils:newTool(readonly)
   local tool = {} --The tool editor api.
   
-  tool.editorsheet = eapi.editorsheet
   tool.flavor = eapi.flavor
   tool.flavorBack = eapi.flavorBack
   tool.background = eapi.background
@@ -22,16 +21,16 @@ function utils:newTool(readonly)
   
   function tool:drawTopBar()
     rect(0,0,swidth,8,false,self.flavor)
-    SpriteGroup(55, 0,0, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
-    SpriteGroup(controlID, controlGrid[1],controlGrid[2], controlGrid[5],controlGrid[6], 1,1, false, self.editorsheet)
+    SpriteGroup(55, 0,0, 4,1, 1,1, false, _SystemSheet) --The LIKO12 Logo
+    SpriteGroup(controlID, controlGrid[1],controlGrid[2], controlGrid[5],controlGrid[6], 1,1, false, _SystemSheet)
     if readonly then
-      self.editorsheet:draw(controlID-2, controlGrid[1]+8,controlGrid[2])
+      _SystemSheet:draw(controlID-2, controlGrid[1]+8,controlGrid[2])
     end
     if sid then
       if readonly and sid == 1 then
-        self.editorsheet:draw(controlID+24-2, controlGrid[1]+sid*8,controlGrid[2])
+        _SystemSheet:draw(controlID+24-2, controlGrid[1]+sid*8,controlGrid[2])
       else
-        self.editorsheet:draw(controlID+24+sid, controlGrid[1]+sid*8,controlGrid[2])
+        _SystemSheet:draw(controlID+24+sid, controlGrid[1]+sid*8,controlGrid[2])
       end
     end
   end

@@ -1,9 +1,4 @@
 --This file is responsible about the editors shown after pressing escape--
-local term = require("terminal")
-local MainDrive = term.getMainDrive()
-
-local SpriteSheet = require("Libraries.spritesheet")
-
 local edit = {}
 
 --=Contributing Guide=--
@@ -66,8 +61,6 @@ function edit:initialize()
   self.flavorBack = 4 --Brown
   self.background = 5 --Dark Grey
   
-  self.editorsheet = SpriteSheet(image(fs.read(MainDrive..":/editorsheet.lk12")),24,16)
-  
   self.active = 4 --Active editor
   
   self.editors = {"music","sfx","tile","sprite","code"; music=1,sfx=2,tile=3,sprite=4,code=5}
@@ -76,8 +69,8 @@ function edit:initialize()
   self.leditors = {} --Loaded editors (Executed chunks)
   
   self.icons = imagedata(5*8,2*8)
-  self.icons:paste(self.editorsheet.img:data(),0,0, (24-#self.editors)*8,0, #self.editors*8,8)
-  self.icons:paste(self.editorsheet.img:data(),0,8, (24-#self.editors)*8,0, #self.editors*8,8)
+  self.icons:paste(_SystemSheet.img:data(),0,0, (24-#self.editors)*8,0, #self.editors*8,8)
+  self.icons:paste(_SystemSheet.img:data(),0,8, (24-#self.editors)*8,0, #self.editors*8,8)
   self.icons:map(function(x,y,c)
     if y < 8 then if c == 0 then return self.flavor else return self.flavorBack end; else
     if c == 0 then return self.flavorBack else return self.flavor end; end
@@ -92,7 +85,7 @@ function edit:initialize()
   
   local editors = {"soon","sfx","tile","sprite","code","soon"} --List of built-in editors to create chunks of
   for k, v in ipairs(editors) do --Load chunks
-    local chunk, err = fs.load(MainDrive..":/Editors/"..v..".lua")
+    local chunk, err = fs.load(_SystemDrive..":/Editors/"..v..".lua")
     if not chunk then error(err or "Error loading: "..tostring(v)) end
     table.insert(self.chunks,k,chunk)
   end
@@ -172,20 +165,20 @@ end
 function edit:loadCursors()
   pushPalette()
   palt()
-  cursor(self.editorsheet:extract(1),"normal",1,1)
-  cursor(self.editorsheet:extract(2),"handrelease",2,1)
-  cursor(self.editorsheet:extract(3),"handpress",2,1)
-  cursor(self.editorsheet:extract(4),"hand",4,4)
-  cursor(self.editorsheet:extract(5),"cross",3,3)
-  cursor(self.editorsheet:extract(7),"point",1,1)
-  cursor(self.editorsheet:extract(8),"draw",3,3)
+  cursor(_SystemSheet:extract(1),"normal",1,1)
+  cursor(_SystemSheet:extract(2),"handrelease",2,1)
+  cursor(_SystemSheet:extract(3),"handpress",2,1)
+  cursor(_SystemSheet:extract(4),"hand",4,4)
+  cursor(_SystemSheet:extract(5),"cross",3,3)
+  cursor(_SystemSheet:extract(7),"point",1,1)
+  cursor(_SystemSheet:extract(8),"draw",3,3)
   
-  cursor(self.editorsheet:extract(32),"normal_white",1,1)
+  cursor(_SystemSheet:extract(32),"normal_white",1,1)
   
-  cursor(self.editorsheet:extract(149),"pencil",0,7)
-  cursor(self.editorsheet:extract(150),"bucket",0,7)
-  cursor(self.editorsheet:extract(151),"eraser",0,7)
-  cursor(self.editorsheet:extract(152),"picker",0,7)
+  cursor(_SystemSheet:extract(149),"pencil",0,7)
+  cursor(_SystemSheet:extract(150),"bucket",0,7)
+  cursor(_SystemSheet:extract(151),"eraser",0,7)
+  cursor(_SystemSheet:extract(152),"picker",0,7)
   popPalette()
 end
 
@@ -195,7 +188,7 @@ end
 
 function edit:drawTopBar()
   rect(0,0,swidth,8,false,self.flavor)
-  SpriteGroup(55, 0,0, 4,1, 1,1, false, self.editorsheet) --The LIKO12 Logo
+  SpriteGroup(55, 0,0, 4,1, 1,1, false, _SystemSheet) --The LIKO12 Logo
   
   self.icons:draw((swidth-#self.editors*8),0, 0, 1,1, self.iconsBGQuad)
   self.icons:draw(swidth-self.active*8,0, 0, 1,1, self.iconsQuads[self.active])

@@ -81,7 +81,7 @@ function se:drawSlot()
   color(12)
   print("SLOT:",sw-53,16)
   if slotLeftDown then pal(9,4) end
-  eapi.editorsheet:draw(164,slotLeft[1],slotLeft[2])
+  _SystemSheet:draw(164,slotLeft[1],slotLeft[2])
   pal()
   
   color(13)
@@ -89,7 +89,7 @@ function se:drawSlot()
   print(selectedSlot, sw-20,16, fontWidth()*2+2, "right")
   
   if slotRightDown then pal(9,4) end
-  eapi.editorsheet:draw(165,slotRight[1],slotRight[2])
+  _SystemSheet:draw(165,slotRight[1],slotRight[2])
   pal()
 end
 
@@ -100,7 +100,7 @@ function se:drawSpeed()
   color(7)
   print("SPEED:",sw-55,28)
   if speedLeftDown then pal(9,4) end
-  eapi.editorsheet:draw(164,speedLeft[1],speedLeft[2])
+  _SystemSheet:draw(164,speedLeft[1],speedLeft[2])
   pal()
   
   color(13)
@@ -108,7 +108,7 @@ function se:drawSpeed()
   print(speed/0.25, sw-19,28, fontWidth()*2+2, "right")
   
   if speedRightDown then pal(9,4) end
-  eapi.editorsheet:draw(165,speedRight[1],speedRight[2])
+  _SystemSheet:draw(165,speedRight[1],speedRight[2])
   pal()
 end
 
@@ -116,9 +116,9 @@ local playRect, playDown = {sw-8,sh-8,8,8}, false
 
 function se:drawPlay()
   if playingNote >= 0 then
-    eapi.editorsheet:draw(playDown and 41 or 17,playRect[1],playRect[2])
+    _SystemSheet:draw(playDown and 41 or 17,playRect[1],playRect[2])
   else
-    eapi.editorsheet:draw(playDown and 40 or 16,playRect[1],playRect[2])
+    _SystemSheet:draw(playDown and 40 or 16,playRect[1],playRect[2])
   end
 end
 
@@ -133,7 +133,7 @@ function se:drawWave()
     if colorize then pal(6,8+i) end
     if down then palt(13,true) end
     
-    eapi.editorsheet:draw(173+i,down and waveGrid[1]+i*9+1 or waveGrid[1]+i*9,down and waveGrid[2]+1 or waveGrid[2])
+    _SystemSheet:draw(173+i,down and waveGrid[1]+i*9+1 or waveGrid[1]+i*9,down and waveGrid[2]+1 or waveGrid[2])
     
     pal() palt()
   end

@@ -8,6 +8,8 @@
 --[[ Constants:
 - _APIVer, The current version of the games API.
 - _APIList, A list
+- _SystemDrive, The drive system is running from.
+- _SystemSheet, The system sprites sheet.
 ]]
 
 --[[ Sprites Functions:
@@ -25,6 +27,7 @@
 
 --==Variables used by the global functions==--
 local tw, th = termSize()
+local SpriteSheet = require("Libraries.spritesheet")
 
 --==Constants==--
 
@@ -47,6 +50,9 @@ do
   add("Sprite","fget","fset","map","eventLoop","pget","pset","sget","sset","mget","mset","Controls","SFX","SaveID","SaveData","LoadData")
   add("SpriteMap","SheetFlagsData","TileMap","MapObj","SFXS","SfxObj","_GameCode","btn","btnp","__BTNUpdate","__BTNKeypressed","__BTNTouchControl","_BTNGamepad","_DISABLE_PAUSE")
 end
+
+_SystemDrive = fs.drive()
+_SystemSheet = SpriteSheet(image(fs.read(_SystemDrive..":/systemsheet.lk12")),24,16)
 
 --==Sprites Functions==--
 
