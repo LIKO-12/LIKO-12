@@ -1,5 +1,7 @@
 --The spritesheet loader
 
+local SpriteSheet = require("Libraries.spritesheet")
+
 local Globals = (...) or {}
 local edata = select(2,...) or {}
 

@@ -9,12 +9,14 @@ local fw, fh = fontSize() --The LIKO-12 GPU Font size.
 --The API
 local TextUtils = {}
 
-function TextUtils.textInput(historyTable)
+function TextUtils.textInput(historyTable,preinput)
   local history = historyTable or {} --The history of commands.
   local hispos --The current item in the history.
   local btimer, btime, blink = 0, 0.5, true  --The terminal cursor blink timer.
-  local buffer = "" --The terminal input buffer
-  local inputPos = 1 --The next input character position in the terminal buffer.
+  local buffer = preinput or "" --The terminal input buffer
+  local inputPos = #buffer+1 --The next input character position in the terminal buffer.
+  
+  print(buffer,false)
   
   --Checks if the cursor is in the bounds of the screen.
   local function checkCursor()

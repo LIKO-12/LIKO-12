@@ -1,29 +1,31 @@
 --Games runtime API
+
 local rt = {}
 
 function rt.loadResources()
-  local scripts = fs.getDirectoryItems("Runtime/Resources/")
+  local scripts = fs.getDirectoryItems(_SystemDrive..":/Runtime/Resources/")
   
   for id, name in ipairs(scripts) do
-    scripts[id] = fs.load("Runtime/Resources/"..name)
+    scripts[id] = fs.load(_SystemDrive..":/Runtime/Resources/"..name)
   end
   
   return scripts
 end
 
 function rt.loadGlobals()
-  local scripts = fs.getDirectoryItems("Runtime/Globals/")
+  local scripts = fs.getDirectoryItems(_SystemDrive..":/Runtime/Globals/")
   
   for id, name in ipairs(scripts) do
-    scripts[id] = fs.load("Runtime/Globals/"..name)
+    scripts[id] = fs.load(_SystemDrive..":/Runtime/Globals/"..name)
   end
   
   return scripts
 end
 
-function rt.loadGame(edata)
+function rt.loadGame(edata,apiver)
   
-  local edata = edata or {}
+  apiver = apiver or (edata and 1 or require("Editors").apiVersion)
+  edata = edata or (require("Editors"):export())
   
   local glob = _FreshGlobals()
   glob._G = glob --Magic ;)
@@ -59,6 +61,17 @@ function rt.loadGame(edata)
   for i=1, #globals do
     globals[i](glob,co)
   end
+  
+  --Apply compatiblity layers if needed
+  if apiver < _APIVer then
+    for a=_APIVer-1, apiver, -1 do
+      if fs.exists(_SystemDrive..":/Runtime/Compatibility/v"..a..".lua") then
+        fs.load(_SystemDrive..":/Runtime/Compatibility/v"..a..".lua")(glob,co)
+      end
+    end
+  end
+  
+  glob._APIVer = apiver --The api version the game is running under.
   
   return glob, co, chunk
 end

@@ -1,3 +1,5 @@
+local GameDiskOS = fs.drive() == "GameDiskOS"
+
 --Reimplement the Lua package library
 package = {}
 
@@ -5,7 +7,7 @@ package.loaded = {}
 package.preload = {}
 package.searchers = {}
 
-package.path = "?.lua;?/init.lua"
+package.path = GameDiskOS and "GameDiskOS:/?.lua;GameDiskOS:/?/init.lua;./?.lua;./?/init.lua" or "D:/OS/?.lua;D:/OS/?/init.lua;C:/?.lua;C:/?/init.lua;./?.lua;./?/init.lua"
 package.cpath = "" --It's not used
 
 package.config = "/\n;\n?\n!\n-"
