@@ -52,6 +52,7 @@ do
 end
 
 _SystemDrive = fs.drive()
+_GameDiskOs = (_SystemDrive == "GameDiskOS")
 _SystemSheet = SpriteSheet(image(fs.read(_SystemDrive..":/systemsheet.lk12")),24,16)
 
 --==Sprites Functions==--
