@@ -1,7 +1,5 @@
 --Games runtime API
 
-local term = require("terminal")
-
 local rt = {}
 
 function rt.loadResources()
