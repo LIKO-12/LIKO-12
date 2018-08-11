@@ -17,6 +17,7 @@ local CalibrationVars = GPUVars.Calibration
 local MiscVars = GPUVars.Misc
 local CursorVars = GPUVars.Cursor
 local MatrixVars = GPUVars.Matrix
+local VRamVars = GPUVars.VRam
 
 --==Varss Constants==--
 local _CursorsCache = CursorVars.CursorsCache
@@ -25,6 +26,7 @@ local _ColorSet = PaletteVars.ColorSet
 local ofs = CalibrationVars.Offsets
 local _LIKO_W = WindowVars.LIKO_W
 local _LIKO_H = WindowVars.LIKO_H
+local UnbindVRAM = VRamVars.UnbindVRAM
 
 --==Local Variables==--
 local _GIFScale = math.floor(Config._GIFScale or 2) --The gif scale factor (must be int).
