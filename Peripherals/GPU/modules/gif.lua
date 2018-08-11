@@ -154,6 +154,7 @@ events.register("love:update",function(dt)
   _GIFTimer = _GIFTimer + dt
   if _GIFTimer >= _GIFFrameTime then
     _GIFTimer = _GIFTimer % _GIFFrameTime
+    UnbindVRAM(true) --Make sure that the VRAM changes are applied
     lg.setCanvas() --Quit the canvas and return to the host screen.
     
     if MatrixVars.PatternFill then
