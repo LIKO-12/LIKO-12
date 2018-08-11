@@ -1,5 +1,7 @@
 --HTTP API
 
+if not WEB then return end --WEB Peripheral not available
+
 --Localized Lua Library
 
 --Localized LIKO-12 Peripherals
