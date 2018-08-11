@@ -95,7 +95,6 @@ function edit:initialize()
   self.modeGrid = {swidth-(#self.editors*8),0,#self.editors*8,8,#self.editors,1} --The editor selection grid
   self.modeGridFlag = false
   self.modeGridHover = false
-  self:loadCursors()
   
   self.apiVersion = _APIVer --The used API
 end
@@ -160,26 +159,6 @@ function edit:clearData()
     local editor = v(self)
     self.leditors[k] = editor
   end
-end
-
-function edit:loadCursors()
-  pushPalette()
-  palt()
-  cursor(_SystemSheet:extract(1),"normal",1,1)
-  cursor(_SystemSheet:extract(2),"handrelease",2,1)
-  cursor(_SystemSheet:extract(3),"handpress",2,1)
-  cursor(_SystemSheet:extract(4),"hand",4,4)
-  cursor(_SystemSheet:extract(5),"cross",3,3)
-  cursor(_SystemSheet:extract(7),"point",1,1)
-  cursor(_SystemSheet:extract(8),"draw",3,3)
-  
-  cursor(_SystemSheet:extract(32),"normal_white",1,1)
-  
-  cursor(_SystemSheet:extract(149),"pencil",0,7)
-  cursor(_SystemSheet:extract(150),"bucket",0,7)
-  cursor(_SystemSheet:extract(151),"eraser",0,7)
-  cursor(_SystemSheet:extract(152),"picker",0,7)
-  popPalette()
 end
 
 function edit:drawBottomBar()
