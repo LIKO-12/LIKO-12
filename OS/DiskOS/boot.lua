@@ -78,7 +78,8 @@ function split(inputstr, sep)
 end
 
 dofile(SystemDrive..":/System/package.lua") --Create the package system
-dofile(SystemDrive..":/System/globals.lua") --Load DiskOS Globals.
+dofile(SystemDrive..":/System/globals.lua") --Load DiskOS globals.
+dofile(SystemDrive..":/System/cursors.lua") --Load DiskOS cursors.
 
 --Load APIS
 for k, file in ipairs(fs.getDirectoryItems(SystemDrive..":/APIS/")) do
