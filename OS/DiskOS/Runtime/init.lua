@@ -2,25 +2,23 @@
 
 local term = require("terminal")
 
-local MainDrive = term.getMainDrive()
-
 local rt = {}
 
 function rt.loadResources()
-  local scripts = fs.getDirectoryItems(MainDrive..":/Runtime/Resources/")
+  local scripts = fs.getDirectoryItems(_SystemDrive..":/Runtime/Resources/")
   
   for id, name in ipairs(scripts) do
-    scripts[id] = fs.load(MainDrive..":/Runtime/Resources/"..name)
+    scripts[id] = fs.load(_SystemDrive..":/Runtime/Resources/"..name)
   end
   
   return scripts
 end
 
 function rt.loadGlobals()
-  local scripts = fs.getDirectoryItems(MainDrive..":/Runtime/Globals/")
+  local scripts = fs.getDirectoryItems(_SystemDrive..":/Runtime/Globals/")
   
   for id, name in ipairs(scripts) do
-    scripts[id] = fs.load(MainDrive..":/Runtime/Globals/"..name)
+    scripts[id] = fs.load(_SystemDrive..":/Runtime/Globals/"..name)
   end
   
   return scripts
@@ -69,8 +67,8 @@ function rt.loadGame(edata,apiver)
   --Apply compatiblity layers if needed
   if apiver < _APIVer then
     for a=_APIVer-1, apiver, -1 do
-      if fs.exists(MainDrive..":/Runtime/Compatibility/v"..a..".lua") then
-        fs.load(MainDrive..":/Runtime/Compatibility/v"..a..".lua")(glob,co)
+      if fs.exists(_SystemDrive..":/Runtime/Compatibility/v"..a..".lua") then
+        fs.load(_SystemDrive..":/Runtime/Compatibility/v"..a..".lua")(glob,co)
       end
     end
   end

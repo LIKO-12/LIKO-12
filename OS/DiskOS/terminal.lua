@@ -4,8 +4,7 @@ local _LIKO_TAG = _LIKO_Version:sub(-3,-1)
 local _LIKO_DEV = (_LIKO_TAG == "DEV")
 local _LIKO_BUILD = _LIKO_Version:sub(3,-5)
 
-local MainDrive = fs.drive()
-local GameDiskOS = (MainDrive == "GameDiskOS")
+local GameDiskOS = (_SystemDrive == "GameDiskOS")
 
 local PATH = "D:/Programs/;C:/Programs/;" --The system PATH variable, used by the terminal to search for programs.
 local curdrive, curdir, curpath = "D", "/", "D:/" --The current active path in the terminal.
@@ -68,10 +67,10 @@ function term.init()
   if not GameDiskOS then
     fs.drive("D") --Set the HDD api active drive to D
   end
-  SpriteGroup(25,1,1,5,1,1,1,0,editor.editorsheet)
+  SpriteGroup(25,1,1,5,1,1,1,0,_SystemSheet)
   printCursor(0,1,0)
   color(_LIKO_DEV and 8 or 9) print(_LIKO_TAG,5*8+1,3) flip() sleep(0.125)
-  cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  ".._LIKO_BUILD) editor.editorsheet:draw(60,(fw+1)*6+1,fh+1) flip() sleep(0.125) cam()
+  cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS",false) color(6) cam("translate",0,-1) print("  ".._LIKO_BUILD) _SystemSheet:draw(60,(fw+1)*6+1,fh+1) flip() sleep(0.125) cam()
   color(6) print("\nhttp://github.com/ramilego4game/liko12")
 
   flip() sleep(0.0625)
@@ -110,11 +109,11 @@ function term.reload()
   local active_editor = editor.active
   
   package.loaded = {} --Reset the package system
-  package.loaded[MainDrive..":/terminal.lua"] = term --Restore the current terminal instance
+  package.loaded[_SystemDrive..":/terminal.lua"] = term --Restore the current terminal instance
 
   --Reload the APIS
-  for k, file in ipairs(fs.getDirectoryItems(MainDrive..":/APIS/")) do
-    dofile(MainDrive..":/APIS/"..file)
+  for k, file in ipairs(fs.getDirectoryItems(_SystemDrive..":/APIS/")) do
+    dofile(_SystemDrive..":/APIS/"..file)
   end
 
   editor = require("Editors") --Re initialize the editors
@@ -165,7 +164,6 @@ function term.getdirectory() return curdir end
 function term.setPATH(p) PATH = p end
 function term.getPATH() return PATH end
 
-function term.getMainDrive() return MainDrive end
 function term.isGameDiskOS() return GameDiskOS end
 
 function term.prompt()
@@ -223,7 +221,7 @@ function term.executeFile(file,...)
   local ok, err, e = pcall(chunk,...)
   color(7) pal() palt() cam() clip() patternFill()
   if not ok then color(7) cprint("Program Error:",err) return 2, "\nERR: "..tostring(err) end
-  if not fs.drives()[curdrive] then curdrive, curdir, curpath = MainDrive, "/", MainDrive..":/" end
+  if not fs.drives()[curdrive] then curdrive, curdir, curpath = _SystemDrive, "/", _SystemDrive..":/" end
   if not fs.exists(curpath) then curdir, curpath = "/", curdrive..":/" end
   return tonumber(err) or 0, e
 end
@@ -280,10 +278,10 @@ function term.loop() --Enter the while loop of the terminal
       local p, n, e = splitFilePath(a)
       if e == "png" or e == "lk12" then
         if b then
-          fs.write(MainDrive..":/.temp/"..n,b)
+          fs.write(_SystemDrive..":/.temp/"..n,b)
           blink = false; checkCursor()
           print("load "..n)
-          term.execute("load",MainDrive..":/.temp/"..n)
+          term.execute("load",_SystemDrive..":/.temp/"..n)
           term.prompt()
           blink = true; checkCursor()
         else

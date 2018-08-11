@@ -1,10 +1,8 @@
 --DiskOS LIKO-12 GUI Library
 local class = require("Libraries.middleclass")
-local term = require("terminal")
-local MainDrive = term.getMainDrive()
 
 local path = select(1,...)
-local objectsPath = MainDrive..":/"..path:gsub("%.","/").."/"
+local objectsPath = _SystemDrive..":/"..path:gsub("%.","/").."/"
 
 local container = require(path..".container")
 

@@ -29,7 +29,7 @@ local zSlider = 1 --Current slider value
 local zsflag = false --Zoom slider flag
 
 --Tools Selection--
-local toolsdraw = {190, 0,sh-8, 3,1, 1,1,false, eapi.editorsheet} --Tools draw arguments
+local toolsdraw = {190, 0,sh-8, 3,1, 1,1,false, _SystemSheet} --Tools draw arguments
 local toolsgrid = {toolsdraw[2],toolsdraw[3], toolsdraw[4]*8,toolsdraw[5]*8, toolsdraw[4],toolsdraw[5]} --Tools Selection Grid
 local stool = 1 --Current selected tool id
 
@@ -80,7 +80,7 @@ local tools = {
   end
 }
 
-local bgsprite = eapi.editorsheet:extract(59):image() --The background sprite
+local bgsprite = _SystemSheet:extract(59):image() --The background sprite
 local bgquad = bgsprite:quad(0,0,imagerect[3],imagerect[4]) --The background quad
 
 local mflag = false
@@ -95,7 +95,7 @@ function paint:drawColorCell()
   palt(0,true)
   pal(8,self.fgcolor)
   pal(12,self.bgcolor)
-  eapi.editorsheet:draw(77,sw-16*8-8,sh-8)
+  _SystemSheet:draw(77,sw-16*8-8,sh-8)
   pal()
   palt(0,false)
 end
@@ -120,19 +120,19 @@ end
 --Draw the tools selection GUI
 function paint:drawTOOLS()
   SpriteGroup(unpack(toolsdraw))
-  eapi.editorsheet:draw((toolsdraw[1]+(stool-1))-24, toolsdraw[2]+(stool-1)*8,toolsdraw[3], 0, toolsdraw[6],toolsdraw[7])
+  _SystemSheet:draw((toolsdraw[1]+(stool-1))-24, toolsdraw[2]+(stool-1)*8,toolsdraw[3], 0, toolsdraw[6],toolsdraw[7])
 end
 
 --Draw the zooming slider
 function paint:drawSlider()
-  eapi.editorsheet:draw(zSliderDraw[1],zSliderDraw[2],zSliderDraw[3])
+  _SystemSheet:draw(zSliderDraw[1],zSliderDraw[2],zSliderDraw[3])
   for i=2,zSliderDraw[4]-1 do
-    eapi.editorsheet:draw(zSliderDraw[1]+1,zSliderDraw[2]+(i-1)*8,zSliderDraw[3])
+    _SystemSheet:draw(zSliderDraw[1]+1,zSliderDraw[2]+(i-1)*8,zSliderDraw[3])
   end
-  eapi.editorsheet:draw(zSliderDraw[1]+2,zSliderDraw[2]+(zSliderDraw[4]-1)*8,zSliderDraw[3])
+  _SystemSheet:draw(zSliderDraw[1]+2,zSliderDraw[2]+(zSliderDraw[4]-1)*8,zSliderDraw[3])
   
   palt(0,true)
-  eapi.editorsheet:draw(zSliderHandle,zSliderDraw[2]+(zSlider-1)*8,zSliderDraw[3],0,zSliderDraw[6],zSliderDraw[7])
+  _SystemSheet:draw(zSliderHandle,zSliderDraw[2]+(zSlider-1)*8,zSliderDraw[3],0,zSliderDraw[6],zSliderDraw[7])
   palt(0,false)
 end
 

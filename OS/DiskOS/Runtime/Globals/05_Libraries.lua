@@ -1,8 +1,5 @@
 --Loads external libraries.
 
-local term = require("terminal")
-local MainDrive = term.getMainDrive()
-
 local Globals = (...) or {}
 
 local Libraries = {}
@@ -14,15 +11,15 @@ local function addLibrary(path,name)
   Libraries[name] = lib
 end
 
-addLibrary(MainDrive..":/Libraries/lume.lua","lume")
-addLibrary(MainDrive..":/Libraries/middleclass.lua","class")
-addLibrary(MainDrive..":/Libraries/bump.lua","bump")
-addLibrary(MainDrive..":/Libraries/likocam.lua","likocam")
-addLibrary(MainDrive..":/Libraries/JSON.lua","JSON")
-addLibrary(MainDrive..":/Libraries/luann.lua","luann")
-addLibrary(MainDrive..":/Libraries/genetic.lua","geneticAlgo")
-addLibrary(MainDrive..":/Libraries/vector.lua","vector")
-addLibrary(MainDrive..":/Libraries/spritesheet.lua","spritesheet")
+addLibrary(_SystemDrive..":/Libraries/lume.lua","lume")
+addLibrary(_SystemDrive..":/Libraries/middleclass.lua","class")
+addLibrary(_SystemDrive..":/Libraries/bump.lua","bump")
+addLibrary(_SystemDrive..":/Libraries/likocam.lua","likocam")
+addLibrary(_SystemDrive..":/Libraries/JSON.lua","JSON")
+addLibrary(_SystemDrive..":/Libraries/luann.lua","luann")
+addLibrary(_SystemDrive..":/Libraries/genetic.lua","geneticAlgo")
+addLibrary(_SystemDrive..":/Libraries/vector.lua","vector")
+addLibrary(_SystemDrive..":/Libraries/spritesheet.lua","spritesheet")
 
 function Globals.Library(name)
   if type(name) ~= "string" then return error("Library name should be a string, got: "..type(name)) end

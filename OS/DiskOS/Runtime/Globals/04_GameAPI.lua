@@ -1,8 +1,5 @@
 --Games special API loader
 
-local term = require("terminal")
-local MainDrive = term.getMainDrive()
-
 local Globals = (...) or {}
 
 local sw,sh = screenSize()
@@ -191,7 +188,7 @@ local GameSaveID
 local GameSaveData
 local GameSaveSize = 1024*2 --2KB
 
-if not fs.exists(MainDrive..":/GamesData") then fs.newDirectory(MainDrive..":/GamesData") end
+if not fs.exists(_SystemDrive..":/GamesData") then fs.newDirectory(_SystemDrive..":/GamesData") end
 
 function Globals.SaveID(name)
   if type(name) ~= "string" then return error("SaveID should be a string, provided: "..type(name)) end
@@ -200,8 +197,8 @@ function Globals.SaveID(name)
   
   GameSaveID, GameSaveData = name, ""
   
-  if fs.exists(MainDrive..":/GamesData/"..GameSaveID..".bin") then
-    GameSaveData = fs.read(MainDrive..":/GamesData/"..GameSaveID..".bin", GameSaveSize)
+  if fs.exists(_SystemDrive..":/GamesData/"..GameSaveID..".bin") then
+    GameSaveData = fs.read(_SystemDrive..":/GamesData/"..GameSaveID..".bin", GameSaveSize)
   end
 end
 
@@ -215,7 +212,7 @@ function Globals.SaveData(data)
   GameSaveData = data
   
   --Write the game data
-  fs.write(string.format(MainDrive..":/GamesData/%s.bin",GameSaveID), GameSaveData)
+  fs.write(string.format(_SystemDrive..":/GamesData/%s.bin",GameSaveID), GameSaveData)
 end
 
 function Globals.LoadData()
@@ -225,7 +222,7 @@ function Globals.LoadData()
 end
 
 --Helpers
-local helpersloader, err = fs.load(MainDrive..":/Libraries/diskHelpers.lua")
+local helpersloader, err = fs.load(_SystemDrive..":/Libraries/diskHelpers.lua")
 if not helpersloader then error(err) end
 setfenv(helpersloader,Globals) helpersloader()
 

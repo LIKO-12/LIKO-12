@@ -4,8 +4,7 @@
 local JSON = require("Libraries.JSON")
 
 local term = require("terminal")
-local MainDrive = term.getMainDrive()
-local GameDiskOS = (MainDrive == "GameDiskOS")
+local GameDiskOS = term.isGameDiskOS()
 
 --Localized Lua Library
 
@@ -13,7 +12,7 @@ local GameDiskOS = (MainDrive == "GameDiskOS")
 local ConfigUtils = {}
 
 --The path were the config file would be stored.
-ConfigUtils.configPath = MainDrive..":/user.json"
+ConfigUtils.configPath = _SystemDrive..":/user.json"
 
 --Load the config.
 function ConfigUtils.loadConfig()

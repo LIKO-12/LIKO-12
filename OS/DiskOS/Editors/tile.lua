@@ -29,7 +29,7 @@ local Map = MapObj(MapW, MapH)
 
 local mapdx, mapdy = 0,0 --Map drawing offsets.
 
-local bgsprite = eapi.editorsheet:extract(59):image() --The background image sprite.
+local bgsprite = _SystemSheet:extract(59):image() --The background image sprite.
 local bgquad = bgsprite:quad(0,0,MapVPW,MapVPH) --The quad of the background image
 
 local isquad = bgsprite:quad(0,0,8*8,8)
@@ -119,7 +119,7 @@ function t:drawToolbar()
     local sprid = hotbarTiles[i+1]
     
     if sprid == 0 then
-      eapi.editorsheet:draw(120, swidth-8,8+i*8)
+      _SystemSheet:draw(120, swidth-8,8+i*8)
     else
       SpriteMap:draw(sprid, swidth-8,8+i*8)
     end
@@ -132,7 +132,7 @@ function t:drawToolbar()
     
     if i == selectedTool then sprid = sprid + 24 end
     
-    eapi.editorsheet:draw(sprid,swidth-8,sheight-5*8+i*8)
+    _SystemSheet:draw(sprid,swidth-8,sheight-5*8+i*8)
   end
   
   --Draw hotbar selection box
@@ -218,7 +218,7 @@ function t:drawMenu()
   rect(sdx+1,sdy+1,22*8+2,12*8+2,true,1)
   rect(sdx+2,sdy+2,22*8,12*8,false,0)
   SpritesMap:draw(sdx+2,sdy+2,false,false,false,false,false,false,SpriteMap)
-  eapi.editorsheet:draw(120,sdx+2,sdy+2)
+  _SystemSheet:draw(120,sdx+2,sdy+2)
   
   --Invalid tiles
   pal(1,2)
