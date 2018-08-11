@@ -19,6 +19,7 @@ local ofs = CalibrationVars.Offsets
 local newImageHandler = love.filesystem.load(Path.."scripts/imageHandler.lua")
 local VRAMBound = false
 local VRAMImg
+local VRAMDrawImg
 
 --==VRAM==--
 
@@ -32,14 +33,18 @@ end
 
 local function UnbindVRAM(keepbind)
   if not VRAMBound then return end
-  local Img = love.graphics.newImage(VRAMImg)
+  if VRAMDrawImg then
+    VRAMDrawImg:replacePixels(VRAMImg)
+  else
+    VRAMDrawImg = love.graphics.newImage(VRAMImg)
+  end
   GPU.pushColor()
   love.graphics.push()
   love.graphics.origin()
   love.graphics.setColor(1,1,1,1)
   love.graphics.setShader()
   love.graphics.clear(0,0,0,1)
-  love.graphics.draw(Img,ofs.image[1],ofs.image[2])
+  love.graphics.draw(VRAMDrawImg,ofs.image[1],ofs.image[2])
   love.graphics.setShader(RenderVars.DrawShader)
   love.graphics.pop()
   GPU.popColor()
