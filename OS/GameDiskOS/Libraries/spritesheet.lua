@@ -35,11 +35,12 @@ return function(img,w,h)
   
   function ss:image() return self.img end
   function ss:data() return self.img:data() end
-  function ss:quad(id) return self.quads[id] end
-  function ss:rect(id) return self.quads[id]:getViewport() end
-  function ss:draw(id,x,y,r,sx,sy) self.img:draw(x,y,r,sx,sy,self.quads[id]) return self end
-  function ss:extract(id) return imagedata(self.cw,self.ch):paste(self:data(),0,0,self:rect(id)) end
+  function ss:quad(id) return self.quads[math.floor(id)] end
+  function ss:rect(id) return self.quads[math.floor(id)]:getViewport() end
+  function ss:draw(id,x,y,r,sx,sy) self.img:draw(x,y,r,sx,sy,self.quads[math.floor(id)]) return self end
+  function ss:extract(id) return imagedata(self.cw,self.ch):paste(self:data(),0,0,self:rect(math.floor(id))) end
   function ss:flag(id,value)
+    id = math.floor(id)
     if value then
       self.flags[id] = value
       return self
