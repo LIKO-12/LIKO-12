@@ -188,7 +188,7 @@ fs.mountZIP()
 log("unmounted successfully")
 
 log("- Generating game.lk12")
-local gameLK12 = LK12Utils.encodeDiskGame(eapi:export())
+local gameLK12 = LK12Utils.encodeDiskGame(eapi:export(),false,false,eapi.apiVersion)
 likosrc.OS.GameDiskOS["game.lk12"] = gameLK12
 log("generated successfully")
 
