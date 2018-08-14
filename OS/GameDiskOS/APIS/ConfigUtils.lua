@@ -37,7 +37,7 @@ function ConfigUtils.get(name)
 end
 
 --Initialize the ConfigUtils
-if not fs.exists(ConfigUtils.configPath) then
+if not fs.exists(ConfigUtils.configPath) and not _GameDiskOS then
   fs.write(ConfigUtils.configPath,"[]")
 end
 

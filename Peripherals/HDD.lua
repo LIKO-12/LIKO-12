@@ -45,7 +45,11 @@ return function(Config)
     end
     
     ActiveDrive = ActiveDrive or name
-    Drives[name] = {Size=size, Usage=0, Readonly=false}
+    if size == 0 then
+      Drives[name] = {Size=0, Usage=0, Readonly=true}
+    else
+      Drives[name] = {Size=size, Usage=0, Readonly=false}
+    end
   end
   
   MainDrive = ActiveDrive
@@ -653,6 +657,9 @@ return function(Config)
   function devkit.calcUsage()
     for k, v in pairs(Drives) do
       v.Usage = getSizeRecursive(k)
+      if v.Readonly then
+        v.Size = v.Usage
+      end
     end
   end
   
