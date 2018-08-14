@@ -36,7 +36,7 @@ end
 
 local lk12Data = fs.read("game.lk12")
 
-local edata, binary = LK12Utils.decodeDiskGame(lk12Data)
+local edata, binary, apiver = LK12Utils.decodeDiskGame(lk12Data)
 
 if not edata then
   color(8) print("\nFailed to decode game.lk12: "..tostring(binary))
@@ -51,7 +51,7 @@ end
 local Runtime = require("Runtime")
 
 while true do
-  local glob, co, chunk, apiver = Runtime.loadGame(edata)
+  local glob, co, chunk = Runtime.loadGame(edata)
 
   if not glob then
     color(8) print("\nFailed to load game.lk12: "..tostring(co))
