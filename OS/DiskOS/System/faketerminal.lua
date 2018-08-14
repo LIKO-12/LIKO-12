@@ -51,14 +51,14 @@ end
 local Runtime = require("Runtime")
 
 while true do
-  local glob, co, chunk = Runtime.loadGame(edata)
+  local glob, co, chunk, apiver = Runtime.loadGame(edata)
 
   if not glob then
     color(8) print("\nFailed to load game.lk12: "..tostring(co))
     crashLoop()
   end
 
-  local ok, err = Runtime.runGame(glob, co,...)
+  local ok, err = Runtime.runGame(glob, co, apiver)
 
   if not ok then
     color(8)
