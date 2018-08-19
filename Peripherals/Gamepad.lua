@@ -7,8 +7,8 @@ return function(config) --A function that creates a new Gamepad peripheral.
   local CPUKit = config.CPUKit
   if not CPUKit then error("The gamepad peripheral can't work without the CPUKit passed !") end
   
-  if love.filesystem.getInfo("Misc/GamepadMapping.txt","file") then
-    love.joystick.loadGamepadMappings("Misc/GamepadMapping.txt")
+  if love.filesystem.getInfo("Miscellaneous/GamepadMapping.txt","file") then
+    love.joystick.loadGamepadMappings("Miscellaneous/GamepadMapping.txt")
   end
   
   local debug = config.debug
@@ -111,7 +111,7 @@ return function(config) --A function that creates a new Gamepad peripheral.
   end
   
   function GP._SaveMap()
-    return love.joystick.saveGamepadMappings("Misc/GamepadMapping.txt")
+    return love.joystick.saveGamepadMappings("Miscellaneous/GamepadMapping.txt")
   end
   
   events.register("love:joystickpressed",function(joystick,button)

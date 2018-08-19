@@ -1,6 +1,6 @@
 --The BIOS Post Screen !
 
-local DevMode = love.filesystem.getInfo("/Misc/devmode.txt") and true or false
+local DevMode = love.filesystem.getInfo("/Miscellaneous/devmode.txt") and true or false
 
 local events = require("Engine.events")
 local coreg = require("Engine.coreg")
@@ -61,7 +61,7 @@ GPU.print("LIKO-12 - Fantasy Computer",15,6)
 GPU.print("Copyright (C) Rami Sabbagh",15,13)
 
 --LIKO-12 Sourcecode .love creation
-if _LIKO_Old or not love.filesystem.getInfo("/Misc/LIKO-12_Source.love") then
+if _LIKO_Old or not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love") then
   print("Creating LIKO-12_Source.love")
   
   GPU._systemMessage("Generating internal file...",120,0,7,true)
@@ -99,7 +99,7 @@ if _LIKO_Old or not love.filesystem.getInfo("/Misc/LIKO-12_Source.love") then
   local LIKO_SRC_ZIP = assert(writer.finishZip()):read()
   
   love.filesystem.setIdentity(currentIdentity)
-  love.filesystem.write("/Misc/LIKO-12_Source.love",LIKO_SRC_ZIP)
+  love.filesystem.write("/Miscellaneous/LIKO-12_Source.love",LIKO_SRC_ZIP)
   
   CPU.clearEStack()
   
@@ -166,7 +166,7 @@ elseif (DevMode or _LVer.tag == "DEV") and not fs.exists("/.noupdate") then Inst
 --Update the operating system
 if _LIKO_Old then
   if not fs.exists("/.noupdate") then InstallOS(true) end
-  love.filesystem.write("Misc/.version",tostring(_LIKO_Version)) --Update the .version file
+  love.filesystem.write("Miscellaneous/.version",tostring(_LIKO_Version)) --Update the .version file
 end
 
 if DevMode and love.thread and not fs.exists("/.noupdate") and not enterSetup then

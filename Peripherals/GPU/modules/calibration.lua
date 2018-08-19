@@ -19,11 +19,11 @@ local _CanvasFormats = lg.getCanvasFormats()
 
 local gpuName, gpuVersion, gpuVendor, gpuDevice = lg.getRendererInfo() --Used to apply some device specific bugfixes.
 local gpuInfo = gpuName..";"..gpuVersion..";"..gpuVendor..";"..gpuDevice
-if not love.filesystem.getInfo("/Misc/GPUInfo.txt","file") then love.filesystem.write("/Misc/GPUInfo.txt",gpuInfo) end
+if not love.filesystem.getInfo("/Miscellaneous/GPUInfo.txt","file") then love.filesystem.write("/Miscellaneous/GPUInfo.txt",gpuInfo) end
 
 --==Graphics card supported canvases info==--
 
-if not love.filesystem.getInfo("/Misc/GPUCanvasFormats.txt","file") then
+if not love.filesystem.getInfo("/Miscellaneous/GPUCanvasFormats.txt","file") then
   local formats = {}
   for k,v in pairs(_CanvasFormats) do
     if v then table.insert(formats,k) end
@@ -36,25 +36,25 @@ if not love.filesystem.getInfo("/Misc/GPUCanvasFormats.txt","file") then
   end
   table.sort(rformats)
   rformats = table.concat(rformats,"\n")
-  love.filesystem.write("/Misc/GPUCanvasFormats.txt",formats.."\n\nReadable:\n\n"..rformats)
+  love.filesystem.write("/Miscellaneous/GPUCanvasFormats.txt",formats.."\n\nReadable:\n\n"..rformats)
 end
 
 --==Calibration Process==--
 
 local calibVersion,ofs = 1.5
-if love.filesystem.getInfo("/Misc/GPUCalibration.json","file") then
-  ofs = json:decode(love.filesystem.read("/Misc/GPUCalibration.json"))
+if love.filesystem.getInfo("/Miscellaneous/GPUCalibration.json","file") then
+  ofs = json:decode(love.filesystem.read("/Miscellaneous/GPUCalibration.json"))
   if ofs.version < calibVersion or ofs.info ~= gpuInfo then --Redo calibration
     ofs = love.filesystem.load(Path.."scripts/calibrate.lua")()
     ofs.version = calibVersion
     ofs.info = gpuInfo
-    love.filesystem.write("/Misc/GPUCalibration.json",json:encode_pretty(ofs))
+    love.filesystem.write("/Miscellaneous/GPUCalibration.json",json:encode_pretty(ofs))
   end
 else
   ofs = love.filesystem.load(Path.."scripts/calibrate.lua")()
   ofs.version = calibVersion
   ofs.info = gpuInfo
-  love.filesystem.write("/Misc/GPUCalibration.json",json:encode_pretty(ofs))
+  love.filesystem.write("/Miscellaneous/GPUCalibration.json",json:encode_pretty(ofs))
 end
 
 --==Custom Patches==--

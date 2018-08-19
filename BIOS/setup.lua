@@ -4,7 +4,7 @@
 local Handled, Devkits = ... --Handled is passed by BIOS POST
 --luacheck: pop
 
-local DevMode = love.filesystem.getInfo("/Misc/devmode.txt") and true or false
+local DevMode = love.filesystem.getInfo("/Miscellaneous/devmode.txt") and true or false
 
 --Engine parts
 local coreg = require("Engine.coreg")
@@ -541,11 +541,11 @@ end
 
 --Toggle Devmode
 tools[5] = function()
-  if love.filesystem.getInfo("Misc/devmode.txt","file") then
-    love.filesystem.remove("Misc/devmode.txt")
+  if love.filesystem.getInfo("Miscellaneous/devmode.txt","file") then
+    love.filesystem.remove("Miscellaneous/devmode.txt")
     systemMessage("Disabled DEVMODE")
   else
-    love.filesystem.write("Misc/devmode.txt","")
+    love.filesystem.write("Miscellaneous/devmode.txt","")
     systemMessage("Enabled DEVMODE")
   end
 end
