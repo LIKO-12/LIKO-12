@@ -8,18 +8,18 @@ if BuildMode then
   BuildMode = json:decode(love.filesystem.read("build.json"))
 end
 
-if not love.filesystem.getInfo("Misc","directory") then
-  love.filesystem.createDirectory("Misc")
+if not love.filesystem.getInfo("Miscellaneous","directory") then
+  love.filesystem.createDirectory("Miscellaneous")
 end
 
 local _LIKO_Version, _LIKO_Old = _LVERSION:sub(2,-1)
-if love.filesystem.getInfo("Misc/.version","file") then
-  _LIKO_Old = love.filesystem.read("Misc/.version")
+if love.filesystem.getInfo("Miscellaneous/.version","file") then
+  _LIKO_Old = love.filesystem.read("Miscellaneous/.version")
   if _LIKO_Old == _LIKO_Version then
     _LIKO_Old = false
   end
 else
-  love.filesystem.write("Misc/.version",tostring(_LIKO_Version))
+  love.filesystem.write("Miscellaneous/.version",tostring(_LIKO_Version))
 end
 
 --Require the engine libraries--
@@ -155,9 +155,9 @@ do
   
   --Returns LIKO-12_Source.love data
   function yAPIS.BIOS.getSRC()
-    if not love.filesystem.getInfo("/Misc/LIKO-12_Source.love") then return true, false, "LIKO-12_Source.love doesn't exist ! Try to reboot." end
+    if not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love") then return true, false, "LIKO-12_Source.love doesn't exist ! Try to reboot." end
     
-    return true, love.filesystem.read("/Misc/LIKO-12_Source.love")
+    return true, love.filesystem.read("/Miscellaneous/LIKO-12_Source.love")
   end
   
 end
