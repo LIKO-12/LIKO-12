@@ -28,7 +28,7 @@ First of all, you have to download LIKO-12, it's available at:
     2. APT Update `sudo apt update`.
     3. Install LÖVE `sudo apt install love`.
 2. Download the universal `.love` file `..._Universal.love`
-3. Download LuaSec:
+3. Install LuaSec (For https support, _optional_):
   - If using debian:
     - `sudo apt install luasec`
   - Otherwise use [luarocks](https://luarocks.org/):
@@ -42,7 +42,12 @@ First of all, you have to download LIKO-12, it's available at:
 
 1. Download the Linux .AppImage `..._Linux_x86_64.AppImage`.
 2. Make it executable `chmod u+x LIKO-12_..._Linux_x86_64.AppImage`.
-3. Execute it `./LIKO-12_..._Linux_x86_64.AppImage`.
+3. Install LuaSec (For https support, _optional_):
+  - If using debian:
+    - `sudo apt install luasec`
+  - Otherwise use [luarocks](https://luarocks.org/):
+    - `sudo luarocks install luasec`
+4. Execute the .AppImage `./LIKO-12_..._Linux_x86_64.AppImage`.
 
 ---
 ## OS X
