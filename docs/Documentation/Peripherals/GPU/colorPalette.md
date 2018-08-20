@@ -23,14 +23,14 @@ local r, g, b = GPU.colorPalette(id)
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **id (number):** The color id.
 
 
 ---
-## Returns
+#### Returns
 ---
 
 * **r (number):** The channel red value [0-225]
@@ -43,12 +43,12 @@ local r, g, b = GPU.colorPalette(id)
 ---
 
 ```lua
-local  = GPU.colorPalette(id, r, g, b)
+GPU.colorPalette(id, r, g, b)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **id (number):** The color id.
@@ -56,31 +56,13 @@ local  = GPU.colorPalette(id, r, g, b)
 * **g (number):** The channel green value [0-225]
 * **b (number):** The channel blue value [0-225]
 
-
----
-## Returns
----
-
-
 ---
 
 # 3. Reset the palette colors to their defaults (PICO-8 Palette):
 ---
 
 ```lua
-local  = GPU.colorPalette()
+GPU.colorPalette()
 ```
-
-
----
-## Arguments
----
-
-
-
----
-## Returns
----
-
 
 ---

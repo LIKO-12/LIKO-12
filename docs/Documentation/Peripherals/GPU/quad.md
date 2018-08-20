@@ -11,15 +11,13 @@ Quads can be used to select a part of an image to draw. In this way, one large i
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 GPU.quad(x, y, w, h, sw, sh)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **x (number):** The x coord of the quad's top-left corner.

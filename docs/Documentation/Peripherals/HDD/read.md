@@ -9,22 +9,20 @@ Returns the content of a file.
 * **Last updated in:** _HDD:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local data = HDD.read(file)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **file (string):** File to read.
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **data (string):** The content of the file.

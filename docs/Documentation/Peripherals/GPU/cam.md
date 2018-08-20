@@ -31,7 +31,7 @@ GPU.cam("translate", x, y)
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **`"translate"` (string)**
@@ -53,7 +53,7 @@ GPU.cam("scale", sx, sy)
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **`"scale"` (string)**
@@ -71,7 +71,7 @@ GPU.cam("rotate", a)
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **`"rotate"` (string)**
@@ -88,7 +88,7 @@ GPU.cam("shear", x, y)
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **`"shear"` (string)**

@@ -13,15 +13,13 @@ Events in LIKO-12 may be pulled directly, or pulled from a stack if there are al
 * **Last updated in:** _CPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local event, a, b, c, d, e, f = CPU.pullEvent()
 ```
 
 ---
-# Returns
+### Returns
 ---
 
 * **event (string):** The event name, can be any of the callbacks names without the "_" at the start.

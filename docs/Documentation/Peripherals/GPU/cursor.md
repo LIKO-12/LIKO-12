@@ -18,22 +18,16 @@ Sets the current active mouse cursor, or creates a new one.
 ---
 
 ```lua
-local  = GPU.cursor(name, grap)
+GPU.cursor(name, grap)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **name (string):** The name of the cursor.
-* **grap (boolean):** True -> Grap the cursor to the pixelated screen.
-
-
----
-## Returns
----
-
+* **grap (boolean/nil) (Default:`"false"`):** True -> Grap the cursor to the pixelated screen.
 
 ---
 
@@ -46,13 +40,7 @@ local current = GPU.cursor()
 
 
 ---
-## Arguments
----
-
-
-
----
-## Returns
+#### Returns
 ---
 
 * **current (string):** The current active cursor name.
@@ -63,23 +51,17 @@ local current = GPU.cursor()
 ---
 
 ```lua
-local  = GPU.cursor(imgdata, name, hx, hy)
+GPU.cursor(imgdata, name, hx, hy)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **imgdata ():** The imagedata of the cursor.
-* **name (string):** The name of the cursor.
-* **hx (number):** The X coord of the cursor hot position.
-* **hy (number):** The Y coord of the cursor hot position.
-
-
----
-## Returns
----
-
+* **name (string/nil) (Default:`"default"`):** The name of the cursor.
+* **hx (number/nil) (Default:`0`):** The X coord of the cursor hot position.
+* **hy (number/nil) (Default:`0`):** The Y coord of the cursor hot position.
 
 ---

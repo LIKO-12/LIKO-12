@@ -9,22 +9,14 @@ Changes the current drive.
 * **Last updated in:** _HDD:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = HDD.drive(drive)
+HDD.drive(drive)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **drive (string):** Drive to change to.
-
-
----
-# Returns
----
-
 

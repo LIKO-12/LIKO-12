@@ -9,22 +9,14 @@ Creates a new floppy disk and mounts it
 * **Last updated in:** _FDD:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = FDD.newDisk(tname)
+FDD.newDisk(tname)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
-* **tname (string):** Template name, without the .png extension.
-
-
----
-# Returns
----
-
+* **tname (string/nil) (Default:`"Blue"`):** Template name, without the .png extension.
 

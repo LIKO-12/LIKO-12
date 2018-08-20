@@ -9,22 +9,14 @@ Imports and mounts a floppy disk
 * **Last updated in:** _FDD:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = FDD.importDisk(data)
+FDD.importDisk(data)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **data (string):** Disk to import.
-
-
----
-# Returns
----
-
 

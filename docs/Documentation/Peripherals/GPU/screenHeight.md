@@ -9,15 +9,13 @@ Returns the height of the screen.
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local h = GPU.screenHeight()
 ```
 
 ---
-# Returns
+### Returns
 ---
 
 * **h (number):** The height of the screen (By default - 128)

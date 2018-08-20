@@ -9,22 +9,20 @@ Load a submodule.
 * **Last updated in:** _WEB:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local submodule = WEB.luasocket(name)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **name (string):** Name of submodule to load.
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **submodule (table):** The loaded submodule.

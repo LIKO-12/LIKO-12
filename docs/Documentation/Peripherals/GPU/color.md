@@ -27,7 +27,7 @@ GPU.color(id)
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **id (number):** The new active color id (0-15).
@@ -43,7 +43,7 @@ local id = GPU.color()
 
 
 ---
-## Returns
+#### Returns
 ---
 
 * **id (number):** The current active color id (0-15).

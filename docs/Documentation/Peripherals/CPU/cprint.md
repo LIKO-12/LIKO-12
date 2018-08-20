@@ -9,23 +9,15 @@ Print into the developer terminal, that can be shown by running LIKO-12 from ter
 * **Last updated in:** _CPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = CPU.cprint(text, ...)
+CPU.cprint(text, ...)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **text (any):** The text to print.
-* **... (any):** Will be automatically concated with the first argument, works the same way of the standard Lua print.
-
-
----
-# Returns
----
-
+* **... (any/nil) (Default:`"nil"`):** Will be automatically concated with the first argument, works the same way of the standard Lua print.
 

@@ -9,21 +9,13 @@ Returns the imagedata object of LabelImage, which can be capture by pressing F6,
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local limg = GPU.getLabelImage()
 ```
 
 ---
-# Arguments
----
-
-
-
----
-# Returns
+### Returns
 ---
 
 * **limg ():** The imagedata object of the label.

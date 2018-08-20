@@ -9,15 +9,13 @@ Draws line(s) on the screen.
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = GPU.line(x1, y1, x2, y2, ..., color)
+GPU.line(x1, y1, x2, y2, ..., color)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **x1 (number):** The x position of the first end of the line.
@@ -26,10 +24,4 @@ local  = GPU.line(x1, y1, x2, y2, ..., color)
 * **y2 (number):** The y position of the second end of the line.
 * **... (number):** Any other lines to draw at the same time.
 * **color (number):** The color of the line(s) (0-15), defaults to the active color.
-
-
----
-# Returns
----
-
 

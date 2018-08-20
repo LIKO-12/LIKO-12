@@ -11,15 +11,13 @@ Check [Enums/KeyConstants](/Documentation/Enums/KeyConstants.md).
 * **Last updated in:** _Keyboard:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local down = Keyboard.isKDown(key, ...)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **key (string):**  A key to check.
@@ -27,7 +25,7 @@ local down = Keyboard.isKDown(key, ...)
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **down (boolean):** True if any supplied key is down, false if not.

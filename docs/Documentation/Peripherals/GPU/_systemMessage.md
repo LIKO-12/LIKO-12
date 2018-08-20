@@ -9,25 +9,17 @@ Shows a system message: A single line message at the bottom of the screen.
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = GPU._systemMessage(msg, time, , )
+GPU._systemMessage(msg, time, , )
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **msg (string):** The message to show.
-* **time (number):** How long the message to be shown, (in seconds).
-* ** (number):** The color of the text (0-15).
-* ** (number):** The color of the background (0-15).
-
-
----
-# Returns
----
-
+* **time (number/nil) (Default:`1`):** How long the message to be shown, (in seconds).
+* ** (number/nil) (Default:`4`):** The color of the text (0-15).
+* ** (number/nil) (Default:`9`):** The color of the background (0-15).
 

@@ -9,21 +9,7 @@ Pushes the current color mapping and transparent colors list to the palettes sta
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = GPU.pushPalette()
+GPU.pushPalette()
 ```
-
----
-# Arguments
----
-
-
-
----
-# Returns
----
-
-

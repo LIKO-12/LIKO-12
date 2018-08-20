@@ -23,7 +23,7 @@ GPU.printBackspace(c)
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **c (number):** The background color to fill the character with (**-1**,**15**), **-1** means no background, defaults to the current print cursor background color.
@@ -39,7 +39,7 @@ GPU.printBackspace(c, "true")
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **c (number):** The background color to fill the character with (**-1**,**15**), **-1** means no background, defaults to the current print cursor background color.

@@ -22,21 +22,15 @@ The interval between repeats depends on the user's system settings.
 ---
 
 ```lua
-local  = Keyboard.keyrepeat(state)
+Keyboard.keyrepeat(state)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **state (boolean):** Whether repeat keypress events should be enabled when a key is held down.
-
-
----
-## Returns
----
-
 
 ---
 
@@ -49,13 +43,7 @@ local state = Keyboard.keyrepeat()
 
 
 ---
-## Arguments
----
-
-
-
----
-## Returns
+#### Returns
 ---
 
 * **state (boolean):** Whether repeat keypress events should be enabled when a key is held down.

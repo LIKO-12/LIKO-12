@@ -18,21 +18,15 @@ Enables the text input, and shows the onscreen keyboard for the mobile users.
 ---
 
 ```lua
-local  = Keyboard.textinput(state)
+Keyboard.textinput(state)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **state (boolean):** True to enable the input, False to disable it.
-
-
----
-## Returns
----
-
 
 ---
 
@@ -45,13 +39,7 @@ local state = Keyboard.textinput()
 
 
 ---
-## Arguments
----
-
-
-
----
-## Returns
+#### Returns
 ---
 
 * **state (boolean):** True if the textinput is enabled, false is the text input is disabled.

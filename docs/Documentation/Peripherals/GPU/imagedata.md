@@ -13,22 +13,20 @@ Creates a new imagedata object, which can be used for images processing (Set pix
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local imgdata = GPU.imagedata(data)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **data (string):** The image data, (png binary string or in lk12 format)
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **imgdata ():** The created imagedata object.
