@@ -1,5 +1,5 @@
-* [Home](/)
 * [Get Started](Get_Started.md)
+* [Home](/)
 * [Documentation](Documentation/)
 * [Disks](https://ramilego4game.github.io/LIKO-12-Disks/)
 * External Links
