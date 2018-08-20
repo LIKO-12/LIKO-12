@@ -9,22 +9,20 @@ Returns the Unix timestamp of a file.
 * **Last updated in:** _HDD:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local timestamp = HDD.getLastModified(file)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **file (string):** File to get timestamp of.
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **timestamp (number):** Unix timestamp of the file.

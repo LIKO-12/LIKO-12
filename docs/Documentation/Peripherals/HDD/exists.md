@@ -9,22 +9,20 @@ Returns true if a file or directory exists.
 * **Last updated in:** _HDD:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local existent = HDD.exists(file)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **file (string):** File to check.
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **existent (boolean):** Existence of file or directory.

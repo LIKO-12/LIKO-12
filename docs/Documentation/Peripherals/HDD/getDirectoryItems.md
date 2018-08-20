@@ -9,22 +9,20 @@ Returns a table containing items in a directory.
 * **Last updated in:** _HDD:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local files = HDD.getDirectoryItems(directory)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **directory (string):** Directory to list items of.
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **files (table):** List of files in the directory.

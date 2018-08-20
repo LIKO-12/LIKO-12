@@ -9,23 +9,21 @@ Send a request to a URL.
 * **Last updated in:** _WEB:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local requestID = WEB.send(url, args)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **url (string):** URL to send request to.
-* **args (table):** Arguements to send in the request.
+* **args (table/nil) (Default:`"nil"`):** Arguements to send in the request.
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **requestID (number):** The request's id, used to read it later.

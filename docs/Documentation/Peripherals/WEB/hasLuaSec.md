@@ -9,21 +9,13 @@ Checks if it has Luasec.
 * **Last updated in:** _WEB:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local hasLuaSec = WEB.hasLuaSec()
 ```
 
 ---
-# Arguments
----
-
-
-
----
-# Returns
+### Returns
 ---
 
 * **hasLuaSec (boolean):** True if it has LuaSec, false otherwise.

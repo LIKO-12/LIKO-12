@@ -11,15 +11,13 @@ This function accounts for newlines correctly (i.e. '\n').
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local width, wrappedText = GPU.wrapText(text, wraplimit)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **text (string):** The text that will be wrapped.
@@ -27,7 +25,7 @@ local width, wrappedText = GPU.wrapText(text, wraplimit)
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **width (string):** The maximum width of the wrapped text.

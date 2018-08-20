@@ -9,22 +9,20 @@ Returns true if the path given represents a file.
 * **Last updated in:** _HDD:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local isFile = HDD.isFile(file)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **file (string):** Checks if it is a file.
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **isFile (boolean):** True if it is a file, false otherwise.

@@ -18,7 +18,7 @@ Sets the region that the GPU can draw on.
 ---
 
 ```lua
-local  = GPU.clip(x, y, w, h)
+GPU.clip(x, y, w, h)
 ```
 
 ?> The arguments can be passed in a table.
@@ -27,7 +27,7 @@ local  = GPU.clip(x, y, w, h)
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **x (number):** The top-left X coord of the clipping area.
@@ -35,31 +35,13 @@ local  = GPU.clip(x, y, w, h)
 * **w (number):** The width of the clipping area.
 * **h (number):** The height of the clipping area.
 
-
----
-## Returns
----
-
-
 ---
 
 # 2. Disable clipping:
 ---
 
 ```lua
-local  = GPU.clip()
+GPU.clip()
 ```
-
-
----
-## Arguments
----
-
-
-
----
-## Returns
----
-
 
 ---

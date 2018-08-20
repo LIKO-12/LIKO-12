@@ -18,19 +18,19 @@ Prints text to the screen, uses the current active color.
 ---
 
 ```lua
-local  = GPU.print(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
+GPU.print(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **text (string):** The text to draw.
 * **x (number):** The X coord to draw at.
 * **y (number):** The y coord to draw at.
 * **limit (number):** Wrap the line after this many horizontal pixels.
-* **align (string):** The alignment.
+* **align (string/nil) (Default:`"left"`):** The alignment.
 * **r (number):** Rotation (radians).
 * **sx (number):** Scale factor (x-axis).
 * **sy (number):** Scale factor (y-axis).
@@ -38,12 +38,6 @@ local  = GPU.print(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
 * **oy (number):** Origin offset (y-axis).
 * **kx (number):** Shear factor (x-axis).
 * **ky (number):** Shear factor (y-axis).
-
-
----
-## Returns
----
-
 
 ---
 
@@ -51,19 +45,19 @@ local  = GPU.print(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
 ---
 
 ```lua
-local  = GPU.print(text, x, y, false, false, r, sx, sy, ox, oy, kx, ky)
+GPU.print(text, x, y, false, false, r, sx, sy, ox, oy, kx, ky)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **text (string):** The text to draw.
 * **x (number):** The X coord to draw at.
 * **y (number):** The y coord to draw at.
-* **false (boolean):** literal
-* **false (boolean):** literal
+* **`false` (boolean)**
+* **`false` (boolean)**
 * **r (number):** Rotation (radians).
 * **sx (number):** Scale factor (x-axis).
 * **sy (number):** Scale factor (y-axis).
@@ -72,33 +66,21 @@ local  = GPU.print(text, x, y, false, false, r, sx, sy, ox, oy, kx, ky)
 * **kx (number):** Shear factor (x-axis).
 * **ky (number):** Shear factor (y-axis).
 
-
----
-## Returns
----
-
-
 ---
 
 # 3. Print in terminal grid way.
 ---
 
 ```lua
-local  = GPU.print(text)
+GPU.print(text)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **text (string):** The text to draw.
-
-
----
-## Returns
----
-
 
 ---
 
@@ -106,22 +88,16 @@ local  = GPU.print(text)
 ---
 
 ```lua
-local  = GPU.print(text, "false")
+GPU.print(text, false)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **text (string):** The text to draw.
-* **`"false"` (boolean)**
-
-
----
-## Returns
----
-
+* **`false` (boolean)**
 
 ---
 
@@ -129,22 +105,16 @@ local  = GPU.print(text, "false")
 ---
 
 ```lua
-local  = GPU.print(text, "false", "true")
+GPU.print(text, false, true)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **text (string):** The text to draw.
-* **`"false"` (boolean)**
-* **`"true"` (boolean)**
-
-
----
-## Returns
----
-
+* **`false` (boolean)**
+* **`true` (boolean)**
 
 ---

@@ -27,13 +27,13 @@ local  = CPU.reboot()
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 
 
 ---
-## Returns
+#### Returns
 ---
 
 
@@ -52,14 +52,14 @@ local  = CPU.reboot("true")
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **`"true"` (boolean)**
 
 
 ---
-## Returns
+#### Returns
 ---
 
 

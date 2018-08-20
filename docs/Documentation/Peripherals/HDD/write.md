@@ -9,23 +9,15 @@ Writes content to a file (Will override anything in the file).
 * **Last updated in:** _HDD:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = HDD.write(file, text)
+HDD.write(file, text)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **file (string):** File to write to.
 * **text (string):** Text to write.
-
-
----
-# Returns
----
-
 

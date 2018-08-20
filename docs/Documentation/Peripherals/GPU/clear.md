@@ -9,22 +9,14 @@ Clears the screen and fills it with a specific color, useful when clearing the s
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = GPU.clear(id)
+GPU.clear(id)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
-* **id (number):** The ID of the color to fill the screen with, can be 0-15.
-
-
----
-# Returns
----
-
+* **id (number/nil) (Default:`0`):** The ID of the color to fill the screen with, can be 0-15.
 

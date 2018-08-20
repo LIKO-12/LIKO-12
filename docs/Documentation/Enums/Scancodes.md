@@ -19,7 +19,7 @@ Scancodes are keyboard layout-independent, so the scancode "w" will be generated
 
 `kp/`, `kp*`, `kp-`, `kp+`, `kp=`, `kpenter`, `kp1`, `kp2`, `kp3`, `kp4`, `kp5`, `kp6`, `kp7`, `kp8`, `kp9`, `kp0`, `kp.`
 
-###International / Language Scancodes
+## International / Language Scancodes
 ---
 
 `international1`, `international2`, `international3`, `international4`, `international5`, `international6`, `international7`, `international8`, `international9`,

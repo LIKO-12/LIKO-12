@@ -15,22 +15,20 @@ Check [Enums/Scancodes](/Documentation/Enums/Scancodes.md) and [Enums/KeyConstan
 * **Last updated in:** _Keyboard:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local key = Keyboard.scancodetokey(scancode)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **scancode (string):** The scancode to get the key from.
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **key (string):** The key corresponding to the given scancode, or "unknown" if the scancode doesn't map to a KeyConstant on the current system.

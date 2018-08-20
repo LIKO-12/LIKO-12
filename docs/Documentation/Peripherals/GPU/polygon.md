@@ -9,15 +9,13 @@ Draws a polygon on the screen.
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = GPU.polygon(x1, y1, x2, y2, x3, y3, ..., color)
+GPU.polygon(x1, y1, x2, y2, x3, y3, ..., color)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **x1 (number):** The x position of the first vertex of the polygon.
@@ -28,10 +26,4 @@ local  = GPU.polygon(x1, y1, x2, y2, x3, y3, ..., color)
 * **y3 (number):** The y position of the third vertex of the polygon.
 * **... (number):** Any other vertices of the polygon.
 * **color (number):** The color of the polygon (0-15), defaults to the active color.
-
-
----
-# Returns
----
-
 

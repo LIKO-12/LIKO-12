@@ -22,22 +22,16 @@ Makes a specific color transparent or not, by default the color 0 is transparent
 ---
 
 ```lua
-local  = GPU.palt(color, transparent)
+GPU.palt(color, transparent)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **color (number):** The color id (0-15).
-* **transparent (boolean):** (true) The color will be transparent, (false/nil) The color will be opaque.
-
-
----
-## Returns
----
-
+* **transparent (boolean/nil) (Default:`"nil"`):** (true) The color will be transparent, (false/nil) The color will be opaque.
 
 ---
 
@@ -45,19 +39,7 @@ local  = GPU.palt(color, transparent)
 ---
 
 ```lua
-local  = GPU.palt()
+GPU.palt()
 ```
-
-
----
-## Arguments
----
-
-
-
----
-## Returns
----
-
 
 ---

@@ -23,13 +23,7 @@ local content = CPU.clipboard()
 
 
 ---
-## Arguments
----
-
-
-
----
-## Returns
+#### Returns
 ---
 
 * **content (string):** The clipboard content.
@@ -40,20 +34,14 @@ local content = CPU.clipboard()
 ---
 
 ```lua
-local  = CPU.clipboard(content)
+CPU.clipboard(content)
 ```
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **content ():** The new clipboard content.
-
-
----
-## Returns
----
-
 
 ---

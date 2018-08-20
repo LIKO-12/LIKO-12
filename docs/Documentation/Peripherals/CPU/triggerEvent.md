@@ -9,28 +9,20 @@ Add a new event to the events stack.
 * **Last updated in:** _CPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
-local  = CPU.triggerEvent(event, a, b, c, d, e, f)
+CPU.triggerEvent(event, a, b, c, d, e, f)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **event (string):** The event name.
-* **a (any):** First argument.
-* **b (any):** Second argument.
-* **c (any):** Third argument.
-* **d (any):** Forth argument.
-* **e (any):** Fifth argument.
-* **f (any):** Sixth argument.
-
-
----
-# Returns
----
-
+* **a (any/nil) (Default:`"nil"`):** First argument.
+* **b (any/nil) (Default:`"nil"`):** Second argument.
+* **c (any/nil) (Default:`"nil"`):** Third argument.
+* **d (any/nil) (Default:`"nil"`):** Forth argument.
+* **e (any/nil) (Default:`"nil"`):** Fifth argument.
+* **f (any/nil) (Default:`"nil"`):** Sixth argument.
 

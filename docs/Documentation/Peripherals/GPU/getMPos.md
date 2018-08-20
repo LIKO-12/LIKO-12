@@ -9,21 +9,13 @@ Gets position of the mouse.
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local mx, my = GPU.getMPos()
 ```
 
 ---
-# Arguments
----
-
-
-
----
-# Returns
+### Returns
 ---
 
 * **mx (number):** The x position of the mouse.

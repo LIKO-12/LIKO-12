@@ -9,22 +9,20 @@ Encode a url to send it.
 * **Last updated in:** _WEB:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local url = WEB.urlEncode(url)
 ```
 
 ---
-# Arguments
+### Arguments
 ---
 
 * **url (string):** URL to encode.
 
 
 ---
-# Returns
+### Returns
 ---
 
 * **url (string):** The encoded URL.

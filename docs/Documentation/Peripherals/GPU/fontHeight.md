@@ -9,21 +9,13 @@ Returns height of the font character in pixels.
 * **Last updated in:** _GPU:_ v1.0.0, _LIKO-12_: v0.6.0
 
 ---
-# Syntax
----
 
 ```lua
 local height = GPU.fontHeight()
 ```
 
 ---
-# Arguments
----
-
-
-
----
-# Returns
+### Returns
 ---
 
 * **height (number):** The height of the font character.

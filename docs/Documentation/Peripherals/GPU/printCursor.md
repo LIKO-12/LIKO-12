@@ -27,7 +27,7 @@ GPU.printCursor(x, y, bgcolor)
 
 
 ---
-## Arguments
+#### Arguments
 ---
 
 * **x (number):** The X coord of the cursor in characters, defaults to the current X coord.
@@ -45,7 +45,7 @@ local x, y, bgcolor = GPU.printCursor()
 
 
 ---
-## Returns
+#### Returns
 ---
 
 * **x (number):** The current X coord of the cursor in characters.
