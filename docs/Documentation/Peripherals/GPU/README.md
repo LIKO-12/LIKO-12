@@ -34,7 +34,7 @@ It's the strongest peripheral in LIKO-12, and the biggest file also, it's respos
 * [isMDown](/Documentation/Peripherals/GPU/isMDown.md): Checks if a mouse button is down.
 * [line](/Documentation/Peripherals/GPU/line.md): Draws line(s) on the screen.
 * [pal](/Documentation/Peripherals/GPU/pal.md): Maps a color in the palette to another color.
-* [palt](/Documentation/Peripherals/GPU/palt.md): Makes a specific color transparent or not, By default the color 0 is transparent.
+* [palt](/Documentation/Peripherals/GPU/palt.md): Makes a specific color transparent or not, by default the color 0 is transparent.
 * [pauseGifRecording](/Documentation/Peripherals/GPU/pauseGifRecording.md): Pause LIKO-12 screen Gif recording by code.
 * [point](/Documentation/Peripherals/GPU/point.md): Draws point(s) on the screen.
 * [polygon](/Documentation/Peripherals/GPU/polygon.md): Draws a polygon on the screen.
@@ -52,7 +52,7 @@ It's the strongest peripheral in LIKO-12, and the biggest file also, it's respos
 * [screenHeight](/Documentation/Peripherals/GPU/screenHeight.md): Returns the height of the screen.
 * [screenSize](/Documentation/Peripherals/GPU/screenSize.md): Returns the dimensions of the screen.
 * [screenWidth](/Documentation/Peripherals/GPU/screenWidth.md): Returns the width of the screen.
-* [screenshot](/Documentation/Peripherals/GPU/screenshot.md): Takes a screenshot of the canvas (without the cursor), and returns it's imagedata.
+* [screenshot](/Documentation/Peripherals/GPU/screenshot.md): Takes a screenshot of the canvas (without the cursor), and returns its imagedata.
 * [startGifRecording](/Documentation/Peripherals/GPU/startGifRecording.md): Start LIKO-12 screen Gif recording by code.
 * [termHeight](/Documentation/Peripherals/GPU/termHeight.md): Returns height of the terminal in characters.
 * [termSize](/Documentation/Peripherals/GPU/termSize.md): Returns size of the terminal in characters.
