@@ -4,7 +4,7 @@ Editing the .lk12 file is not a good choice, because you will have to reload it 
 
 ---
 
-## 1. Moving your current code into a .lua file:
+## 1. Moving your current code into a .lua file
 
 ---
 
@@ -18,7 +18,7 @@ In the terminal, .lua extension will be automatically added.
 
 ---
 
-## 2. Clear the code from the internal code editor:
+## 2. Clear the code from the internal code editor
 
 ---
 
@@ -28,7 +28,7 @@ LIKO-12 may lag for a while when selecting everything, depending on how big your
 
 ---
 
-## 3. Call dofile in the code editor:
+## 3. Call dofile in the code editor
 
 ---
 
@@ -46,7 +46,7 @@ This way, you won't have to reload the .lk12 file each time editing your code, a
 
 ---
 
-## 4. Putting the code back into the code editor:
+## 4. Putting the code back into the code editor
 
 ---
 
