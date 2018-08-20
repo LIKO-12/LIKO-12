@@ -1,1 +1,0 @@
-**The documentation has been move to [https://ramilego4game.github.io/LIKO-12/](https://ramilego4game.github.io/LIKO-12/)**

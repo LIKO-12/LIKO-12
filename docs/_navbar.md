@@ -1,0 +1,5 @@
+* [Home](README.md)
+* [Get Started](https://github.com/RamiLego4Game/LIKO-12/releases)
+* [Documentation](Documentation/)
+* [Disks](https://ramilego4game.github.io/LIKO-12-Disks/)
+* [FAQ](FAQ.md)
