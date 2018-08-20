@@ -4,7 +4,7 @@
 
 * Available on Windows, Linux, OS X and Android
 * Completely written in Lua, powered by LÖVE
-* Open-source since the first day
+* Open-sourced since the first day
 
 [GitHub](https://github.com/RamiLego4Game/LIKO-12)
 [Get Started](Get_Started.md)
