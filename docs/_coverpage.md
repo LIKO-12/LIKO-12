@@ -7,4 +7,4 @@
 * Open-sourced since the first day
 
 [GitHub](https://github.com/RamiLego4Game/LIKO-12)
-[Get Started](Get_Started.md)
+[Get Started](Get Started.md)
