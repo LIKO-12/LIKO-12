@@ -4,7 +4,7 @@
 
 ### Welcome to the official documentation of LIKO-12.
 
-!> Please note that the documentation is not finished and it's still being written !
+!> Please note that the documentation is not finished and is still being written !
 
 ---
 ## Cheatsheets
