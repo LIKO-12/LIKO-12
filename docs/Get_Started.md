@@ -38,7 +38,7 @@ First of all, you have to download LIKO-12, it's available at:
 
 ### Method B (Works only for x86_64 systems):
 
-!> The .AppImage can't open it's data folder, and the data folder location is also unknown :stuck_out_tongue:
+!> The .AppImage can't open it's data folder, and the data folder location is also unknown.
 
 1. Download the Linux .AppImage `..._Linux_x86_64.AppImage`.
 2. Make it executable `chmod u+x LIKO-12_..._Linux_x86_64.AppImage`.
