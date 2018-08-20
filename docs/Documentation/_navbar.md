@@ -12,11 +12,16 @@
   * [Manually creating .love file from .lk12](/Documentation/Guides/Manually creating .love file from .lk12.md)
 
 * [Peripherals](/Documentation/Peripherals/)
-  * GPU
-  * CPU
-  * RAM
-  * FDD
-  * HDD
+  * [GPU](/Documentation/Peripherals/GPU/)
+  * [CPU](/Documentation/Peripherals/CPU/)
+  * [RAM](/Documentation/Peripherals/RAM/)
+  * [FDD](/Documentation/Peripherals/FDD/)
+  * [HDD](/Documentation/Peripherals/HDD/)
+  * [WEB](/Documentation/Peripherals/WEB/)
+  * [Audio](/Documentation/Peripherals/Audio/)
+  * [Gamepad](/Documentation/Peripherals/Gamepad/)
+  * [Keyboard](/Documentation/Peripherals/Keyboard/)
+  * [TouchControls](/Documentation/Peripherals/TouchControls/)
 
 * DiskOS
   * Games API
