@@ -170,6 +170,10 @@ else ---INSTALL--------------------------------------------
     
     drawProgress(1)
   end
+  
+  if osName ~= "DiskOS" then
+    fs.write(osDrive..":/.noupdate","This file ensures that the operating system is not overwritten by DiskOS when LIKO-12's version is changed.")
+  end
 end
 
 GPU.clear(0)
