@@ -22,6 +22,8 @@ First of all, you have to download LIKO-12, it's available at:
 
 ### Method A (Recommended):
 
+!> Not installing LuaSec would disable HTTPs connection support in LIKO-12.
+
 1. Install LÖVE 11.1 from [http://love2d.org](http://love2d.org)
   - If using debian doing the following would install it:
     1. Add LÖVE PPA to your system `sudo add-apt-repository ppa:bartbes/love-stable`.
