@@ -2,14 +2,38 @@
 local args = {...} --Get the arguments passed to this program
 if #args < 2 or args[1] == "-?" then
   printUsage(
-    "cp <source> <destination>","Copies a file creating any missing directory in the destination path"
+    "cp <source> <destination> [--verbose]","Copies a file or directory, creating any missing directory in the destination path"
   )
   return
+end
+
+local function copyRecursive(from, to, verbose)
+  color(10)
+  if verbose then
+    print("Copying " .. from .. " to " .. to)
+  end
+  if fs.isDirectory(from) then
+    if fs.exists(to) then
+      to = fs.combine(to, fs.getName(from))
+    end
+    local files = fs.getDirectoryItems(from)
+    for _,file in ipairs(files) do
+      copyRecursive(
+        fs.combine(from, file),
+        fs.combine(to, file),
+        verbose
+      )
+    end
+  else
+    local data = fs.read(from)
+    fs.write(to, data)
+  end
 end
 
 local term = require("terminal")
 local source = term.resolve(args[1])
 local destination = term.resolve(args[2])
+local verbose = args[3] == "--verbose"
 
 color(8)
 
@@ -40,9 +64,6 @@ for k, dir in ipairs(dirs) do
 end
 
 --Copy the source !
-if fs.isFile(source) then
-  fs.write(destination,fs.read(source))
-  color(11) print("Copied file successfully")
-else
-  return 1, "Copying directories is not supported yet"
-end
+copyRecursive(source, destination, verbose)
+color(11)
+print("Successfully Copied!")
