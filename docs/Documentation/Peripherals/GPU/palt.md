@@ -31,7 +31,7 @@ GPU.palt(color, transparent)
 ---
 
 * **color (number):** The color id (0-15).
-* **transparent (boolean/nil) (Default:`"nil"`):** (true) The color will be transparent, (false/nil) The color will be opaque.
+* **transparent (boolean, nil) (Default:`"nil"`):** (true) The color will be transparent, (false/nil) The color will be opaque.
 
 ---
 

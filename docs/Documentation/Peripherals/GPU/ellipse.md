@@ -26,7 +26,7 @@ GPU.ellipse(x, y, rx, ry, l, r, seg)
 * **y (number):** The y coord of ellipse center.
 * **rx (number):** The radius of the ellipse along the x-axis (half the ellipse's width).
 * **ry (number):** The radius of the ellipse along the y-axis (half the ellipse's height).
-* **l (boolean/nil) (Default:`"false"`):** (false/nil) The ellipse will be filled, (true) The ellipse will have only lines (outline).
+* **l (boolean, nil) (Default:`"false"`):** (false/nil) The ellipse will be filled, (true) The ellipse will have only lines (outline).
 * **r (number):** The color of the ellipse (0-15), defaults to the active color.
 * **seg (number):** The number of the segments used when drawing the ellipse.
 

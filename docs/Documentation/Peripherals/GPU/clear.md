@@ -18,5 +18,5 @@ GPU.clear(id)
 ### Arguments
 ---
 
-* **id (number/nil) (Default:`0`):** The ID of the color to fill the screen with, can be 0-15.
+* **id (number, nil) (Default:`0`):** The ID of the color to fill the screen with, can be 0-15.
 

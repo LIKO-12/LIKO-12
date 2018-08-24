@@ -10,7 +10,7 @@ It's the strongest peripheral in LIKO-12, and the biggest file also, it's respon
 * **Last updated in LIKO-12:** v0.8.0
 
 ---
-## Methods
+### Methods
 ---
 * [cam](/Documentation/Peripherals/GPU/cam.md): Transforms the drawing operations.
 * [circle](/Documentation/Peripherals/GPU/circle.md): Draws a circle on the screen.
@@ -61,7 +61,7 @@ It's the strongest peripheral in LIKO-12, and the biggest file also, it's respon
 * [wrapText](/Documentation/Peripherals/GPU/wrapText.md): Gets formatting information for text, given a wrap limit.
 
 ---
-## OS Methods
+### OS Methods
 ---
 !> Those methods are not available for games.
 * [_systemMessage](/Documentation/Peripherals/GPU/_systemMessage.md): Shows a system message: A single line message at the bottom of the screen.

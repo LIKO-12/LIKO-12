@@ -18,5 +18,5 @@ local limg = GPU.getLabelImage()
 ### Returns
 ---
 
-* **limg ():** The imagedata object of the label.
+* **limg ([Peripherals/GPU/imageData](/Documentation/Peripherals/GPU/objects/imageData/)):** The imagedata object of the label.
 

@@ -12,7 +12,7 @@ This peripheral is responsible for loading and reading data inside of PNGs, invi
 * **Last updated in LIKO-12:** v0.8.0
 
 ---
-## Methods
+### Methods
 ---
 * [exportDisk](/Documentation/Peripherals/FDD/exportDisk.md): Exports current floppy disk
 * [importDisk](/Documentation/Peripherals/FDD/importDisk.md): Imports and mounts a floppy disk

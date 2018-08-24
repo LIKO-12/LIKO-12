@@ -12,7 +12,7 @@ This peripheral gives access to LIKO-12's virtual drives.
 * **Last updated in LIKO-12:** v0.8.0
 
 ---
-## Methods
+### Methods
 ---
 * [append](/Documentation/Peripherals/HDD/append.md): Appends content to the end of a file.
 * [delete](/Documentation/Peripherals/HDD/delete.md): Deletes a file.

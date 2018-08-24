@@ -5,6 +5,7 @@
   * [FDD](/Documentation/Peripherals/FDD/)
   * [HDD](/Documentation/Peripherals/HDD/)
   * [WEB](/Documentation/Peripherals/WEB/)
+  * [BIOS](/Documentation/Peripherals/BIOS/)
   * [Audio](/Documentation/Peripherals/Audio/)
   * [Gamepad](/Documentation/Peripherals/Gamepad/)
   * [Keyboard](/Documentation/Peripherals/Keyboard/)

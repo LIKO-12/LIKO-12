@@ -10,7 +10,7 @@ This peripheral contains most of miscellaneous functions that LIKO-12 would use.
 * **Last updated in LIKO-12:** v0.8.0
 
 ---
-## Methods
+### Methods
 ---
 * [clearClipboard](/Documentation/Peripherals/CPU/clearClipboard.md): Clears the clipboard content.
 * [clearEStack](/Documentation/Peripherals/CPU/clearEStack.md): Clears the events stack.

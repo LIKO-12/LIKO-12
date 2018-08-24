@@ -12,7 +12,7 @@ This peripheral gives access into the Internet.
 * **Last updated in LIKO-12:** v0.8.0
 
 ---
-## Methods
+### Methods
 ---
 * [hasLuaSec](/Documentation/Peripherals/WEB/hasLuaSec.md): Checks if it has Luasec.
 * [luasec](/Documentation/Peripherals/WEB/luasec.md): Load a luasec submodule.

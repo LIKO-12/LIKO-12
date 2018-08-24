@@ -19,10 +19,10 @@ CPU.triggerEvent(event, a, b, c, d, e, f)
 ---
 
 * **event (string):** The event name.
-* **a (any/nil) (Default:`"nil"`):** First argument.
-* **b (any/nil) (Default:`"nil"`):** Second argument.
-* **c (any/nil) (Default:`"nil"`):** Third argument.
-* **d (any/nil) (Default:`"nil"`):** Forth argument.
-* **e (any/nil) (Default:`"nil"`):** Fifth argument.
-* **f (any/nil) (Default:`"nil"`):** Sixth argument.
+* **a (any, nil) (Default:`"nil"`):** First argument.
+* **b (any, nil) (Default:`"nil"`):** Second argument.
+* **c (any, nil) (Default:`"nil"`):** Third argument.
+* **d (any, nil) (Default:`"nil"`):** Forth argument.
+* **e (any, nil) (Default:`"nil"`):** Fifth argument.
+* **f (any, nil) (Default:`"nil"`):** Sixth argument.
 

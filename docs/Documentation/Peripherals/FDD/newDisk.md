@@ -18,5 +18,5 @@ FDD.newDisk(tname)
 ### Arguments
 ---
 
-* **tname (string/nil) (Default:`"Blue"`):** Template name, without the .png extension.
+* **tname (string, nil) (Default:`"Blue"`):** Template name, without the .png extension.
 
