@@ -12,7 +12,7 @@ if not love.filesystem.getInfo("Miscellaneous","directory") then
   love.filesystem.createDirectory("Miscellaneous")
 end
 
-local _LIKO_Version, _LIKO_Old = _LVERSION:sub(2,-1)
+local _LIKO_Version, _LIKO_Old, _FirstBoot = _LVERSION:sub(2,-1)
 if love.filesystem.getInfo("Miscellaneous/.version","file") then
   _LIKO_Old = love.filesystem.read("Miscellaneous/.version")
   if _LIKO_Old == _LIKO_Version then
@@ -20,6 +20,7 @@ if love.filesystem.getInfo("Miscellaneous/.version","file") then
   end
 else
   love.filesystem.write("Miscellaneous/.version",tostring(_LIKO_Version))
+  _FirstBoot = true
 end
 
 --Require the engine libraries--
@@ -116,7 +117,7 @@ do
     return true, pList
   end
 
-  --Returns the handled APIS, that can be used directly.
+  --Returns the handled peripherals APIS, that can be used directly.
   function yAPIS.BIOS.HandledAPIS()
     local hAPIS = {}
     
@@ -130,7 +131,7 @@ do
     return true, hAPIS
   end
 
-  --Returns the list of available peripheral functions, and their type (Direct,Yield)
+  --Returns the list of available peripheral functions, and their type (Direct,Yield).
   function yAPIS.BIOS.PeripheralFunctions(mountName)
     if type(mountName) ~= "string" then return false, "MountName should be a string, provided: "..type(mountName) end
     if not Mounted[mountName] then return false, "No mounted peripheral '"..mountName"..'" end
@@ -148,12 +149,17 @@ do
     return true, funcList
   end
   
-  --Returns LIKO-12 Version
+  --Returns LIKO-12's Version.
   function yAPIS.BIOS.getVersion()
     return true, _LIKO_Version, _LIKO_Old
   end
   
-  --Returns LIKO-12_Source.love data
+  --Tells if this is the first boot of LIKO-12 ever.
+  function yAPIS.BIOS.isFirstBoot()
+    return true, _FirstBoot or false
+  end
+  
+  --Returns LIKO-12_Source.love data.
   function yAPIS.BIOS.getSRC()
     if not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love") then return true, false, "LIKO-12_Source.love doesn't exist ! Try to reboot." end
     
