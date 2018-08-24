@@ -19,7 +19,7 @@ local requestID = WEB.send(url, args)
 ---
 
 * **url (string):** URL to send request to.
-* **args (table/nil) (Default:`"nil"`):** Arguements to send in the request.
+* **args (table, nil) (Default:`"nil"`):** Arguements to send in the request.
 
 
 ---

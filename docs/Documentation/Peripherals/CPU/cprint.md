@@ -19,5 +19,5 @@ CPU.cprint(text, ...)
 ---
 
 * **text (any):** The text to print.
-* **... (any/nil) (Default:`"nil"`):** Will be automatically concated with the first argument, works the same way of the standard Lua print.
+* **... (any, nil) (Default:`"nil"`):** Will be automatically concated with the first argument, works the same way of the standard Lua print.
 

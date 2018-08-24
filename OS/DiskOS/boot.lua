@@ -1,4 +1,4 @@
-local HandledAPIS = ... --select(2,...)
+local HandledAPIS = ...
 
 --Backup the fresh clean globals
 local function copy(t)

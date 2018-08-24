@@ -30,9 +30,9 @@ GPU.pal(A, B, palette)
 #### Arguments
 ---
 
-* **A ():** The color to replace, or false for all
+* **A (boolean, number):** The color to replace, or false for all
 * **B (number):** The color which will replace A
-* **palette ():** (0) will reset the color in the Drawing palette only, (1) will reset the color in the Images palette only, (nil/false) will reset the color in both palettes.
+* **palette (number, boolean):** (0) will reset the color in the Drawing palette only, (1) will reset the color in the Images palette only, (nil/false) will reset the color in both palettes.
 
 ---
 
@@ -50,6 +50,6 @@ GPU.pal(color, false, p)
 
 * **color (number):** The color to reset to it's default.
 * **false (boolean):** literal
-* **p ():** (0) will reset the color in the Drawing palette only, (1) will reset the color in the Images palette only, (nil/false) will reset the color in both palettes.
+* **p (number, boolean):** (0) will reset the color in the Drawing palette only, (1) will reset the color in the Images palette only, (nil/false) will reset the color in both palettes.
 
 ---

@@ -28,6 +28,6 @@ GPU.triangle(x1, y1, x2, y2, x3, y3, l, c)
 * **y2 (number):** The second y coordinate of triangle vector.
 * **x3 (number):** The third x coordinate of triangle vector.
 * **y3 (number):** The third y coordinate of triangle vector.
-* **l (boolean/nil) (Default:`"false"`):** (false/nil) The triangle will be filled, (true) The triangle will have only lines (outline).
+* **l (boolean, nil) (Default:`"false"`):** (false/nil) The triangle will be filled, (true) The triangle will have only lines (outline).
 * **c (number):** The color of triangle (0-15), defaults to the active color.
 

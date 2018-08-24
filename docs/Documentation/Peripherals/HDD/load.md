@@ -25,6 +25,6 @@ local chunk, ok = HDD.load(file)
 ### Returns
 ---
 
-* **chunk (function/nil):** Loaded file function, nil when fails to load.
-* **ok (string/nil):** The error message when failed to load.
+* **chunk (function, nil):** Loaded file function, nil when fails to load.
+* **ok (string, nil):** The error message when failed to load.
 

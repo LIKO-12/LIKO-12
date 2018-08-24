@@ -10,7 +10,7 @@ This peripheral is responsible for handling keyboard input.
 * **Last updated in LIKO-12:** v0.8.0
 
 ---
-## Methods
+### Methods
 ---
 * [isKDown](/Documentation/Peripherals/Keyboard/isKDown.md): Checks whether a certain key is down.
 * [keyrepeat](/Documentation/Peripherals/Keyboard/keyrepeat.md): Enables or disables key repeat.

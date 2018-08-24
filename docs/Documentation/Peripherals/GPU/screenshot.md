@@ -18,8 +18,8 @@ local imgdata = GPU.screenshot(x, y, w, h)
 ### Arguments
 ---
 
-* **x (number/nil) (Default:`0`):** The top-left X coord of the area to take the screenshot of.
-* **y (number/nil) (Default:`0`):** The top-left Y coord of the area to take the screenshot of.
+* **x (number, nil) (Default:`0`):** The top-left X coord of the area to take the screenshot of.
+* **y (number, nil) (Default:`0`):** The top-left Y coord of the area to take the screenshot of.
 * **w (number):** The width of the area to take the screenshot of.
 * **h (number):** The height of the area to take the screenshot of.
 
@@ -28,5 +28,5 @@ local imgdata = GPU.screenshot(x, y, w, h)
 ### Returns
 ---
 
-* **imgdata ():** The created imagedata object.
+* **imgdata ([Peripherals/GPU/imageData](/Documentation/Peripherals/GPU/objects/imageData/)):** The created imagedata object.
 

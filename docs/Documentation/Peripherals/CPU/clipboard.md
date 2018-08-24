@@ -42,6 +42,6 @@ CPU.clipboard(content)
 #### Arguments
 ---
 
-* **content ():** The new clipboard content.
+* **content (string, number):** The new clipboard content.
 
 ---

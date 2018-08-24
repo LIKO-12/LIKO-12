@@ -29,5 +29,5 @@ local imgdata = GPU.imagedata(data)
 ### Returns
 ---
 
-* **imgdata ():** The created imagedata object.
+* **imgdata ([Peripherals/GPU/imageData](/Documentation/Peripherals/GPU/objects/imageData/)):** The created imagedata object.
 

@@ -9,6 +9,7 @@ Peripherals are the most important things in LIKO-12, They give LIKO-12 the powe
 * [FDD](/Documentation/Peripherals/FDD/) - The Floppy Disk Drive.
 * [HDD](/Documentation/Peripherals/HDD/) - The Hard Disk Drive.
 * [WEB](/Documentation/Peripherals/WEB/) - The WEB Interface.
+* [BIOS](/Documentation/Peripherals/BIOS/) - The Basic Integrated Operating System.
 * [Audio](/Documentation/Peripherals/Audio/) - The Audio Output.
 * [Gamepad](/Documentation/Peripherals/Gamepad/) - The Gamepad Input.
 * [Keyboard](/Documentation/Peripherals/Keyboard/) - The Keyboard Input.

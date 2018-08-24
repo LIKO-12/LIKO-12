@@ -30,7 +30,7 @@ GPU.print(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
 * **x (number):** The X coord to draw at.
 * **y (number):** The y coord to draw at.
 * **limit (number):** Wrap the line after this many horizontal pixels.
-* **align (string/nil) (Default:`"left"`):** The alignment.
+* **align (string, nil) (Default:`"left"`):** The alignment.
 * **r (number):** Rotation (radians).
 * **sx (number):** Scale factor (x-axis).
 * **sy (number):** Scale factor (y-axis).

@@ -26,6 +26,6 @@ GPU.rect(x, y, w, h, l, c)
 * **y (number):** The top-left y position of the rectangle.
 * **w (number):** The width of rectangle.
 * **h (number):** The height of rectangle.
-* **l (boolean/nil) (Default:`"false"`):** (false/nil) The rectangle will be filled, (true) The rectangle will have only lines (border).
+* **l (boolean, nil) (Default:`"false"`):** (false/nil) The rectangle will be filled, (true) The rectangle will have only lines (border).
 * **c (number):** The color of the rectangle (0-15), defaults to the active color.
 

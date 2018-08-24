@@ -25,5 +25,5 @@ local img = GPU.image(data)
 ### Returns
 ---
 
-* **img ():** The created image object.
+* **img ([Peripherals/GPU/image](/Documentation/Peripherals/GPU/objects/image/)):** The created image object.
 

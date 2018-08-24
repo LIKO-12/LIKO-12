@@ -27,7 +27,7 @@ GPU.cursor(name, grap)
 ---
 
 * **name (string):** The name of the cursor.
-* **grap (boolean/nil) (Default:`"false"`):** True -> Grap the cursor to the pixelated screen.
+* **grap (boolean, nil) (Default:`"false"`):** True -> Grap the cursor to the pixelated screen.
 
 ---
 
@@ -59,9 +59,9 @@ GPU.cursor(imgdata, name, hx, hy)
 #### Arguments
 ---
 
-* **imgdata ():** The imagedata of the cursor.
-* **name (string/nil) (Default:`"default"`):** The name of the cursor.
-* **hx (number/nil) (Default:`0`):** The X coord of the cursor hot position.
-* **hy (number/nil) (Default:`0`):** The Y coord of the cursor hot position.
+* **imgdata ([Peripherals/GPU/imageData](/Documentation/Peripherals/GPU/objects/imageData/)):** The imagedata of the cursor.
+* **name (string, nil) (Default:`"default"`):** The name of the cursor.
+* **hx (number, nil) (Default:`0`):** The X coord of the cursor hot position.
+* **hy (number, nil) (Default:`0`):** The Y coord of the cursor hot position.
 
 ---
