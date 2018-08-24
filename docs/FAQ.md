@@ -5,3 +5,12 @@
 
 #### Q: I have an issue with LIKO-12, where should I report it ?
 **A:** Report it into [LIKO-12's GitHub issues](https://github.com/RamiLego4Game/LIKO-12/issues).
+
+---
+
+#### Q: LIKO-12 hangs for me at boot with the `Generating internal file...` message, what to do ?
+**A:** That's pretty normal, give it 120 seconds, it's compressing LIKO-12's source code into a .zip, that'll only happen when LIKO-12's version is changed.
+
+!> If it takes more than 5 min please create a [GitHub issue](https://github.com/RamiLego4Game/LIKO-12/issues).
+
+---
