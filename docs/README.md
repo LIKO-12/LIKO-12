@@ -1,6 +1,4 @@
 
-!> The website is being worked on !
-
 [![Release Badge](https://img.shields.io/github/release/RamiLego4Game/LIKO-12/all.svg)](https://github.com/RamiLego4Game/LIKO-12/releases)
 [![Downloads](https://img.shields.io/github/downloads/RamiLego4Game/LIKO-12/total.svg)](https://github.com/RamiLego4Game/LIKO-12/releases)
 [![Commits Badge](https://img.shields.io/github/commits-since/RamiLego4Game/LIKO-12/latest.svg)](https://github.com/RamiLego4Game/LIKO-12/commits/master)
