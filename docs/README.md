@@ -2,6 +2,7 @@
 !> The website is being worked on !
 
 [![Release Badge](https://img.shields.io/github/release/RamiLego4Game/LIKO-12/all.svg)](https://github.com/RamiLego4Game/LIKO-12/releases)
+[![Downloads](https://img.shields.io/github/downloads/RamiLego4Game/LIKO-12/total.svg)](https://github.com/RamiLego4Game/LIKO-12/releases)
 [![Commits Badge](https://img.shields.io/github/commits-since/RamiLego4Game/LIKO-12/latest.svg)](https://github.com/RamiLego4Game/LIKO-12/commits/master)
 [![Nightly Build 0.9.0](https://img.shields.io/badge/nightly_builds-v0.9.0-orange.svg)](https://ramilego4game.github.io/LIKO-12-Nightly/)
 [![Donate Badge](https://img.shields.io/badge/%24-Donate-ff69b4.svg)](Donate)
