@@ -2,7 +2,7 @@
 local args = {...} --Get the arguments passed to this program
 if #args < 2 or args[1] == "-?" then
   printUsage(
-    "cp <source> <destination> [--verbose]","Copies a file or directory, creating any missing directory in the destination path"
+    "cp <source> <destination> [--verbose / -v]","Copies a file or directory, creating any missing directory in the destination path"
   )
   return
 end
@@ -33,7 +33,7 @@ end
 local term = require("terminal")
 local source = term.resolve(args[1])
 local destination = term.resolve(args[2])
-local verbose = args[3] == "--verbose"
+local verbose = args[3] == "--verbose" or args[3] == "-v"
 
 color(8)
 
