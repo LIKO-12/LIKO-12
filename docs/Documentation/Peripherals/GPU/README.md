@@ -1,7 +1,7 @@
 # GPU - The Graphics Processing Unit
 ---
 
-It's the strongest peripheral in LIKO-12, and the biggest file also, it's resposible for creating the window and doing all the drawing operations.
+It's the strongest peripheral in LIKO-12, and the biggest file also, it's responsible for creating the window and doing all the drawing operations.
 
 ---
 
