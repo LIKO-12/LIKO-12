@@ -34,8 +34,9 @@ function fget(id,n)
   local id = math.floor(id)
   local n = n; if n then n = math.floor(n) end
   local sheet = SpriteMap
-  if id < 1 then return error("SpriteId is out of range ("..id..") expected [1,"..#sheet.quads.."]") end
-  if id > #sheet.quads then return error("SpriteId is out of range ("..id..") expected [1,"..#sheet.quads.."]") end
+  if id < 0 then return error("SpriteId is out of range ("..id..") expected [0,"..#sheet.quads.."]") end
+  if id > #sheet.quads then return error("SpriteId is out of range ("..id..") expected [0,"..#sheet.quads.."]") end
+  if id == 0 then return end
   local flag = sheet:flag(id)
   if n then
     if n < 1 then return error("BitNumber is out of range ("..n..") expected [1,8]") end
