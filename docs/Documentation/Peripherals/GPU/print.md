@@ -101,7 +101,7 @@ GPU.print(text, false)
 
 ---
 
-# 5. Print in terminal grid directly without wrapping nor updating the cursor pos.
+# 5. Print in terminal grid directly without wrapping nor new line.
 ---
 
 ```lua
