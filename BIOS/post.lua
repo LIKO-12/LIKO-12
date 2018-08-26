@@ -16,6 +16,7 @@ local fs = Handled.HDD
 local RAMKit = Devkits.RAM
 
 local _LIKO_Version, _LIKO_Old = BIOS.getVersion()
+local _FirstBoot = BIOS.isFirstBoot()
 
 local Mobile = CPU.isMobile()
 
@@ -32,7 +33,7 @@ local function wait(timeout, required) --Wait for 'delete' or 'escape' keypress.
       timer = timer - a
       if timer <= 0 then return end
     elseif event == "keypressed" then
-      if a == setupkey then
+      if a == setupkey and not enterSetup then
         enterSetup = true
         
         GPU.rect(0,sh-8,sw,8,false, 7) GPU.color(0)
@@ -64,30 +65,27 @@ GPU.print("Copyright (C) Rami Sabbagh",15,13)
 if _LIKO_Old or not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love") then
   print("Creating LIKO-12_Source.love")
   
-  GPU._systemMessage("Generating internal file...",120,0,7,true)
+  GPU._systemMessage("Generating an internal file...",60,0,7,true)
   GPU.flip()
   
   --Create the sourcecode.love
   local currentIdentity = love.filesystem.getIdentity()
   love.filesystem.setIdentity("LIKO-12_TEMP")
   
-  local blackList = {"/.git","/.gitattributes","/.gitignore","/.nomedia","/DLL","/docs","/Extra","/.luacheckrc","/.travis.yml","/mkdocs.yml","/README.md","/CODE_OF_CONDUCT.md","/CONTRIBUTING.md"}
+  local blackList = {"/.git","/.gitattributes","/.gitignore","/.nomedia","/DLL","/docs","/Docs_old","/Extra","/.luacheckrc","/.travis.yml","/mkdocs.yml","/README.md","/CODE_OF_CONDUCT.md","/CONTRIBUTING.md"}
   for i=1,#blackList do blackList[blackList[i]] = i end
   
   local writer = loveZip.newZipWriter()
+  
+  local paths = {}
   
   local function index(dir)
     if blackList[dir] then return end
     local dirInfo = love.filesystem.getInfo(dir)
     
     if dirInfo.type == "file" then
-      local fileData = love.filesystem.read(dir)
-      local fileName = dir:sub(2,-1)
-      local modTime = dirInfo.modTime
-      
-      writer.addFile(fileName,fileData,modTime)
+      paths[#paths + 1] = dir
     elseif dirInfo.type == "directory" then
-      CPU.sleep(0)
       for id,item in ipairs(love.filesystem.getDirectoryItems(dir)) do
         index(dir.."/"..item)
       end
@@ -96,7 +94,27 @@ if _LIKO_Old or not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love"
   
   index("")
   
+  for i=1, #paths do
+    local percent = "("..math.floor((i/#paths)*100) .. "%)..."
+    GPU._systemMessage("Generating an internal file "..percent,60,0,7,true)
+    CPU.sleep(0)
+    
+    local dir = paths[i]
+    local dirInfo = love.filesystem.getInfo(dir)
+    local fileData = love.filesystem.read(dir)
+    local fileName = dir:sub(2,-1)
+    local modTime = dirInfo.modTime
+    
+    writer.addFile(fileName,fileData,modTime)
+  end
+  
+  GPU._systemMessage("Finalizing the internal file...",60,0,7,true)
+  GPU.flip()
+  
   local LIKO_SRC_ZIP = assert(writer.finishZip()):read()
+  
+  GPU._systemMessage("Writing the internal file...",60,0,7,true)
+  GPU.flip()
   
   love.filesystem.setIdentity(currentIdentity)
   love.filesystem.write("/Miscellaneous/LIKO-12_Source.love",LIKO_SRC_ZIP)
