@@ -34,6 +34,11 @@ local ecommand --The editor command, used by the Ctrl-R hotkey to execute the 'r
 local buffer = "" --The terminal input buffer
 local inputPos = 1 --The next input character position in the terminal buffer.
 
+--Used for autocomplete suggestion
+local commands = {}
+local autocompleteSuggestions = {}
+local suggestionIndex = nil
+
 --Checks if the cursor is in the bounds of the screen.
 local function checkCursor()
   local cx, cy = printCursor()
@@ -99,6 +104,8 @@ function term.init()
       flip() sleep(0.0625)
     end
   end
+
+  commands = term.indexCommands()
 end
 
 --Reload the system
@@ -124,6 +131,8 @@ function term.reload()
   editor.apiVersion = api_version
   editor.filePath = game_path
   editor.active = active_editor
+
+  commands = term.indexCommands()
 end
 
 function term.setdrive(d)
@@ -274,7 +283,10 @@ function term.loop() --Enter the while loop of the terminal
   checkCursor() term.prompt()
   buffer, inputPos = "", 1
   for event, a,b,c,d,e,f in pullEvent do
-    checkCursor() --Which also draws the cursor blink
+    --If an autocomplete suggestion is displayed, doesn't make the cursor blink
+    if next(autocompleteSuggestions) == nil then
+      checkCursor() --Which also draws the cursor blink
+    end
     
     if event == "filedropped" then
       local p, n, e = splitFilePath(a)
@@ -389,17 +401,31 @@ function term.loop() --Enter the while loop of the terminal
           blink = true; checkCursor()
         end
       elseif a == "left" then
-        blink = false; checkCursor()
-        if inputPos > 1 then
-          inputPos = inputPos - 1
-          printBackspace(-1)
+        --If an autocomplete suggestion is displayed, erase it
+        if next(autocompleteSuggestions) ~= nil then
+          term.clearSuggestion(autocompleteSuggestions[suggestionIndex
+        ])
+          autocompleteSuggestions = {}
+        else
+          blink = false; checkCursor()
+          if inputPos > 1 then
+            inputPos = inputPos - 1
+            printBackspace(-1)
+          end
+          blink = true; checkCursor()
         end
-        blink = true; checkCursor()
       elseif a == "right" then
-        blink = false; checkCursor()
-        if inputPos <= buffer:len() then
-          print(buffer:sub(inputPos,inputPos),false)
-          inputPos = inputPos + 1
+        --If an autocomplete suggestion is displayed, accept it
+        if next(autocompleteSuggestions) ~= nil then
+          term.append(autocompleteSuggestions[suggestionIndex
+        ])
+          autocompleteSuggestions = {}
+        else
+          blink = false; checkCursor()
+          if inputPos <= buffer:len() then
+            print(buffer:sub(inputPos,inputPos),false)
+            inputPos = inputPos + 1
+          end
         end
         blink = true; checkCursor()
       elseif a == "c" then
@@ -419,6 +445,25 @@ function term.loop() --Enter the while loop of the terminal
           buffer = buffer:sub(1,inputPos-1)..paste..buffer:sub(inputPos,-1)
           inputPos = inputPos + paste:len()
         end
+      elseif a == "tab" then
+        --If the autocomplete suggestions list is empty, create a new one
+        if next(autocompleteSuggestions) == nil then
+          autocompleteSuggestions = term.autocomplete(buffer, commands)
+          suggestionIndex
+         = 1
+        --Otherwise, go to the next suggestion in the list (looping to the
+        --first if the end of the list is reached)
+        else
+          term.clearSuggestion(autocompleteSuggestions[suggestionIndex])
+          suggestionIndex = suggestionIndex + 1
+          if autocompleteSuggestions[suggestionIndex] == nil then
+            suggestionIndex= 1
+          end
+        end
+        --Display the current suggestion
+        if next(autocompleteSuggestions) ~= nil then
+          term.displaySuggestion(autocompleteSuggestions[suggestionIndex])
+        end
       end
     elseif event == "touchpressed" then
       textinput(true)
@@ -430,6 +475,62 @@ function term.loop() --Enter the while loop of the terminal
       end
     end
   end
+end
+
+--Given an input and a list of commands, return a list of strings that can be
+--used as autocomplete suggestion. For example if passed "c" and {"cls, copy"}
+--as parameters, will return {"ls", "opy"}.
+function term.autocomplete(input, commands)
+
+  result = {}
+  for k, f in ipairs(commands) do
+    if f:sub(1, input:len()) == input and input:len() < f:len() then
+      table.insert(result, f:sub(input:len()+1))
+    end
+  end
+
+  return result
+end
+
+--Display given suggestion on the command line
+function term.displaySuggestion(suggestion)
+  local cx, cy = printCursor()
+  local fw, fh = fontSize()
+  local x, y = 1+(fw+1)*cx, 1+(fh+1)*cy
+  rect(x-1,y-1,#suggestion*(fw+1)+1,fh+2,false,5)
+  print(suggestion,x,y)
+end
+
+--Clear given suggestion from the command line
+function term.clearSuggestion(suggestion)
+  local cx, cy = printCursor()
+  local fw, fh = fontSize()
+  local x, y = 1+(fw+1)*cx, 1+(fh+1)*cy
+  rect(x-1,y-1,#suggestion*(fw+1)+1,fh+2,false,0)
+end
+
+--Append given text to the command line
+function term.append(text)
+  print(text..buffer:sub(inputPos,-1), false, true)
+  for i=inputPos, buffer:len() do printBackspace(-1) end
+  buffer = buffer:sub(1,inputPos-1)..text..buffer:sub(inputPos,-1)
+  inputPos = inputPos + text:len()
+end
+
+--Return a list of commands found in PATH
+function term.indexCommands()
+  commands = {}
+  for path in nextPath(PATH) do
+    if fs.exists(path) then
+      local files = fs.getDirectoryItems(path)
+      for _,file in ipairs(files) do
+        if file:sub(#file-3) == ".lua" then
+          table.insert(commands, file:sub(1,#file-4))
+        end
+      end
+    end
+  end
+  return commands
 end
 
 return term
