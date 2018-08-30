@@ -19,12 +19,12 @@ local _LIKO_Version, _LIKO_Old = BIOS.getVersion()
 local _FirstBoot = BIOS.isFirstBoot()
 
 --Check if we have to migrate from LIKO-12 v0.8.0
-local migrate080 = true
+local migrate080 = false
 if _FirstBoot then
   local cIdentity = love.filesystem.getIdentity()
   love.filesystem.setIdentity("liko12")
   
-  migrate080 = not not love.filesystem.getInfo(".version")
+  migrate080 = not not (love.filesystem.getInfo(".version") or love.filesystem.getInfo("Miscellaneous/.version"))
   
   love.filesystem.setIdentity(cIdentity)
 end
