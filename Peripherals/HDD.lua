@@ -30,7 +30,7 @@ local function Verify(v,t,n)
 end
 
 return function(Config)
-  local RootDir = Config.RootDir or "/drives/"
+  local RootDir = Config.RootDir or "/Drives/"
   local Drives, ActiveDrive, MainDrive = {}
   
   --Create the drives root directory if it doesn't exists.
