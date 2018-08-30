@@ -284,7 +284,7 @@ function term.loop() --Enter the while loop of the terminal
   buffer, inputPos = "", 1
   for event, a,b,c,d,e,f in pullEvent do
     --If an autocomplete suggestion is displayed, doesn't make the cursor blink
-    if next(autocompleteSuggestions) == nil then
+    if not next(autocompleteSuggestions) then
       checkCursor() --Which also draws the cursor blink
     end
     
@@ -402,7 +402,7 @@ function term.loop() --Enter the while loop of the terminal
         end
       elseif a == "left" then
         --If an autocomplete suggestion is displayed, erase it
-        if next(autocompleteSuggestions) ~= nil then
+        if next(autocompleteSuggestions) then
           term.clearSuggestion(autocompleteSuggestions[suggestionIndex
         ])
           autocompleteSuggestions = {}
@@ -416,7 +416,7 @@ function term.loop() --Enter the while loop of the terminal
         end
       elseif a == "right" then
         --If an autocomplete suggestion is displayed, accept it
-        if next(autocompleteSuggestions) ~= nil then
+        if next(autocompleteSuggestions) then
           term.append(autocompleteSuggestions[suggestionIndex
         ])
           autocompleteSuggestions = {}
@@ -447,7 +447,7 @@ function term.loop() --Enter the while loop of the terminal
         end
       elseif a == "tab" then
         --If the autocomplete suggestions list is empty, create a new one
-        if next(autocompleteSuggestions) == nil then
+        if not next(autocompleteSuggestions) then
           autocompleteSuggestions = term.autocomplete(buffer, commands)
           suggestionIndex
          = 1
@@ -456,12 +456,12 @@ function term.loop() --Enter the while loop of the terminal
         else
           term.clearSuggestion(autocompleteSuggestions[suggestionIndex])
           suggestionIndex = suggestionIndex + 1
-          if autocompleteSuggestions[suggestionIndex] == nil then
+          if not autocompleteSuggestions[suggestionIndex] then
             suggestionIndex= 1
           end
         end
         --Display the current suggestion
-        if next(autocompleteSuggestions) ~= nil then
+        if next(autocompleteSuggestions) then
           term.displaySuggestion(autocompleteSuggestions[suggestionIndex])
         end
       end
