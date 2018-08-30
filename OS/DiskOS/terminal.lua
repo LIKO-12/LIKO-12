@@ -105,7 +105,7 @@ function term.init()
     end
   end
 
-  commands = term.indexCommands()
+  commands = term.updateCommands()
 end
 
 --Reload the system
@@ -132,7 +132,7 @@ function term.reload()
   editor.filePath = game_path
   editor.active = active_editor
 
-  commands = term.indexCommands()
+  commands = term.updateCommands()
 end
 
 function term.setdrive(d)
@@ -253,6 +253,7 @@ function term.execute(command,...)
     local exitCode, err = term.executeFile(curpath..command..".lua",...)
     if exitCode > 0 then color(8) print(err or "Failed !") color(7) end
     textinput(true)
+    commands = term.updateCommands()
     return exitCode, err
   end
   for path in nextPath(PATH) do
@@ -263,6 +264,7 @@ function term.execute(command,...)
           local exitCode, err = term.executeFile(path..file,...)
           if exitCode > 0 then color(8) print(err or "Failed !") color(7) end
           textinput(true)
+          commands = term.updateCommands()
           return exitCode, err
         end
       end
@@ -538,8 +540,15 @@ function term.append(text)
   inputPos = inputPos + text:len()
 end
 
+function term.updateCommands()
+  term.append("Updating commands")
+  commands = term.indexCommandsPATH()
+  commands = tableConcat(commands, term.indexCommandsActiveDir())
+  return commands
+end
+
 --Return a list of commands found in PATH
-function term.indexCommands()
+function term.indexCommandsPATH()
   commands = {}
   for path in nextPath(PATH) do
     if fs.exists(path) then
@@ -552,6 +561,27 @@ function term.indexCommands()
     end
   end
   return commands
+end
+
+function term.indexCommandsActiveDir()
+  commands = {}
+  local files = fs.getDirectoryItems(term.getdirectory())
+  for _,file in ipairs(files) do
+    if file:sub(#file-3) == ".lua" then
+      table.insert(commands, file:sub(1,#file-4))
+    end
+  end
+  return commands
+end
+
+--An helper used to concatenate the list of commands in PATH and the list of
+--commands in the active directory. This could probably be moved somewhere else
+--in the code.
+function tableConcat(t1,t2)
+  for i=1,#t2 do
+      t1[#t1+1] = t2[i]
+  end
+  return t1
 end
 
 return term
