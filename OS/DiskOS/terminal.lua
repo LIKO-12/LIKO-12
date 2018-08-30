@@ -284,7 +284,7 @@ function term.loop() --Enter the while loop of the terminal
   buffer, inputPos = "", 1
   for event, a,b,c,d,e,f in pullEvent do
     --If an autocomplete suggestion is displayed, doesn't make the cursor blink
-    if not next(autocompleteSuggestions) then
+    if not autocompleteSuggestions[1] then
       checkCursor() --Which also draws the cursor blink
     end
     
@@ -402,7 +402,7 @@ function term.loop() --Enter the while loop of the terminal
         end
       elseif a == "left" then
         --If an autocomplete suggestion is displayed, erase it
-        if next(autocompleteSuggestions) then
+        if autocompleteSuggestions[1] then
           term.clearSuggestion(autocompleteSuggestions[suggestionIndex
         ])
           autocompleteSuggestions = {}
@@ -416,7 +416,7 @@ function term.loop() --Enter the while loop of the terminal
         end
       elseif a == "right" then
         --If an autocomplete suggestion is displayed, accept it
-        if next(autocompleteSuggestions) then
+        if autocompleteSuggestions[1] then
           term.append(autocompleteSuggestions[suggestionIndex
         ])
           autocompleteSuggestions = {}
@@ -447,7 +447,7 @@ function term.loop() --Enter the while loop of the terminal
         end
       elseif a == "tab" then
         --If the autocomplete suggestions list is empty, create a new one
-        if not next(autocompleteSuggestions) then
+        if not autocompleteSuggestions[1] then
           autocompleteSuggestions = term.autocomplete(buffer, commands)
           suggestionIndex
          = 1
@@ -461,7 +461,7 @@ function term.loop() --Enter the while loop of the terminal
           end
         end
         --Display the current suggestion
-        if next(autocompleteSuggestions) then
+        if autocompleteSuggestions[1] then
           term.displaySuggestion(autocompleteSuggestions[suggestionIndex])
         end
       end
@@ -504,7 +504,6 @@ end
 --Clear given suggestion from the command line
 function term.clearSuggestion(suggestion)
   local cx, cy = printCursor()
-  --local fw, fh = fontSize()
   local x, y = 1+(fw+1)*cx, 1+(fh+1)*cy
   rect(x-1,y-1,#suggestion*(fw+1)+1,fh+2,false,0)
 end
