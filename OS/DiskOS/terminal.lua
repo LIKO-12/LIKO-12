@@ -485,7 +485,7 @@ function term.autocomplete(input, commands)
   result = {}
   for k, f in ipairs(commands) do
     if f:sub(1, input:len()) == input and input:len() < f:len() then
-      table.insert(result, f:sub(input:len()+1))
+      result[#result + 1] = f:sub(#input + 1)
     end
   end
 
