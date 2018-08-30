@@ -313,46 +313,60 @@ function term.loop() --Enter the while loop of the terminal
       inputPos = inputPos + a:len()
     elseif event == "keypressed" then
       if a == "return" then
-        if hispos then table.remove(history,#history) hispos = false end
-        table.insert(history, buffer)
-        blink = false; checkCursor()
-        print("") -- insert newline after Enter
-        term.execute(split(buffer)) buffer, inputPos = "", 1
-        checkCursor() term.prompt() blink = true cursor("none")
+        if autocompleteSuggestions[1] then
+          term.acceptSuggestion()
+        else
+          if hispos then table.remove(history,#history) hispos = false end
+          table.insert(history, buffer)
+          blink = false; checkCursor()
+          print("") -- insert newline after Enter
+          term.execute(split(buffer)) buffer, inputPos = "", 1
+          checkCursor() term.prompt() blink = true cursor("none")
+        end
       elseif a == "backspace" then
-        blink = false; checkCursor()
-        if buffer:len() > 0 then
-          --Remove the character
-          printBackspace()
-          
-          --Re print the buffer
-          for char in string.gmatch(buffer:sub(inputPos,-1),".") do
-            print(char,false)
+        --If an autocomplete suggestion is displayed, erase it
+        if autocompleteSuggestions[1] then
+          term.refuseSuggestion()
+        else
+          blink = false; checkCursor()
+          if buffer:len() > 0 then
+            --Remove the character
+            printBackspace()
+
+            --Re print the buffer
+            for char in string.gmatch(buffer:sub(inputPos,-1),".") do
+              print(char,false)
+            end
+
+            --Erase the last character
+            print("-",false) printBackspace()
+
+            --Go back to the input position
+            for i=#buffer,inputPos,-1 do
+              printBackspace(-1)
+            end
+
+            --Remove the character from the buffer
+            buffer = buffer:sub(1,inputPos-2) .. buffer:sub(inputPos,-1)
+
+            --Update input postion
+            inputPos = inputPos-1
           end
-          
-          --Erase the last character
-          print("-",false) printBackspace()
-          
-          --Go back to the input position
-          for i=#buffer,inputPos,-1 do
-            printBackspace(-1)
-          end
-          
-          --Remove the character from the buffer
-          buffer = buffer:sub(1,inputPos-2) .. buffer:sub(inputPos,-1)
-          
-          --Update input postion
-          inputPos = inputPos-1
+          blink = true; checkCursor()
         end
-        blink = true; checkCursor()
       elseif a == "delete" then
-        blink = false; checkCursor()
-        print(buffer:sub(inputPos,-1),false)
-        for i=1,buffer:len() do
-          printBackspace()
+        --If an autocomplete suggestion is displayed, erase it
+        if autocompleteSuggestions[1] then
+          term.refuseSuggestion()
+        else
+          blink = false; checkCursor()
+          print(buffer:sub(inputPos,-1),false)
+          for i=1,buffer:len() do
+            printBackspace()
+          end
+          buffer, inputPos = "", 1
+          blink = true; checkCursor()
         end
-        buffer, inputPos = "", 1
-        blink = true; checkCursor()
       elseif a == "escape" then
         local screenbk = screenshot()
         local oldx, oldy, oldbk = printCursor()
@@ -403,9 +417,7 @@ function term.loop() --Enter the while loop of the terminal
       elseif a == "left" then
         --If an autocomplete suggestion is displayed, erase it
         if autocompleteSuggestions[1] then
-          term.clearSuggestion(autocompleteSuggestions[suggestionIndex
-        ])
-          autocompleteSuggestions = {}
+          term.refuseSuggestion()
         else
           blink = false; checkCursor()
           if inputPos > 1 then
@@ -417,9 +429,7 @@ function term.loop() --Enter the while loop of the terminal
       elseif a == "right" then
         --If an autocomplete suggestion is displayed, accept it
         if autocompleteSuggestions[1] then
-          term.append(autocompleteSuggestions[suggestionIndex
-        ])
-          autocompleteSuggestions = {}
+          term.acceptSuggestion()
         else
           blink = false; checkCursor()
           if inputPos <= buffer:len() then
@@ -492,6 +502,12 @@ function term.autocomplete(input, commands)
   return result
 end
 
+--Accept the currently displayed suggestion and empty the suggestions list
+function term.acceptSuggestion()
+  term.append(autocompleteSuggestions[suggestionIndex])
+  autocompleteSuggestions = {}
+end
+
 --Display given suggestion on the command line
 function term.displaySuggestion(suggestion)
   local cx, cy = printCursor()
@@ -499,6 +515,12 @@ function term.displaySuggestion(suggestion)
   local x, y = 1+(fw+1)*cx, 1+(fh+1)*cy
   rect(x-1,y-1,#suggestion*(fw+1)+1,fh+2,false,5)
   print(suggestion,x,y)
+end
+
+--Delete the currently displayed suggestion and empty the suggestions list
+function term.refuseSuggestion()
+  term.clearSuggestion(autocompleteSuggestions[suggestionIndex])
+  autocompleteSuggestions = {}
 end
 
 --Clear given suggestion from the command line
