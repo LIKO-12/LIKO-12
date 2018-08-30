@@ -504,7 +504,7 @@ end
 --Clear given suggestion from the command line
 function term.clearSuggestion(suggestion)
   local cx, cy = printCursor()
-  local fw, fh = fontSize()
+  --local fw, fh = fontSize()
   local x, y = 1+(fw+1)*cx, 1+(fh+1)*cy
   rect(x-1,y-1,#suggestion*(fw+1)+1,fh+2,false,0)
 end
