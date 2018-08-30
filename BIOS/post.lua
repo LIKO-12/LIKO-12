@@ -18,6 +18,17 @@ local RAMKit = Devkits.RAM
 local _LIKO_Version, _LIKO_Old = BIOS.getVersion()
 local _FirstBoot = BIOS.isFirstBoot()
 
+--Check if we have to migrate from LIKO-12 v0.8.0
+local migrate080 = true
+if _FirstBoot then
+  local cIdentity = love.filesystem.getIdentity()
+  love.filesystem.setIdentity("liko12")
+  
+  migrate080 = not not love.filesystem.getInfo(".version")
+  
+  love.filesystem.setIdentity(cIdentity)
+end
+
 local Mobile = CPU.isMobile()
 
 local sw,sh = GPU.screenSize()
@@ -96,7 +107,7 @@ if _LIKO_Old or not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love"
   
   for i=1, #paths do
     local percent = "("..math.floor((i/#paths)*100) .. "%)..."
-    GPU._systemMessage("Generating an internal file "..percent,60,0,7,true)
+    GPU._systemMessage("Generating an internal file "..percent,60,0,7)
     CPU.sleep(0)
     
     local dir = paths[i]
@@ -108,12 +119,12 @@ if _LIKO_Old or not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love"
     writer.addFile(fileName,fileData,modTime)
   end
   
-  GPU._systemMessage("Finalizing the internal file...",60,0,7,true)
+  GPU._systemMessage("Finalizing the internal file...",60,0,7)
   GPU.flip()
   
   local LIKO_SRC_ZIP = assert(writer.finishZip()):read()
   
-  GPU._systemMessage("Writing the internal file...",60,0,7,true)
+  GPU._systemMessage("Writing the internal file...",60,0,7)
   GPU.flip()
   
   love.filesystem.setIdentity(currentIdentity)
@@ -123,6 +134,10 @@ if _LIKO_Old or not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love"
   
   GPU._systemMessage("",0)
   GPU.flip()
+end
+
+if migrate080 then
+  love.filesystem.load("BIOS/migrate080.lua")(Handled)
 end
 
 GPU.printCursor(0,3,0)
