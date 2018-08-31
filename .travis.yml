@@ -5,22 +5,22 @@ go:
 
 sudo: required
 
-install: ./Extra/Travis/install.sh
+install: ./Travis/install.sh
 
-script: ./Extra/Travis/script.sh
+script: ./Travis/script.sh
 
-before_deploy: ./Extra/Travis/before_deploy.sh
+before_deploy: ./Travis/before_deploy.sh
 
 deploy:
   # Deploy a nightly build.
   - provider: script
-    script: bash ./Extra/Travis/deploy_nightly.sh
+    script: bash ./Travis/deploy_nightly.sh
     skip-cleanup: true
     on:
       branch: master
   # Deploy a new LIKO-12 release.
   - provider: script
-    script: bash ./Extra/Travis/deploy_release.sh
+    script: bash ./Travis/deploy_release.sh
     skip-cleanup: true
     on:
       tags: true
