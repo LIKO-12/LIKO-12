@@ -85,7 +85,7 @@ Those editors hasn't been made yet, but they are really comming soon (they are c
 | CPU   | LuaJIT (Lua 5.1)                    |
 | GPU   | 192x128 4-Bit Screen                |
 | Map   | 144x128 Cell (255 Tile)             |
-| HDD   | 2x 50mb drives        |
+| HDD   | 2x 50mb drives                      |
 | Input | Keyboard, Mouse, Touch, and Gamepad |
 
 ---
