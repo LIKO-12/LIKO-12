@@ -9,8 +9,8 @@ gothub edit \
   --user LIKO-12 \
   --repo Nightly \
   --tag TRAVIS \
-  --name "Build \#$TRAVIS_BUILD_NUMBER" \
-  --description "[`$TRAVIS_COMMIT`]: `$TRAVIS_COMMIT_MESSAGE`" \
+  --name "Build #${TRAVIS_BUILD_NUMBER}" \
+  --description "[`${TRAVIS_COMMIT}`]: `${TRAVIS_COMMIT_MESSAGE}`" \
   --pre-release
 
 echo ----==== Uploading the builds ====----
