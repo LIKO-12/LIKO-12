@@ -12,7 +12,7 @@ sudo luarocks install luacheck
 
 echo ----==== Downloading build templates ====----
 
-git clone https://github.com/RamiLego4Game/LIKO-12-Nightly.git ../BuildUtils
+git clone https://github.com/LIKO-12/Nightly.git ../BuildUtils
 
 echo ----==== Downloading AppImage toolkit ====----
 
