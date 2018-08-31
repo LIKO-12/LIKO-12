@@ -10,7 +10,7 @@ cd ../BuildUtils/LIKO-12/
 echo ----==== Removing unnecessary files... ====----
 
 rm -v -f README.md CODE_OF_CONDUCT.md CONTRIBUTING.md .travis.yml .gitattributes .gitignore .nomedia
-rm -v -f -r .git Travis
+rm -v -f -r .git .github Travis
 
 echo ----==== Packing .love file ====----
 
