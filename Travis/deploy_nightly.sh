@@ -5,6 +5,8 @@ echo ----==== Deploying Nightly Build ====----
 echo -----------------------------------------
 echo - Editing existing TRAVIS release
 
+gothub --help
+
 gothub edit \
   --user LIKO-12 \
   --repo Nightly \
