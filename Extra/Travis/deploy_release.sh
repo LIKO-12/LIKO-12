@@ -6,11 +6,11 @@ echo ----------------------------------------------
 echo - Creating the new release
 
 gothub release \
-  --user RamiLego4Game \
+  --user LIKO-12 \
   --repo LIKO-12 \
   --tag $TRAVIS_TAG \
   --name "Draft Release" \
-  --description "Please wait for @RamiLego4Game to setup this release." \
+  --description "Please wait for @RamiLego4Game or @LIKO-12/Collaborators to setup this release." \
   --draft
 
 echo ----==== Uploading the builds ====----
@@ -18,7 +18,7 @@ echo ----==== Uploading the builds ====----
 echo - Uploading windows build
 
 gothub upload \
-  --user RamiLego4Game \
+  --user LIKO-12 \
   --repo LIKO-12 \
   --tag $TRAVIS_TAG \
   --name "LIKO-12_V"$TRAVIS_TAG"_PRE_Windows.zip" \
@@ -28,7 +28,7 @@ gothub upload \
 echo - Uploading linux build
 
 gothub upload \
-  --user RamiLego4Game \
+  --user LIKO-12 \
   --repo LIKO-12 \
   --tag $TRAVIS_TAG \
   --name "LIKO-12_V"$TRAVIS_TAG"_PRE_Linux_x86_64.AppImage" \
@@ -38,7 +38,7 @@ gothub upload \
 echo - Uploading mac build
 
 gothub upload \
-  --user RamiLego4Game \
+  --user LIKO-12 \
   --repo LIKO-12 \
   --tag $TRAVIS_TAG \
   --name "LIKO-12_V"$TRAVIS_TAG"_PRE_Mac.zip" \
@@ -48,7 +48,7 @@ gothub upload \
 echo - Uploading universal build
 
 gothub upload \
-  --user RamiLego4Game \
+  --user LIKO-12 \
   --repo LIKO-12 \
   --tag $TRAVIS_TAG \
   --name "LIKO-12_V"$TRAVIS_TAG"_PRE_Universal.love" \
