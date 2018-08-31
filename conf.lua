@@ -13,8 +13,8 @@ I don't think anyone would want to edit anything in this file, but on change the
 
 --LIKO-12 Version
 _LVer = {
-	major = 0,
-	minor = 9,
+	major = 9,
+	minor = 0,
 	patch = 0,
 	tag = "DEV",
 }
