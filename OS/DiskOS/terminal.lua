@@ -131,8 +131,6 @@ function term.reload()
   editor.apiVersion = api_version
   editor.filePath = game_path
   editor.active = active_editor
-
-  commands = term.updateCommands()
 end
 
 function term.setdrive(d)
@@ -253,7 +251,6 @@ function term.execute(command,...)
     local exitCode, err = term.executeFile(curpath..command..".lua",...)
     if exitCode > 0 then color(8) print(err or "Failed !") color(7) end
     textinput(true)
-    commands = term.updateCommands()
     return exitCode, err
   end
   for path in nextPath(PATH) do
@@ -264,7 +261,6 @@ function term.execute(command,...)
           local exitCode, err = term.executeFile(path..file,...)
           if exitCode > 0 then color(8) print(err or "Failed !") color(7) end
           textinput(true)
-          commands = term.updateCommands()
           return exitCode, err
         end
       end
@@ -323,6 +319,7 @@ function term.loop() --Enter the while loop of the terminal
           blink = false; checkCursor()
           print("") -- insert newline after Enter
           term.execute(split(buffer)) buffer, inputPos = "", 1
+          commands = term.updateCommands()
           checkCursor() term.prompt() blink = true cursor("none")
         end
       elseif a == "backspace" then
