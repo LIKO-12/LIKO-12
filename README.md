@@ -25,4 +25,4 @@ The created games are stored as disk files that can be saved, shared and played 
 
 ## Website:
 
-Please visit the website for more information about LIKO-12, including features list and screenshots: [https://liko-12.github.io/](https://liko-12.github.io/)
+Please visit the website for more information about LIKO-12, including features list, screenshots, and documentation: [https://liko-12.github.io/](https://liko-12.github.io/)
