@@ -1,8 +1,7 @@
 --The terminal !--
-local _LIKO_Version, _LIKO_Old = BIOS.getVersion()
-local _LIKO_TAG = _LIKO_Version:sub(-3,-1)
+local _LIKO_TAG = _LVer.tag
 local _LIKO_DEV = (_LIKO_TAG == "DEV")
-local _LIKO_BUILD = _LIKO_Version:sub(3,-5)
+local _LIKO_BUILD = _LVer.major ..".".. _LVer.minor
 
 local PATH = "D:/Programs/;C:/Programs/;" --The system PATH variable, used by the terminal to search for programs.
 local curdrive, curdir, curpath = "D", "/", "D:/" --The current active path in the terminal.

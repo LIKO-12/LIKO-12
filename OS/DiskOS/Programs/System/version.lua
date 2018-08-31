@@ -3,9 +3,7 @@ if select(1,...) == "-?" then
   return
 end
 
-local new, old = BIOS.getVersion()
-
-color(11) print("LIKO-12 V"..new)
+color(11) print("LIKO-12 V".._LIKO_Version)
 if old then
-  color(6) print("Updated from: V"..old)
+  color(6) print("Updated from: V".._LIKO_Old)
 end
