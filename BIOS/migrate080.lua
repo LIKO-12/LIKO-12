@@ -31,11 +31,12 @@ local function index(path,list,ext,rec)
   if not love.filesystem.getInfo(path) then return end
   
   for _,file in ipairs(love.filesystem.getDirectoryItems(path)) do
-    if love.filesystem.getInfo(path..file).type == "file" then
+    local info = love.filesystem.getInfo(path..file)
+    if info and info.type == "file" then
       if not ext or file:sub(-#ext,-1) == ext then
         list[#list + 1] = path..file
       end
-    elseif rec then
+    elseif info and rec then
       index(path..file.."/",list,ext,rec)
     end
   end
@@ -106,13 +107,15 @@ end
 
 for i=1, #Screenshots do
   local src = Screenshots[i]
-  local dst = src:sub(1,13) == "/Screenshots/" and src or "/Screenshots"..src
-  activate()
-  local data = love.filesystem.read(src)
-  deactivate()
-  love.filesystem.createDirectory(fs.getDirectory(dst))
-  love.filesystem.write(dst,data)
-  progress()
+  if src ~= "/icon.png" then
+    local dst = src:sub(1,13) == "/Screenshots/" and src or "/Screenshots"..src
+    activate()
+    local data = love.filesystem.read(src)
+    deactivate()
+    love.filesystem.createDirectory(fs.getDirectory(dst))
+    love.filesystem.write(dst,data)
+    progress()
+  end
 end
 
 activate()
