@@ -5,13 +5,11 @@ echo ----==== Deploying Nightly Build ====----
 echo -----------------------------------------
 echo - Editing existing TRAVIS release
 
-gothub --help
-
 gothub edit \
   --user LIKO-12 \
   --repo Nightly \
   --tag TRAVIS \
-  --name "Build #$TRAVIS_BUILD_NUMBER" \
+  --name "Build \#$TRAVIS_BUILD_NUMBER" \
   --description "[`$TRAVIS_COMMIT`]: `$TRAVIS_COMMIT_MESSAGE`" \
   --pre-release
 
