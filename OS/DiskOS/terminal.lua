@@ -538,7 +538,6 @@ function term.append(text)
 end
 
 function term.updateCommands()
-  term.append("Updating commands")
   commands = term.indexCommandsPATH()
   commands = tableConcat(commands, term.indexCommandsActiveDir())
   return commands
