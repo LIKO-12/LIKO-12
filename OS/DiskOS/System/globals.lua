@@ -5,6 +5,12 @@
 - The HDD peripheral is also available as fs, use fs instead of HDD !
 ]]
 
+--[[ Version:
+- _LIKO_Version, LIKO-12's current version string.
+- _LIKO_Old, LIKO-12's old version string,
+- _LVer, Parsed LIKO-12 version information, a table with this indexes: major,minor,patch and tag.
+]]
+
 --[[ Constants:
 - _APIVer, The current version of the games API.
 - _APIList, A list
@@ -28,6 +34,13 @@
 --==Variables used by the global functions==--
 local tw, th = termSize()
 local SpriteSheet = require("Libraries.spritesheet")
+
+--==Version==--
+
+_LIKO_Version, _LIKO_Old = BIOS.getVersion()
+_LVer = {}
+_LVer.major, _LVer.minor, _LVer.patch, _LVer.tag = string.match(_LIKO_Version,"(%d+)%.(%d+)%.(%d+)_(.+)")
+_LVer.major, _LVer.minor, _LVer.patch = tonumber(_LVer.major), tonumber(_LVer.minor), tonumber(_LVer.patch)
 
 --==Constants==--
 
