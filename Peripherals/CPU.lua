@@ -5,7 +5,7 @@ return function(config) --A function that creates a new CPU peripheral.
   local EventStack = {}
   local Instant = false
   local RawPull = false
-  local sleepTimer, quitPressTimer
+  local sleepTimer
   
   local devkit = {}
   
@@ -21,27 +21,13 @@ return function(config) --A function that creates a new CPU peripheral.
   events.register("love:update", function(...) --Update event
     if not sleepTimer then devkit.triggerEvent("update",...) end
   end)
-
-  events.register("love:quit", function(...) --Quit event
-    if not quitPressTimer and devkit.triggerEvent("quit") then
-      quitPressTimer = 2
-      return true
-    end
-  end)
   
-  events.register("love:update",function(dt) --Update Timers
+  events.register("love:update",function(dt) --Sleep Timer
     if sleepTimer then
       sleepTimer = sleepTimer-dt
-      if sleepTimer <= 0 then
+      if sleepTimer <=0 then
         sleepTimer = nil
         coreg.resumeCoroutine(true)
-      end
-    end
-    
-    if quitPressTimer then
-      quitPressTimer = quitPressTimer-dt
-      if quitPressTimer <= 0 then
-        quitPressTimer = nil
       end
     end
   end)
