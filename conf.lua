@@ -13,12 +13,12 @@ I don't think anyone would want to edit anything in this file, but on change the
 
 --LIKO-12 Version
 _LVer = {
-	major = 9,
+	major = 1,
 	minor = 0,
 	patch = 0,
-	tag = "DEV",
+	tag = "Release" --Release, Pre-Relase, Development
 }
-_LVERSION = string.format("V%d.%d.%d_%s",_LVer.major,_LVer.minor,_LVer.patch,_LVer.tag)
+_LVERSION = string.format("V%d.%d.%d-%s",_LVer.major,_LVer.minor,_LVer.patch,_LVer.tag)
 
 --BuildConfig
 local build = {}
