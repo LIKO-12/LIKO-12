@@ -1,6 +1,6 @@
 \BChangelog:
 
-\9V0.9.0_PRE (WIP):
+\9V1.0.0 (2/9/2018):
 \FBugfixes:\7
 1. Fix high keyboard letancy in the help command (DiskOS).
 2. Fix persistent gamedata saving (DiskOS).
@@ -10,29 +10,35 @@
 6. Fix a problem in the `rm` command (DiskOS).
 7. Fix `No enough space` message (Engine/HDD).
 8. Fix sprite flags not redrawing when changing the sprite using WASD (DiskOS/SpriteEditor).
+9. Fix cursors colors palette is not reset after calling `colorPlaette()`.
+10. Fix issue #195: Fget on tile 0 should return false (DiskOS).
 
 \FContributions:\7
 1. @theartofme: Add an theme to the code editor (Pull request #185).
 2. @boredom101: Rectangle Demo (Pull request #187).
 3. @hachem2001: Mouse selection scroll up and down (Pull request #190).
+4. @boredom101: Improved copy with directory support, and optional verbose (Pull request #197).
 
 \FEngine:\7
 1. The devmode filethread no longer prints messages into the developer console (Only prints for errors).
-2. Huge improvements in the custom love.run (the main loop), lot's of mistakes impacting user performance.
-3. LIKO-12's appdata folder is now organized in folders, much cleaner, please backup your appdata files, and wipe it, then put your files back into the new folders.
+2. Huge improvements in the custom love.run (the main loop), lot's of mistakes was impacting user performance.
+3. LIKO-12's appdata folder is now organized in folders, much cleaner.
 4. New extended ASCII characters support, type `charmap` in DiskOS to view most of them.
-5. D Drive space has been increased to 50mb (Because 25 builds can be instantly filled with native builds).
+5. D Drive space has been increased to 50mb (Because 25 mbs can be instantly filled with native builds).
 6. C Drive space has been increased to 50mb (So the native builds templates can fit in).
 7. New spritebatches support, can be used to optimize map rendering.
 8. Optimized the engine files (`events.lua` and `coreg.lua`), should improve the performance.
-9. The GPU peripheral has been split into multiple files (instead of 1500 line file), and some optimization has been done.
+9. The GPU peripheral has been split into multiple files (instead of 1500 lines file), and some optimization has been done.
 10. Cleared trailing whitespace from LIKO-12's code.
 11. WIP Custom fonts support, currently only fontData object has been made.
 12. fontSize() now returns 4,6.
-13. The WEB peripheral has been written, with http requests using luasec support, and progressive download events.
-14. The WEB peripheral supports https when libcurl or luasec are available (prefers luasec when both available), and could do normal http requests even if https is not available.
-15. Libcurl is no longer included in Android builds.
-16. GPU calibration when the graphics card/drive is changed.
+13. The WEB peripheral has been re-written, with https requests using luasec support, and progressive download events.
+14. The WEB peripheral supports https when libcurl or luasec are available (prefers luasec when both are available), and could do normal http requests even if https is not available.
+15. Libcurl is no longer included in the Android builds.
+16. The GPU now re-calibrates when the graphics card/driver is changed.
+17. An optamization has been made to the GPU VRAM.
+18. LIKO-12's Appdata folder has been renamed to `LIKO-12` (was `liko12`).
+19. A migration script has been made, that runs automatically to migrate your data from the previous appdata folder, Please note that only `user.json` and `_backup.lk12` are migrated from the C drive !
 
 \FBIOS:\7
 1. The post screen now shows a `Generating internal file...` whenever LIKO-12's version changes, the BIOS internally generates a .zip of LIKO-12's source code, used for integrated native builds system.
@@ -40,39 +46,60 @@
 3. The engine no longer generates luacheck warnings.
 4. The C drive OS is no longer updated (replaced with DiskOS) when `C:/.noupdate` is created.
 5. New BIOS SETUP V3 !!!, Advanced features are work in progress.
+6. The `GameDiskOS` drive (when in native build mode) is now readonly.
+7. New `BIOS.isFirstBoot()`.
 
 \FDiskOS:\7
 1. Did some more work on the internal WIP GUI library (not used anywhere, yet).
 2. You can now mount LIKO-12's SRC into the `ZIP:` drive by typing: `mount --LIKOSRC`.
 3. New `TextUtils`, `BuildUtils` and `LK12Utils`.
-4. Disks (aka `.lk12` game files) writing and reading code has been made into `LK12Utils`.
+4. Disks (aka `.lk12` game files) writing and reading code has been moved into `LK12Utils`.
 5. Rewritten the `programs` command so that it's output is much more readable.
-6. Corrected some old information in help files: `Programming`, `Quickstart`.
-7. Removed some debug console prints from the code editor.
+6. Corrected some old information in the help files: `Programming`, `Quickstart`.
+7. Removed some developer console prints from the code editor.
 8. The `help` command now supports setting the background color of text.
 9. Spritesheet objects now has flags API.
 10. The editors are no longer included in GameDiskOS (Native builds of .lk12 games).
-11. Cleaned up and made some improvements to the Lua syntax highlighter (Used in the code editor).
+11. Cleaned up and made some improvements in the Lua syntax highlighter (Used in the code editor).
 12. New native builds system !
-13. Added new vector library to games environment.
+13. Added new vector library to the games environment.
 14. TileEditor: The mouse wheel can now scroll the selected tile box.
 15. TileEditor: You can now erase tiles with right mouse button.
 16. TileEditor: You can now pan with middle mouse button.
 17. TileEditor: New grid for each room.
 18. SpriteEditor: The sprite flags order has been corrected.
 19. The Lua interpreter now has the same features of the terminal textinput.
-20. The `save` command now creats a backup of the old lk12 at `C:/_backup.lk12`.
+20. The `save` command now creates a backup of the old lk12 at `C:/_backup.lk12`.
 21. New disk format v4, with LIKO-12 api version field !
 22. A compatibility layer is applied for games using old API.
 23. New `setapi` command to set the current loaded disk API version.
 24. The `snake` game has been tweaked, now the snake speeds up linearly, and 2 fruits are now available on the screen.
-25. The programs has been categorized into subfolders, WIPE `C:/Programs/` !!
+25. The programs has been categorized into subfolders.
+26. The `install_games` and `install_demos` now displays `D:/` instead of `D://`.
+27. New games API v2, check it's own section.
+28. `C:/editorsheet.lk12` has been renamed to `C:/systemsheet.lk12`.
+29. System wide globals are now defined in `C:/System/globals.lua`.
+30. New global `_SystemSheet`, which replaces `eapi.editorsheet`.
+31. New global `_SystemDrive`, which replaces `term.getMainDrive`.
+32. The system cursors are now loaded in `C:/System/cursor.lua` by `boot.lua`, instead of being loaded at `eapi.initialize()`.
+33. The sprite id in `SpriteMap` methods is now floored.
+34. New `_LIKO_Version`, `_LIKO_Old` and `_LVer` globals, check `C:/System/globals.lua` for more information.
+
+\FGames API v2:\7
+1. The extra libraries are no longer available as globals, but instead are now loadable by calling `local lib = Library("library_name")`.
+2. The `SpriteSheet` function is no longer a global, it's now a library, you can easily add it back by adding this line of code: `local SpriteSheet = Library("spritesheet")`
+3. The old `input` function is now replaced with `TextUtils.textInput`, It's compatible with the old `input` function, But also has history and cursor movement support like in the terminal.
 
 \FOther:\7
 1. New GPU Cheatsheet (check online LIKO-12's documentation).
 2. New Other Peripherals Cheatsheet (check online LIKO-12's documentation).
 3. Linux builds are now in .AppImage format.
 4. LIKO-12's release builds are now automated via Travis, publishing new releases of LIKO-12 is way more easier, so expect more frequent updates before 2/9/2018 (My school start).
+5. Starting from this version, LIKO-12 now uses semantic versioning scheme 2.0.0.
+6. LIKO-12 now has a Github organization: https://github.com/LIKO-12
+7. LIKO-12 repos has been moved to the Github organization, the main repository is now at https://github.com/LIKO-12/LIKO-12
+8. A website has been made for LIKO-12, which also includes the documentation: https://liko-12.github.io/
+9. The ReadTheDocs website of LIKO-12 documentation has been removed.
 
 \9V0.8.0_PRE (20/5/2018):
 \FRemarkable:\7
