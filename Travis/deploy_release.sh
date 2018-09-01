@@ -10,7 +10,7 @@ gothub release \
   --repo LIKO-12 \
   --tag $TRAVIS_TAG \
   --name "Draft Release" \
-  --description "Please wait for @RamiLego4Game or @LIKO-12/Collaborators to setup this release." \
+  --description "Please wait for @RamiLego4Game or @LIKO-12/collaborators to setup this release." \
   --draft
 
 echo ----==== Uploading the builds ====----
