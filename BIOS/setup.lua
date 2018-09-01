@@ -6,12 +6,8 @@ local Handled, Devkits = ... --Handled is passed by BIOS POST
 
 local DevMode = love.filesystem.getInfo("/Miscellaneous/devmode.txt") and true or false
 
---Engine parts
-local coreg = require("Engine.coreg")
-
 --Peripherals
 local Keyboard = Handled.Keyboard
-local BIOS = Handled.BIOS
 local GPU = Handled.GPU
 local CPU = Handled.CPU
 local fs = Handled.HDD
@@ -19,7 +15,7 @@ local TC = Handled.TC
 
 --Constants
 local sw,sh = GPU.screenSize()
-local tw,th = GPU.termSize()
+local tw = GPU.termWidth()
 local fw,fh = GPU.fontSize()
 local mobile = CPU.isMobile()
 
