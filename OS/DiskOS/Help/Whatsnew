@@ -18,6 +18,7 @@
 2. @boredom101: Rectangle Demo (Pull request #187).
 3. @hachem2001: Mouse selection scroll up and down (Pull request #190).
 4. @boredom101: Improved copy with directory support, and optional verbose (Pull request #197).
+5. @olivier-grech: Implement terminal commands names autocomplete (Pull request #198).
 
 \FEngine:\7
 1. The devmode filethread no longer prints messages into the developer console (Only prints for errors).
