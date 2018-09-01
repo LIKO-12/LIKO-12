@@ -63,6 +63,10 @@ index("/drives/D/",Data,false,true)
 if love.filesystem.getInfo("/drives/C/user.json") then
   Data[#Data + 1] = "/drives/C/user.json"
 end
+
+if love.filesystem.getInfo("/drives/C/_backup.lk12") then
+  Data[#Data + 1] = "/drives/C/_backup.lk12"
+end
 deactivate()
 
 local total = #Screenshots + #GIFs + #Shaders + #Data
