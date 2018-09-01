@@ -39,7 +39,7 @@ local SpriteSheet = require("Libraries.spritesheet")
 
 _LIKO_Version, _LIKO_Old = BIOS.getVersion()
 _LVer = {}
-_LVer.major, _LVer.minor, _LVer.patch, _LVer.tag = string.match(_LIKO_Version,"(%d+)%.(%d+)%.(%d+)_(.+)")
+_LVer.major, _LVer.minor, _LVer.patch, _LVer.tag = string.match(_LIKO_Version,"(%d+)%.(%d+)%.(%d+)%-(.+)")
 _LVer.major, _LVer.minor, _LVer.patch = tonumber(_LVer.major), tonumber(_LVer.minor), tonumber(_LVer.patch)
 
 --==Constants==--
