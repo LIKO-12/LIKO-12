@@ -74,7 +74,7 @@ function term.init()
   color(7) print("V".._LIKO_BUILD,(_LIKO_DEV or _LIKO_PRE) and 53 or 43,10)
   cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS") color(6) cam()
   _SystemSheet:draw(60,(fw+1)*6+1,fh+3) flip() sleep(0.125)
-  color(6) print("\nhttp://github.com/ramilego4game/liko12")
+  color(6) print("\nhttps://liko-12.github.io")
 
   flip() sleep(0.0625)
   if fs.exists("D:/autoexec.lua") then
