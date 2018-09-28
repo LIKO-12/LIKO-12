@@ -9,12 +9,12 @@ Here I'll explain the most important commands:
 
 Game Saving:
 
-`save <filename>`
+'save <filename>'
 
 The save command allows you to save the currently loaded game from the editors into a .lk12 file.
 
 It takes the filename as the first argument, spaces are not allowed:
-`save Game`
+'save Game'
 
 It will automatically add the .lk12 extension.
 
@@ -22,13 +22,13 @@ By default, the resulting .lk12 file will be plaintext, but you can save it in t
 
 Compressed format:
 
-`save Game -c`
+'save Game -c'
 
 The savefile as a whole part will be highly compressed and b64 encoded, so you can still share it as a plaintext file.
 
 Binary format:
 
-`save Game -b`
+'save Game -b'
 
 The game will be saved as binary data, the code will be compressed, and the spritesheet, map, and SFX will be saved as raw binary, so the binary file could be bigger than the compressed file.
 
@@ -38,7 +38,7 @@ You can also save parts of your game as individual files:
 
 Game Loading:
 
-`load <filename>`
+'load <filename>'
 
 
 
