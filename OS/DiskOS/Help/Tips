@@ -16,7 +16,7 @@ You can install PoorOS in the BIOS SETUP, it's just a Lua interpreter.
 You can boot PoorOS directly without installing in the BIOS SETUP.
 You can boot from drive D from the BIOS SETUP, it will execute D:/boot.lua
 You can use the 'SheetToClip' command to store extra spritesheets in your code.
-There's a public github repository for LIKO-12 disks: https://ramilego4game.github.io/LIKO-12-Disks
+There's a public github repository for LIKO-12 disks: https://liko-12.github.io/Disks/
 LIKO-12 can use post shader, check https://github.com/RamiLego4Game/LIKO-12-Shaders
 Don't forget to give a star in LIKO-12 Github https://github.com/RamiLego4Game/LIKO-12
 LIKO-12 Nightly-Builds are available at https://ramilego4game.github.io/LIKO-12-Nightly
