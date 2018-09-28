@@ -6,7 +6,7 @@ Here I'll explain how useful they are, starting from the \6left-most\7 slot, to 
 In this editor, you will write the \6code\7 of your game, using the \CLua\7 programming language, more about that later.
 
 \B> Sprite Editor:\7
-In this editor you will draw the \6"Sprites"\7 of your game, using the limited \616 color palette\7 and the available \6384 sprites\7, note that you can modify the palette colors in the game code.
+In this editor, you will draw the \6"Sprites"\7 of your game, using the limited \616 color palette\7 and the available \6384 sprites\7, note that you can modify the palette colors in the game code.
 
 \B> Map Editor:\7
 In this editor, you can edit your game map (if you need one), it uses the sprites edited in the \6Sprite editor\7 as tiles, the map is \6144x128\7 tiles and limited to the \9first 255\7 sprites, plus a special one, \60\7 which is the \6empty\7 tile.
