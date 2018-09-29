@@ -2,19 +2,19 @@
 
 Here I'll explain how useful they are, starting from the \6left-most\7 slot, to the \6right-most\7 slot:
 
-\B> Code editor:\7
-In this editor you will write the \6code\7 of your game, using the \CLua\7 programming language, more about that later.
+\B> Code Editor:\7
+In this editor, you will write the \6code\7 of your game, using the \CLua\7 programming language, more about that later.
 
-\B> Sprite editor:\7
-In this editor you will draw the \6"Sprites"\7 of your game, using the limited \616 color palette\7 and the available \6384 sprites\7, note that you can modify the palette colors in the game code.
+\B> Sprite Editor:\7
+In this editor, you will draw the \6"Sprites"\7 of your game, using the limited \616 color palette\7 and the available \6384 sprites\7, note that you can modify the palette colors in the game code.
 
-\B> Map editor:\7
-In this editor you can edit your game map (if you need one), it uses the sprites edited in the \6Sprite editor\7 as tiles, the map is \6144x128\7 tile, and limited to the \9first 255\7 sprites, plus a special one, \60\7 which is the \6empty\7 tile.
+\B> Map Editor:\7
+In this editor, you can edit your game map (if you need one), it uses the sprites edited in the \6Sprite editor\7 as tiles, the map is \6144x128\7 tiles and limited to the \9first 255\7 sprites, plus a special one, \60\7 which is the \6empty\7 tile.
 
-\B> SFX editor:\7
-In this editor you can edit the sound effects of your game, with \964\7 available slots. It is powered by a \6chiptune generator\7 supporting \6square\7,\6pulse\7,\6sawtooth\7,\6triange\7 and \6noise\7 waveforms.
+\B> SFX Editor:\7
+In this editor, you can edit the sound effects of your game, with \964\7 available slots. It is powered by a \6chiptune generator\7 supporting \6square\7,\6pulse\7,\6sawtooth\7,\6triange\7 and \6noise\7 waveforms.
 
-\B> Music editor:\7
-This editor is \9work in program\7, and still doesn't exist...
+\B> Music Editor:\7
+This editor is a \9work in progress\7 and doesn't exist yet...
 
-Now you know more about \DiskOS\7 editors, you should also know about \6the terminal\7. So type \9help Terminal\7 !
+Now you know more about \DiskOS\7 editors, you should also know about \6the terminal\7. So type \9help Terminal\7!
