@@ -16,8 +16,8 @@ You can install PoorOS in the BIOS SETUP, it's just a Lua interpreter.
 You can boot PoorOS directly without installing in the BIOS SETUP.
 You can boot from the D drive from the BIOS SETUP, it will execute 'D:/boot.lua'.
 You can use the 'SheetToClip' command to store extra spritesheets in your code.
-Did you know that there's a public GitHub repository for LIKO-12 disks? Check them out at 'https://liko-12.github.io/Disks/'.
+Did you know that there's a public GitHub repository for LIKO-12 disks? Check them out at 'https://liko-12.github.io/Disks'.
 LIKO-12 can use post shaders, check 'https://github.com/LIKO-12/Shaders'.
 Don't forget to give a star on the LIKO-12 GitHub page! Visit 'https://github.com/LIKO-12/LIKO-12'.
-LIKO-12 Nightly-Builds are available at 'https://liko-12.github.io/Nightly/'.
+LIKO-12 Nightly-Builds are available at 'https://liko-12.github.io/Nightly'.
 A backup of the .lk12 is created when saving at C:/_backup.lk12.

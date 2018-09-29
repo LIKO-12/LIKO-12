@@ -28,17 +28,17 @@ if targets.win or targets.linux or targets.osx then
     color(7) print("Please download ",false)
     color(6) print("BuildTemplates.zip ",false)
     color(7) print("from ",false)
-    color(6) print("https://github.com/RamiLego4Game/LIKO-12-Nightly/releases")
+    color(6) print("https://github.com/LIKO-12/Nightly/releases")
     color(7) print("\nThen drop them into the window here")
     color(6) print("\nPress any key to open the webpage, or press escape to terminate the build")
     color(7)
-    
+
     for event, a,b,c,d,e,f in pullEvent do
       if event == "keypressed" then
         if a == "escape" then
           return 1, "Build terminated."
         else
-          openURL("https://github.com/RamiLego4Game/LIKO-12-Nightly/releases")
+          openURL("https://github.com/LIKO-12/Nightly/releases")
         end
       elseif event == "filedropped" then
         if not b then return 1, "Failed to read file." end

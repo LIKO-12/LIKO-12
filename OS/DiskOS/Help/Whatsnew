@@ -232,7 +232,7 @@
 40. New colored variants of the disk (png) template.
 41. Typo fix in GPU.printBackspace.
 42. GPU Matrix stack depth error handling.
-43. New post shaders support, check https://github.com/ramilego4game/LIKO-12-Shaders.
+43. New post shaders support, check https://github.com/LIKO-12/Shaders.
 44. New pattern filling support.
 45. New CPU.openURL.
 46. Added LuaSec to the WEB peripheral.
@@ -242,9 +242,9 @@
 \FOther:\7
 49. New \LIKO-12\7 Icon.
 50. The window icon is now the 16x16 version.
-51. New Nightly Builds: https://ramilego4game.github.io/LIKO-12-Nightly/
+51. New Nightly Builds: https://liko-12.github.io/Nightly
 52. Updated GitHub readme.md
-53. New Disks repository: https://ramilego4game.github.io/LIKO-12-Disks
+53. New Disks repository: https://liko-12.github.io/Disks
 54. Dropped Windows 64-bit support (temporary).
 55. Luacheck now runs on \LIKO-12\7 Github Repo.
 56. Good amount of updates to the online Documentation.
