@@ -34,7 +34,7 @@ function input()
         return t --Return the text
       elseif a == "escape" then
         return false --User canceled text input.
-      elseif a == "v" and Keyboard.isKDown("lctrl","rctrl") then
+      elseif a == "v" and Keyboard.isKDown("lctrl","rctrl", "lgui", "rgui") then
         CPU.triggerEvent("textinput",CPU.clipboard())
       end
     elseif event == "touchpressed" then

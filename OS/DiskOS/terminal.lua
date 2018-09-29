@@ -307,7 +307,7 @@ function term.loop() --Enter the while loop of the terminal
           commands = term.updateCommands()
           checkCursor() term.prompt() blink = true cursor("none")
         end
-      elseif a == "backspace" then
+      elseif a == "backspace" and not isKDown("ralt", "lalt") then
         --If an autocomplete suggestion is displayed, erase it
         if autocompleteSuggestions[1] then
           term.refuseSuggestion()
@@ -338,7 +338,7 @@ function term.loop() --Enter the while loop of the terminal
           end
           blink = true; checkCursor()
         end
-      elseif a == "delete" then
+      elseif a == "delete" or (a == "backspace" and isKDown("ralt", "lalt")) then
         --If an autocomplete suggestion is displayed, erase it
         if autocompleteSuggestions[1] then
           term.refuseSuggestion()
@@ -423,11 +423,11 @@ function term.loop() --Enter the while loop of the terminal
         end
         blink = true; checkCursor()
       elseif a == "c" then
-        if isKDown("lctrl","rctrl") then
+        if isKDown("lctrl","rctrl", "lgui", "rgui") then
           clipboard(buffer)
         end
       elseif a == "v" then
-        if isKDown("lctrl","rctrl") then
+        if isKDown("lctrl","rctrl", "lgui", "rgui") then
           local paste = clipboard() or ""
 
           for char in string.gmatch(paste..buffer:sub(inputPos,-1),".") do

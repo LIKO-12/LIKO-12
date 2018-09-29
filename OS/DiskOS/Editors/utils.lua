@@ -115,7 +115,7 @@ function utils:newTool(readonly)
             key = "alt-" .. key
             sc = "alt-" .. sc
           end
-          if(isKDown("lctrl", "rctrl", "capslock")) then
+          if(isKDown("lctrl", "rctrl", "lgui", "rgui", "capslock")) then
             key = "ctrl-" .. key
             sc = "ctrl-" .. sc
           end

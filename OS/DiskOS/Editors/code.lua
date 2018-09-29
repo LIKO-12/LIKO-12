@@ -860,6 +860,8 @@ ce.keymap = {
   end,
 }
 
+ce.keymap["alt-backspace"] = ce.keymap["delete"]
+
 function ce:entered()
   eapi:drawUI()
   cam("translate",0,1)

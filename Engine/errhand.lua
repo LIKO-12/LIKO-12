@@ -112,7 +112,7 @@ function love.errorhandler(msg)
 				return 1
 			elseif e == "keypressed" and a == "escape" then
 				return 1
-			elseif e == "keypressed" and a == "c" and love.keyboard.isDown("lctrl", "rctrl") then
+			elseif e == "keypressed" and a == "c" and love.keyboard.isDown("lctrl", "rctrl", "lgui", "rgui") then
 				copyToClipboard()
 			elseif e == "touchpressed" then
 				local name = love.window.getTitle()

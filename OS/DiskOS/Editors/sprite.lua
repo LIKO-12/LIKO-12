@@ -784,4 +784,6 @@ function se:redrawSPRS() _ = nil
     ["i"] = function() transform(5) end
   }
 
+  se.keymap["alt-backspace"] = se.keymap["delete"]
+
   return se

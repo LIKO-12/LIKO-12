@@ -266,7 +266,7 @@ function edit:loop() --Starts the while loop
           key = "alt-" .. key
           sc = "alt-" .. sc
         end
-        if(isKDown("lctrl", "rctrl")) then
+        if(isKDown("lctrl", "rctrl", "lgui", "rgui")) then
           key = "ctrl-" .. key
           sc = "ctrl-" .. sc
         end
