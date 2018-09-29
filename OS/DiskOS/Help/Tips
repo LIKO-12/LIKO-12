@@ -1,5 +1,5 @@
 You can view the system files by switching to drive C 'cd C:'.
-You can factory_reset DiskOS by typing 'factory_reset'.
+You can reinstall DiskOS through the BIOS at any time.
 You can update old LIKO-12 games (older than V0.0.5A) by using the 'loadcart' command.
 You can play piano notes by using the 'play' program.
 You can check the drives usage by typing 'drives'.

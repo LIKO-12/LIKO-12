@@ -3,6 +3,6 @@ To learn the Lua programming language visit \6http://lua-users.org/wiki/Tutorial
 To create games, press \6Escape/Back\7 to switch to the Editors Mode.
 For a list of available API functions, check the official documentation webpage.
 
-To edit system files, use \6"edit file.lua"\7. If you mess something up, run \6factory_reset"\7 to revert the changes you've made.
+To edit system files, use \6"edit file.lua"\7. If you mess something up, you can always reinstall the OS from the BIOS.
 
 Note that the system is overwritten whenever a new update comes, so it's better to create a folder in drive \BD\7 named \6"Programs"\7 and place your own programs there (you can override system programs).
