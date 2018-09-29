@@ -2,19 +2,19 @@
 
 \9V1.0.0 (2/9/2018):
 \FBugfixes:\7
-1. Fix high keyboard letancy in the help command (DiskOS).
-2. Fix persistent gamedata saving (DiskOS).
+1. Fix high keyboard latency in the help command (DiskOS).
+2. Fix persistent game data saving (DiskOS).
 3. Fix eventloop not running in games when only `_update60` is defined (DiskOS).
 4. Fix `raw-read` and `raw-write` in the `disk` program (DiskOS).
 5. Fix some commands help not fitting in the terminal (DiskOS).
 6. Fix a problem in the `rm` command (DiskOS).
 7. Fix `No enough space` message (Engine/HDD).
 8. Fix sprite flags not redrawing when changing the sprite using WASD (DiskOS/SpriteEditor).
-9. Fix cursors colors palette is not reset after calling `colorPlaette()`.
+9. Fix cursors colors palette is not reset after calling `colorPalette()`.
 10. Fix issue #195: Fget on tile 0 should return false (DiskOS).
 
 \FContributions:\7
-1. @theartofme: Add an theme to the code editor (Pull request #185).
+1. @theartofme: Add a theme to the code editor (Pull request #185).
 2. @boredom101: Rectangle Demo (Pull request #187).
 3. @hachem2001: Mouse selection scroll up and down (Pull request #190).
 4. @boredom101: Improved copy with directory support, and optional verbose (Pull request #197).
@@ -31,23 +31,23 @@
 8. Optimized the engine files (`events.lua` and `coreg.lua`), should improve the performance.
 9. The GPU peripheral has been split into multiple files (instead of 1500 lines file), and some optimization has been done.
 10. Cleared trailing whitespace from LIKO-12's code.
-11. WIP Custom fonts support, currently only fontData object has been made.
+11. WIP Custom fonts support. Currently, only the fontData object has been made.
 12. fontSize() now returns 4,6.
 13. The WEB peripheral has been re-written, with https requests using luasec support, and progressive download events.
-14. The WEB peripheral supports https when libcurl or luasec are available (prefers luasec when both are available), and could do normal http requests even if https is not available.
+14. The WEB peripheral supports https when libcurl or luasec are available (prefers luasec when both are available), and could do normal HTTP requests even if https is not available.
 15. Libcurl is no longer included in the Android builds.
 16. The GPU now re-calibrates when the graphics card/driver is changed.
-17. An optamization has been made to the GPU VRAM.
-18. LIKO-12's Appdata folder has been renamed to `LIKO-12` (was `liko12`).
-19. A migration script has been made, that runs automatically to migrate your data from the previous appdata folder, Please note that only `user.json` and `_backup.lk12` are migrated from the C drive !
+17. An optimization has been made to the GPU VRAM.
+18. LIKO-12's appdata folder has been renamed to `LIKO-12` (was `liko12`).
+19. A migration script has been made, that runs automatically to migrate your data from the previous appdata folder, Please note that only `user.json` and `_backup.lk12` are migrated from the C drive!
 
 \FBIOS:\7
 1. The post screen now shows a `Generating internal file...` whenever LIKO-12's version changes, the BIOS internally generates a .zip of LIKO-12's source code, used for integrated native builds system.
 2. New BIOS.getSRC() to return LIKO-12's src .zip binary data in a string (Use with fs.mount).
 3. The engine no longer generates luacheck warnings.
 4. The C drive OS is no longer updated (replaced with DiskOS) when `C:/.noupdate` is created.
-5. New BIOS SETUP V3 !!!, Advanced features are work in progress.
-6. The `GameDiskOS` drive (when in native build mode) is now readonly.
+5. New BIOS SETUP V3!!!, Advanced features are work in progress.
+6. The `GameDiskOS` drive (when in native build mode) is now read-only.
 7. New `BIOS.isFirstBoot()`.
 
 \FDiskOS:\7
@@ -59,27 +59,27 @@
 6. Corrected some old information in the help files: `Programming`, `Quickstart`.
 7. Removed some developer console prints from the code editor.
 8. The `help` command now supports setting the background color of text.
-9. Spritesheet objects now has flags API.
+9. Spritesheet objects now have flags API.
 10. The editors are no longer included in GameDiskOS (Native builds of .lk12 games).
 11. Cleaned up and made some improvements in the Lua syntax highlighter (Used in the code editor).
-12. New native builds system !
-13. Added new vector library to the games environment.
+12. New native builds system!
+13. Added new vector library to the game's environment.
 14. TileEditor: The mouse wheel can now scroll the selected tile box.
-15. TileEditor: You can now erase tiles with right mouse button.
-16. TileEditor: You can now pan with middle mouse button.
+15. TileEditor: You can now erase tiles with the right mouse button.
+16. TileEditor: You can now pan with the middle mouse button.
 17. TileEditor: New grid for each room.
 18. SpriteEditor: The sprite flags order has been corrected.
 19. The Lua interpreter now has the same features of the terminal textinput.
 20. The `save` command now creates a backup of the old lk12 at `C:/_backup.lk12`.
-21. New disk format v4, with LIKO-12 api version field !
+21. New disk format v4, with LIKO-12 API version field!
 22. A compatibility layer is applied for games using old API.
-23. New `setapi` command to set the current loaded disk API version.
+23. New `setapi` command to set the currently loaded disk API version.
 24. The `snake` game has been tweaked, now the snake speeds up linearly, and 2 fruits are now available on the screen.
-25. The programs has been categorized into subfolders.
+25. The programs have been categorized into subfolders.
 26. The `install_games` and `install_demos` now displays `D:/` instead of `D://`.
 27. New games API v2, check it's own section.
 28. `C:/editorsheet.lk12` has been renamed to `C:/systemsheet.lk12`.
-29. System wide globals are now defined in `C:/System/globals.lua`.
+29. System-wide globals are now defined in `C:/System/globals.lua`.
 30. New global `_SystemSheet`, which replaces `eapi.editorsheet`.
 31. New global `_SystemDrive`, which replaces `term.getMainDrive`.
 32. The system cursors are now loaded in `C:/System/cursor.lua` by `boot.lua`, instead of being loaded at `eapi.initialize()`.
@@ -87,7 +87,7 @@
 34. New `_LIKO_Version`, `_LIKO_Old` and `_LVer` globals, check `C:/System/globals.lua` for more information.
 
 \FGames API v2:\7
-1. The extra libraries are no longer available as globals, but instead are now loadable by calling `local lib = Library("library_name")`.
+1. The extra libraries are no longer available as globals but instead are now loadable by calling `local lib = Library("library_name")`.
 2. The `SpriteSheet` function is no longer a global, it's now a library, you can easily add it back by adding this line of code: `local SpriteSheet = Library("spritesheet")`
 3. The old `input` function is now replaced with `TextUtils.textInput`, It's compatible with the old `input` function, But also has history and cursor movement support like in the terminal.
 
@@ -95,16 +95,16 @@
 1. New GPU Cheatsheet (check online LIKO-12's documentation).
 2. New Other Peripherals Cheatsheet (check online LIKO-12's documentation).
 3. Linux builds are now in .AppImage format.
-4. LIKO-12's release builds are now automated via Travis, publishing new releases of LIKO-12 is way more easier, so expect more frequent updates before 2/9/2018 (My school start).
+4. LIKO-12's release builds are now automated via Travis, publishing new releases of LIKO-12 is way easier, so expect more frequent updates before 2/9/2018 (My school start).
 5. Starting from this version, LIKO-12 now uses semantic versioning scheme 2.0.0.
 6. LIKO-12 now has a Github organization: https://github.com/LIKO-12
-7. LIKO-12 repos has been moved to the Github organization, the main repository is now at https://github.com/LIKO-12/LIKO-12
+7. LIKO-12 repos have been moved to the Github organization, the main repository is now at https://github.com/LIKO-12/LIKO-12
 8. A website has been made for LIKO-12, which also includes the documentation: https://liko-12.github.io/
 9. The ReadTheDocs website of LIKO-12 documentation has been removed.
 
 \9V0.8.0_PRE (20/5/2018):
 \FRemarkable:\7
-1. New WIP map editor, with easier to use interface, biger view box.
+1. New WIP map editor, with easier to use interface, bigger view box.
 2. Added a new library, `luann`, a neural network library.
 3. Added a genetic algorithm library.
 4. New TipOfTheDay system.
@@ -127,19 +127,19 @@
 
 \FBugfixes:\7
 1. Fix math.randomSeed not returning the seed when no arguments are passed.
-2. The bucket tool nolonger errors in the paint program.
+2. The bucket tool no longer errors in the paint program.
 3. Huge performance boost for Audio on Android.
 4. Fix slowdown/desync effect when playing Audio.
 5. Fix touch controls not acting until the touch moves.
 6. Fix terminal backspace with cursor movement.
-7. Fix 'delete' key in terminal when cursor is not at EOL.
+7. Fix 'delete' key in terminal when the cursor is not at EOL.
 
 \FDiskOS:\7
 1. New TipOfTheDay system.
 2. New ConfigUtils for programs that needs to save and read data, so there won't be a ton of config files in the C drive.
-3. New ImageUtils with a Queued flood fill algorithm, and darken effect.
-4. New WIP map editor, with easier to use interface, biger view box.
-5. Added new library, `luann`, a nural network library.
+3. New ImageUtils with a Queued flood fill algorithm and darken effect.
+4. New WIP map editor, with easier to use interface, bigger view box.
+5. Added new library, `luann`, a neural network library.
 6. Added a genetic algorithm library.
 7. New colored Help system.
 8. New Help scripts support.
@@ -159,7 +159,7 @@
 22. Audio peripheral is no longer required for DiskOS to operate.
 23. New `_update60()` `_update30()` `_draw60()` `_draw30()` callbacks in games.
 24. New `mount` command, to mount .ZIPs to the ZIP drive.
-25. Added support for bigEndian in BinUtils, and optamized `BinUtils.binToNum`.
+25. Added support for bigEndian in BinUtils, and optimized `BinUtils.binToNum`.
 26. New `getBtnName(buttonID,playerNumber)` function for games.
 
 \FEngine:\7
@@ -170,16 +170,16 @@
 5. New `math.hash(hashFunction, rawString)` supporting md5,sha1,sha224,sha256,sha384 and sha512.
 6. Added windows console executable support (LIKO-12_Console.exe).
 7. New ZIP drive functionality.
-8. New `fs.isReadonly(path)` to check if the path points to a readonly file/directory.
+8. New `fs.isReadonly(path)` to check if the path points to a read-only file/directory.
 
 \FBIOS:\7
 1. Faster boot time when in devmode.
-2. New show GPU information option in Setup screen.
+2. New show GPU information option in the Setup screen.
 
 \9V0.7.1_PRE (1/3/2018):
 \FBugfixes:\7
 1. Fix `help` program crash.
-2. Fix BIOS Setup `Open Appdata` crash.
+2. Fix BIOS Setup `Open appdata` crash.
 3. Fix \LIKO-12\7 failing to update DiskOS.
 
 \9V0.7.0_PRE (1/3/2018):
@@ -196,7 +196,7 @@
 7. You can now copy and paste in the terminal.
 8. New AudioUtils API, used for `note,oc` <-> `frequency` conversion.
 9. New HTTP API for easier HTTP requests.
-10. The editor shortcuts now uses keynames instead of scancodes.
+10. The editor shortcuts now use keynames instead of scancodes.
 11. New `patterns` demo.
 12. The `bounce` demo now has sound effects.
 13. Now prints program errors to the developer console.
@@ -204,18 +204,18 @@
 15. Now loads lk12/png files when dropped into \LIKO-12\7 windows while the terminal is visible.
 16. json library is now available as `JSON` for games (Instead of `json`).
 17. New RamUtils.binWriter and binReader.
-18. Programs now has exitcodes.
-19. New SFX editor and SFX api.
-20. The pastebin command now uses the HTTP api.
+18. Programs now have exitcodes.
+19. New SFX editor and SFX API.
+20. The pastebin command now uses the HTTP API.
 21. New `play` command, to play musical waves.
-22. Updated BARNES Palette in the palletes demo.
+22. Updated BARNES Palette in the palettes demo.
 23. New program `SheetToClip` for generating alt sheets to add in code.
 24. New incremental code search by @trabitboy.
 
 \FBIOS:\7
 26. The BIOS has been re-written.
 27. It runs now the POST screen in a coroutine.
-28. There's now a BIOS SETUP screen, which can do useful function, like opening appdata, wiping drives, installing DiskOS/PoorOS, booting from drive D and toggle devmode !
+28. There's now a BIOS SETUP screen, which can do useful function, like opening appdata, wiping drives, installing DiskOS/PoorOS, booting from drive D and toggling devmode!
 29. Most of peripherals functions are now called directly, better performance.
 30. Peripherals function arguments verification is now much cleaner.
 31. New DiskOS Installer/Updater screen, You can now know why \LIKO-12\7 takes some time for the first boot.
@@ -227,10 +227,10 @@
 \FEngine:\7
 36. New Audio Peripheral.
 37. 4 SFX Audio Channels, and 1 Generating Channel.
-38. Rewrote the HDD peripheral, the code is much cleaner, and it can now delete, move and copy directories & files recursivly.
+38. Rewrote the HDD peripheral, the code is much cleaner, and it can now delete, move and copy directories & files recursively.
 39. load() and loadstring() now takes chunkname.
 40. New colored variants of the disk (png) template.
-41. Typofix in GPU.printBackspace.
+41. Typo fix in GPU.printBackspace.
 42. GPU Matrix stack depth error handling.
 43. New post shaders support, check https://github.com/ramilego4game/LIKO-12-Shaders.
 44. New pattern filling support.
@@ -243,7 +243,7 @@
 49. New \LIKO-12\7 Icon.
 50. The window icon is now the 16x16 version.
 51. New Nightly Builds: https://ramilego4game.github.io/LIKO-12-Nightly/
-52. Updated github readme.md
+52. Updated GitHub readme.md
 53. New Disks repository: https://ramilego4game.github.io/LIKO-12-Disks
 54. Dropped Windows 64-bit support (temporary).
 55. Luacheck now runs on \LIKO-12\7 Github Repo.
@@ -258,7 +258,7 @@
 4. New `disk` command, to write and read files in .png disks.
 5. Paint program now accepts `@clip` and `@label`
 6. The `save` and `load` commands now accept .png saving (not compatible with the `disk` command).
-7. The `import` command now accepts `@label` so you can edit the label in the spriteeditor, or save the label as a .lk12 file.
+7. The `import` command now accepts `@label` so you can edit the label in the sprite editor, or save the label as a .lk12 file.
 8. The `export` command now accepts `@label` so you can set the label to your current spritesheet.
 9. The `factory_reset` command now accepts `-wipe` argument, to wipe the C drive before reflashing DiskOS.
 
@@ -267,7 +267,7 @@
 10. New code-editor undo and redo support by @jminor
 
 \FAPI:\7
-11. New image:refresh(), to reload it's content from the source imagedata.
+11. New image:refresh(), to reload its content from the source imagedata.
 12. New RAM functions: `poke4` and `peek4`.
 
 \FDemos:\7
@@ -275,10 +275,10 @@
 14. Added 'likocam' library, a 3D camera library + a new demo (cube.lk12).
 
 \FBugfixes:\7
-15. The `appdata` and `folder` programs now shows the path on Android.
-16. Fix horizental scrolling in the code editor is reversed (issue #118).
+15. The `appdata` and `folder` programs now show the path on Android.
+16. Fix horizontal scrolling in the code editor is reversed (issue #118).
 17. Fix `save -?` not showing help.
-18. Fix \LIKO-12\7 crashing on Android when connecting/disconnecting a bluetooth keyboard, thanks for @trabitboy
+18. Fix \LIKO-12\7 crashing on Android when connecting/disconnecting a Bluetooth keyboard, thanks for @trabitboy
 
 \FOperating System:\7
 19. New DiskOS System Structure.
@@ -288,14 +288,14 @@
 
 \FEngine:\7
 23. New Simplified RAM Layout.
-24. Optamized RAM peripheral binary handler.
+24. Optimized RAM peripheral binary handler.
 25. Reworked parts of the RAM peripheral.
 
 \9V0.6.0_PRE_06 (14/9/2017):
 \FNew:\7
 1. New custom palettes support, `colorPalette(id,red,green,blue)`
-2. New `exit()` function to exit the current running game.
-3. Ctrl-X and Ctrl-A now works in the code editor.
+2. New `exit()` function to exit the currently running game.
+3. Using Ctrl-X and Ctrl-A now works in the code editor.
 4. New 'palette' demo by nesbox, to show different palettes on \LIKO-12\7.
 
 \FOperating System:\7
@@ -320,40 +320,40 @@
 3. Now can paste from PICO-8 and TIC-80, and can also copy to TIC-80.
 4. New sprite editor selection size slider.
 5. New `install_games` program, to install a set of built-in games.
-6. New games: Snake, minesweeper, batteryman, pong.
-7. New sprite editor shorcuts, check the docs for them.
+6. New games: Snake, Minesweeper, BatteryMan, Pong.
+7. New sprite editor shortcuts, check the docs for them.
 8. New `loadcart` program to load old \LIKO-12\7 V0.0.5a carts.
-9. New joysticks support, with unlimited number of controllers.
+9. New joysticks support, with an unlimited number of controllers.
 10. New `joymap` program to remap the joystick buttons.
 11. New controls test demo `joytest`.
 12. Added support for installing custom editors.
-13. New lua syntax highlighter by lhs_azevedo.
-14. Now colors the api functions in the code editor.
+13. New Lua syntax highlighter by lhs_azevedo.
+14. Now colors the API functions in the code editor.
 15. New `exit` command, the same of `shutdown` command.
 16. New ctrl-s, ctrl-l, ctrl-r works in the editors and the edit program.
 17. New copy program to copy single files.
 18. circle() and ellipse() now accepts segments count argument.
-19. New `pastebin run` varient.
+19. New `pastebin run` variant.
 20. New Gif recording pause key: `F7`
-21. Now system messages are shown when starting, pauseing, etc... the gif recording.
+21. Now system messages are shown when starting, pausing, etc... the gif recording.
 22. New selection functionality in the code editor to copy, paste, etc... \o/.
 23. New math functions: math.isConvex, math.triangulate, math.noise and math.randomNormal.
-24. New 'mathcircles' Demo by @egordorichev, check it out !
+24. New 'mathcircles' Demo by @egordorichev, check it out!
 
 \FImprovements:\7
 1. Faster gif recording.
 2. New sprite editor layout.
 
 \FBugfixes:\7
-1. Bugfix appdata program oppening the appdata folder after showing help.
+1. Bugfix appdata program opening the appdata folder after showing help.
 2. Fix some internal cursors hot position.
-3. Fix `appdata` and `folder` programs on Android to print the path instead of openning the browser.
-4. Fixed a bug that the shaders fail to compile on some opengl-es devices.
+3. Fix `appdata` and `folder` programs on Android to print the path instead of opening the browser.
+4. Fixed a bug that the shaders fail to compile on some OpenGL-es devices.
 5. Bugfix issue #107 "Invalid Print Alignment"
 
 \FOperating System:\7
-1. New Editor.utils, makes adding standalone editors more easier.
-2. New editors api function `eapi:addEditor()`, Allows you to add custom editor.
+1. New Editor.utils, makes adding standalone editors easier.
+2. New editors API function `eapi:addEditor()`, Allows you to add a custom editor.
 3. Made the terminal commands case sensitive.
 4. New temp folder `C:/.temp/`, Gets cleaned at startup.
 
@@ -362,11 +362,11 @@
 2. `NormBIOS Revision 060-011`: New file tracking when in devmode.
 3. New system messages functionality.
 4. New `CPU.getSaveDirectory` to get the real save directory in the host filesystem.
-5. Added `os.date` to the lua sandbox.
+5. Added `os.date` to the Lua sandbox.
 
 \9V0.6.0_PRE_03 (7/7/2017):\7
 1. New touch controls.
-2. There are android builds now !
+2. There are android builds now!
 3. No longer crashes if it failed to load the WEB peripheral.
 4. Now automatically reflashes DiskOS when changing \LIKO-12\7 version.
 5. Updated the BIOS to version 060-010.
@@ -375,7 +375,7 @@
 8. Improved some Demos.
 9. New scrolling in the code editor via 2 touch fingers.
 10. Removed debug printing from the load program.
-11. Bugfixed million of bugs in the map api.
+11. Bugfixed million of bugs in the map API.
 12. Restored the help topic system.
 13. New sget, sset, pget, pset, mget, mset functions.
 14. Made map save format more readable.
@@ -391,5 +391,5 @@
 24. Upgraded terminal path resolving.
 25. You can now take screenshots by pressing f6.
 26. Now prints D:/ instead of D:///
-27. The WEB peripherals now closes the thread when rebooting \LIKO-12\7.
-28. New 'appdata' program to open \LIKO-12\7 appdata folder.
+27. The WEB peripherals now close the thread when rebooting \LIKO-12\7.
+28. New 'appdata' program to open the \LIKO-12\7 appdata folder.

@@ -1,23 +1,23 @@
-You can view the system files by switching to drive C 'cd C:'
-You can factory_reset DiskOS by typing 'factory_reset'
-You can update old LIKO-12 games (older than V0.0.5A) by using the 'loadcart' command
-You can play piano notes by using the 'play' program
-You can check the drives usage by typing 'drives'
-You can check the available API functions by typing 'apis'
-You can store your own programs in D:/Programs/
-You can always look in other people's code to see how to use a feature
-There are third-party libraries included for things ranging from collision detection to object orientation
-If you want code to run on boot up, place it in autoexec.lua in the D: drive.
-Updates overwrite the C: drive, so place your own data in the D: drive
-You can use the pastebin command to share your work with your friends in no time.
+You can view the system files by switching to drive C 'cd C:'.
+You can factory_reset DiskOS by typing 'factory_reset'.
+You can update old LIKO-12 games (older than V0.0.5A) by using the 'loadcart' command.
+You can play piano notes by using the 'play' program.
+You can check the drives usage by typing 'drives'.
+You can check the available API functions by typing 'apis'.
+You can store your own programs in 'D:/Programs/'.
+You can always look at other people's code to see how to use a feature.
+There are third-party libraries included for all sorts of functions, ranging from collision detection to object orientation.
+If you want some code to run on boot up, place it in 'autoexec.lua' in the D: drive.
+Updates overwrite the C: drive, so place your own data in the D: drive.
+You can use the 'pastebin' command to share your work with your friends in no time.
 You can access the BIOS SETUP screen by pressing delete (or back on mobiles) at POST screen.
 You can wipe your drives, or reinstall DiskOS in the BIOS SETUP.
 You can install PoorOS in the BIOS SETUP, it's just a Lua interpreter.
 You can boot PoorOS directly without installing in the BIOS SETUP.
-You can boot from drive D from the BIOS SETUP, it will execute D:/boot.lua
+You can boot from the D drive from the BIOS SETUP, it will execute 'D:/boot.lua'.
 You can use the 'SheetToClip' command to store extra spritesheets in your code.
-There's a public github repository for LIKO-12 disk: https://ramilego4game.github.io/LIKO-12-Disks
-LIKO-12 can use post shader, check https://github.com/RamiLego4Game/LIKO-12-Shaders
-Don't forget to give a star in LIKO-12 Github https://github.com/RamiLego4Game/LIKO-12
-LIKO-12 Nightly-Builds are available at https://ramilego4game.github.io/LIKO-12-Nightly
-A backup of the .lk12 is created when saving at C:/_backup.lk12
+Did you know that there's a public GitHub repository for LIKO-12 disks? Check them out at 'https://liko-12.github.io/Disks/'.
+LIKO-12 can use post shaders, check 'https://github.com/LIKO-12/Shaders'.
+Don't forget to give a star on the LIKO-12 GitHub page! Visit 'https://github.com/LIKO-12/LIKO-12'.
+LIKO-12 Nightly-Builds are available at 'https://liko-12.github.io/Nightly/'.
+A backup of the .lk12 is created when saving at C:/_backup.lk12.
