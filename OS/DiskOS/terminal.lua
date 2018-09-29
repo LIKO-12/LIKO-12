@@ -423,11 +423,11 @@ function term.loop() --Enter the while loop of the terminal
         end
         blink = true; checkCursor()
       elseif a == "c" then
-        if isKDown("lctrl","rctrl") then
+        if isKDown("lctrl","rctrl", "lgui", "rgui") then
           clipboard(buffer)
         end
       elseif a == "v" then
-        if isKDown("lctrl","rctrl") then
+        if isKDown("lctrl","rctrl", "lgui", "rgui") then
           local paste = clipboard() or ""
 
           for char in string.gmatch(paste..buffer:sub(inputPos,-1),".") do
