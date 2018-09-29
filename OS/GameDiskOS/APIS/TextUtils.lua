@@ -52,7 +52,7 @@ function TextUtils.textInput(historyTable,preinput)
         table.insert(history, buffer)
         blink = false; checkCursor()
         return buffer
-      elseif a == "backspace" then
+      elseif a == "backspace" and not isKDown("ralt", "lalt") then
         blink = false; checkCursor()
         if buffer:len() > 0 then
           --Remove the character
@@ -78,7 +78,7 @@ function TextUtils.textInput(historyTable,preinput)
           inputPos = inputPos-1
         end
         blink = true; checkCursor()
-      elseif a == "delete" then
+      elseif a == "delete" or (a == "backspace" and isKDown("ralt", "lalt")) then
         blink = false; checkCursor()
         print(buffer:sub(inputPos,-1),false)
         for i=1,buffer:len() do
