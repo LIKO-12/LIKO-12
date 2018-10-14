@@ -1,9 +1,9 @@
-\B> The terminal:\7
+\B> The Terminal:\7
 It's a command prompt waiting for you to enter commands in, like the /9help/7 command that you did just use.
 
 It takes the command name first, then the arguments if there's any.
 
-\DiskOS\7 comes with a standard set of commands to preform game saveing, loading, execution, sharing, importing, exporting, and much more.
+\DiskOS\7 comes with a standard set of commands to perform game saving, loading, execution, sharing, importing, exporting, and much more.
 
 Here I'll explain the most important commands:
 
@@ -11,14 +11,14 @@ Game Saving:
 
 `save <filename>`
 
-The save command allows you to save the current loaded game from the editors into a .lk12 file.
+The save command allows you to save the currently loaded game from the editors into a .lk12 file.
 
 It takes the filename as the first argument, spaces are not allowed:
 `save Game`
 
 It will automatically add the .lk12 extension.
 
-By default the resulting .lk12 file will be plaintext, but you can save it in 2 other formats:
+By default, the resulting .lk12 file will be plaintext, but you can save it in two other formats:
 
 Compressed format:
 
@@ -30,7 +30,7 @@ Binary format:
 
 `save Game -b`
 
-The game will be saved as binary data, the code will be compressed, and the spritesheet,map and SFX will be saved as raw binary, so the binary file could be bigger than the compressed file.
+The game will be saved as binary data, the code will be compressed, and the spritesheet, map, and SFX will be saved as raw binary, so the binary file could be bigger than the compressed file.
 
 You can also save parts of your game as individual files:
 
@@ -43,4 +43,4 @@ Game Loading:
 
 
 
-\8The documentation is Work-In-Progress !\7
+\8The documentation is Work-In-Progress!\7

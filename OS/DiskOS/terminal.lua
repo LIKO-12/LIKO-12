@@ -74,7 +74,7 @@ function term.init()
   color(7) print("V".._LIKO_BUILD,(_LIKO_DEV or _LIKO_PRE) and 53 or 43,10)
   cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS") color(6) cam()
   _SystemSheet:draw(60,(fw+1)*6+1,fh+3) flip() sleep(0.125)
-  color(6) print("\nhttp://github.com/ramilego4game/liko12")
+  color(6) print("\nhttps://liko-12.github.io")
 
   flip() sleep(0.0625)
   if fs.exists("D:/autoexec.lua") then
@@ -103,7 +103,7 @@ function term.reload()
   local api_version = editor.apiVersion
   local game_path = editor.filePath
   local active_editor = editor.active
-  
+
   package.loaded = {} --Reset the package system
   package.loaded[_SystemDrive..":/terminal.lua"] = term --Restore the current terminal instance
 
@@ -113,7 +113,7 @@ function term.reload()
   end
 
   editor = require("Editors") --Re initialize the editors
-  
+
   --Restore the loaded game and the active editor
   editor:import(game_data)
   editor.apiVersion = api_version
@@ -270,7 +270,7 @@ function term.loop() --Enter the while loop of the terminal
     if not autocompleteSuggestions[1] then
       checkCursor() --Which also draws the cursor blink
     end
-    
+
     if event == "filedropped" then
       local p, n, e = splitFilePath(a)
       if e == "png" or e == "lk12" then
@@ -546,7 +546,7 @@ end
 
 function term.indexCommandsActiveDir()
   commands = {}
-  local files = fs.getDirectoryItems(term.getdirectory())
+  local files = fs.getDirectoryItems(term.getpath())
   for _,file in ipairs(files) do
     if file:sub(#file-3) == ".lua" then
       table.insert(commands, file:sub(1,#file-4))
