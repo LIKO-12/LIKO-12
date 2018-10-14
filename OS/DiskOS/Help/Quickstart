@@ -1,5 +1,5 @@
 \8Important note for \BAndroid\8 users:\7
-The \6'escape'\7 key mentioned in the docs is the same of your device \6'back'\7 key !
+The \6'escape'\7 key mentioned in the docs is the same of your device \6'back'\7 key!
 
 \BThe most used programs:\7
 
@@ -7,7 +7,7 @@ The \6'escape'\7 key mentioned in the docs is the same of your device \6'back'\7
  \7drives \5-\6 Lists the available storage drives and their space usage.
  \7ls \5-\6 Lists the files and directories in the current directory.
  \7cd \5-\6 Changes the current directory.
- \7rm \5-\6 Remove/Delete a file or a folder, cunnot undo , be warned !
+ \7rm \5-\6 Remove/Delete a file or a folder. This cannot be undone. Be warned!
  \7mkdir \5-\6 Create a new directory.
  \7cls \5-\6 Clears the screen.
  \7folder \5-\6 Open the current folder in the host explorer.
@@ -23,7 +23,7 @@ The \6'escape'\7 key mentioned in the docs is the same of your device \6'back'\7
  \7appdata \5-\6 Opens \LIKO-12\6 appdata folder.
  \7programs \5-\6 Lists installed programs.
  \7save <file> -c \5-\6 Saves with compression mode.
- \7pastebin \5-\6 Uploads and Downloads from pastebin.
+ \7pastebin \5-\6 Uploads and Downloads from Pastebin.
 
 \9Press escape/back to switch to Editors Mode !\7
 
@@ -37,5 +37,5 @@ Type "install_games" to install some built-in games,
  load snake
  run\7
 
-\BOfficial documentation:\6
+\BOfficial Documentation:\6
 http://liko-12.github.io/

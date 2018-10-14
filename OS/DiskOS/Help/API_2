@@ -1,6 +1,6 @@
 \CAPI V2 - Since \LIKO-12\C V1.0.0\7
 
-\91.\7 The extra libraries are no longer available as globals, but instead are now loadable by calling `local lib = Library("library_name")`.
+\91.\7 Since the extra libraries are no longer available as globals, they are now loadable by calling `local lib = Library("library_name")`.
 
 \92.\7 The `SpriteSheet` function is no longer a global, it's now a library, you can easily add it back by adding this line of code: `local SpriteSheet = Library("spritesheet")`
 
