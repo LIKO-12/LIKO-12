@@ -21,16 +21,16 @@ return function(config) --A function that creates a new Keyboard peripheral.
 
   if config.CPUKit then --Register Keyboard events
     local cpukit = config.CPUKit
-	   events.register("love:keypressed", function(...)
-       if OSX then
-           if {...} == {"lgui"} then
-             cpukit.triggerEvent("keypressed","lctrl")
-           elseif {...} == {"rgui"} then
-             cpukit.triggerEvent("keypressed","rctrl")
-           end
+	  events.register("love:keypressed", function(...)
+    if OSX then
+      if {...} == {"lgui"} then
+        cpukit.triggerEvent("keypressed","lctrl")
+      elseif {...} == {"rgui"} then
+        cpukit.triggerEvent("keypressed","rctrl")
       end
-	     cpukit.triggerEvent("keypressed",...)
-	   end)
+    end
+    cpukit.triggerEvent("keypressed",...)
+  end)
 
 	   events.register("love:keyreleased", function(...)
 	     cpukit.triggerEvent("keyreleased",...)
