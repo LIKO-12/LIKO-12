@@ -87,7 +87,7 @@ return function(config) --A function that creates a new Keyboard peripheral.
   end
 
   function KB.isKDown(...)
-    args = {...}
+    local args = {...}
     if OSX then
       for key, value in pairs (args) do
         if value == "lctrl" then
