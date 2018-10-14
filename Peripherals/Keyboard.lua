@@ -1,7 +1,9 @@
 local events = require("Engine.events")
 
 return function(config) --A function that creates a new Keyboard peripheral.
-  
+
+  local OSX = (love.system.getOS() == "OS X")
+
   if config._SpaceWalkthrough then
     events.register("love:keypressed",function(key,sc,isrepeat)
       if key == "space" then
@@ -9,26 +11,33 @@ return function(config) --A function that creates a new Keyboard peripheral.
       end
     end)
   end
-  
+
   if config._Android then
     events.register("love:textinput",function(t)
       events.trigger("love:keypressed",string.lower(t),string.lower(t))
       events.trigger("love:keyreleased",string.lower(t),string.lower(t))
     end)
   end
-  
+
   if config.CPUKit then --Register Keyboard events
     local cpukit = config.CPUKit
 	   events.register("love:keypressed", function(...)
+       if OSX then
+           if {...} == {"lgui"} then
+             cpukit.triggerEvent("keypressed","lctrl")
+           elseif {...} == {"rgui"} then
+             cpukit.triggerEvent("keypressed","rctrl")
+           end
+      end
 	     cpukit.triggerEvent("keypressed",...)
 	   end)
-	
+
 	   events.register("love:keyreleased", function(...)
 	     cpukit.triggerEvent("keyreleased",...)
     end)
-    
+
     local gpukit = config.GPUKit
-    
+
     --The hook the textinput for feltering characters not in the font
     events.register("love:textinput",function(text)
       local text_escaped = text:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1")
@@ -37,10 +46,10 @@ return function(config) --A function that creates a new Keyboard peripheral.
       end
     end)
   end
-  
+
   --The api starts here--
   local KB = {}
-  
+
   function KB.textinput(state)
     if type(state) ~= "nil" then
       love.keyboard.setTextInput(state or config._EXKB)
@@ -48,7 +57,7 @@ return function(config) --A function that creates a new Keyboard peripheral.
       return love.keyboard.getTextInput()
     end
   end
-  
+
   function KB.keyrepeat(state)
     if type(state) ~= "nil" then
       love.keyboard.setKeyRepeat(state)
@@ -56,7 +65,7 @@ return function(config) --A function that creates a new Keyboard peripheral.
       return love.keyboard.getKeyRepeat()
     end
   end
-  
+
   function KB.keytoscancode(key)
     if type(key) ~= "string" then return false, "Key must be a string, provided: "..type(key) end --Error
     local ok, err = pcall(love.keyboard.getScancodeFromKey, key)
@@ -66,7 +75,7 @@ return function(config) --A function that creates a new Keyboard peripheral.
       return error(err)
     end
   end
-  
+
   function KB.scancodetokey(scancode)
     if type(scancode) ~= "string" then return false, "Scancode must be a string, provided: "..type(scancode) end --Error
     local ok, err = pcall(love.keyboard.getKeyFromScancode, scancode)
@@ -76,10 +85,22 @@ return function(config) --A function that creates a new Keyboard peripheral.
       return error(err)
     end
   end
-  
+
   function KB.isKDown(...)
-    return love.keyboard.isDown(...)
+    args = {...}
+    if OSX then
+      for key, value in pairs (args) do
+        if value == "lctrl" then
+          args[key] = "lgui"
+        elseif value == "rctrl" then
+          args[key] = "rgui"
+        end
+      end
+
+    end
+
+    return love.keyboard.isDown(unpack(args))
   end
-  
+
   return KB
 end
