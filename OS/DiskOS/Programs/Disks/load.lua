@@ -5,22 +5,32 @@ local eapi = require("Editors")
 
 local png = false
 
-if source and source ~= "@clip" and source ~= "-?" then
-  source = term.resolve(source)
-  if source:sub(-4,-1) == ".png" then
-    png = true
-  elseif source:sub(-5,-1) ~= ".lk12" then
-    local lksrc = source..".lk12"
-    if fs.exists(lksrc) then
-      source = lksrc
-    elseif fs.exists(source..".png") then
-      source = source..".png"
+local lk12Data = nil
+
+if source == "@clip" then
+  lk12Data = clipboard()
+else
+  if not source then
+    source = eapi.filePath
+  elseif source ~= "-?"
+    if not fs.exists(source) then return 1, "File doesn't exists" end
+    if fs.isDirectory(source) then return 1, "Couldn't load a directory !" end
+    if source:sub(-4,-1) == ".png" then
       png = true
-    else
-      source = lksrc
+    elseif source:sub(-5,-1) ~= ".lk12" then
+      local lksrc = source..".lk12"
+      if fs.exists(lksrc) then
+        source = lksrc
+      elseif fs.exists(source..".png") then
+        source = source..".png"
+        png = true
+      else
+        source = lksrc
+      end
     end
   end
-elseif source ~= "@clip" and source ~= "-?" then source = eapi.filePath end
+  lk12Data = fs.read(source)
+end
 
 if not source or source == "-?" then
   printUsage(
@@ -30,10 +40,6 @@ if not source or source == "-?" then
   )
   return
 end
-if source ~= "@clip" and not fs.exists(source) then return 1, "File doesn't exists" end
-if source ~= "@clip" and fs.isDirectory(source) then return 1, "Couldn't load a directory !" end
-
-local lk12Data = source == "@clip" and clipboard() or fs.read(source)
 
 if png then
   FDD.importDisk(lk12Data)
