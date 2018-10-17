@@ -7,14 +7,19 @@ local png = false
 
 local lk12Data = nil
 
+-- Load from clipboard
 if source == "@clip" then
   lk12Data = clipboard()
 else
+  -- Use the last know path if no file was provided
   if not source then
     source = eapi.filePath
+  -- Load from the provided file
   elseif source ~= "-?"
+    -- Check if the file exists and is not a directory
     if not fs.exists(source) then return 1, "File doesn't exists" end
     if fs.isDirectory(source) then return 1, "Couldn't load a directory !" end
+    -- Load differently according to the type of the file
     if source:sub(-4,-1) == ".png" then
       png = true
     elseif source:sub(-5,-1) ~= ".lk12" then
@@ -32,6 +37,7 @@ else
   lk12Data = fs.read(source)
 end
 
+-- Display help message
 if not source or source == "-?" then
   printUsage(
     "load <file>","Loads a game into memory",
