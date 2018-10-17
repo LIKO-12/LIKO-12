@@ -17,8 +17,8 @@ else
   -- Load from the provided file
   elseif source ~= "-?"
     -- Check if the file exists and is not a directory
-    if not fs.exists(source) then return 1, "File doesn't exists" end
-    if fs.isDirectory(source) then return 1, "Couldn't load a directory !" end
+    if not fs.exists(source) then return 1, "File "..source.." does not exist" end
+    if fs.isDirectory(source) then return 1, "Could not load "..source.." as it is a directory" end
     -- Load differently according to the type of the file
     if source:sub(-4,-1) == ".png" then
       png = true
