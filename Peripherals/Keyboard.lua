@@ -102,7 +102,7 @@ return function(config) --A function that creates a new Keyboard peripheral.
       for i=1, select("#", ...) do
         if select(i, ...) == "lctrl" and love.keyboard.isDown("lgui") then
           return true
-	      elseif select(i, ...) == "rctrl" and love.keyboard.isDown("rgui") then
+        elseif select(i, ...) == "rctrl" and love.keyboard.isDown("rgui") then
           return true
         end
       end
