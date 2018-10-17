@@ -21,19 +21,26 @@ return function(config) --A function that creates a new Keyboard peripheral.
 
   if config.CPUKit then --Register Keyboard events
     local cpukit = config.CPUKit
-	  events.register("love:keypressed", function(...)
-    if OSX then
-      if {...} == {"lgui"} then
-        cpukit.triggerEvent("keypressed","lctrl")
-      elseif {...} == {"rgui"} then
-        cpukit.triggerEvent("keypressed","rctrl")
+      events.register("love:keypressed", function(k,...)
+      if OSX then
+        if k == "lgui" then
+          cpukit.triggerEvent("keypressed","lctrl",...)
+        elseif k == "rgui" then
+          cpukit.triggerEvent("keypressed","rctrl",...)
+        end
       end
-    end
-    cpukit.triggerEvent("keypressed",...)
-  end)
+      cpukit.triggerEvent("keypressed",k,...)
+    end)
 
-	   events.register("love:keyreleased", function(...)
-	     cpukit.triggerEvent("keyreleased",...)
+    events.register("love:keyreleased", function(k,...)
+      if OSX then
+        if k == "lgui" then
+          cpukit.triggerEvent("keyreleased","lctrl",...)
+        elseif k == "rgui" then
+          cpukit.triggerEvent("keyreleased","rctrl",...)
+        end
+      end
+      cpukit.triggerEvent("keyreleased",k,...)
     end)
 
     local gpukit = config.GPUKit
@@ -87,19 +94,21 @@ return function(config) --A function that creates a new Keyboard peripheral.
   end
 
   function KB.isKDown(...)
-    local args = {...}
-    if OSX then
-      for key, value in pairs (args) do
-        if value == "lctrl" then
-          args[key] = "lgui"
-        elseif value == "rctrl" then
-          args[key] = "rgui"
-        end
-      end
-
+    if love.keyboard.isDown(...) then
+      return true
     end
 
-    return love.keyboard.isDown(unpack(args))
+    if OSX then
+      for i=1, select("#", ...) do
+        if select(i, ...) == "lctrl" and love.keyboard.isDown("lgui") then
+          return true
+	      elseif select(i, ...) == "rctrl" and love.keyboard.isDown("rgui") then
+          return true
+        end
+      end
+    end
+
+    return false
   end
 
   return KB
