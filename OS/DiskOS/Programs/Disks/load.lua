@@ -42,7 +42,7 @@ if not source or source == "-?" then
   printUsage(
     "load <file>","Loads a game into memory",
     "load","Reloads the current game",
-    "load @clip","Load from clipboard"
+    "load @clip","Loads from clipboard"
   )
   return
 end
