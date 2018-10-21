@@ -1,3 +1,5 @@
+-- Load a game into memory either from a .png or .lk12 file or from the clipboard
+
 local source = select(1,...)
 
 local term = require("terminal")
