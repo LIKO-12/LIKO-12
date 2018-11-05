@@ -1,7 +1,7 @@
 local args = {...}
 local message = {}
 
-if args[1] == '-?' or args[1] == nil or #args < 2 then
+if args[1] == '-?' or args[1] == nil or #args < 1 then
   printUsage('echo <message>', 'Print a message to stdout')
   return
 end
