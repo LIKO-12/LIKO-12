@@ -5,7 +5,7 @@ echo ----==== Installing 7zip ====----
 sudo apt-get -qq update
 sudo apt-get install -qq p7zip-full
 
-echo ----==== Install luacheck ====----
+echo ----==== Installing luacheck ====----
 
 sudo apt-get install -qq luarocks
 sudo luarocks install luacheck
@@ -23,3 +23,8 @@ echo ----==== Downloading ApkTool ====---
 
 wget -O "../BuildUtils/apktool.jar" "https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.3.4.jar"
 chmod a+x ../BuildUtils/apktool.jar
+
+echo ----==== Installing supply ====----
+
+rvm install 2.3.1
+gem install supply
