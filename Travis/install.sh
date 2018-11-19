@@ -18,3 +18,8 @@ echo ----==== Downloading AppImage toolkit ====----
 
 wget -O "../BuildUtils/appimagetool.AppImage" "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-"$(uname -m)".AppImage"
 chmod a+x ../BuildUtils/appimagetool.AppImage
+
+echo ----==== Downloading ApkTool ====---
+
+wget -O "../BuildUtils/apktool.jar" "https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.3.4.jar"
+chmod a+x ../BuildUtils/apktool.jar
