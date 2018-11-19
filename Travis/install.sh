@@ -26,5 +26,5 @@ chmod a+x ../BuildUtils/apktool.jar
 
 echo ----==== Installing supply ====----
 
-rvm install 2.3.1
-gem install supply
+rvm install 2.7.7
+gem install fastlane supply
