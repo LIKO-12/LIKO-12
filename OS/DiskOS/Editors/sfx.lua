@@ -215,14 +215,6 @@ function se:drawSelect()
   pal()
 end
 
-
-local spr_pitchup = imagedata("LK12;GPUIMG;8x8;0000000077700000700700007007000077700700700077707000070000000000;")
-local spr_pitchdown = imagedata("LK12;GPUIMG;8x8;0000000077700000700700007007000077700000700077707000000000000000;")
-local spr_octup = imagedata("LK12;GPUIMG;8x8;0770000070070000700700007007000007700700000077700000070000000000;")
-local spr_octdown = imagedata("LK12;GPUIMG;8x8;0770000070070000700700007007000007700000000077700000000000000000;")
-local spr_flatten = imagedata("LK12;GPUIMG;8x8;0000000000000000707070700000000070707070707070707070707000000000;")
-local spr_undo = imagedata("LK12;GPUIMG;8x8;0000000000000000000777007070007077000070777007000000000000000000;")
-
 local ToolButtons = {
   ["x_origin"] = sw-56,
   ["y_origin"] = 71,
@@ -250,18 +242,17 @@ function se:drawTools()
   end
   pal(7,13)
   local ix,iy = tb.x_origin + 1, tb.y_origin + tb.tools_offset + 2
-  spr_pitchup:image():draw(ix, iy)
-  spr_pitchdown:image():draw(ix + tb.tools_spacing, iy)
+  _SystemSheet:draw(179, ix, iy)
+  _SystemSheet:draw(180, ix + tb.tools_spacing, iy)
   --spr_clear:image():draw(ix + 22, iy)
   _SystemSheet:draw(82, ix + 21, iy -1)
   _SystemSheet:draw(83, ix + 32, iy -1)
   _SystemSheet:draw(84, ix + 44, iy -1)
   --Second Row
-  spr_octup:image():draw(ix, iy + tb.tools_spacing)
-  spr_octdown:image():draw(ix + tb.tools_spacing, iy + tb.tools_spacing)
-  spr_flatten:image():draw(ix + tb.tools_spacing*2, iy + tb.tools_spacing)
-  spr_undo:image():draw(ix + tb.tools_spacing*3, iy + tb.tools_spacing)
-  spr_undo:image():draw(ix + tb.tools_spacing*4 + 7, iy + tb.tools_spacing + 8, math.pi)
+  for i=1,4 do
+    _SystemSheet:draw(180 + i, ix + tb.tools_spacing * (i-1), iy + tb.tools_spacing)
+  end
+  _SystemSheet:draw(184, ix + tb.tools_spacing*4 + 7, iy + tb.tools_spacing + 8, math.pi)
   pal()
   
   for i=0,5 do
@@ -340,7 +331,7 @@ function se:volumeMouse(state,x,y,button,istouch)
     drawGraph()
   end
   if(not touched_graphs and cx and state == "moved" and (isMDown(1) or istouch))then
-  touched_graphs = true
+    touched_graphs = true
   end
 end
 
@@ -686,8 +677,6 @@ function se:toolRedo()
 end
 
 function se:toolsMouse(state,x,y,button,istouch)
-  local dbg = ""
-
   local cx,cy = whereInGrid(x,y, tools_grid)
   local tb = ToolButtons
   
@@ -716,14 +705,11 @@ function se:toolsMouse(state,x,y,button,istouch)
       self:drawTools()
     end
   end
-  
   if state == "released" then
     tb.tool_down = -1
     tb.wave_down = -1
     self:drawTools()
   end
-  
-  print(dbg,8,8)
 end
 
 function se:addHistory()
@@ -821,20 +807,20 @@ se.keymap = {
   ["up"] = se.toolPitchUp,
   ["down"] = se.toolPitchDown,
   ["left"] = function(self)
-  if(selection[1] > 0)then
-    selection[1] = selection[1] - 1
-    selection[2] = selection[2] - 1
-  end
-  self:drawSelect()
-  drawGraph()
+    if(selection[1] > 0)then
+      selection[1] = selection[1] - 1
+      selection[2] = selection[2] - 1
+    end
+    self:drawSelect()
+    drawGraph()
   end,
   ["right"] = function(self)
-  if(selection[2] < 31)then
-    selection[1] = selection[1] + 1
-    selection[2] = selection[2] + 1
-  end
-  self:drawSelect()
-  drawGraph()
+    if(selection[2] < 31)then
+      selection[1] = selection[1] + 1
+      selection[2] = selection[2] + 1
+    end
+    self:drawSelect()
+    drawGraph()
   end,
   
   ["ctrl-c"] = se.toolCopy,
