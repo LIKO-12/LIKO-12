@@ -265,8 +265,10 @@ end
 function se:entered()
   speed = sfxdata[selectedSlot]:getSpeed()
   -- Default state
-  se:clearHistory()
-  se:addHistory()
+  if(#history == 0)then
+    se:clearHistory()
+    se:addHistory()
+  end
   
   eapi:drawUI()
   drawGraph()
