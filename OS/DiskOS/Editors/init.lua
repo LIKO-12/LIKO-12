@@ -64,7 +64,7 @@ function edit:initialize()
   self.active = 4 --Active editor
   
   self.editors = {"music","sfx","tile","sprite","code"; music=1,sfx=2,tile=3,sprite=4,code=5}
-  self.saveid = {-1,"sfx","tilemap","spritesheet","luacode";sfx=2,tilemap=3,spritesheet=4,luacode=5}
+  self.saveid = {"music","sfx","tilemap","spritesheet","luacode"; music=1,sfx=2,tilemap=3,spritesheet=4,luacode=5}
   self.chunks = {} --Editors Code Chunks
   self.leditors = {} --Loaded editors (Executed chunks)
   
@@ -83,7 +83,7 @@ function edit:initialize()
     table.insert(self.iconsQuads,self.icons:quad(self.icons:width()-i*8,8, 8,8))
   end
   
-  local editors = {"soon","sfx","tile","sprite","code","soon"} --List of built-in editors to create chunks of
+  local editors = {"music","sfx","tile","sprite","code","music"} --List of built-in editors to create chunks of
   for k, v in ipairs(editors) do --Load chunks
     local chunk, err = fs.load(_SystemDrive..":/Editors/"..v..".lua")
     if not chunk then error(err or "Error loading: "..tostring(v)) end
