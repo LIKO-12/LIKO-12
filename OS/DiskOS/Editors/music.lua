@@ -22,6 +22,8 @@ local cur_OAI = {4,5,1}
 -- after the user taps a piano key
 local added_note_timer = 0
 
+local key_copy_buffer = {}
+
 -- Testing
 local imported = "|0:C 0450,8:D#,12:A#03,20:G#,22:A#,24:C 04,32:D#,36:A#03,46:r,48:C 045,56:D#,60:A#,68:G#,72:D#,80:C#,82:C ,84:A#03,92:r;|0:E 0450,2:C ;|"
 
@@ -259,9 +261,14 @@ function me:doDraw()
 	me:drawPianoKeys()
 	me:drawRollers()
 	me:drawCaretPad()
+	
+	local str = table.concat(songdata.held.note,"  ")
+	color(1)
+	print(str,8,8)
 end
 
 function me:playButton()
+	cprint(songdata:getSongDuration())
 	if(songdata:getSongDuration() == 0)then return end
 	playing = not playing
 	if(not playing)then Audio.generate() songdata:clearHeld() end
@@ -296,14 +303,11 @@ function me:scrollCaret(dir)
 	if(dir == -1 and songdata.timer > 0)then
 		songdata.timer = math.max(math.floor(songdata.timer - 1),0)		
 	end
-	if(dir == 1 and songdata.timer < 255)then
-		songdata.timer = math.min(math.floor(songdata.timer + 1),255)
+	if(dir == 1)then
+		songdata.timer = math.floor(songdata.timer + 1)
 	end
 	me:scrollToCaretSheet()
 	me:doDraw()
-end
-function me:getCaretPosition()
-	return math.floor(songdata.timer)
 end
 function me:scrollSheet(dir)
 	if(playing)then return end
@@ -320,7 +324,7 @@ function me:scrollToCaretSheet()
 end
 
 function me:scrollOAI(OAI, dir)
-	local ranges = {{1,8},{1,7},{1,32}}
+	local ranges = {{1,8},{1,7},{0,5}}
 	if(dir > 0 and cur_OAI[OAI] < ranges[OAI][2])then
 		cur_OAI[OAI] = cur_OAI[OAI] +1
 	elseif(dir < 0 and cur_OAI[OAI] > ranges[OAI][1])then
@@ -336,9 +340,8 @@ function me:scrollBPM(dir)
 	me:doDraw()
 end
 
-function me:addPianoKey(piano_key, chan, time_index)
-	chan = chan or cur_chan
-	time_index = time_index or self:getCaretPosition()
+function me:pushedPianoKey(piano_key)
+	local time_index = songdata:getTimeIndex()
 	_systemMessage("User pressed: "..AudioUtils.Notes[piano_key])
 	local new_key = {math.floor(songdata.timer), piano_key, cur_OAI[1], cur_OAI[2], cur_OAI[3]}
 	songdata:insertKey(cur_chan, new_key)
@@ -349,16 +352,45 @@ function me:addPianoKey(piano_key, chan, time_index)
 end
 function me:addRestNote(chan, time_index)
 	chan = chan or cur_chan
-	time_index = time_index or self.getCaretPosition()
+	time_index = time_index or songdata:getTimeIndex()
 	local rest_key = {time_index,1,1,0,1}
 	songdata:insertKey(cur_chan, rest_key)
 	me:doDraw()
 end
-function me:deleteKey(chan, time_index)
+function me:deleteKey(chan, key_index)
 	chan = chan or cur_chan
-	time_index = time_index or math.floor(songdata.timer)
-	local key_index = songdata:getKeyIndexByTime(chan, time_index)
+	key_index = key_index or songdata:getKeyIndexByTime(chan, songdata:getTimeIndex())
 	songdata:deleteKey(chan, key_index)
+	me:doDraw()
+end
+function me:copyKey(chan, key_index)
+	chan = chan or cur_chan
+	key_index = key_index or songdata:getKeyIndexByTime(chan,songdata:getTimeIndex())
+	if(key_index < 0 or key_index > songdata:getChannelSize(chan))then _systemMessage("No valid key at "..key_index.." in channel "..chan) return end
+	-- Copy everything but time data, obviously
+	for i=1,4 do
+		key_copy_buffer[i] = songdata[chan][(key_index-1) * 5 + 1 + i]
+	end
+	local key = ""
+	if(#key_copy_buffer > 0)then key = table.concat(key_copy_buffer,",") end
+	cprint("key_index: "..key_index.."\nkey: {"..key.."}")
+end
+function me:cutKey(chan, key_index)
+	chan = chan or cur_chan
+	key_index = key_index or songdata:getKeyIndexByTime(chan, songdata:getTimeIndex())
+	self:copyKey(chan, key_index)
+	self:deleteKey(chan, key_index)
+end
+function me:pasteKey(chan, time_index)
+	chan = chan or cur_chan
+	time_index = time_index or songdata:getTimeIndex()
+	if(#key_copy_buffer == 0)then
+		_systemMessage("No key data in buffer to paste.")
+		return
+	end
+	local kp = key_copy_buffer
+	local pasted = {time_index, kp[1],kp[2],kp[3],kp[4]}
+	songdata:insertKey(chan, pasted)
 	me:doDraw()
 end
 
@@ -370,7 +402,7 @@ function me:update(t)
 		cur_sheet = math.floor(songdata.timer / 16)
 		self:doDraw()
 		songdata:updateDataTime(t)
-		if(songdata.timer >= songdata:getSongDuration()+1)then
+		if(songdata.timer >= songdata:getSongDuration())then
 			playing = false
 			me:doDraw()
 		end
@@ -428,12 +460,16 @@ me.keymap = {
 	["\\"] = function() me:scrollBPM(-1) end,
 	-- Rest note
 	["r"] = me.addRestNote,
+	
+	["ctrl-c"] = me.copyKey,
+	["ctrl-x"] = me.cutKey,
+	["ctrl-v"] = me.pasteKey,
 }
 local piano_keyboard = {"z","s","x","d","c","v","g","b","h","n","j","m"}
 for i=1,12 do
 	table.insert(me.keymap, piano_keyboard[i])
 	me.keymap[piano_keyboard[i]] = function()
-		me:addPianoKey(i)
+		me:pushedPianoKey(i)
 	end
 end
 

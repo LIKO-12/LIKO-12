@@ -6,49 +6,62 @@ return function(config)
   
   local sfxThreads = {}
   local sfxChannels = {}
+  local ctuneThreads = {}
+  local ctuneChannels = {}
   
   for i=0,3 do
     sfxThreads[i] = love.thread.newThread(perpath.."sfxthread.lua")
     sfxChannels[i] = love.thread.newChannel()
+	ctuneThreads[i] = love.thread.newThread(perpath.."ctunethread.lua")
+	ctuneChannels[i] = love.thread.newChannel()
   end
   
-  local ctunethread = love.thread.newThread(perpath.."ctunethread.lua")
-  local chctune = love.thread.newChannel()
+  --local ctunethread = love.thread.newThread(perpath.."ctunethread.lua")
+  --local chctune = love.thread.newChannel()
   
   for i=0,3 do
     sfxThreads[i]:start(sfxChannels[i])
+	ctuneThreads[i]:start(ctuneChannels[i])
   end
-  ctunethread:start(chctune)
+  
   
   events.register("love:reboot", function()
     for i=0,3 do
       sfxChannels[i]:clear()
       sfxChannels[i]:push("stop")
+	  ctuneChannels[i]:clear()
+	  ctuneChannels[i]:push("stop")
     end
-    chctune:clear()
-    chctune:push("stop")
   end)
   
   events.register("love:quit", function()
     for i=0,3 do
       sfxChannels[i]:clear()
       sfxChannels[i]:push("stop")
+	  ctuneChannels[i]:clear()
+	  ctuneChannels[i]:push("stop")
     end
-    chctune:clear()
-    chctune:push("stop")
+    
     for i=0,3 do
       sfxThreads[i]:wait()
+	  ctuneThreads[i]:wait()
     end
-    ctunethread:wait()
   end)
   
   local AU, yAU, devkit = {}, {}, {}
   
-  function AU.generate(wave,freq,amp)
-    
+  function AU.generate(wave,freq,amp,channel)
+    -- Clear the channel of audio
     if not wave then
-      chctune:clear()
-      chctune:push({})
+	  if channel == nil then
+		for i=0,3 do
+			ctuneChannels[i]:clear()
+			ctuneChannels[i]:push({})
+		end
+	  else
+	    ctuneChannels[channel]:clear()
+		ctuneChannels[channel]:push({})
+	  end
       return
     end
     
@@ -61,18 +74,20 @@ return function(config)
     
     freq = math.abs(freq)
     amp = math.abs(amp)
-    
-    chctune:clear()
-    chctune:push({wave,freq,amp})
+    -- Default channel is 0 when not provided
+	channel = channel or 0
+	
+    ctuneChannels[channel]:clear()
+    ctuneChannels[channel]:push({wave,freq,amp})
     
   end
   
   function AU.stop()
-    chctune:clear()
-    chctune:push({})
     for i=0,3 do
       sfxChannels[i]:clear()
       sfxChannels[i]:push({})
+	  ctuneChannels[i]:clear()
+	  ctuneChannels[i]:push({})
     end
   end
   
@@ -116,11 +131,12 @@ return function(config)
         error("SFXThread #"..i..": "..terr)
       end
     end
-    
-    local terr = ctunethread:getError()
-    if terr then
-      error("GenThread: "..terr)
-    end
+    for i=0,3 do
+      local terr = ctuneThreads[i]:getError()
+      if terr then
+        error("CTuneThread #"..i..": "..terr)
+      end
+	end
     
   end)
   

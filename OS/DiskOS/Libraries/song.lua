@@ -16,49 +16,52 @@ local function newSong(bpm)
 
 	function song:updateDataTime(t)
 		local length = self:getSongDuration()
-		if(length == 0)then return end
-		
-		local time_index = self:getTimeIndex()
-		
-		for chan=1,1 do
-			-- Don't iterate if it's zero length
-			if(self:getChannelDuration(chan) == 0)then break end
-			-- Find our current note key
-			for i=0,(#song[chan]/5) do
-				local key_time = song[1][i*5 + 1]
-				
-				if(key_time ~= nil and key_time == time_index)then
-					local key_note = song[chan][i*5 + 2]
-					local key_octa = song[chan][i*5 + 3]
-					local key_ampl = song[chan][i*5 + 4]
-					local key_inst = song[chan][i*5 + 5]
-					song.held.note[chan] = key_note
-					song.held.octa[chan] = key_octa
-					song.held.ampl[chan] = key_ampl
-					song.held.inst[chan] = key_inst
-					break
+		if(length > 0)then			
+			local time_index = self:getTimeIndex()
+			-- iterate all four channels
+			for chan=1,4 do
+				-- Don't iterate if it's zero length
+				if(self:getChannelSize(chan) > 0)then 
+					-- Find our current note key
+					for i=0,(#song[chan]/5) do
+						local key_time = song[chan][i*5 + 1]
+						
+						if(key_time ~= nil and key_time == time_index)then
+							local key_note = song[chan][i*5 + 2]
+							local key_octa = song[chan][i*5 + 3]
+							local key_ampl = song[chan][i*5 + 4]
+							local key_inst = song[chan][i*5 + 5]
+							song.held.note[chan] = key_note
+							song.held.octa[chan] = key_octa
+							song.held.ampl[chan] = key_ampl
+							song.held.inst[chan] = key_inst
+							break
+						end
+					end
 				end
 			end
-		end
-		
-		-- Todo make this four channels
-		if(song.held.ampl[1] > 0 and song.held.inst[1] > -1)then
-			local note = math.floor(AudioUtils.noteFrequency(song.held.note[1],song.held.octa[1]))
-			local amp = 0.5--(math.min(math.max(song.held.ampl[1],1),7) / 7)
-			local inst = song.held.inst[1]
-			Audio.generate(inst,note,amp)
-		else
-			--Audio.stop()
-			Audio.generate()
-		end
-		
-		if(song.timer < length+1)then
-			song.timer = song.timer + t * (song.bpm*8/60)
-		end
-		if(song.timer > length+1)then
-			song.timer = length+1
-			song:clearHeld()
-			Audio.generate()
+			
+			-- Play sound on all four channels
+			for chan = 1,4 do
+				if(song.held.ampl[chan] > 0 and song.held.inst[chan] > -1)then
+					local note = math.floor(AudioUtils.noteFrequency(song.held.note[chan],song.held.octa[chan]))
+					local amp = (math.min(math.max(song.held.ampl[chan],1),7) / 7)
+					local inst = song.held.inst[chan]
+					Audio.generate(inst,note,amp,chan-1)
+				else
+					-- Stop audio on this channel
+					Audio.generate(nil,nil,nil,chan-1)
+				end
+			end
+			
+			if(song.timer < length)then
+				song.timer = song.timer + t * (song.bpm*8/60)
+			end
+			if(song.timer > length)then
+				song.timer = length
+				song:clearHeld()
+				Audio.generate()
+			end
 		end
 	end
 	
@@ -87,7 +90,7 @@ local function newSong(bpm)
 	-- Find last keyframe of given channel and return its time index
 	function song:getChannelDuration(channel)
 		local length = 0
-		if(#song[channel] >= 5)then length = song[channel][#song[channel] - 4] end
+		if(#song[channel] >= 5)then length = song[channel][#song[channel] - 4]+1 end
 		return length
 	end
 	function song:getChannelSize(chan)
@@ -115,6 +118,10 @@ local function newSong(bpm)
 			end
 		end
 		return index
+	end
+	
+	function song:getKeyTableIndex(chan, key_index)
+		return song[chan][(key_index-1)*5+1]
 	end
 	
 	-- Return the currently 'held' keyframe data
@@ -145,7 +152,6 @@ local function newSong(bpm)
 			for i=1,chan_size do
 				local time_index = self:getKeyByIndex(chan, i)
 				-- Slot already taken? Replace it
-				cprint("Is "..time_index.." = "..(key[1]).."?")
 				if(key[1] == time_index)then
 					self:deleteKey(chan,i)
 					my_index = (i-1)*5+1
@@ -178,9 +184,16 @@ local function newSong(bpm)
 	
 	function song:import(data)
 		assert(type(data) == "string", "Imported music data must be string.")
+		cprint("==Begin Song Import==")
 		-- Get BPM
 		local bpm_data = data:sub(1,data:find("|")-1)
-		if(bpm_data == nil)then song.bpm = tonumber(bpm_data) end
+		if(bpm_data ~= nil and #bpm_data > 0)then
+			song.bpm = tonumber(bpm_data)
+			cprint("BPM = "..bpm_data)
+		else
+			cprint("BPM = nil; using default")
+		end
+		
 		-- Everything AFTER the first ' | ' is channel data.
 		local channel_data = data:sub(data:find("|")+1)
 		-- Chop channels up into separate strings
@@ -219,12 +232,12 @@ local function newSong(bpm)
 					end
 					id = id + 5
 				end
-				cprint("\n==Importing Channel #"..chan.."==\n")
-				cprint("Raw:\n"..channels[chan].."\n")
-				cprint("Baked: ")
-				self:printSongToConsole()
+				cprint("\nImporting Channel #"..chan.."\n")
+				cprint("Raw:\n"..channels[chan])
 			end
 		end
+		cprint("\nBaked: ")
+		self:printSongToConsole()
 		cprint("Done")
 	end
 	
@@ -244,19 +257,25 @@ local function newSong(bpm)
 					local note = AudioUtils.Notes[song[c][id+1]]
 					-- Note at minimum must be supplied
 					if(#note == 1)then note = note.." " end
+					-- For an instrument or amplitude value to be in the correct spot,
+					-- its preceeding values must also be written.
+					local must_write = false
+					local instrument = ""
+					if(song[c][id+4] ~= song[c][id-5+4])then
+						instrument = song[c][id+4]..""
+						must_write = true
+					end
+					local amplitude = ""
+					if(must_write or song[c][id+3] ~= song[c][id-5+3])then
+						amplitude = song[c][id+3]..""
+						must_write = true
+					end	
 					local octave = ""
-					if(song[c][id+2] ~= -1)then
+					if(must_write or song[c][id+2] ~= song[c][id-5+2])then
 						octave = song[c][id+2]..""
 						if(#octave == 1)then octave = "0"..octave end
 					end
-					local amplitude = ""
-					if(song[c][id+3] ~= -1)then
-						amplitude = song[c][id+3]..""
-					end	
-					local instrument = ""
-					if(song[c][id+4] ~= -1)then
-						instrument = song[c][id+4]..""
-					end
+
 					chan = chan..note..octave..amplitude..instrument..","
 				end
 			end
@@ -270,12 +289,13 @@ local function newSong(bpm)
 		for chan=1,4 do
 			if(#song[chan] > 0)then
 				local keys = ""
-				for i=1,self:getChannelSize(chan) do
+				for i=1,#song[chan] do
 					if(song[chan][i] ~= nil)then
 						keys = keys..song[chan][i]..","
 						if(i % 5 == 0)then keys = keys.."\n" end
 					end
 				end
+				cprint("Channel #"..chan)
 				cprint(keys)
 				cprint("Duration: "..self:getChannelDuration(chan))
 			end
