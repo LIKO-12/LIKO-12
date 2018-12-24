@@ -1,5 +1,15 @@
 \BChangelog:
 
+\9V1.0.1 (25/12/2018):
+
+\FContributions:\7
+1. @cheezed: Grammatical corrections in help files (Pull request #208).
+2. @boredom101: Fixed autocomplete regression (Pull request #209).
+3. @leereilly and @positive07: Updated all links to new repos (Pull request #204).
+4. @boredom101 and @positive07: Added keyboard aliases for Mac (Pull request #212)
+5. @positive07: Removed tips about factory_reset.
+6. @thirite2: Several improvements to SFX editor (Pull request #218).
+
 \9V1.0.0 (2/9/2018):
 \FBugfixes:\7
 1. Fix high keyboard latency in the help command (DiskOS).
