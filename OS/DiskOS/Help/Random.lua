@@ -1,5 +1,5 @@
 --Get the help files PATH
-local helpPATH = require("Programs.help",true).getHelpPATH()
+local helpPATH = require("Programs.Terminal.help",true).getHelpPATH()
 local term = require("terminal")
 
 --Create an iterator for the helpPATH
