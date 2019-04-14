@@ -19,6 +19,7 @@ else
   -- Load from the provided file
   elseif source ~= "-?" then
     -- Check if the file exists and is not a directory
+    source = term.resolve(source)
     if not fs.exists(source) then return 1, "File "..source.." does not exist" end
     if fs.isDirectory(source) then return 1, "Could not load "..source.." as it is a directory" end
     -- Load differently according to the type of the file
