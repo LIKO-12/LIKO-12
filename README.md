@@ -17,7 +17,7 @@
 LIKO-12 is a fantasy computer that you can use to make, play and share tiny retro-looking games and programs.
 
 This fantasy computer comes with a default, fully customizable, DOS-like operating system installed, called DiskOS,
-which provides and environment with basic command line programs and visual game editors.
+which provides an environment with basic command line programs and visual game editors.
 
 The created games are stored as disk files that can be saved, shared and played by friends and others.
 
