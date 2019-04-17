@@ -7,7 +7,7 @@ local eapi = require("Editors")
 
 local png = false
 
-local lk12Data = nil
+local lk12Data
 
 -- Load from clipboard
 if source == "@clip" then
