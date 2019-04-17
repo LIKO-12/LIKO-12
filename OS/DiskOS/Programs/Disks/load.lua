@@ -13,7 +13,7 @@ local lk12Data
 if source == "@clip" then
   lk12Data = clipboard()
 else
-  -- Use the last know path if no file was provided
+  -- Use the last known path if no file was provided
   if not source then
     source = eapi.filePath
   -- Load from the provided file
