@@ -17,6 +17,6 @@ DiskOS provides an environment with basic command line programs and visual game 
 
 The created games and programs are saved as disk files that can be easily shared to friends or anyone else.
 
-# Website:
+# Website
 
 Please visit the website for more information about LIKO-12, including features list, screenshots, and documentation: [https://liko-12.github.io/](https://liko-12.github.io/)
