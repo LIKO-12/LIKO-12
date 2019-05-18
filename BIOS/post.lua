@@ -83,7 +83,7 @@ if _LIKO_Old or not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love"
   local currentIdentity = love.filesystem.getIdentity()
   love.filesystem.setIdentity("LIKO-12_TEMP")
   
-  local blackList = {"/.git","/.gitattributes","/.gitignore","/.github","/.nomedia","/DLL","/Travis","/.luacheckrc","/.travis.yml","/README.md","/CODE_OF_CONDUCT.md","/CONTRIBUTING.md","/PULL_REQUEST_TEMPLATE.md"}
+  local blackList = {"/.git","/.gitattributes","/.gitignore","/.github","/.nomedia","/DLL","/Travis","/snap","/.luacheckrc","/.travis.yml","/README.md","/CODE_OF_CONDUCT.md","/CONTRIBUTING.md","/PULL_REQUEST_TEMPLATE.md"}
   for i=1,#blackList do blackList[blackList[i]] = i end
   
   local writer = loveZip.newZipWriter()
