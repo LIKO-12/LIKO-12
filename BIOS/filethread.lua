@@ -8,15 +8,15 @@ require("love.timer")
 
 local reg = {}
 
-local tpath = "/OS/DiskOS/" --Tracking path
-local dpath = "/drives/C/" --Destination path
+local source_path = "/OS/DiskOS/"
+local target_path = "/drives/C/"
 
 local channel = love.thread.getChannel("BIOSFileThread") --Stop the thread when needed
 
 local function checkDir(dir, r)
     dir = dir or ""
     r = r or reg
-    local path = tpath .. dir
+    local path = source_path .. dir
     local items = love.filesystem.getDirectoryItems(path)
 
     -- Check every file in the tracking path
@@ -25,10 +25,10 @@ local function checkDir(dir, r)
             local fpath = path .. file
             if love.filesystem.getInfo(fpath, "file") then
                 -- It's a file
-                local fupdate = false --Should the file be updated?
-                if not love.filesystem.getInfo(dpath .. dir .. file) then
-                    -- The files does not exist in the destination path, create it
-                    fupdate = true
+                local file_need_update = false --Should the file be updated?
+                if not love.filesystem.getInfo(target_path .. dir .. file) then
+                    -- The files does not exist in the target path, create it
+                    file_need_update = true
                 else
                     -- Get the last timestamp at which the file was modified
                     local info = love.filesystem.getInfo(fpath)
@@ -39,7 +39,7 @@ local function checkDir(dir, r)
                             --The file is already registered
                             if modtime > r[file] then
                                 --The file has been edited since last time, update it
-                                fupdate = true
+                                file_need_update = true
                             end
                         else
                             --The file is not registered yet, register it
@@ -50,12 +50,12 @@ local function checkDir(dir, r)
                     end
                 end
                 --Update the file if needed
-                if fupdate then
+                if file_need_update then
                     local info = love.filesystem.getInfo(fpath)
                     r[file] = info and info.modtime or false
                     local data, rerr = love.filesystem.read(fpath)
                     if data then
-                        local ok, werr = love.filesystem.write(dpath .. dir .. file, data)
+                        local ok, werr = love.filesystem.write(target_path .. dir .. file, data)
                         if not ok then
                             r[file] = nil
                             print("Error: failed to write,", werr)
