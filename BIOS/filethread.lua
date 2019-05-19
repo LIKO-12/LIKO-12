@@ -8,6 +8,7 @@ require("love.timer")
 
 local reg = {}
 
+local delay_between_checks = 3 --Time in seconds between each check
 local source_path = "/OS/DiskOS/"
 local target_path = "/drives/C/"
 
@@ -86,7 +87,7 @@ while true do
 
     checkDir()
 
-    love.timer.sleep(3)
+    love.timer.sleep(delay_between_checks)
 end
 
 print("Finished File Thread")
