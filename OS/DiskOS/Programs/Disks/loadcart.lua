@@ -18,7 +18,7 @@ end
 local source = args[1]
 source = term.resolve(source..".lk12")
 
-if not fs.exists(source) then return 1, "Cart doesn't exists !" end
+if not fs.exists(source) then return 1, "Cart doesn't exist !" end
 if not fs.isFile(source) then return 1, "Cart can't be a directory !" end
 
 local cartdata = fs.read(source)

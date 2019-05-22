@@ -30,7 +30,7 @@ if not source or source == "-?" then
   )
   return
 end
-if source ~= "@clip" and not fs.exists(source) then return 1, "File doesn't exists" end
+if source ~= "@clip" and not fs.exists(source) then return 1, "File doesn't exist" end
 if source ~= "@clip" and fs.isDirectory(source) then return 1, "Couldn't load a directory !" end
 
 local lk12Data = source == "@clip" and clipboard() or fs.read(source)

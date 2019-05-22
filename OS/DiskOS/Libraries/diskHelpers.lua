@@ -21,7 +21,7 @@ end
 
 --Play a sfx
 function SFX(id,chn)
-  if (not SFXS) or (not SFXS[id]) then return error("SFX "..tostring(id).." doesn't exists!") end
+  if (not SFXS) or (not SFXS[id]) then return error("SFX "..tostring(id).." doesn't exist!") end
   
   SFXS[id]:play(chn)
 end
