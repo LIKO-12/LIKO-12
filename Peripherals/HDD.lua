@@ -33,7 +33,7 @@ return function(Config)
   local RootDir = Config.RootDir or "/Drives/"
   local Drives, ActiveDrive, MainDrive = {}
   
-  --Create the drives root directory if it doesn't exists.
+  --Create the drives root directory if it doesn't exist.
   if not love.filesystem.getInfo(RootDir,"directory") then
     love.filesystem.createDirectory(RootDir)
   end
@@ -67,7 +67,7 @@ return function(Config)
     local drive = (not ignoreActiveDrive) and ActiveDrive or false
     local d, p = path:match("(.+):/(.+)")
     if d then
-      if (not Drives[d]) and (not skipDriveCheck) then error("Drive '"..d.."' doesn't exists !",3) end
+      if (not Drives[d]) and (not skipDriveCheck) then error("Drive '"..d.."' doesn't exist !",3) end
       drive, path = d, p
     end
     
@@ -281,7 +281,7 @@ return function(Config)
     
     local info = love.filesystem.getInfo(RootDir..path)
     
-    if not info then return error("Folder doesn't exists !") end
+    if not info then return error("Folder doesn't exist !") end
     if info.type ~= "directory" then return error("The path must be a directory, not a file !") end
     
     return assert(love.filesystem.getDirectoryItems(RootDir..path))
@@ -352,7 +352,7 @@ return function(Config)
     
     local path, drive = sanitizePath(path); path = drive.."/"..path
     
-    if not love.filesystem.getInfo(RootDir..path) then return error("File doesn't exists !") end
+    if not love.filesystem.getInfo(RootDir..path) then return error("File doesn't exist !") end
     
     return getLastModifiedRecursive(path)
   end
@@ -419,7 +419,7 @@ return function(Config)
     if Drives[toDrive].Readonly then return error("Drive "..toDrive.." is readonly !") end
     if Drives[fromDrive].Readonly then return error("Drive "..fromDrive.." is readonly !") end
     
-    if not love.filesystem.getInfo(RootDir..from) then return error("From Path doesn't exists !") end
+    if not love.filesystem.getInfo(RootDir..from) then return error("From Path doesn't exist !") end
     
     createPath(to)
     
@@ -437,7 +437,7 @@ return function(Config)
     
     if Drives[toDrive].Readonly then return error("Drive "..toDrive.." is readonly !") end
     
-    if not love.filesystem.getInfo(RootDir..from) then return error("From Path doesn't exists !") end
+    if not love.filesystem.getInfo(RootDir..from) then return error("From Path doesn't exist !") end
     
     local csize = getSizeRecursive(from)
     if Drives[toDrive].Usage + csize > Drives[toDrive].Size then return error("No enough space.",2) end
@@ -457,7 +457,7 @@ return function(Config)
     
     if Drives[drive].Readonly then return error("Drive "..drive.." is readonly !") end
     
-    if not love.filesystem.getInfo(RootDir..path) then return error("Path doesn't exists !") end
+    if not love.filesystem.getInfo(RootDir..path) then return error("Path doesn't exist !") end
     
     local dsize = getSizeRecursive(path)
     Drives[drive].Usage = Drives[drive].Usage - dsize
@@ -525,7 +525,7 @@ return function(Config)
     
     local info = love.filesystem.getInfo(RootDir..path)
     
-    if not info then return error("File doesn't exists.") end
+    if not info then return error("File doesn't exist.") end
     if info.type == "directory" then return error("Can't read content of a directory.") end
     
     return love.filesystem.read(RootDir..path, size)
@@ -539,7 +539,7 @@ return function(Config)
     
     local info = love.filesystem.getInfo(RootDir..path)
     
-    if not info then return error("File doesn't exists.") end
+    if not info then return error("File doesn't exist.") end
     if info.type == "directory" then return error("Can't load content of a directory.") end
     
     local data = love.filesystem.read(RootDir..path)
@@ -560,7 +560,7 @@ return function(Config)
     
     local info = love.filesystem.getInfo(RootDir..path)
     
-    if not info then return error("File doesn't exists.") end
+    if not info then return error("File doesn't exist.") end
     if info.type == "directory" then return error("Can't read content of a directory.") end
     
     return love.filesystem.lines(RootDir..path)

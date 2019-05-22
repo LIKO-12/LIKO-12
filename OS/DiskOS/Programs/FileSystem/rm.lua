@@ -30,7 +30,7 @@ end
 
 tar = term.resolve(tar)
 
-if not fs.exists(tar) then return 1, "Path doesn't exists" end
+if not fs.exists(tar) then return 1, "Path doesn't exist" end
 if fs.isReadonly(tar) then return 1, "Path is readonly !" end
 
 index(fs.isFile(tar) and tar or tar.."/")

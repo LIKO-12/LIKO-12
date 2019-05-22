@@ -25,7 +25,7 @@ end
 if destination then destination = term.resolve(destination) end
 
 if source ~= "@label" then
-  if not fs.exists(source) then return 1, "Source doesn't exists" end
+  if not fs.exists(source) then return 1, "Source doesn't exist" end
   if fs.isDirectory(source) then return 1, "Source can't be a directory" end
 end
 

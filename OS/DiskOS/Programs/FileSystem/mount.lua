@@ -24,7 +24,7 @@ if source == "--LIKOSRC" then
 else
   source = term.resolve(source)
 
-  if not fs.exists(source) then return 1, "File doesn't exists" end
+  if not fs.exists(source) then return 1, "File doesn't exist" end
   if fs.isDirectory(source) then return 1, "Couldn't mount a directory !" end
 
   zipData = fs.read(source)
