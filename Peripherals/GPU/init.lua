@@ -1,5 +1,5 @@
 local perpath = select(1,...) --The path to the GPU folder.
---/Peripherals/GPUN/
+--/Peripherals/GPU/
 
 --[[
 #GPUVARS
