@@ -67,13 +67,22 @@ local function newMap(w,h,sheet)
   
   function Map:draw(dx,dy,x,y,w,h,sx,sy,sheet)
     local dx,dy,x,y,w,h,sx,sy = dx or 0, dy or 0, x or 0, y or 0, w or self.w, h or self.h, sx or 1, sy or 1
+	
+	--mapX and mapY are different from x and y so that if x or y are less
+	--than 0, the clamping doesn't affect the relative position of
+	--the tiles on the screen.
+	mapX = math.max(x,0)
+	mapY = math.max(y,0)
+	w = math.min(w+x,self.w)-x
+	h = math.min(h+y,self.h)-y
+	
     self:map(function(spx,spy,sprid)
       if sprid < 1 then return end
       
       spx, spy = spx-x, spy-y;
 	  
       (self.sheet or sheet):draw(sprid,dx + spx*8*sx, dy + spy*8*sy, 0, sx, sy)
-    end,x,y,w,h)
+    end,mapX,mapY,w,h)
     return self
   end
   
