@@ -40,6 +40,23 @@ local _ColorSet = Config._ColorSet or {
   {252,204,171,255} --Human Skin 16
 } --The colorset of the gpu
 
+--This is a path of an image containing the palette colors
+if type(_ColorSet) == "string" then
+  --Load the image
+  local paletteImageData = love.image.newImageData(_ColorSet)
+  
+  --Make the _Colorset a table
+  _ColorSet = {}
+  
+  --Read the colors
+  paletteImageData:mapPixel(function(x,y, r,g,b,a)
+    if #_ColorSet < 16 then
+      _ColorSet[#_ColorSet + 1] = {r,g,b,255}
+    end
+    return r,g,b,a
+  end)
+end
+
 local _DefaultColorSet = {} --The default palette for the operating system.
 
 for k,v in ipairs(_ColorSet) do
