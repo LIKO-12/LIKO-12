@@ -19,11 +19,18 @@ local function newMap(w,h,sheet)
   --If called with a function, it will be called on everycell with x,y,sprid args
   --The function can return an new sprid to set
   --If called with no args, it will return the map table.
-  function Map:map(func)
+  function Map:map(func,x,y,w,h)
+	x,y,w,h = x or 0, y or 0, w or self.w, h or self.h
+	
+	assert(x >= 0, "Attempted to map out of bounds: x less than 0 ("..x..")")
+	assert(y >= 0, "Attempted to map out of bounds: y less than 0 ("..y..")")
+	assert(x+w <= self.w, "Attempted to map out of bounds: right side greater than map width (Width is "..self.w..", right side is "..x+w..")")
+	assert(y+h <= self.h, "Attempted to map out of bounds: lower side greater than map width (Height is "..self.h..", lower side is "..y+h..")")
+	
     if func then
-      for y=0, self.h-1 do
-        for x=0, self.w-1 do
-          self.m[x][y] = func(x,y,self.m[x][y]) or self.m[x][y]
+      for iy=y, y+h-1 do
+        for ix=x, x+w-1 do
+          self.m[ix][iy] = func(ix,iy,self.m[ix][iy]) or self.m[ix][iy]
         end
       end
     end
@@ -63,11 +70,10 @@ local function newMap(w,h,sheet)
     self:map(function(spx,spy,sprid)
       if sprid < 1 then return end
       
-      if (spx) < x or (spy < y) or (spx > x+w-1) or (spy > y+h-1) then return end
       spx, spy = spx-x, spy-y;
-      
+	  
       (self.sheet or sheet):draw(sprid,dx + spx*8*sx, dy + spy*8*sy, 0, sx, sy)
-    end)
+    end,x,y,w,h)
     return self
   end
   
