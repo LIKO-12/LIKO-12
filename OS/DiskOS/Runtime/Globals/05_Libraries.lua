@@ -23,7 +23,7 @@ addLibrary(_SystemDrive..":/Libraries/spritesheet.lua","spritesheet")
 
 function Globals.Library(name)
   if type(name) ~= "string" then return error("Library name should be a string, got: "..type(name)) end
-  if not Libraries[name] then return error("Library '"..name.."' doesn't exists !") end
+  if not Libraries[name] then return error("Library '"..name.."' doesn't exist !") end
   return Libraries[name]()
 end
 
