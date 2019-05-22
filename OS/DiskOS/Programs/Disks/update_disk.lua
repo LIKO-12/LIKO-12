@@ -12,7 +12,7 @@ local term = require("terminal")
 local eapi = require("Editors")
 
 if source then source = term.resolve(source)..".lk12" else source = eapi.filePath end
-if not fs.exists(source) then return 1, "File doesn't exists" end
+if not fs.exists(source) then return 1, "File doesn't exist" end
 if fs.isDirectory(source) then return 1, "Couldn't load a directory !" end
 
 local saveData = fs.read(source)..";"

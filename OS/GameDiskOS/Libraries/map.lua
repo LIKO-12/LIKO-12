@@ -25,7 +25,7 @@ local function newMap(w,h,sheet)
 	assert(x >= 0, "Attempted to map out of bounds: x less than 0 ("..x..")")
 	assert(y >= 0, "Attempted to map out of bounds: y less than 0 ("..y..")")
 	assert(x+w <= self.w, "Attempted to map out of bounds: right side greater than map width (Width is "..self.w..", right side is "..x+w..")")
-	assert(y+h <= self.h, "Attempted to map out of bounds: lower side greater than map width (Height is "..self.h..", lower side is "..y+h..")")
+	assert(y+h <= self.h, "Attempted to map out of bounds: lower side greater than map height (Height is "..self.h..", lower side is "..y+h..")")
 	
     if func then
       for iy=y, y+h-1 do

@@ -42,7 +42,7 @@ function GPU.cursor(imgdata,name,hx,hy)
     if CursorVars.GrappedCursor then if not name then RenderVars.AlwaysDraw = false; RenderVars.ShouldDraw = true end elseif name then RenderVars.AlwaysDraw = true end
     if CursorVars.Cursor == imgdata and not ((CursorVars.GrappedCursor and not name) or (name and not CursorVars.GrappedCursor)) then return end
     CursorVars.GrappedCursor = name
-    if (not _CursorsCache[imgdata]) and (imgdata ~= "none") then return error("Cursor doesn't exists: "..imgdata) end
+    if (not _CursorsCache[imgdata]) and (imgdata ~= "none") then return error("Cursor doesn't exist: "..imgdata) end
     CursorVars.Cursor = imgdata
     if CursorVars.Cursor == "none" or CursorVars.GrappedCursor then
       love.mouse.setVisible(false)

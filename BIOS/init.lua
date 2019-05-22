@@ -65,7 +65,7 @@ indexPeripherals("/Peripherals/") --Index and Load the peripherals
 local function P(per,m,conf)
   if not per then return false, "Should provide peripheral name" end
   if type(per) ~= "string" then return false, "Peripheral name should be a string, provided "..type(per) end
-  if not Peripherals[per] then return false, "'"..per.."' Peripheral doesn't exists" end
+  if not Peripherals[per] then return false, "'"..per.."' Peripheral doesn't exist" end
   if type(Peripherals[per]) == "string" then return false, "Compile "..Peripherals[per] end
   
   m = m or per

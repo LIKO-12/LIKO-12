@@ -37,7 +37,7 @@ local verbose = args[3] == "--verbose" or args[3] == "-v"
 
 color(8)
 
-if not fs.exists(source) then return 1, "Source doesn't exists !" end
+if not fs.exists(source) then return 1, "Source doesn't exist !" end
 if fs.isReadonly(destination) then return 1, "Destination is readonly !" end
 
 --Create destination folders
