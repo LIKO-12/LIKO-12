@@ -15,8 +15,8 @@ I don't think anyone would want to edit anything in this file, but on change the
 _LVer = {
 	major = 1,
 	minor = 0,
-	patch = 1,
-	tag = "Release" --Release, Pre-Relase, Development
+	patch = 2,
+	tag = "Development" --Release, Pre-Relase, Development
 }
 _LVERSION = string.format("V%d.%d.%d-%s",_LVer.major,_LVer.minor,_LVer.patch,_LVer.tag)
 
