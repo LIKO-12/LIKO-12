@@ -51,7 +51,7 @@ if type(_ColorSet) == "string" then
   --Read the colors
   paletteImageData:mapPixel(function(x,y, r,g,b,a)
     if #_ColorSet < 16 then
-      _ColorSet[#_ColorSet + 1] = {r,g,b,255}
+      _ColorSet[#_ColorSet + 1] = {r*255,g*255,b*255,255}
     end
     return r,g,b,a
   end)
