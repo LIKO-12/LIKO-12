@@ -194,7 +194,7 @@ local function InstallOS(update)
 end
 
 if not fs.exists("/boot.lua") then _LIKO_Old = false; InstallOS()
-elseif (DevMode or _LVer.tag == "DEV") and not fs.exists("/.noupdate") then InstallOS(true) end
+elseif (DevMode or _LVer.tag == "Development") and not fs.exists("/.noupdate") then InstallOS(true) end
 
 --Update the operating system
 if _LIKO_Old then
