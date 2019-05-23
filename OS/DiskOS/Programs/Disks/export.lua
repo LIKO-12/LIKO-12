@@ -28,7 +28,7 @@ if destination == "@label" then
   color(11) print("Exported label image successfully")
   
 elseif destination:sub(-4,-1) == ".png" then --Sprite Map Exporting.
-  if select(2,...) == "-opaque" then
+  if select(2,...) == "--opaque" then
     fs.write(destination,eapi.leditors[eapi.editors.sprite].SpriteMap.img:data():exportOpaque())
     color(11) print("Exported Opaque Spritesheet successfully")
   else
