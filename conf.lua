@@ -3,7 +3,7 @@
 This is LOVE configuration file,
 It also contains LIKO-12 version table, all other code in LIKO-12 technically references this.
 
-I don't think anyone would want to edit anything in this file, but on change the version number.
+I don't think anyone would want to edit anything in this file, but only change the version number.
 
 ==Contributors to this file==
 (Add your name when contributing to this file)
