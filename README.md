@@ -27,4 +27,4 @@ The created games and programs are saved as disk files that can be easily shared
 
 ---
 
-Please visit the website for more information about LIKO-12, including features list, screenshots, and documentation: [https://liko-12.github.io/](https://liko-12.github.io/)
+Please visit the [website](https://liko-12.github.io/) for more information about LIKO-12, including features list, screenshots, and documentation.
