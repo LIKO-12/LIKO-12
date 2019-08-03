@@ -142,7 +142,7 @@ waveforms[5] = function(samples)
       c = hs
     end
     
-    return (mn(v)*2-1)*2*amp
+    return (v*2-1)*2*amp
   end
 end
 
