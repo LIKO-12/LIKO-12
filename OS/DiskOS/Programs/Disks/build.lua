@@ -17,7 +17,6 @@ end
 
 local targets = {...}
 if #targets == 0 then targets = {"love","win","linux","osx"} end
---if #targets == 0 then targets = {"love","win","linux"} end
 
 for i=1,#targets do targets[targets[i]] = true end --Values to Keys, easier for searching.
 
