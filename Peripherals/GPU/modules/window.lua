@@ -87,6 +87,42 @@ events.register("love:filedropped", function(file)
   if CPUKit then CPUKit.triggerEvent("filedropped",file:getFilename(),data) end
 end)
 
+--Alt-Return (Fullscreen toggle) hook
+local raltDown, lastWidth, lastHeight = false, 0, 0
+
+events.register("love:keypressed", function(key, scancode,isrepeat)
+  if key == "ralt" then
+    raltDown = true --Had to use a workaround, for some reason isDown("ralt") is not working at Rami's laptop
+  elseif key == "return" and raltDown and not isrepeat then
+    local screenshot = GPU.screenshot():image()
+
+    local canvas = love.graphics.getCanvas() --Backup the canvas.
+    love.graphics.setCanvas() --Deactivate the canvas.
+
+    if love.window.getFullscreen() then --Go windowed
+      love.window.setMode(lastWidth,lastHeight,{
+        fullscreen = false,
+        vsync = 1,
+        resizable = true,
+        minwidth = _LIKO_W,
+        minheight = _LIKO_H
+      })
+    else --Go fullscreen
+      lastWidth, lastHeight = love.window.getMode()
+      love.window.setMode(0,0,{fullscreen=true})
+    end
+
+    events.trigger("love:resize", love.graphics.getDimensions()) --Make sure the canvas is scaled correctly
+    love.graphics.setCanvas{canvas,stencil=true} --Reactivate the canvas.
+
+    screenshot:draw() --Restore the backed up screenshot
+  end
+end)
+
+events.register("love:keyreleased", function(key, scancode)
+  if key == "ralt" then raltDown = false end
+end)
+
 --==Graphics Initializations==--
 love.graphics.clear(0,0,0,1) --Clear the host screen.
 
