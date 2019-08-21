@@ -126,7 +126,8 @@ return function(config) --A function that creates a new CPU peripheral.
   
   function CPU.openAppData(tar)
     tar = tar or "/"
-    if tar:sub(0,1) ~= "/" then tar = "/"..tar end
+    if tar:sub(1,1) ~= "/" then tar = "/"..tar end
+    if tar:sub(-1,-1) ~= "/" then tar = tar.."/" end
     love.system.openURL("file://"..love.filesystem.getSaveDirectory()..tar)
   end
   
