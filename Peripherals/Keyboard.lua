@@ -108,7 +108,7 @@ return function(config) --A function that creates a new Keyboard peripheral.
           return true
         elseif select(i, ...) == "rctrl" and love.keyboard.isDown("rgui") then
           return true
-        elseif select(i, ...) == "delete" and love.keyboard.isDown("ralt", "lalt") and k == "backspace" then
+        elseif select(i, ...) == "delete" and love.keyboard.isDown("ralt", "lalt") and love.keyboard.isDown("backspace") then
           return true
         end
       end
