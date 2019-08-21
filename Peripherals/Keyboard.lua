@@ -27,6 +27,8 @@ return function(config) --A function that creates a new Keyboard peripheral.
           cpukit.triggerEvent("keypressed","lctrl",...)
         elseif k == "rgui" then
           cpukit.triggerEvent("keypressed","rctrl",...)
+        elseif love.keyboard.isDown("lalt","ralt") and love.keyboard.isDown("backspace") then
+          cpukit.triggerEvent("keyreleased", "delete",...)
         end
       end
       cpukit.triggerEvent("keypressed",k,...)
@@ -38,6 +40,8 @@ return function(config) --A function that creates a new Keyboard peripheral.
           cpukit.triggerEvent("keyreleased","lctrl",...)
         elseif k == "rgui" then
           cpukit.triggerEvent("keyreleased","rctrl",...)
+        elseif love.keyboard.isDown("lalt","ralt") and love.keyboard.isDown("backspace") then
+          cpukit.triggerEvent("keyreleased", "delete",...)
         end
       end
       cpukit.triggerEvent("keyreleased",k,...)
@@ -103,6 +107,8 @@ return function(config) --A function that creates a new Keyboard peripheral.
         if select(i, ...) == "lctrl" and love.keyboard.isDown("lgui") then
           return true
         elseif select(i, ...) == "rctrl" and love.keyboard.isDown("rgui") then
+          return true
+        elseif select(i, ...) == "delete" and love.keyboard.isDown("ralt", "lalt") and love.keyboard.isDown("backspace") then
           return true
         end
       end
