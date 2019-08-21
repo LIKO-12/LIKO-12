@@ -1,5 +1,33 @@
 \BChangelog:
 
+\9V1.1.0 (Not released yet):
+
+\FContributions:\7
+1. @mrtnpwn: New echo command (Pull request #216).
+2. @boredom101: Fix `help Topics` and `help Random`, and remove `.DS_Store` files (Pull Request #233).
+3. @Lin-Buo-Ren: Implement snap packaging, snaps are universal linux packages (Pull Request #239).
+4. @olivier-grech: Improve devmode filethread (Pull Request #242).
+5. @abledbody: Added optional bounds to Map:map function (Pull Request #243).
+6. @abledbody: Grammatical cleanup around the system (Pull Request #245).
+7. @boredom101: Added `delete` alias for macOS: `alt-backspace` (Pull Request #265).
+
+\FBugfixes:\7
+1. Fix foldar command not working on linux and macOS (Issue #223).
+
+\FEngine:\7
+1. `ralt-return` (Right alt + enter) now toggles fullscreen mode (Issue #253).
+
+\FBIOS:\7
+
+
+\FDiskOS:\7
+1. `folder` and `appdata` commands now accept `--path` option, which will print the real path on the secreen instead of openning the folders.
+2. Add missing DiskOS API functions into the linter (so they get highlighted in the code editor).
+3. The pause menu is now disabled while inputting text with the `input` function (in games).
+
+\FOther:\7
+1. The icon now has a black outline, instead of darkgrey.
+
 \9V1.0.1 (25/12/2018):
 
 \FContributions:\7
