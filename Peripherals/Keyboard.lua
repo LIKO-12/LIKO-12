@@ -103,12 +103,14 @@ return function(config) --A function that creates a new Keyboard peripheral.
     end
 
     if OSX then
-      for i=1, select("#", ...) do
-        if select(i, ...) == "lctrl" and love.keyboard.isDown("lgui") then
+      local args = {...}
+      for i=1, #args do
+        local key = args[i]
+        if key == "lctrl" and love.keyboard.isDown("lgui") then
           return true
-        elseif select(i, ...) == "rctrl" and love.keyboard.isDown("rgui") then
+        elseif key == "rctrl" and love.keyboard.isDown("rgui") then
           return true
-        elseif select(i, ...) == "delete" and love.keyboard.isDown("ralt", "lalt") and love.keyboard.isDown("backspace") then
+        elseif key == "delete" and love.keyboard.isDown("ralt", "lalt") and love.keyboard.isDown("backspace") then
           return true
         end
       end
