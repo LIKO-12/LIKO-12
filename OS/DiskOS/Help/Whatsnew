@@ -18,7 +18,7 @@
 1. `ralt-return` (Right alt + enter) now toggles fullscreen mode (Issue #253).
 
 \FBIOS:\7
-
+1. Fix the devmode filethread not working on linux and spamming the console.
 
 \FDiskOS:\7
 1. `folder` and `appdata` commands now accept `--path` option, which will print the real path on the secreen instead of openning the folders.

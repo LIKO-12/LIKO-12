@@ -10,9 +10,9 @@ local reg = {}
 
 local delay_between_checks = 3 --Time in seconds between each check
 local source_path = "/OS/DiskOS/"
-local target_path = "/drives/C/"
+local target_path = "/Drives/C/"
 
-local channel = love.thread.getChannel("BIOSFileThread") --Stop the thread when needed
+local channel = ... --A channel for stopping the thread when needed
 
 local function checkDir(dir, r)
 	dir = dir or ""

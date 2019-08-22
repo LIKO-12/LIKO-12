@@ -203,17 +203,16 @@ if _LIKO_Old then
 end
 
 if DevMode and love.thread and not fs.exists("/.noupdate") and not enterSetup then
+  local FChannel = love.thread.newChannel()
   local FThread = love.thread.newThread("/BIOS/filethread.lua") --File tracking thread
-  FThread:start()
+  FThread:start(FChannel)
   
   events.register("love:reboot",function()
-		local channel = love.thread.getChannel("BIOSFileThread")
-		channel:push(true) --Shutdown the thread
+		FChannel:push(true) --Shutdown the thread
 	end)
 
   events.register("love:quit",function()
-		local channel = love.thread.getChannel("BIOSFileThread")
-		channel:push(true) --Shutdown the thread
+		FChannel:push(true) --Shutdown the thread
 		FThread:wait()
 	end)
 end
