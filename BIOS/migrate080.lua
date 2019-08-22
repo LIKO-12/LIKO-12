@@ -58,14 +58,14 @@ index("/",GIFs,".gif")
 index("/GIF Recordings/",GIFs,".gif",true)
 
 index("/Shaders/",Shaders,false,true)
-index("/drives/D/",Data,false,true)
+index("/Drives/D/",Data,false,true)
 
-if love.filesystem.getInfo("/drives/C/user.json") then
-  Data[#Data + 1] = "/drives/C/user.json"
+if love.filesystem.getInfo("/Drives/C/user.json") then
+  Data[#Data + 1] = "/Drives/C/user.json"
 end
 
-if love.filesystem.getInfo("/drives/C/_backup.lk12") then
-  Data[#Data + 1] = "/drives/C/_backup.lk12"
+if love.filesystem.getInfo("/Drives/C/_backup.lk12") then
+  Data[#Data + 1] = "/Drives/C/_backup.lk12"
 end
 deactivate()
 
