@@ -358,8 +358,10 @@ function term.loop() --Enter the while loop of the terminal
         printCursor(oldx,oldy,oldbk)
         palt(0,false) screenbk:image():draw(0,0) color(7) palt(0,true) flip()
         if ecommand then
+          blink = false; checkCursor()
+          print(ecommand)
           term.execute(split(ecommand))
-          checkCursor() term.prompt() blink = true cursor("none")
+          checkCursor(); term.prompt(); blink = true; cursor("none")
           ecommand = false
         end
       elseif a == "up" then
@@ -438,6 +440,14 @@ function term.loop() --Enter the while loop of the terminal
 
           buffer = buffer:sub(1,inputPos-1)..paste..buffer:sub(inputPos,-1)
           inputPos = inputPos + paste:len()
+        end
+      elseif a == "r" then
+        if isKDown("lctrl","rctrl") then
+          blink = false; checkCursor()
+          print("run")
+          term.execute("run")
+          checkCursor(); term.prompt()
+          blink = true; checkCursor()
         end
       elseif a == "tab" then
         --If the autocomplete suggestions list is empty, create a new one
