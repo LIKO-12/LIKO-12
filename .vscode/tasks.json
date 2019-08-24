@@ -7,6 +7,9 @@
             "label": "Run LIKO-12",
             "type": "shell",
             "command": "love .",
+            "windows": {
+                "command": "lovec .",
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
