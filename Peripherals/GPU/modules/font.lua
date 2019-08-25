@@ -16,7 +16,7 @@ function GPU.fontdata(cw,ch)
   if type(cw) == "string" then
     if cw:sub(0,13) == "LK12;GPUFONT;" then
       cw = cw:gsub("\r",""):gsub("\n","")
-      cw,ch,fdata = string.match(cw,"LK12;GPUFONT;(%d+)x(%d+);(.+)")
+      cw, ch, fdata = string.match(cw,"LK12;GPUFONT;(%d+)x(%d+);(.+)")
       cw, ch = tonumber(cw), tonumber(ch)
     else
       return error("Invalid fontdata string")
@@ -85,7 +85,7 @@ function GPU.fontdata(cw,ch)
     
     fontImage:mapPixel(function(x,y,r,g,b,a)
       if x == 0 then
-        fstr[fpos] = "\n"
+        fstr[fpos] = "|\n"
         fpos = fpos + 1
       end
       
@@ -98,7 +98,8 @@ function GPU.fontdata(cw,ch)
       
       return r,g,b,a
     end)
-    
+
+    fstr[fpos] = "|"
     fstr = table.concat(fstr)
     
     return fstr
