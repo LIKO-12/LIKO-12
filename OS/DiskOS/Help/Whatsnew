@@ -28,6 +28,7 @@
 4. The map object now has spritebatch support, call `TileMap:spritebatch()` to enable it, the only cost is that the whole map is drawn (use `clip()` as a walkthrough) (Issue #252).
 5. `Ctrl-R` in the terminal now executes `run` (Issue #227).
 6. Binary numbers are now highlighted properly.
+7. `.json` files are now highlighted by the `edit` command with errors highlighted!
 
 \FOther:\7
 1. The icon now has a black outline, instead of darkgrey.
