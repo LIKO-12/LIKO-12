@@ -11,13 +11,16 @@ local tar = table.concat(args," ") --The path may include whitespaces
 local term = require("terminal")
 tar = term.resolve(tar)
 
+local highlighter = require("Libraries.SyntaxHighlighter")
+
 if fs.exists(tar) and fs.isDirectory(tar) then return 1, "Can't edit directories !" end
 if fs.isReadonly(tar) and not fs.exists(tar) then return 1, "Directory is readonly !" end
 local eutils = require("Editors.utils")
 local tool = eutils:newTool(fs.isReadonly(tar))
 
 local ok, editor = assert(pcall(assert(fs.load(_SystemDrive..":/Editors/code.lua")),tool))
-if tar:sub(-4,-1) ~= ".lua" then editor.colorize = false end
+if tar:sub(-4,-1) ~= ".lua" and tar:sub(-5,-1) ~= ".json" then editor.colorize = false end
+if tar:sub(-5,-1) == ".json" then highlighter:setSyntax("json") end
 editor.readonly = fs.isReadonly(tar)
 
 local data --Data to import at start.
@@ -96,3 +99,5 @@ local function hotkey(tool,key,sc)
 end
 
 tool:start(editor,reload,save,data,hotkey)
+
+highlighter:setSyntax("lua") --Make sure the highlighter is back into Lua
