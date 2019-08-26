@@ -1,6 +1,5 @@
 local eapi = select(1,...) --The editor library is provided as an argument
 
-
 --=Contributing Guide=--
 --[[
 Try your best to keep your work light, documented and tidy, since this will be the base of other places where text editors exist.
@@ -54,7 +53,8 @@ local highlighterTheme = {
   api = 14,
   callback = 15,
   selection = 6,
-  escape = 12
+  escape = 12,
+  error = 8
 }
 highlighter:setTheme(highlighterTheme)
 
