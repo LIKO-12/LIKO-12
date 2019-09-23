@@ -32,7 +32,7 @@ local _M = socket.http
 
 local tls_params = {
   protocol = "any",
-  options  = {"all", "no_sslv2", "no_sslv3"},
+  options  = {"all", "no_sslv2", "no_sslv3", "no_tlsv1"},
   verify   = "none",
   mode     = "client"
 }
@@ -140,6 +140,7 @@ function _M.open(host, port, create, nreqt)
     if nreqt.scheme == "https" then
       h.try(c:connect(host, port or HTTPS_PORT))
       c = h.try(ssl.wrap(c, tls_params)); h.c = c
+      c:sni(host)
       h.try(c:dohandshake())
     else
       h.try(c:connect(host, port or HTTP_PORT))
