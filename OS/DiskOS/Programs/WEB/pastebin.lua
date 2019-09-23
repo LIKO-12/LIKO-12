@@ -56,7 +56,7 @@ local function getPaste(paste)
     
     return data
   else
-    if tostring(respond.code) == "404" then
+    if respond and tostring(respond.code) == "404" then
       return false, "Paste not found."
     elseif err then
       return false, "Failed, "..tostring(err)
