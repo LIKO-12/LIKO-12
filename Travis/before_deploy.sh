@@ -52,9 +52,9 @@ go get github.com/itchio/gothub
 
 echo Downloading butler
 
-curl https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default --output ~/temp/butler.zip
-unzip ~/temp/butler.zip
-mv -v -f ~/temp/butler ~/bin/butler
+wget -O butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default 
+unzip butler.zip
+mv -v -f butler ~/bin/butler
 chmod 755 ~/bin/butler
 
 echo ----==== Done ====----
