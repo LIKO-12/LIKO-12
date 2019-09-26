@@ -140,7 +140,7 @@ function _M.open(host, port, create, nreqt)
     if nreqt.scheme == "https" then
       h.try(c:connect(host, port or HTTPS_PORT))
       c = h.try(ssl.wrap(c, tls_params)); h.c = c
-      c:sni(host)
+      if c.sni then c:sni(host) end --Required to lua-sec 0.8.1 to work
       h.try(c:dohandshake())
     else
       h.try(c:connect(host, port or HTTP_PORT))
