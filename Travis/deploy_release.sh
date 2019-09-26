@@ -68,9 +68,10 @@ mv -v -f "../BuildUtils/Builds/LIKO-12_Nightly_Universal.love" "../BuildUtils/Bu
 
 echo ----=== Uploading the builds ====----
 
-butler push "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_Windows.zip" ramilego4game/liko12:windows
-butler push "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_Linux_x86_64.AppImage" ramilego4game/liko12:linux
-butler push "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_Mac.zip" ramilego4game/liko12:osx
-butler push "../BuildUtils/Builds/LIKO-12_V"$TRAVIS_TAG"_Universal.love" ramilego4game/liko12:src
+cd ../BuildUtils/
+butler push "./Builds/LIKO-12_V"$TRAVIS_TAG"_Windows.zip" ramilego4game/liko12:windows
+butler push "./Builds/LIKO-12_V"$TRAVIS_TAG"_Linux_x86_64.AppImage" ramilego4game/liko12:linux
+butler push "./Builds/LIKO-12_V"$TRAVIS_TAG"_Mac.zip" ramilego4game/liko12:osx
+butler push "./Builds/LIKO-12_V"$TRAVIS_TAG"_Universal.love" ramilego4game/liko12:src
 
 echo ----==== Done ====----

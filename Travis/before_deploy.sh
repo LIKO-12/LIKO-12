@@ -54,8 +54,7 @@ echo Downloading butler
 
 wget -O butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default 
 unzip butler.zip
-mv -v -f butler ~/bin/butler
-chmod 755 ~/bin/butler
+chmod 755 butler
 
 echo ----==== Done ====----
 
