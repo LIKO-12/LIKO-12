@@ -70,9 +70,9 @@ local editorsData = (string.lower(flag) == "-b" or png) and eapi:encode() or eap
 local apiVersion = eapi.apiVersion
 local diskData = ""
 
-if string.lower(flag) == "-c" then
+if string.lower(flag) == "-c" or png then
   diskData = LK12Utils.encodeDiskGame(editorsData,ctype,clvl,apiVersion)
-elseif string.lower(flag) == "-b" or png then
+elseif string.lower(flag) == "-b" then
   diskData = LK12Utils.encodeDiskGame(editorsData,"binary",false,apiVersion)
 else
   diskData = LK12Utils.encodeDiskGame(editorsData,false,false,apiVersion)
