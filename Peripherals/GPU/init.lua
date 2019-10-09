@@ -34,9 +34,6 @@ ConstantValue, **DynamicValue**
 #PShaders:
 - **ActiveShader**, **_PostShaderTimer**
 
-#ImageData:
-- PasteImage
-
 #Cursor:
 - **GrappedCursor**, **Cursor**, CursorsCache
 
@@ -92,7 +89,6 @@ return function(config) --A function that creates a new GPU peripheral.
   GPUVars.Palette = {}
   GPUVars.Shared = {}
   GPUVars.Gif = {}
-  GPUVars.ImageData = {}
   GPUVars.VRam = {}
   GPUVars.Misc = {}
   GPUVars.Cursor = {}
