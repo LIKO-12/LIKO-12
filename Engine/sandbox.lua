@@ -5,6 +5,9 @@ local utf8 = require("utf8")
 
 local _LuaBCHeader = string.char(0x1B).."LJ"
 
+--Protect Lua's string metatable
+getmetatable('').__metatable = {}
+
 return function(getParentCoroutine)
   local GLOB = {
     assert=assert,
@@ -102,6 +105,7 @@ return function(getParentCoroutine)
     },
     os={
       time=os.time,
+      difftime = os.difftime,
       clock=os.clock,
       date=os.date
     },
