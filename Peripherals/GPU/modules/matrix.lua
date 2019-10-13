@@ -81,12 +81,10 @@ end
 function GPU.patternFill(img)
   if img then
     Verify(img,"Pattern ImageData","table")
-    if not img.typeOf or not img.typeOf("GPU.imageData") then return error("Invalid ImageData") end
+    if not ImageDataVars.weakImageData[img] then return error("Invalid ImageData") end
     
     local IMG = love.image.newImageData(img:size())
-    img:___pushimgdata()
-    IMG:paste(ImageDataVars.PasteImage,0,0)
-    ImageDataVars.PasteImage = nil
+    IMG:paste(ImageDataVars.weakImageData[img],0,0)
     
     IMG = lg.newImage(IMG)
     

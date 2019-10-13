@@ -17,6 +17,9 @@ ConstantValue, **DynamicValue**
 #Calibration:
 - Offsets
 
+#ImageData:
+- weakImageData
+
 #VRam:
 - BindVRAM, UnbindVRAM
 
@@ -94,7 +97,8 @@ return function(config) --A function that creates a new GPU peripheral.
   GPUVars.Cursor = {}
   GPUVars.PShaders = {}
   GPUVars.Matrix = {}
-  
+  GPUVars.ImageData = {}
+
   --==Modules Loading==--
   
   local function loadModule(name)

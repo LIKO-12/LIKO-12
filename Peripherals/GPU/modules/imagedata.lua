@@ -8,6 +8,7 @@ local lg = love.graphics
 
 local SharedVars = GPUVars.Shared
 local PaletteVars = GPUVars.Palette
+local ImageDataVars = GPUVars.ImageData
 
 --==Varss Constants==--
 local _ImageTransparent = PaletteVars.ImageTransparent
@@ -23,6 +24,7 @@ local strFormat = string.format
 --==Variables==--
 local weakMetatable = { __mode = "k" } --Weak keys
 local weakImageData = setmetatable({}, weakMetatable)
+ImageDataVars.weakImageData = weakImageData
 
 --==Helper Functions==--
 
