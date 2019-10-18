@@ -35,11 +35,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]
 
-local bit = _G["bit"]
+local bit = require("bit")
 
 local bxor,band,rshift = bit.bxor,bit.band,bit.rshift
 
-local strByte = string.byte
+local strByte, strSub = string.byte, string.sub
 
 local crctable = {
  0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA,
@@ -111,11 +111,8 @@ local crctable = {
 return function(data)
   local crc32 = 0xFFFFFFFF
   
-  for char in string.gmatch(data,".") do
-    local byte = strByte(char)
-    
-    local nLookupIndex = band(bxor(crc32,byte), 0xFF) + 1
-    crc32 = bxor(rshift(crc32,8),crctable[nLookupIndex])
+  for i=1, #data do
+    crc32 = bxor(rshift(crc32,8),crctable[band(bxor(crc32,strByte(strSub(data, i,i))), 0xFF) + 1])
   end
   
   crc32 = bxor(crc32,0xFFFFFFFF)

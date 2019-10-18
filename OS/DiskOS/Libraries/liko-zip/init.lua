@@ -76,11 +76,8 @@ local function decodeNumber(str,bigEndian)
   
   if not bigEndian then str = str:reverse() end
   
-  for char in string.gmatch(str,".") do
-    local byte = string.byte(char)
-    
-    num = lshift(num,8)
-    num = bor(num, byte)
+  for i=1, #str do
+    num = bor(lshift(num,8), string.byte(string.sub(str, i,i)))
   end
   
   return num
