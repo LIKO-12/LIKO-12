@@ -5,7 +5,7 @@ local onMobile = love.system.getOS() == "Android" or love.system.getOS() == "iOS
 --Wrapper for setColor to use 0-255 values
 local function setColor(r,g,b,a)
   if type(r) == "table" then
-    r,g,b,a = unpack(r)
+    r,g,b,a = r[1], r[2], r[3], r[4]
   end
   if r then r = r/255 end
   if g then g = g/255 end

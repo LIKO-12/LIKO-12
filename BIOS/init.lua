@@ -187,6 +187,10 @@ for mountName, yAPI in pairs(yAPIS) do
 end
 
 --Create handled functions
+local function _procReturns( arg1, arg2, ...)
+  if arg1 then return arg2, ...
+  else error(arg2, 3) end
+end
 for mountName, pType in pairs(Mounted) do
   Handled[mountName] = {}
   
@@ -197,12 +201,7 @@ for mountName, pType in pairs(Mounted) do
   for funcName, func in pairs(yAPIS[mountName]) do
     local funcCommand = mountName..":"..funcName
     Handled[mountName][funcName] = function(...)
-      local respond = {coroutine.yield(funcCommand,...)}
-      if respond[1] then
-        return select(2,unpack(respond))
-      else
-        return error(tostring(respond[2]))
-      end
+      return _procReturns(coroutine.yield(funcCommand,...))
     end
   end
 end

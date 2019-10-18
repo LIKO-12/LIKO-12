@@ -5,7 +5,7 @@ local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift
 local floor = math.floor
 
 local function convertColor(r,g,b,a)
-  if type(r) == "table" then r,g,b,a = unpack(r) end
+  if type(r) == "table" then r,g,b,a = r[1], r[2], r[3], r[4] end
   if r then r = r/255 end
   if g then g = g/255 end
   if b then b = b/255 end
@@ -26,7 +26,7 @@ return function(config)
   local ColorSet = {}
   
   for i=0,15 do
-    local r,g,b = unpack(GPUKit._ColorSet[i])
+    local r,g,b = GPUKit._ColorSet[i][1], GPUKit._ColorSet[i][2], GPUKit._ColorSet[i][3]
     r,g,b = band(r,252), band(g,252), band(b,252)
     ColorSet[i] = {r,g,b,252}
     ColorSet[r*10^9 + g*10^6 + b*10^3 + 252] = i

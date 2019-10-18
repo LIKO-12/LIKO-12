@@ -59,7 +59,7 @@ function GPU.rect(x,y,w,h,l,c) UnbindVRAM()
   
   --It accepts all the args as a table.
   if type(x) == "table" then
-    x,y,w,h,l,c = unpack(x)
+    x,y,w,h,l,c = x[1], x[2], x[3], x[4], x[5], x[6]
     l,c = l or false, c --In case if they are not provided.
   end
   
@@ -95,7 +95,7 @@ function GPU.circle(x,y,r,l,c,s) UnbindVRAM()
   
   --It accepts all the args as a table.
   if x and type(x) == "table" then
-    x,y,r,l,c,s = unpack(x)
+    x,y,r,l,c,s = x[1], x[2], x[3], x[4], x[5], x[6]
     l,c = l or false, c --In case if they are not provided.
   end
   
@@ -128,7 +128,7 @@ function GPU.triangle(x1,y1,x2,y2,x3,y3,l,col) UnbindVRAM()
   x1,y1,x2,y2,x3,y3,l,col = x1,y1,x2,y2,x3,y3,l or false,col --Localize them
   
   if type(x1) == "table" then
-    x1,y1,x2,y2,x3,y3,l,col = unpack(x1)
+    x1,y1,x2,y2,x3,y3,l,col = x1[1], x1[2], x1[3], x1[4], x1[5], x1[6], x1[7], x1[8]
   end
   
   x1 = Verify(x1,"x1","number")
@@ -172,7 +172,7 @@ function GPU.ellipse(x,y,rx,ry,l,c,s) UnbindVRAM()
   
   --It accepts all the args as a table.
   if x and type(x) == "table" then
-    x,y,rx,ry,l,c,s = unpack(x)
+    x,y,rx,ry,l,c,s = x[1], x[2], x[3], x[4], x[5], x[6], x[7]
   end
   
   --Args types verification

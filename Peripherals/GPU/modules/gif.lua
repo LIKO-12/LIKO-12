@@ -209,7 +209,7 @@ events.register("love:update",function(dt)
       lg.setStencilTest("greater",0)
     end
     
-    if MatrixVars.Clip then lg.setScissor(unpack(MatrixVars.Clip)) end
+    if MatrixVars.Clip then lg.setScissor(MatrixVars.Clip[1], MatrixVars.Clip[2], MatrixVars.Clip[3], MatrixVars.Clip[4]) end
     GPU.popColor() --Restore the active color.
     
     if GifVars.PChanged then

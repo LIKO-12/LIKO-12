@@ -69,11 +69,11 @@ do --So I can hide this part in ZeroBran studio
   local bmap = ConfigUtils and ConfigUtils.get("GamesKeymap") or {}
 
   if not bmap[1] then
-    bmap[1] = {unpack(defaultbmap[1])}
+    bmap[1] = {defaultbmap[1][1], defaultbmap[1][2], defaultbmap[1][3], defaultbmap[1][4], defaultbmap[1][5], defaultbmap[1][6], defaultbmap[1][7]}
     if ConfigUtils then ConfigUtils.saveConfig() end
   end
   if not bmap[2] then
-    bmap[2] = {unpack(defaultbmap[2])}
+    bmap[2] = {defaultbmap[2][1], defaultbmap[2][2], defaultbmap[2][3], defaultbmap[2][4], defaultbmap[2][5], defaultbmap[2][6], defaultbmap[2][7]}
     if ConfigUtils then ConfigUtils.saveConfig() end
   end
   

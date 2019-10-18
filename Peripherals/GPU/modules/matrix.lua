@@ -109,7 +109,7 @@ end
 function GPU.clip(x,y,w,h)
   if x then
     if type(x) == "table" then
-      x,y,w,h = unpack(x)
+      x,y,w,h = x[1], x[2], x[3], x[4]
     end
     
     Verify(x,"X","number")
@@ -118,7 +118,7 @@ function GPU.clip(x,y,w,h)
     Verify(h,"H","number")
     
     MatrixVars.Clip = {x,y,w,h}
-    lg.setScissor(unpack(MatrixVars.Clip))
+    lg.setScissor(x, y, w, h)
   else
     local oldClip = MatrixVars.Clip
     MatrixVars.Clip = false

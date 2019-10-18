@@ -95,7 +95,7 @@ function isInRect(x,y,rect)
 end
 
 function whereInGrid(x,y, grid) --Grid X, Grid Y, Grid Width, Grid Height, NumOfCells in width, NumOfCells in height
-  local gx,gy,gw,gh,cw,ch = unpack(grid)
+  local gx,gy,gw,gh,cw,ch = grid[1], grid[2], grid[3], grid[4], grid[5], grid[6]
   
   if isInRect(x,y,{gx,gy,gw,gh}) then
     local clw, clh = math.floor(gw/cw), math.floor(gh/ch)

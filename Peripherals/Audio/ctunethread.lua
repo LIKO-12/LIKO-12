@@ -158,7 +158,7 @@ while true do
       return --It's time to shutdown the thread.
     else
       --New waveform parameters
-      local nwave, nfreq, namp = unpack(params)
+      local nwave, nfreq, namp = params[1], params[2], params[3]
       nwave, nfreq, namp = nwave or wave, nfreq or 0, namp or 0
       
       if nfreq == 0 then nfreq, namp = freq, 0 end

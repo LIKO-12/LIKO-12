@@ -80,10 +80,10 @@ return function(config)
   function devkit.defaultHandler(mode,startAddress,...)
     local args = {...}
     if mode == "poke" then
-      local address, value = unpack(args)
+      local address, value = args[1], args[2]
       ram[address] = value
     elseif mode == "poke4" then
-      local address4, value = unpack(args)
+      local address4, value = args[1], args[2]
       local address = math.floor(address4 / 2)
       local byte = ram[address]
       
@@ -113,18 +113,18 @@ return function(config)
       
       return byte
     elseif mode == "memcpy" then
-      local from, to, len = unpack(args)
+      local from, to, len = args[1], args[2], args[3]
       for i=0,len-1 do
         ram[to+i] = ram[from+i]
       end
     elseif mode == "memset" then
-      local address, value = unpack(args)
+      local address, value = args[1], args[2]
       local len = value:len()
       for i=0,len-1 do
         ram[address+i] = string.byte(value,i+1)
       end
     elseif mode == "memget" then
-      local address, len = unpack(args)
+      local address, len = args[1], args[2]
       local subtable,nextid = {}, 1
       for i=address,address+len-1 do
         subtable[nextid] = ram[i]

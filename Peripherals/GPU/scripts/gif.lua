@@ -1,7 +1,7 @@
 -- GIF encoder specialized for PICO-8
 -- by gamax92.
 -- Updated for liko12 by RamiLego4Game
-local _GIFScale, _LIKO_W, _LIKO_H = unpack({...})
+local _GIFScale, _LIKO_W, _LIKO_H = ...
 
 local lshift, rshift, band = bit.lshift, bit.rshift, bit.band
 local strchar = string.char

@@ -100,7 +100,7 @@ _ImageTransparent[17] = 0
 function GPU.colorPalette(id,r,g,b)
   if not (id or r or g or b) then --Reset
     for i=0,15 do
-      r,g,b = unpack(_DefaultColorSet[i])
+      r,g,b = _DefaultColorSet[i][1], _DefaultColorSet[i][2], _DefaultColorSet[i][3]
       _ColorSet[i] = {r,g,b,255}
       _DisplayPalette[i+1] = _ColorSet[i]
     end

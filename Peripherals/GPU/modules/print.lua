@@ -171,13 +171,13 @@ function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
   end
 end
 
+local function _wrapText(arg1, arg2, ...)
+  if arg1 then return arg2, ...
+  else error(tostring(args2, 3)) end
+end
+
 function GPU.wrapText(text,sw)
-  local args = {pcall(_Font.getWrap,_Font,text, sw)}
-  if args[1] then
-    return select(2,unpack(args))
-  else
-    return error(tostring(args[2]))
-  end
+  return _wrapText(pcall(_Font.getWrap,_Font,text, sw))
 end
 
 function GPU.printBackspace(c,skpCr) UnbindVRAM()
