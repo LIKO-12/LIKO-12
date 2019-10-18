@@ -140,12 +140,15 @@ Globals.coroutine.running = function()
   return curco
 end
 
+local function _processReturns(arg1, arg2, ...)
+  if arg1 then return arg2, ...
+  else error(arg2, 3) end
+end
 Globals.dofile = function(path,...)
   local chunk, err = fs.load(path)
   if not chunk then return error(err) end
-  setfenv(chunk,Globals)
-  local ok, err = pcall(chunk,...)
-  if not ok then return error(err) end
+  setfenv(chunk, Globals)
+  return _processReturns(pcall(chunk,...))
 end
 
 return Globals
