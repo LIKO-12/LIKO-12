@@ -34,6 +34,8 @@ if (not destination) or destination == "-?" then
   return
 end
 
+if destination ~= "@clip" and string.lower(flag) == "--code" then destination = destination:sub(1,-6)..".lua" end
+
 if destination ~= "@clip" and fs.exists(destination) and fs.isDirectory(destination) then return 1, "Destination must not be a directory" end
 
 if destination ~= "@clip" and fs.isReadonly(destination) then
@@ -41,8 +43,23 @@ if destination ~= "@clip" and fs.isReadonly(destination) then
 end
 
 local backup
-if destination ~= "@clip" and fs.exists(destination) then
+if destination ~= "@clip" and fs.exists(destination) and (flag == "" or flag == "-c" or flag == "-b") then
   backup = fs.read(destination)
+end
+
+if destination ~= "@clip" and fs.exists(destination) then
+  while true do
+    color(9) print("Are you sure you want to overwrite the destination file ? (Y/N)") color(6)
+    local input = TextUtils.textInput() print("")
+    if input then
+      input = input:lower()
+      if input == "y" or input == "yes" then
+        break --The user has accepted to overwrite the file.
+      elseif input == "n" or input == "no" then
+        return 1, "User declined to overwrite the destination file."
+      end
+    end
+  end
 end
 
 local sw, sh = screenSize()
@@ -59,7 +76,7 @@ elseif string.lower(flag) == "--map" then --TileMap export
   return
 elseif string.lower(flag) == "--code" then --Lua code export
   local data = eapi.leditors[eapi.editors.code]:export(true)
-  if destination == "@clip" then clipboard(data) else fs.write(destination:sub(1,-6)..".lua",data) end
+  if destination == "@clip" then clipboard(data) else fs.write(destination,data) end
   color(11) print("Exported Lua code successfully")
   return
 end
