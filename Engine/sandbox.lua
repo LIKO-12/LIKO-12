@@ -172,16 +172,6 @@ return function(getParentCoroutine)
     
     return load(newiter,chunkname)
   end
-  GLOB.coroutine.sethook = function()--co,...)
-    --DEPRICATED--
-    
-    --Coroutine hooks are useless because of LuaJIT
-    
-    --[[if type(co) ~= "thread" then return error("bad argument #1 (thread expected, got "..type(co)..")") end
-    local ok, err = pcall(debug.sethook,co,...)
-    if not ok then return error(err) end
-    return err]]
-  end
   GLOB.coroutine.running = function()
     local curco = coroutine.running()
     if getParentCoroutine then
