@@ -35,8 +35,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]
 
-local bit = require("bit")
-
 local bxor,band,rshift = bit.bxor,bit.band,bit.rshift
 
 local strByte, strSub = string.byte, string.sub
