@@ -16,10 +16,10 @@ local function nextPath()
   return helpPATH:gmatch("(.-);")
 end
 
-local topic, giveApi = ...
+local topic = ...
 topic = topic or "Welcome"
 
-if type(giveApi) == "boolean" then --Requesting HELP api
+if type(topic) == "boolean" then --Requesting HELP api
   local api = {}
 
   function api.setHelpPATH(p)
