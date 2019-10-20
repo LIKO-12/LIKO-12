@@ -1,4 +1,4 @@
-local perpath = select(1,...) --The path to the Audio folder
+local perpath = ... --The path to the Audio folder
 
 local events = require("Engine.events")
 

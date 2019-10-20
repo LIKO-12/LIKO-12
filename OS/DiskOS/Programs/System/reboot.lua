@@ -1,4 +1,4 @@
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "reboot","Soft reboots LIKO-12",
     "reboot hard","Hard reboots LIKO-12"

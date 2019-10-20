@@ -1,5 +1,5 @@
 --Lists the available virtual drives
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "drives","Lists the available virtual drives"
   )

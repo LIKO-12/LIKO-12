@@ -1,4 +1,4 @@
-if select(1,...) and select(1,...) == "-?" then
+if (...) and (...) == "-?" then
   printUsage("programs","Prints the list of available programs")
   return
 end

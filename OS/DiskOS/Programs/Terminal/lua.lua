@@ -1,4 +1,4 @@
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "lua","Starts Lua interpreter"
   )

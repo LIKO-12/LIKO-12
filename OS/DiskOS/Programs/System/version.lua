@@ -1,4 +1,4 @@
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage("version","Print the current version number.")
   return
 end

@@ -1,4 +1,4 @@
-local perpath = select(1,...) --The path to the FDD folder
+local perpath = ... --The path to the FDD folder
 
 local bit = require("bit")
 local band, bor, lshift, rshift = bit.band, bit.bor, bit.lshift, bit.rshift

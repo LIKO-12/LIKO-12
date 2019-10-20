@@ -1,4 +1,4 @@
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "apis","Prints the available peripherals functions",
     "apis <peripheral>","Prints the functions of a specific peripheral"
@@ -11,7 +11,7 @@ local perlist = BIOS.HandledAPIS()
 
 palt(0,false) --Make black opaque
 
-local peri = select(1,...)
+local peri = (...)
 
 local function waitkey()
   while true do

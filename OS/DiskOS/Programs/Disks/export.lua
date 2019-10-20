@@ -1,4 +1,4 @@
-local destination = select(1,...)
+local destination = ...
 
 local term = require("terminal")
 local eapi = require("Editors")

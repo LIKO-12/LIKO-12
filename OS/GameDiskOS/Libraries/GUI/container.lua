@@ -1,4 +1,4 @@
-local path = select(1,...):sub(1,-(string.len("container")+1))
+local path = (...):sub(1,-(string.len("container")+1))
 local class = require("Libraries.middleclass")
 
 --Container object class

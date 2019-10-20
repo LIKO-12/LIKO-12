@@ -2,7 +2,7 @@
 
 local sfxobj = require("Libraries.sfx") --The sfx object
 
-local eapi = select(1,...) --The editors api
+local eapi = ... --The editors api
 
 local sw, sh = screenSize() --The screensize
 local volColors = {1,2,13,6,12,14,15,7}

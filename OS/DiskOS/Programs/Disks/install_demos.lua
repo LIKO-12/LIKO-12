@@ -1,4 +1,4 @@
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "install_demos","Installs some demo games"
   )

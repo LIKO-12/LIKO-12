@@ -1,5 +1,5 @@
 --This file loads a lk12 disk and executes it
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "run [...]","Runs the current loaded game with any provided arguments"
   )

@@ -1,7 +1,7 @@
 --Lists the folders and files at the current directory.
 --The same of dir.lua
 
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "ls","Lists the files and folders in the current directory",
     "ls <dir>","Lists the files and folders in a specific directory"
@@ -11,7 +11,7 @@ end
 
 local term = require("terminal") --Require the terminal api.
 local path = term.getpath() --Get the current active directory.
-local dir = select(1,...)
+local dir = ...
 
 if dir then
 	local newpath, exists = term.resolve(dir)

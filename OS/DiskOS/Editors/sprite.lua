@@ -1,4 +1,4 @@
-local eapi = select(1,...) --The editor library is provided as an argument
+local eapi = (...) --The editor library is provided as an argument
 
 local SpriteSheet = require("Libraries.spritesheet")
 

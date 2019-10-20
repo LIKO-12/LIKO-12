@@ -1,4 +1,4 @@
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "keymap","Remaps the controls keys"
   )

@@ -1,4 +1,4 @@
-local path = select(1,...)
+local path = ...
 
 local strformat = string.format
 

@@ -1,7 +1,6 @@
 --Imports files--
 --For now it imports images--
-local source = select(1,...)
-local destination = select(2,...)
+local source, destination = ...
 
 local term = require("terminal")
 local eapi = require("Editors")

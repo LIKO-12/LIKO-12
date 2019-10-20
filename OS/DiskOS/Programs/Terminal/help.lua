@@ -1,5 +1,5 @@
 --Liko12 Help System !
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "help","Displays the help info",
     "help Topics","Displays help topics list",
@@ -16,10 +16,8 @@ local function nextPath()
   return helpPATH:gmatch("(.-);")
 end
 
-local topic = select(1,...)
+local topic, giveApi = ...
 topic = topic or "Welcome"
-
-local giveApi = select(1,...)
 
 if type(giveApi) == "boolean" then --Requesting HELP api
   local api = {}

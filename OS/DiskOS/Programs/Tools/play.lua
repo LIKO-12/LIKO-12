@@ -1,4 +1,4 @@
-if select(1,...) and select(1,...) == "-?" then
+if (...) and (...) == "-?" then
   printUsage("play <note> [time] [waveform]","Play a music note for an amount of time.")
   return
 end

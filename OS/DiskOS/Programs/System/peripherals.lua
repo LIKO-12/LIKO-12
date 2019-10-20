@@ -1,5 +1,5 @@
 --List the available peripherals
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "peripherals","Lists the available peripherals"
   )

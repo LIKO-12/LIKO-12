@@ -1,4 +1,4 @@
-local source = select(1,...)
+local source = (...)
 
 if not source or source == "-?" then
   printUsage(

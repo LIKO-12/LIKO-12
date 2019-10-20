@@ -1,5 +1,5 @@
 --This is a program for testing LIKO-12 API.
-if tostring(select(1,...) or false) == "-?" then
+if tostring((...) or false) == "-?" then
   printUsage("testapi","A WIP Program for testing LIKO-12 API, Used by the developer.")
   return
 end

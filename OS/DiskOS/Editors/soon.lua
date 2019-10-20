@@ -1,5 +1,5 @@
 --This is an editor to show a "COMING SOON" screen.
-local eapi = select(1,...)
+local eapi = (...)
 
 local soon = {}
 

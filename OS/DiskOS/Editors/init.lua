@@ -10,7 +10,7 @@ Creating an editor:
 4. Edit self.saveid in edit:initialize and change the value of a slot to a save id for your editor, leave -1 if it doesn't save.
 
 * The editor api is passed as an argument to the editor file, to access it add this to the top of your file:
-local eapi = select(1,...)
+local eapi = (...)
 
 * The only usefull function in the editor api is eapi:drawUI()
 which clears the whole screen and draws the top and bottom bars of every editor

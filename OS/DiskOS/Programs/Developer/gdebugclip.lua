@@ -1,4 +1,4 @@
-if select(1,...) == "-?" then
+if (...) == "-?" then
   printUsage(
     "gdebugclip","Loads a GPU debug report from the clipboard"
   )
