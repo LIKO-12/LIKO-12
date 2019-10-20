@@ -281,8 +281,10 @@ function edit:loop() --Starts the while loop
         pushMatrix() pushPalette() pushColor()
         if key == "ctrl-s" then
           local oldprint = print
+          local oldinput = TextUtils.textInput
           local err
-          print = function(msg) if color() == 9 and not err then err = msg end end
+          print = function(msg) if color() == 8 and not err then err = msg end end
+          TextUtils.textInput = function() return "y" end
           
           if not self.filePath then
             err = "Missing save name !"
@@ -304,6 +306,7 @@ function edit:loop() --Starts the while loop
             _systemMessage("Saved successfully",1)
           end
           print = oldprint
+          TextUtils.textInput = oldinput
           hotkey = true
         elseif key == "ctrl-l" then
           local oldprint = print
