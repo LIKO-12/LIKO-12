@@ -86,7 +86,7 @@ local apiVersion = eapi.apiVersion
 local diskData = ""
 
 if string.lower(flag) == "-c" or png then
-  diskData = LK12Utils.encodeDiskGame(editorsData,ctype,clvl,apiVersion)
+  diskData = LK12Utils.encodeDiskGame(editorsData,flag == "-color" and "gzip" or ctype,clvl,apiVersion)
 elseif string.lower(flag) == "-b" then
   diskData = LK12Utils.encodeDiskGame(editorsData,"binary",false,apiVersion)
 else
