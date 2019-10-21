@@ -65,8 +65,8 @@ do
     Verify(x,"x","number") Verify(y,"y","number")
     Verify(r,"r","number")
     Verify(sx,"sx","number") Verify(sy,"sy","number")
-    Verify(ox,"ox","number") Verify(ox,"ox","number")
-    Verify(kx,"kx","number") Verify(kx,"kx","number")
+    Verify(ox,"ox","number") Verify(oy,"oy","number")
+    Verify(kx,"kx","number") Verify(ky,"ky","number")
     local ok, err = pcall(spritebatch.set,spritebatch,id,quad,x,y,r,sx,sy,ox,oy,kx,ky)
     if not ok then return error(err) end
     return self
