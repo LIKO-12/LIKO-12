@@ -14,6 +14,7 @@
 \FBugfixes:\7
 1. Fix `folder` command not working on linux and macOS (Issue #223).
 2. Fix ctrl-r in edittors resulting into a cursor glitch in the terminal.
+3. Fix failing to decompress .lk12 files which are saved with compression...
 
 \FEngine:\7
 1. `ralt-return` (Right alt + enter) now toggles fullscreen mode (Issue #253).
