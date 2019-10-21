@@ -81,7 +81,7 @@ end
 
 eapi.filePath = destination
 
-local editorsData = (string.lower(flag) == "-b" or png) and eapi:encode() or eapi:export()
+local editorsData = (string.lower(flag) == "-c" or png) and eapi:encode() or eapi:export()
 local apiVersion = eapi.apiVersion
 local diskData = ""
 
@@ -95,6 +95,8 @@ end
 
 if string.lower(flag) == "-color" and png then
   FDD.newDisk(select(3,...))
+else
+  FDD.newDisk("Blue")
 end
 
 if destination == "@clip" then
