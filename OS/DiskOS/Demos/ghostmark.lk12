@@ -1,41 +1,23 @@
 LK12;OSData;DiskOS;DiskGame;V4;API_2;192x128;C:none;CLvl:0;
 ___luacode___
 --GhostsBenchmark by MonstersGoBoom
-function class(superclass, name)
- local cls = {}
- cls.__name = name or ""
- cls.__super = superclass
- cls.__index = cls
- return setmetatable(cls, {__call = function (c, ...)
-  self = setmetatable({}, cls)
-  local super = cls.__super
-  while (super~=nil) do
-   if super.__init then
-    super.__init(self, ...)
-   end  
-   super = super.__super
-  end
-  if cls.__init then
-   cls.__init(self, ...)
-  end
-  return self
- end})
-end
+--Modified by Rami Sabbagh
 
-Items = {}
+local class = Library("class")
 
-Item = class(nil,"Stuff")
+--== Ghost Class ==--
 
-function Item:__init()
+local ghost = class("demo.Ghost")
+
+function ghost:initialize()
  self.x = math.random(10,192)
  self.y = math.random(10,128)
  self.vx = math.random(-10,10) / 10.0
  self.vy = math.random(-10,10) / 10.0
  self.color = math.random(15)
- table.insert(Items,self)
 end
 
-function Item:update()
+function ghost:update()
  self.x = self.x + self.vx 
  self.y = self.y + self.vy 
  
@@ -47,40 +29,50 @@ function Item:update()
   self.vy = -(math.random(100)/25.0)
  end
 
- Sprite(self.color+1,self.x,self.y)
  self.vy = self.vy + 0.05
 end
 
-
-
-for x=1,500 do
- bunny = Item()
+function ghost:draw()
+ Sprite(self.color+1,self.x,self.y)
 end
 
+--== Demo Code ==--
+
+local ghosts = {}
+
+--Spawn initial ghosts
+for i=1, 500 do
+ ghosts[i] = ghost()
+end
 
 function _update()
  clear(0)
  
- for x=1,#Items do
-  Items[x]:update()
+ for i=1,#ghosts do
+  ghosts[i]:update()
  end
  
- color(0) print("Dots :" .. #Items,8,9)
- color(7) print("Dots :" .. #Items,8,8)
- color(0) print("FPS :" .. getFPS(),8,17)
- color(7) print("FPS :" .. getFPS(),8,16)
-
- -- add 500 more
- print("press A to add 500 more",8,130)
- 
  if btnp(5) then
-   for x=1,500 do
-    bunny = Item()
+   for i=#ghosts+1, #ghosts+500 do
+     ghosts[i] = ghost()
    end
  end
 end
 
-_touchpressed = _keypressed
+function _draw()
+ clear(0)
+ 
+ for i=1,#ghosts do
+  ghosts[i]:draw()
+ end   
+ 
+ color(0) print("Dots :" .. #ghosts,8,9)
+ color(7) print("Dots :" .. #ghosts,8,8)
+ color(0) print("FPS :" .. getFPS(),8,17)
+ color(7) print("FPS :" .. getFPS(),8,16)
+
+ print("press A to add 500 more",8,130)      
+end
 ___tilemap___
 LK12;TILEMAP;144x128;
 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;
