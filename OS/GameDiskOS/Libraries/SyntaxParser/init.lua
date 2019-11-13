@@ -1,5 +1,28 @@
 local newStream = require("Libraries.SyntaxParser.stream")
 
+local function cloneTable(from, to, old)
+  local c = to or {}
+  local ch = false --Changed ? (when comparing from with old)
+
+  for k,v in pairs(from) do
+    if type(v) == "table" then
+      if old and type(old[k]) ~= "table" then
+        ch = true
+        c[k] = cloneTable(v)
+      else
+        local c2, ch2 = cloneTable(v,{},old and old[k])
+        c[k] = c2
+        ch = ch2 or ch
+      end
+    else
+      c[k] = v
+      if old and v ~= old[k] then ch = true end
+    end
+  end
+
+  return c, ch
+end
+
 local parser = {}
 
 parser.parser = {}
@@ -45,16 +68,12 @@ function parser:parseLines(lines, lineIndex)
     or self:previousState(lineIndex) --Any pervious line
     or self.parser.startState --The start state provided by the parser
     
-    for k,v in pairs(tempState) do
-      self.state[k] = v
-    end
+    cloneTable(tempState, self.state)
 
     -- Backup previous state of the current line
     local previousState = {}
     if self.cache[lineID] then
-      for k,v in pairs(self.cache[lineID]) do
-        previousState[k] = v
-      end
+      cloneTable(self.cache[lineID], previousState)
     end
 
     -- Process line
@@ -63,9 +82,10 @@ function parser:parseLines(lines, lineIndex)
     -- Copy the processd state to cache.
     -- Also checks if this is the last line and its change is colateral.
     self.cache[lineID] = {}
-    for k,v in pairs(self.state) do
-      if i == #lines and previousState[k] ~= self.state[k] then colateral = true end
-      self.cache[lineID][k] = v
+    if i == # lines then
+      if select(2,cloneTable(self.state, self.cache[lineID], previousState)) then colateral = true end
+    else
+      cloneTable(self.state, self.cache[lineID])
     end
   end
   return result, colateral

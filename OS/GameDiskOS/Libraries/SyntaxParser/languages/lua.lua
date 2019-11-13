@@ -50,8 +50,8 @@ local function token(stream, state)
     elseif char == '.' and stream:match('%d+') then
       return "number"
       
-      -- Hex
-    elseif char == "0" and stream:eat("[xX]") then
+      -- Hex and Binary numbers
+    elseif char == "0" and (stream:eat("[xX]") or stream:eat("[bB]")) then
       stream:eatChain("%x")
       return "number"
       

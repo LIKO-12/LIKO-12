@@ -108,12 +108,11 @@ function LK12Utils.decodeDiskGame(diskData)
   --local header = "LK12;OSData;DiskOS;DiskGame;V"..saveVer..";"..sw.."x"..sh..";API_"..apiVer..";C:"
   
   local datasum = 0
-  local nextargiter = string.gmatch(diskData,".")
   local function nextarg()
     local start = datasum + 1
     while true do
       datasum = datasum + 1
-      local char = nextargiter()
+      local char = string.sub(diskData, datasum, datasum)
       if not char then datasum = datasum - 1; return end
       if char == ";" then break end
     end
@@ -222,7 +221,7 @@ function LK12Utils.decodeDiskGame(diskData)
     clevel = string.match(clevel,"CLvl:(.+)")
     if not clevel then return false, "Invalid Data !" end clevel = tonumber(clevel)
 
-    local diskBody = diskData:sub(datasum+2,-1)
+    local diskBody = diskData:sub(datasum+1,-1)
 
     if compress ~= "none" then --Decompress
       local b64data, char = math.b64dec(diskBody)
