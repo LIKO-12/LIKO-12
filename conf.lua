@@ -16,7 +16,7 @@ _LVer = {
 	major = 1,
 	minor = 1,
 	patch = 0,
-	tag = "Development" --Release, Pre-Relase, Development
+	tag = "Release" --Release, Pre-Relase, Development
 }
 _LVERSION = string.format("V%d.%d.%d-%s",_LVer.major,_LVer.minor,_LVer.patch,_LVer.tag)
 
