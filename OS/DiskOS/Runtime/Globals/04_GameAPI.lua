@@ -212,7 +212,7 @@ function Globals.SaveData(data)
   GameSaveData = data
   
   --Write the game data
-  if _GameDiskOS then fs.write(string.format(_SystemDrive..":/GamesData/%s.bin",GameSaveID), GameSaveData) end
+  if not _GameDiskOS then fs.write(string.format(_SystemDrive..":/GamesData/%s.bin",GameSaveID), GameSaveData) end
 end
 
 function Globals.LoadData()
