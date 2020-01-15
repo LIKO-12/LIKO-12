@@ -1,5 +1,10 @@
 \BChangelog:
 
+\9V1.1.1 (WorkInProgress):
+
+\FBugfixes:\7
+1. Fix `fset()` not actually settings the flags when supplied with the flags byte as a number.
+
 \9V1.1.0 (13/11/2019):
 
 \FContributions:\7
