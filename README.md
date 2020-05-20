@@ -3,7 +3,6 @@
 [![Release Badge](https://img.shields.io/github/release/LIKO-12/LIKO-12/all.svg)](https://github.com/LIKO-12/LIKO-12/releases)
 [![Downloads](https://img.shields.io/github/downloads/LIKO-12/LIKO-12/total.svg)](https://github.com/LIKO-12/LIKO-12/releases)
 [![Commits Badge](https://img.shields.io/github/commits-since/LIKO-12/LIKO-12/latest.svg)](https://github.com/LIKO-12/LIKO-12/commits/master)
-[![Nightly Build 1.0.2](https://img.shields.io/badge/nightly_builds-v1.0.2-orange.svg)](https://liko-12.github.io/Nightly/)
 [![Donate Badge](https://img.shields.io/badge/%24-Donate-ff69b4.svg)](https://liko-12.github.io/#/Donate)
 [![License Badge](https://img.shields.io/badge/License-MIT-blue.svg)](?id=license)
 [![Stars Badge](https://img.shields.io/github/stars/LIKO-12/LIKO-12.svg?style=flat&label=Stars)](https://github.com/LIKO-12/LIKO-12)

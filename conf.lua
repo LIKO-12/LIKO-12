@@ -15,7 +15,7 @@ I don't think anyone would want to edit anything in this file, but only change t
 _LVer = {
 	major = 1,
 	minor = 1,
-	patch = 0,
+	patch = 1,
 	tag = "Development" --Release, Pre-Relase, Development
 }
 _LVERSION = string.format("V%d.%d.%d-%s",_LVer.major,_LVer.minor,_LVer.patch,_LVer.tag)
@@ -29,7 +29,7 @@ end
 
 function love.conf(t)
     t.identity = build.Appdata or "LIKO-12"-- The name of the save directory (string)
-    t.version = "11.1"                  -- The LÖVE version this game was made for (string)
+    t.version = "11.3"                  -- The LÖVE version this game was made for (string)
     t.console = false                   -- Attach a console (boolean, Windows only)
     t.accelerometerjoystick = false     -- Enable the accelerometer on iOS and Android by exposing it as a Joystick (boolean)
     t.externalstorage = true            -- True to save files (and read from the save directory) in external storage on Android (boolean)

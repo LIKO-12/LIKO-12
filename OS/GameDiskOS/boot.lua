@@ -1,3 +1,12 @@
+--==Contribution Guide==--
+--[[
+
+==Contributors to this file==
+(Add your name when contributing to this file)
+
+- Rami Sabbagh (RamiLego4Game)
+]]
+
 local HandledAPIS = ...
 
 --Backup the fresh clean globals

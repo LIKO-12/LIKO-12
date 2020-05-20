@@ -20,12 +20,12 @@ local function newMap(w,h,sheet)
   --The function can return an new sprid to set
   --If called with no args, it will return the map table.
   function Map:map(func,x,y,w,h)
-	x,y,w,h = x or 0, y or 0, w or self.w, h or self.h
-	
-	assert(x >= 0, "Attempted to map out of bounds: x less than 0 ("..x..")")
-	assert(y >= 0, "Attempted to map out of bounds: y less than 0 ("..y..")")
-	assert(x+w <= self.w, "Attempted to map out of bounds: right side greater than map width (Width is "..self.w..", right side is "..x+w..")")
-	assert(y+h <= self.h, "Attempted to map out of bounds: lower side greater than map height (Height is "..self.h..", lower side is "..y+h..")")
+    x,y,w,h = x or 0, y or 0, w or self.w, h or self.h
+    
+    assert(x >= 0, "Attempted to map out of bounds: x less than 0 ("..x..")")
+    assert(y >= 0, "Attempted to map out of bounds: y less than 0 ("..y..")")
+    assert(x+w <= self.w, "Attempted to map out of bounds: right side greater than map width (Width is "..self.w..", right side is "..x+w..")")
+    assert(y+h <= self.h, "Attempted to map out of bounds: lower side greater than map height (Height is "..self.h..", lower side is "..y+h..")")
 	
     if func then
       for iy=y, y+h-1 do
@@ -41,6 +41,9 @@ local function newMap(w,h,sheet)
     if x >= self.w or y >= self.h or x < 0 or y < 0 then return false, "out of range" end
     if newID then
       self.m[x][y] = newID or 0
+      if self.batch then
+        self.batch:set(1+x+y*self.w,self.sheet.quads[newID or 0],x*8,y*8)
+      end
       return self
     else
       return self.m[x][y]
@@ -67,13 +70,28 @@ local function newMap(w,h,sheet)
   
   function Map:draw(dx,dy,x,y,w,h,sx,sy,sheet)
     local dx,dy,x,y,w,h,sx,sy = dx or 0, dy or 0, x or 0, y or 0, w or self.w, h or self.h, sx or 1, sy or 1
+    
+    --Spritebatch mode draws the whole map
+    if self.batch then
+      self.batch:draw(dx,dy)
+      return self
+    end
+
+	  --mapX and mapY are different from x and y so that if x or y are less
+    --than 0, the clamping doesn't affect the relative position of
+    --the tiles on the screen.
+    local mapX = math.max(x,0)
+    local mapY = math.max(y,0)
+    w = math.min(w+x,self.w)-x
+    h = math.min(h+y,self.h)-y
+    
     self:map(function(spx,spy,sprid)
       if sprid < 1 then return end
       
       spx, spy = spx-x, spy-y;
 	  
       (self.sheet or sheet):draw(sprid,dx + spx*8*sx, dy + spy*8*sy, 0, sx, sy)
-    end,x,y,w,h)
+    end,mapX,mapY,w,h)
     return self
   end
   
@@ -108,6 +126,16 @@ local function newMap(w,h,sheet)
     end
     
     return self
+  end
+
+  function Map:spritebatch(mode)
+    if self.batch then return error("Already spritebatched !") end
+    if not self.sheet then return error("The map has no spritesheet !") end
+
+    self.batch = self.sheet.img:batch(self.w*self.h,mode)
+    for y=0, self.h-1 do for x=0, self.w-1 do
+      self.batch:add(self.sheet.quads[self:cell(x,y)],x*8,y*8)
+    end end
   end
   
   return Map

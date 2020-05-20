@@ -18,7 +18,8 @@ local highlighterTheme = {
   api = 14,
   callback = 15,
   selection = 6,
-  escape = 12
+  escape = 12,
+  error = 8
 }
 ]]
 function highlighter:setTheme(theme)

@@ -80,6 +80,7 @@ function fset(id,n,v)
     n = math.floor(n)
     if n < 1 then return error("FlagValue is out of range ("..n..") expected [1,255]") end
     if n > 255 then return error("FlagValue is out of range ("..n..") expected [1,255]") end
+	flag = n
   end
   sheet:flag(id,flag)
 end

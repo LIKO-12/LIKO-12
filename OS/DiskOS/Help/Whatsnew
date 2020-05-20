@@ -1,6 +1,12 @@
 \BChangelog:
 
-\9V1.1.0 (Not released yet):
+\9V1.1.1 (WorkInProgress):
+
+\FBugfixes:\7
+1. Fix `fset()` not actually settings the flags when supplied with the flags byte as a number.
+2. Fix `SaveData(data)` not actually saving any data.
+
+\9V1.1.0 (13/11/2019):
 
 \FContributions:\7
 1. @mrtnpwn: New echo command (Pull request #216).
@@ -13,24 +19,27 @@
 
 \FBugfixes:\7
 1. Fix `folder` command not working on linux and macOS (Issue #223).
-2. Fix ctrl-r in edittors resulting into a cursor glitch in the terminal.
-3. Fix failing to decompress .lk12 files which are saved with compression...
+2. Fix ctrl-r in editors resulting into a cursor glitch in the terminal.
+3. Fix failing to decompress .lk12 files that are saved with compression...
+4. Fix the Windows build not running on updated Windows systems.
+5. Fix the missing `https` support in the Windows build...
 
 \FEngine:\7
 1. `ralt-return` (Right alt + enter) now toggles fullscreen mode (Issue #253).
 2. Updated into `LuaSec V0.8.1`.
-3. Added back Windows 64-bit builds.
+3. Added back the Windows 64-bit builds.
 4. Add in `os.difftime` into the \LIKO-12 environment.
 5. Protect strings metatable from malicious code.
 6. Decrease images, imagedatas and spritebatches memory usage, (internally they now use a proper objects system).
 7. Various performance improvements over the code.
 9. Remove the depricated `coroutine.sethook` function.
+10. Updated into LOVE 11.3.
 
 \FBIOS:\7
 1. Fix the devmode filethread not working on linux and spamming the console.
 
 \FDiskOS:\7
-1. `folder` and `appdata` commands now accept `--path` option, which will print the real path on the secreen instead of openning the folders.
+1. `folder` and `appdata` commands now accept `--path` option, which will print the real path on the screen instead of openning the folders.
 2. Add missing DiskOS API functions into the linter (so they get highlighted in the code editor).
 3. The pause menu is now disabled while inputting text with the `input` function (in games).
 4. The map object now has spritebatch support, call `TileMap:spritebatch()` to enable it, the only cost is that the whole map is drawn (use `clip()` as a walkthrough) (Issue #252).
@@ -42,7 +51,7 @@
 
 
 \FOther:\7
-1. The 16x16 icon now has a black outline, instead of darkgrey.
+1. The 16x16 icon now has a black outline, instead of dark grey.
 
 \9V1.0.1 (25/12/2018):
 

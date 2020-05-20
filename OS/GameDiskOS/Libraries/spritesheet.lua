@@ -32,6 +32,8 @@ return function(img,w,h)
   for y=0, ss.h-1 do for x=0, ss.w-1 do
     ss.quads[#ss.quads + 1] = ss.img:quad(x*ss.cw,y*ss.ch,ss.cw,ss.ch)
   end end
+
+  ss.quads[0] = quad(0,0,0,0,0,0) --Null quad, used by the map object for spritebatch mode.
   
   function ss:image() return self.img end
   function ss:data() return self.img:data() end

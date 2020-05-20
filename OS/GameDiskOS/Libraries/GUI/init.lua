@@ -1,7 +1,7 @@
 --DiskOS LIKO-12 GUI Library
 local class = require("Libraries.middleclass")
 
-local path = ...
+local path = (...)
 local objectsPath = _SystemDrive..":/"..path:gsub("%.","/").."/"
 
 local container = require(path..".container")

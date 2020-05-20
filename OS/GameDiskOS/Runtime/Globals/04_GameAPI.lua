@@ -43,7 +43,7 @@ function Globals.pause()
   
   bkimg:draw(0,0)
   
-  if oldClip then clip(oldClip[1], oldClip[2], oldClip[3], oldClip[4]) end
+  if oldClip then clip(unpack(oldClip)) end
   
   popColor()
   popPalette()

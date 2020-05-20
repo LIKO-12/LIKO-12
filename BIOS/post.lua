@@ -221,7 +221,7 @@ CPU.clearEStack() --Remove any events made while booting.
 
 if enterSetup then
   
-  coroutine.yield("echo",Handled,Devkits)
+  coroutine.yield("echo", Handled,Devkits)
    
   local setup = love.filesystem.load("/BIOS/setup.lua")
   local setupCo = coroutine.create(setup)
