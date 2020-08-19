@@ -34,6 +34,7 @@ if not love.window.isOpen() then
   love.window.setMode(WindowVars.Width,WindowVars.Height,{
     vsync = 1,
     resizable = true,
+    fullscreen = _Mobile,
     minwidth = _LIKO_W,
     minheight = _LIKO_H
   })
@@ -46,8 +47,8 @@ if not love.window.isOpen() then
   love.window.setIcon(love.image.newImageData("icon.png"))
 end
 
---Incase if the host operating system decided to give us different window dimensions.
-WindowVars.Width, WindowVars.Height = love.graphics.getDimensions()
+--Incase if the host operating system decided to give us different window dimensions, or if the mobile device has a notch
+WindowVars.LIKO_X, WindowVars.LIKO_Y, WindowVars.Width, WindowVars.Height = love.window.getSafeArea()
 
 --==Window termination==--
 
@@ -63,14 +64,16 @@ end)
 
 --Hook the resize function
 events.register("love:resize",function(w,h) --Do some calculations
-  WindowVars.Width, WindowVars.Height = w, h
+  local SafeX, SafeY, SafeW, SafeH = love.window.getSafeArea()
+
+  WindowVars.Width, WindowVars.Height = SafeW, SafeH
   local TSX, TSY = w/_LIKO_W, h/_LIKO_H --TestScaleX, TestScaleY
   
   WindowVars.LIKOScale = (TSX < TSY) and TSX or TSY
   if _PixelPerfect then WindowVars.LIKOScale = mathFloor(WindowVars.LIKOScale) end
   
-  WindowVars.LIKO_X, WindowVars.LIKO_Y = (WindowVars.Width-_LIKO_W*WindowVars.LIKOScale)/2, (WindowVars.Height-_LIKO_H*WindowVars.LIKOScale)/2
-  if _Mobile then WindowVars.LIKO_Y, RenderVars.AlwaysDrawTimer = 0, 1 end
+  WindowVars.LIKO_X, WindowVars.LIKO_Y = SafeX + (WindowVars.Width-_LIKO_W*WindowVars.LIKOScale)/2, SafeY + (WindowVars.Height-_LIKO_H*WindowVars.LIKOScale)/2
+  if _Mobile then WindowVars.LIKO_Y, RenderVars.AlwaysDrawTimer = SafeY, 1 end
   
   RenderVars.ShouldDraw = true
 end)
