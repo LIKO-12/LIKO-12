@@ -92,6 +92,11 @@ return function(config)
     
     local sendSFX = {}
     for k,v in ipairs(sfx) do
+      --Squares amplitude. This produces exponential volume instead of linear.
+      if k % 4 == 0 then
+       v = v*v
+      end
+      
       sendSFX[k] = v
     end
     
