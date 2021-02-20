@@ -7,11 +7,15 @@
 [![License Badge](https://img.shields.io/badge/License-MIT-blue.svg)](?id=license)
 [![Stars Badge](https://img.shields.io/github/stars/LIKO-12/LIKO-12.svg?style=flat&label=Stars)](https://github.com/LIKO-12/LIKO-12)
 
----
+# Project Status
+
+The project is still until development, but it's going slow because I'm busy with University and Work.
+
+Currently it's being rewritten in Java, and documented at the same time of writing, so there would be less trouble searching for the documentation.
+
+Meanwhile please don't hesitate to join [LIKO-12's discord](https://discord.gg/GDtHrsJ) and ask for help there!
 
 # About
-
----
 
 LIKO-12 is a fantasy computer that you can use to make, play and share tiny retro-looking games and programs. It comes
 with a default, fully customizable, DOS-like operating system installed, called DiskOS.
@@ -20,10 +24,6 @@ DiskOS provides an environment with basic command line programs and visual game 
 
 The created games and programs are saved as disk files that can be easily shared to friends or anyone else.
 
----
-
 # Website
-
----
 
 Please visit the [website](https://liko-12.github.io/) for more information about LIKO-12, including features list, screenshots, and documentation.
