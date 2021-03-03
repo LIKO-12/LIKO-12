@@ -345,7 +345,7 @@ local showAppdataEvents = {
     GPU.color(7)
     GPU.print(appdataPath,0,sh*0.45-(fh-1)/2,sw,"center")
     
-    printCenterBG("Press "..(mobile and "the green button" or "escape").." to return back",sh*0.66,6,5)
+    printCenterBG("Press "..(mobile and "the red button" or "escape").." to return back",sh*0.66,6,5)
   end,
   
   keypressed = function(self,key)
@@ -381,7 +381,7 @@ local wipeADriveEvents = {
     
     drawOptions(self.options,self.selectedOption)
     
-    printBG("\xC2 Press "..(mobile and "the green button" or "escape").." to return back",2,sh-16,0)
+    printBG("\xC2 Press "..(mobile and "the red button" or "escape").." to return back",2,sh-16,0)
   end,
   
   keypressed = function(self,key,_,isrepeat)
@@ -476,7 +476,7 @@ do
     
     printBG("\xC3 Some operating systems won't work",2,sh-16-(fh+2)*2,0)
     printBG("  if not installed on drive C.",2,sh-16-fh-2,0)
-    printBG("\xC2 Press "..(mobile and "the green button" or "escape").." to return back",2,sh-16,0)
+    printBG("\xC2 Press "..(mobile and "the red button" or "escape").." to return back",2,sh-16,0)
   end
   
   function osInstallerEvents:keypressed(key,_,isrepeat)
