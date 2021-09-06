@@ -8,8 +8,6 @@
 [![License Badge](https://img.shields.io/badge/License-MIT-blue.svg)](?id=license)
 [![Stars Badge](https://img.shields.io/github/stars/LIKO-12/Legacy.svg?style=flat&label=Stars)](https://github.com/LIKO-12/LIKO-12)
 
----
-
 > This repository contains the legacy version of LIKO-12 with the original stars and contributions by people. For the new under-progress rewrite please visit the [new repository](https://github.io/LIKO-12/LIKO-12)
 
 ---
