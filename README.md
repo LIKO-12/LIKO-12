@@ -13,7 +13,7 @@ It has been announced that LIKO-12 will be rewritten in Rust, and will use V8 fo
 
 You can view the announcement on [Twitter](https://twitter.com/rami_sab07/status/1434851235564228609) or on [GitHub Discussions](https://github.com/LIKO-12/LIKO-12/discussions/272)
 
-Please follow me on [Twitter](https://twitter.com/rami_sab07) or even join [LIKO-12's discord](https://discord.gg/GDtHrsJ) and stay tuned!
+Please follow me on [Twitter](https://twitter.com/rami_sab07) or even join [LIKO-12's discord](https://discord.gg/GDtHrsJ) to stay tuned!
 
 # About
 
