@@ -9,11 +9,11 @@
 
 # Project Status
 
-The project is still until development, but it's going slow because I'm busy with University and Work.
+It has been announced that LIKO-12 will be rewritten in Rust, and will use V8 for embedding JavaScript.
 
-Currently it's being rewritten in Java, and documented at the same time of writing, so there would be less trouble searching for the documentation.
+You can view the announcement on [Twitter](https://twitter.com/rami_sab07/status/1434851235564228609) or on [GitHub Discussions](https://github.com/LIKO-12/LIKO-12/discussions/272)
 
-Meanwhile please don't hesitate to join [LIKO-12's discord](https://discord.gg/GDtHrsJ) and ask for help there!
+Please follow me on [Twitter](https://twitter.com/rami_sab07) or even join [LIKO-12's discord](https://discord.gg/GDtHrsJ) and stay tuned!
 
 # About
 
