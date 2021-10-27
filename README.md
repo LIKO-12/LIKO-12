@@ -65,5 +65,3 @@ It's very welcome to start a fork of it, and when a fork is greatly improved it 
 ## Thanks to the LÖVE Community
 
 For being such an awesome community that had the patience to tolerate me as a kid, and help me learn way much stuff over the years.
-
-## Contributors ✨
