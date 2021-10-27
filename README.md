@@ -58,9 +58,9 @@ As the project has growed over the years, it has been split into multiple reposi
 
 ## Project Status
 
-The project is unfurtunatly left unmaintaned, because it's original developer had to move on into other stuff.
+​The project is no longer under maintenance, Rami has to move on into other projects.
 
-It's very welcome to start a fork of it, and when a fork is greatly improved it could be linked here so more people can find it.
+It's very welcome to fork it, and if a fork gained much improvements it can be linked in the original repository.
 
 ## Thanks to the LÖVE Community
 
