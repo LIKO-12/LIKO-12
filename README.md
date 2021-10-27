@@ -7,7 +7,7 @@
 [![releases](https://badgen.net/github/tag/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/releases)
 [![license](https://badgen.net/github/license/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/blob/master/LICENSE)
 
-> The project have been unfurtunatly archived and no longer under development nor maintance. Please feel free to fork the project.
+> The project have been unfortunately archived and no longer under development nor maintance. Please feel free to fork the project.
 
 ---
 
@@ -62,6 +62,8 @@ The project is unfurtunatly left unmaintaned, because it's original developer ha
 
 It's very welcome to start a fork of it, and when a fork is greatly improved it could be linked here so more people can find it.
 
-## Credits
+## Thanks to the LÖVE Community
 
-TODO: write this section
+For being such an awesome community that had the patience to tolerate me as a kid, and help me learn way much stuff over the years.
+
+## Contributors ✨
