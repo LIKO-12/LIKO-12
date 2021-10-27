@@ -7,7 +7,7 @@
 [![releases](https://badgen.net/github/tag/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/releases)
 [![license](https://badgen.net/github/license/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/blob/master/LICENSE)
 
-> The project have been unfurtunatly archived and no longer under development nor maintance. Please feel free to fork the project and contact [@Rami-Sabbagh](https://github.com/Rami-Sabbagh/) for help.
+> The project have been unfurtunatly archived and no longer under development nor maintance. Please feel free to fork the project.
 
 ---
 
@@ -61,3 +61,7 @@ As the project has growed over the years, it has been split into multiple reposi
 The project is unfurtunatly left unmaintaned, because it's original developer had to move on into other stuff.
 
 It's very welcome to start a fork of it, and when a fork is greatly improved it could be linked here so more people can find it.
+
+## Credits
+
+TODO: write this section
