@@ -34,6 +34,16 @@ The created games and programs are saved as disk files that can be easily shared
 - **[TIC-80:](https://tic80.com/)** An open-source PICO-8 clone that does have it's own feel and community. It's in a _finished/stable_ state and supports multiple programming languages. Could be also a good choice.
 - There's a whole list of other fantasy consoles [here](https://github.com/paladin-t/fantasy).
 
+## Gallary
+
+![BIOS POST](https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/BIOS_POSلإ.png)
+![DiskOS Installer](https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/DiskOS_Installer.png)
+![Commandline Prompt](https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/DiskOS_Prompt.gif)
+![Code Edittor](https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/Code_Editor.png)
+![Sprite Edittor](https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/Sprite_Editor.png)
+![Map Edittor](https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/Map_Editor.png)
+![WIP Edittor](https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/WIP_Editor.png)
+
 ## Documentation
 
 The documentation is scattered and available over multiple places:
