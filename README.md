@@ -7,7 +7,7 @@
 [![releases](https://badgen.net/github/tag/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/releases)
 [![license](https://badgen.net/github/license/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/blob/master/LICENSE)
 
-> The project have been unfortunately archived and no longer under development nor maintance. Please feel free to fork the project.
+> The project have been unfortunately archived and no longer under development nor maintenance. Please feel free to fork the project.
 
 ---
 
@@ -32,7 +32,7 @@ The created games and programs are saved as disk files that can be easily shared
 - **[PICO-8:](https://www.lexaloffle.com/pico-8.php)** The original fantasy console that started the whole trend. It's community is pretty good. Made with care to provide the old consoles feel. Recommended for anyone who can purchase it.
 - **[PixelVision8:](https://pixelvision8.github.io/Website/)** An open-source fantasy console that promises to keep the old consoles feel, still under development till today. Has a very good quality and sweet graphics.
 - **[TIC-80:](https://tic80.com/)** An open-source PICO-8 clone that does have it's own feel and community. It's in a _finished/stable_ state and supports multiple programming languages. Could be also a good choice.
-- Theres a whole list of other fantasy consoles [here](https://github.com/paladin-t/fantasy).
+- There's a whole list of other fantasy consoles [here](https://github.com/paladin-t/fantasy).
 
 ## Documentation
 
@@ -50,11 +50,11 @@ The demos and games included could be used as a last resort before reading the s
 
 LIKO-12 was made using the awesome [LÖVE Framework](https://love2d.org) and written purely in Lua.
 
-Lua is a simple scripting language that used to be very good back in the days, and it could still serve as a good start for begineers with some care to overcome the obstacles of moving into other well known languages like JavaScript.
+Lua is a simple scripting language that used to be very good back in the days, and it could still serve as a good start for beginners with some care to overcome the obstacles of moving into other well known languages like JavaScript. (Although Python is a better choice for learning programming)
 
 There are lots of ninja crimes in the codebase, where I sacrificed code readability to feel satisfied in doing something so hacky and Lua specific. Very sorry for that 😬
 
-As the project has growed over the years, it has been split into multiple repositories under the [LIKO-12 Organization](https://github.com/LIKO-12)
+As the project has grew over the years, it has been split into multiple repositories under the [LIKO-12 Organization](https://github.com/LIKO-12)
 
 ## Project Status
 
