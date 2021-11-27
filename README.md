@@ -31,7 +31,7 @@ The created games and programs are saved as disk files that can be easily shared
 
 - **[PICO-8:](https://www.lexaloffle.com/pico-8.php)** The original fantasy console that started the whole trend. It's community is pretty good. Made with care to provide the old consoles feel. Recommended for anyone who can purchase it.
 - **[PixelVision8:](https://pixelvision8.github.io/Website/)** An open-source fantasy console that promises to keep the old consoles feel, still under development till today. Has a very good quality and sweet graphics.
-- **[TIC-80:](https://tic80.com/)** An open-source PICO-8 clone that does have it's own feel and community. It's in a _finished/stable_ state and supports multiple programming languages. Could be also a good choice.
+- **[TIC-80:](https://tic80.com/)** An open-source PICO-8 clone that does have it's own feel and community. It's in a _finished/stable_ state and supports multiple programming languages. Could be also a good choice, but it also has a paid PRO version to support the developer.
 - There's a whole list of other fantasy consoles [here](https://github.com/paladin-t/fantasy).
 
 ## Gallary
