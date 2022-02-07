@@ -174,37 +174,37 @@ function t:drawMap()
   
   --Draw selection
   if selsx then
-	--Pixel space positions
+    --Pixel space positions
     local seldx = selsx*8+mapdx-1
     local seldy = selsy*8+mapdy-1+8
     
-	--Tile space size
+    --Tile space size
     local selw, selh = selex-selsx, seley-selsy
-	--Pixel space size
-	local seldw, seldh = selw*8+10, selh*8+10
-	
-	--Outer rect
+    --Pixel space size
+    local seldw, seldh = selw*8+10, selh*8+10
+    
+    --Outer rect
     rect(seldx-2,seldy-2,seldw+4,seldh+4,true,0)
-	--Middle rect
-	--NOTE (2/6/22): For whatever reason palt is not working on pattern fill.
-	--For that reason, this is necessary to fill the background.
+    --Middle rect
+    --NOTE (2/6/22): For whatever reason palt is not working on pattern fill.
+    --For that reason, this is necessary to fill the background.
     rect(seldx-1,seldy-1,seldw+2,seldh+2,true,0)
-	--Inner rect
+    --Inner rect
     rect(seldx,seldy,seldw,seldh,true,0)
-	--Dotted line pattern
+    --Dotted line pattern
     patternFill(selPattern)
     rect(seldx-1,seldy-1,seldw+2,seldh+2,true,7)
-	patternFill()
-	
-	--Selection data display
-	--Background
-	rect(0, sheight - SelectDataHeight, SelectDataWidth, SelectDataHeight, false, 0)
-	--Readout
-	color(7)
-	print("x: "..selsx, 1, sheight - SelectDataHeight + 1)
-	print("y: "..selsy, 1, sheight - SelectDataHeight + 8)
-	print("w: "..selw+1, 1, sheight - SelectDataHeight + 15)
-	print("h: "..selh+1, 1, sheight - SelectDataHeight + 22)
+    patternFill()
+    
+    --Selection data display
+    --Background
+    rect(0, sheight - SelectDataHeight, SelectDataWidth, SelectDataHeight, false, 0)
+    --Readout
+    color(7)
+    print("x: "..selsx, 1, sheight - SelectDataHeight + 1)
+    print("y: "..selsy, 1, sheight - SelectDataHeight + 8)
+    print("w: "..selw+1, 1, sheight - SelectDataHeight + 15)
+    print("h: "..selh+1, 1, sheight - SelectDataHeight + 22)
   end
   
   --Declip
