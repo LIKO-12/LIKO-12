@@ -25,6 +25,8 @@ local MapVW, MapVH = swidth/8, sheight/8 --The visible map space in cells.
 
 local MapVPW, MapVPH = MapVW*8, MapVH*8 --The visible map space in pixels.
 
+local SelectDataWidth, SelectDataHeight = 31, 29 --The size of the rectangle that displays information about selection.
+
 local Map = MapObj(MapW, MapH)
 
 local mapdx, mapdy = 0,0 --Map drawing offsets.
@@ -126,7 +128,7 @@ function t:drawToolbar()
   end
   
   --Draw the tools
-  rect(swidth-9,sheight-5*8,8,5*8, false, 9)
+  rect(swidth-9,sheight-5*8,8,5*8, false, 2)
   for i=0,4 do
     local sprid = 114+i
     
@@ -172,17 +174,37 @@ function t:drawMap()
   
   --Draw selection
   if selsx then
+	--Pixel space positions
     local seldx = selsx*8+mapdx-1
     local seldy = selsy*8+mapdy-1+8
     
-    local selw = (selex-selsx)*8+10
-    local selh = (seley-selsy)*8+10
-    rect(seldx-2,seldy-2,selw+4,selh+4,true,0)
-    rect(seldx-1,seldy-1,selw+2,selh+2,true,0)
-    rect(seldx,seldy,selw,selh,true,0)
+	--Tile space size
+    local selw, selh = selex-selsx, seley-selsy
+	--Pixel space size
+	local seldw, seldh = selw*8+10, selh*8+10
+	
+	--Outer rect
+    rect(seldx-2,seldy-2,seldw+4,seldh+4,true,0)
+	--Middle rect
+	--NOTE (2/6/22): For whatever reason palt is not working on pattern fill.
+	--For that reason, this is necessary to fill the background.
+    rect(seldx-1,seldy-1,seldw+2,seldh+2,true,0)
+	--Inner rect
+    rect(seldx,seldy,seldw,seldh,true,0)
+	--Dotted line pattern
     patternFill(selPattern)
-    rect(seldx-1,seldy-1,selw+2,selh+2,true,7)
-    patternFill()
+    rect(seldx-1,seldy-1,seldw+2,seldh+2,true,7)
+	patternFill()
+	
+	--Selection data display
+	--Background
+	rect(0, screenHeight() - SelectDataHeight, SelectDataWidth, SelectDataHeight, false, 0)
+	--Readout
+	color(7)
+	print("x: "..selsx, 1, screenHeight() - SelectDataHeight + 1)
+	print("y: "..selsy, 1, screenHeight() - SelectDataHeight + 8)
+	print("w: "..selw+1, 1, screenHeight() - SelectDataHeight + 15)
+	print("h: "..selh+1, 1, screenHeight() - SelectDataHeight + 22)
   end
   
   --Declip
