@@ -198,13 +198,13 @@ function t:drawMap()
 	
 	--Selection data display
 	--Background
-	rect(0, screenHeight() - SelectDataHeight, SelectDataWidth, SelectDataHeight, false, 0)
+	rect(0, sheight - SelectDataHeight, SelectDataWidth, SelectDataHeight, false, 0)
 	--Readout
 	color(7)
-	print("x: "..selsx, 1, screenHeight() - SelectDataHeight + 1)
-	print("y: "..selsy, 1, screenHeight() - SelectDataHeight + 8)
-	print("w: "..selw+1, 1, screenHeight() - SelectDataHeight + 15)
-	print("h: "..selh+1, 1, screenHeight() - SelectDataHeight + 22)
+	print("x: "..selsx, 1, sheight - SelectDataHeight + 1)
+	print("y: "..selsy, 1, sheight - SelectDataHeight + 8)
+	print("w: "..selw+1, 1, sheight - SelectDataHeight + 15)
+	print("h: "..selh+1, 1, sheight - SelectDataHeight + 22)
   end
   
   --Declip
