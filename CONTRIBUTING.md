@@ -3,7 +3,13 @@
 
 ## Building LIKO-12
 
-TODO: expand this
+### Packing a universal `.love` file
+
+Simply pack the content of the `src` folder (without the wrapping folder) into a `.zip` file and rename it's extension to `.love`.
+
+### Creating platform-specific binaries
+
+Follow the instructions on [LÖVE Wiki](https://love2d.org/wiki/Game_Distribution).
 
 ## Setting up development environment
 
