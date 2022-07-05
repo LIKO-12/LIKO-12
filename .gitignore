@@ -1,19 +1,5 @@
 *.db
-
-# Releases
-/builds
+.DS_Store
 
 # User Configuration files
 /OS/DiskOS/autoexec.lua
-
-.DS_Store
-
-# Snap packaging specific files
-/snap/.snapcraft/
-/parts/
-/stage/
-/prime/
-
-/*.snap
-/*_source.tar.bz2
-
