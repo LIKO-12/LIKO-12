@@ -4,7 +4,6 @@ local DevMode = love.filesystem.getInfo("/Miscellaneous/devmode.txt") and true o
 
 local events = require("Engine.events")
 local coreg = require("Engine.coreg")
-local loveZip = require("Engine.love-zip")
 
 local Handled, Devkits = ... --It has been passed by the BIOS :)
 
@@ -71,70 +70,6 @@ likologo:draw(2,7)
 
 GPU.print("LIKO-12 - Fantasy Computer",15,6)
 GPU.print("Copyright (C) Rami Sabbagh",15,13)
-
---LIKO-12 Sourcecode .love creation
-if _LIKO_Old or not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love") then
-  print("Creating LIKO-12_Source.love")
-  
-  GPU._systemMessage("Generating an internal file...",60,0,7,true)
-  GPU.flip()
-  
-  --Create the sourcecode.love
-  local currentIdentity = love.filesystem.getIdentity()
-  love.filesystem.setIdentity("LIKO-12_TEMP")
-  
-  local blackList = {"/.git","/.gitattributes","/.gitignore","/.github","/.vscode","/.nomedia","/DLL","/Travis","/snap","/.luacheckrc","/.travis.yml","/README.md","/CODE_OF_CONDUCT.md","/CONTRIBUTING.md","/PULL_REQUEST_TEMPLATE.md"}
-  for i=1,#blackList do blackList[blackList[i]] = i end
-  
-  local writer = loveZip.newZipWriter()
-  
-  local paths = {}
-  
-  local function index(dir)
-    if blackList[dir] then return end
-    local dirInfo = love.filesystem.getInfo(dir)
-    
-    if dirInfo.type == "file" then
-      paths[#paths + 1] = dir
-    elseif dirInfo.type == "directory" then
-      for id,item in ipairs(love.filesystem.getDirectoryItems(dir)) do
-        index(dir.."/"..item)
-      end
-    end
-  end
-  
-  index("")
-  
-  for i=1, #paths do
-    local percent = "("..math.floor((i/#paths)*100) .. "%)..."
-    GPU._systemMessage("Generating an internal file "..percent,60,0,7)
-    CPU.sleep(0)
-    
-    local dir = paths[i]
-    local dirInfo = love.filesystem.getInfo(dir)
-    local fileData = love.filesystem.read(dir)
-    local fileName = dir:sub(2,-1)
-    local modTime = dirInfo.modTime
-    
-    writer.addFile(fileName,fileData,modTime)
-  end
-  
-  GPU._systemMessage("Finalizing the internal file...",60,0,7)
-  GPU.flip()
-  
-  local LIKO_SRC_ZIP = assert(writer.finishZip()):read()
-  
-  GPU._systemMessage("Writing the internal file...",60,0,7)
-  GPU.flip()
-  
-  love.filesystem.setIdentity(currentIdentity)
-  love.filesystem.write("/Miscellaneous/LIKO-12_Source.love",LIKO_SRC_ZIP)
-  
-  CPU.clearEStack()
-  
-  GPU._systemMessage("",0)
-  GPU.flip()
-end
 
 if migrate080 then
   love.filesystem.load("BIOS/migrate080.lua")(Handled)

@@ -10,7 +10,6 @@ end
 
 if #args < 1 or args[1] == "-?" then
   printUsage("mount <zipPath>","Mounts a .ZIP file to the ZIP drive.",
-             "mount --LIKOSRC","Mounts LIKO-12 SourceCode to the ZIP drive.",
              "mount","Unmount the .ZIP file from the ZIP drive.")
   color(7) print("Type 'drives' to check the current mounted ZIP")
   return
@@ -18,17 +17,14 @@ end
 
 local term = require("terminal")
 
-local source, zipData = args[1]
-if source == "--LIKOSRC" then
-  zipData = BIOS.getSRC() or ""
-else
-  source = term.resolve(source)
+local source = args[1]
 
-  if not fs.exists(source) then return 1, "File doesn't exist" end
-  if fs.isDirectory(source) then return 1, "Couldn't mount a directory !" end
+source = term.resolve(source)
 
-  zipData = fs.read(source)
-end
+if not fs.exists(source) then return 1, "File doesn't exist" end
+if fs.isDirectory(source) then return 1, "Couldn't mount a directory !" end
+
+local zipData = fs.read(source)
 
 local success = fs.mountZIP(zipData)
 if success then

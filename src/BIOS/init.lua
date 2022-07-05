@@ -159,13 +159,6 @@ do
     return true, _FirstBoot or false
   end
   
-  --Returns LIKO-12_Source.love data.
-  function yAPIS.BIOS.getSRC()
-    if not love.filesystem.getInfo("/Miscellaneous/LIKO-12_Source.love") then return true, false, "LIKO-12_Source.love doesn't exist ! Try to reboot." end
-    
-    return true, love.filesystem.read("/Miscellaneous/LIKO-12_Source.love")
-  end
-  
 end
 
 --The BIOS config sandbox
