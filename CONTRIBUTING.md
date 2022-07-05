@@ -12,3 +12,8 @@ TODO: expand this
 3. Clone the project locally.
 4. Open the project with your favorite IDE that supports Lua highlighting.
 5. To run LIKO-12 type `love ./src` in the terminal (with the repository root being the working directory).
+
+### Visual Studio Code
+
+- Find some Lua extension (right now I don't know what reliable ones are there).
+- `tasks.json` is provided to simply run LIKO-12 with the right arguments.
