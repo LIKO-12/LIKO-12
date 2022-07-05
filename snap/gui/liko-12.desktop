@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=LIKO-12
-Comment=An open-source fantasy computer, powered by LÖVE
-Exec=liko-12
-Icon=${SNAP}/Icon/icon-large.png
-Categories=Game

@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-# This is the snap maintenance launcher, you can add additional commands
-# to be run before/after the application launch for any purposes, like
-# displaying snap security confinement/snap obsoletion notice, etc.
-
-# Run the next command chain
-"${@}"
-
