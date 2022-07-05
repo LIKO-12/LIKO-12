@@ -55,7 +55,7 @@ The documentation is scattered and available over multiple places:
 - In the [cheatsheets](https://liko-12.github.io/#/Documentation/Cheatsheets/) (best resource I believe).
 - [LIKO-12 GitHub Webpage](https://liko-12.github.io/) (sufferes from changing navigation bar issues).
 - [Another GitHub Webpage](https://liko-12.github.io/WIP/) (an attempt to get better documentation).
-- Via a Discord bot on [LIKO-12's Discord](https://discord.gg/GDtHrsJ)
+- Via a Discord bot on [LIKO-12's Discord](https://discord.gg/adjqkd639F)
 - In a JSON format on the [API-Documentation Repository](https://github.com/LIKO-12/API-Documentation) (used by the Discord bot).
 
 The demos and games included could be used as a last resort before reading the source-code.
