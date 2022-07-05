@@ -3,7 +3,7 @@
 local Globals = (...) or {}
 
 --Only the allowed ones ;)
-local blocklist = { HDD = true, WEB = true, FDD = true, BIOS = true }
+local blocklist = { HDD = true, FDD = true, BIOS = true }
 local perglob = {GPU = true, CPU = true, Keyboard = true, RAM = true} --The perihperals to make global not in a table.
 
 local handledapis = BIOS.HandledAPIS()
