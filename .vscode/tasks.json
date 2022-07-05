@@ -8,7 +8,7 @@
             "type": "shell",
             "command": "love ${workspaceFolder}/src",
             "windows": {
-                "command": "lovec ${workspaceFolder}/src",
+                "command": "lovec ${workspaceFolder}\\src",
             },
             "group": {
                 "kind": "build",
