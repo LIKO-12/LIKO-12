@@ -72,5 +72,3 @@ PA("FDD","FDD",{
   DiskSize = KB(64),
   FRAMAddress = 0x6000
 })
-
-local WEB, yWEB, WEBKit = PA("WEB","WEB",{CPUKit = CPUKit})
