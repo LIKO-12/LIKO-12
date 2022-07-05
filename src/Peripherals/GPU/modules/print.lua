@@ -136,7 +136,7 @@ function GPU.print(t,x,y,limit,align,r,sx,sy,ox,oy,kx,ky) UnbindVRAM()
       pc.x = pc.x + utf8Len(t) --Update the x pos
       return true --It ran successfully
     end
-    t = t.."\n"
+    
     if type(x) == "nil" or x then t = t .. "\n" end --Auto newline after printing.
     
     local sw = TERM_W*(_FontW+1) --Screen width
