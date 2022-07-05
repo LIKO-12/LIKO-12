@@ -6,9 +6,9 @@
         {
             "label": "Run LIKO-12",
             "type": "shell",
-            "command": "love .",
+            "command": "love ${workspaceFolder}/src",
             "windows": {
-                "command": "lovec .",
+                "command": "lovec ${workspaceFolder}/src",
             },
             "group": {
                 "kind": "build",
