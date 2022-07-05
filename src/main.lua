@@ -28,8 +28,6 @@ I don't think anyone would want to edit anything in this file.
 
 local package_exceptions = {
   "bit", "utf8", "ffi", --LuaJIT
-  "ssl.core", "ssl.context", "ssl.x209", "ssl", "https", --LuaSec
-  "socket.http", "ltn12", "mime", "socket.smtp", "socket", "socket.url" --LuaSocket
 }
 
 for k,v in ipairs(package_exceptions) do package_exceptions[v] = k end
