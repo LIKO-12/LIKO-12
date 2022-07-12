@@ -6,31 +6,31 @@ max_line_length = false --Disable max line length warnings.
 std = "luajit+love" --Lua and LuaJIT standard environment.
 
 globals = {
-	"_LVer","_LVERSION", --LIKO-12 Version variables.
-	
+	"_LVer", "_LVERSION", --LIKO-12 Version variables.
+
 	--Missing love globals.
-	
+
 	"love.arg.parseGameArguments",
-	
+
 	"love.audio.newQueueableSource",
-	
+
 	"love.data.compress",
 	"love.data.decode",
 	"love.data.decompress",
 	"love.data.encode",
 	"love.data.hash",
-	
+
 	"love.errorhandler",
-	
+
 	"love.filesystem.getInfo",
 	"love.filesystem.newDirectory",
-	
+
 	"love.graphics.isActive",
 	"love.graphics.isCreated",
-	
+
 	"love.keyboard.getKeyRepeat",
 	"love.keyboard.getTextInput",
-	
+
 	"love.mouse.isCursorSupported"
 }
 
@@ -44,7 +44,7 @@ ignore = {
 }
 
 --Configuration for LIKO-12 operating systems.
-files["OS"] = {
+files["src/OS"] = {
 	global = false,
 	unused = false,
 	redefined = false,
@@ -53,10 +53,10 @@ files["OS"] = {
 
 	allow_defined = true,
 	allow_defined_top = true,
-	not_globals = {"_LVer","_LVERSION"}
+	not_globals = { "_LVer", "_LVERSION" }
 }
 
 --Ignore long line warnings for conf.lua
-files["conf.lua"] = {
-	ignore={"631"} --Line is too long.
+files["src/conf.lua"] = {
+	ignore = { "631" } --Line is too long.
 }
