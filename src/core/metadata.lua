@@ -45,22 +45,28 @@ do
     end
 end
 
----Get the type of the build.
----Read `docs/versioning.md` for more info on version tags and build type.
----@return "release"|"pre-release"|"expermintal"|"development"|"custom" buildType
-function metadata.getBuildType()
-    local tag = metadata.getVersionTag()
+do
+    local buildType = 'custom'
 
-    if tag:match('^%d+\\.%d+.%d+$') then
-        return 'release'
-    elseif tag:match('^%d+%.%d+%.%d+%-.+$') then
-        return 'pre-release'
-    elseif tag:match('^experiments%-%d%d%d%d%d%d%d%d%-%d%d%d$') then
-        return 'expermintal'
-    elseif tag:match('^%x+$') and #tag == 40 then
-        return 'development'
-    else
-        return 'custom'
+    do
+        local tag = metadata.getVersionTag()
+
+        if tag:match('^%d+%.%d+.%d+$') then
+            buildType = 'release'
+        elseif tag:match('^%d+%.%d+%.%d+%-.+$') then
+            buildType = 'pre-release'
+        elseif tag:match('^experimental%-%d%d%d%d%d%d%d%d%-%d%d%d$') then
+            buildType = 'expermintal'
+        elseif tag:match('^%x+$') and #tag == 40 then
+            buildType = 'development'
+        end
+    end
+
+    ---Get the type of the build.
+    ---Read `docs/versioning.md` for more info on version tags and build type.
+    ---@return "release"|"pre-release"|"expermintal"|"development"|"custom" buildType
+    function metadata.getBuildType()
+        return buildType
     end
 end
 
