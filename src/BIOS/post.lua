@@ -15,18 +15,6 @@ local fs = Handled.HDD
 local RAMKit = Devkits.RAM
 
 local _LIKO_Version, _LIKO_Old = BIOS.getVersion()
-local _FirstBoot = BIOS.isFirstBoot()
-
---Check if we have to migrate from LIKO-12 v0.8.0
-local migrate080 = false
-if _FirstBoot then
-  local cIdentity = love.filesystem.getIdentity()
-  love.filesystem.setIdentity("liko12")
-  
-  migrate080 = not not (love.filesystem.getInfo(".version") or love.filesystem.getInfo("Miscellaneous/.version"))
-  
-  love.filesystem.setIdentity(cIdentity)
-end
 
 local Mobile = CPU.isMobile()
 
@@ -70,10 +58,6 @@ likologo:draw(2,7)
 
 GPU.print("LIKO-12 - Fantasy Computer",15,6)
 GPU.print("Copyright (C) Rami Sabbagh",15,13)
-
-if migrate080 then
-  love.filesystem.load("BIOS/migrate080.lua")(Handled)
-end
 
 GPU.printCursor(0,3,0)
 GPU.print(string.format("NormBIOS Revision %d%d%d-018",_LVer.major,_LVer.minor,_LVer.patch))
