@@ -70,4 +70,10 @@ do
     end
 end
 
+---Check if the build type is `development`.
+---@return boolean isIt
+function metadata.isDevelopment()
+    return metadata.getBuildType() == 'development'
+end
+
 return metadata
