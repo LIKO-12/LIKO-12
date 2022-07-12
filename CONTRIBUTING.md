@@ -23,3 +23,7 @@ Follow the instructions on [LÖVE Wiki](https://love2d.org/wiki/Game_Distributio
 
 - Find some Lua extension (right now I don't know what reliable ones are there).
 - `tasks.json` is provided to simply run LIKO-12 with the right arguments.
+
+## Linting
+
+Using the [lunarmodules fork of luacheck](https://github.com/lunarmodules/luacheck).
