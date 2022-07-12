@@ -34,11 +34,15 @@ local function readVersionFile()
     return content
 end
 
----Get the version tag of the build.
----Read `docs/versioning.md` for more info on version tags and build type.
----@return string tag can be an empty string.
-function metadata.getVersionTag()
-    return readVersionFile() or fetchCommitId() or ''
+do
+    local versionTag = readVersionFile() or fetchCommitId() or ''
+
+    ---Get the version tag of the build.
+    ---Read `docs/versioning.md` for more info on version tags and build type.
+    ---@return string tag can be an empty string.
+    function metadata.getVersionTag()
+        return versionTag
+    end
 end
 
 ---Get the type of the build.
