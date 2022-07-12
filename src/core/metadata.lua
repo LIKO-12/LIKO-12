@@ -1,10 +1,10 @@
 ---Metadata of the applcation (version info).
 local metadata = {}
 
----Fetches the head commit id.
+---Fetch the head commit id.
 ---By reading some files from the `.git` directory (hackish solution but portable).
----@return string|nil commitId commit id. `nil` when the `.git` directory doesn't exist or running in fused mode.
-function metadata.fetchCommitId()
+---@return string|nil commitId `nil` when the `.git` directory doesn't exist or running in fused mode.
+local function fetchCommitId()
     if love.filesystem.isFused() then return end
 
     local baseDirectory = love.filesystem.getSourceBaseDirectory()
@@ -24,6 +24,40 @@ function metadata.fetchCommitId()
     referenceFile:close()
 
     return assert(commitId, 'failed to resolve commitId')
+end
+
+---Read the content of the version.txt file if it exists.
+---Check `docs/versioning.md`.
+---@return string|nil versionTag `nil` when the file doesn't exists (considered a development/custom build).
+local function readVersionFile()
+    local content = love.filesystem.read('version.txt')
+    return content
+end
+
+---Get the version tag of the build.
+---Read `docs/versioning.md` for more info on version tags and build type.
+---@return string tag can be an empty string.
+function metadata.getVersionTag()
+    return readVersionFile() or fetchCommitId() or ''
+end
+
+---Get the type of the build.
+---Read `docs/versioning.md` for more info on version tags and build type.
+---@return "release"|"pre-release"|"expermintal"|"development"|"custom" buildType
+function metadata.getBuildType()
+    local tag = metadata.getVersionTag()
+
+    if tag:match('^%d+\\.%d+.%d+$') then
+        return 'release'
+    elseif tag:match('^%d+%.%d+%.%d+%-.+$') then
+        return 'pre-release'
+    elseif tag:match('^experiments%-%d%d%d%d%d%d%d%d%-%d%d%d$') then
+        return 'expermintal'
+    elseif tag:match('^%x+$') and #tag == 40 then
+        return 'development'
+    else
+        return 'custom'
+    end
 end
 
 return metadata
