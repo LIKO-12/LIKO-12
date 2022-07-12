@@ -3,6 +3,7 @@
 local BuildMode = love.filesystem.getInfo("build.json") and true or false
 
 local json = require("Engine.JSON")
+local metadata = require('core.metadata')
 
 if BuildMode then
   BuildMode = json:decode(love.filesystem.read("build.json"))
@@ -12,7 +13,7 @@ if not love.filesystem.getInfo("Miscellaneous","directory") then
   love.filesystem.createDirectory("Miscellaneous")
 end
 
-local _LIKO_Version, _LIKO_Old, _FirstBoot = _LVERSION:sub(2,-1)
+local _LIKO_Version, _LIKO_Old, _FirstBoot = metadata.getVersionTag()
 if love.filesystem.getInfo("Miscellaneous/.version","file") then
   _LIKO_Old = love.filesystem.read("Miscellaneous/.version")
   if _LIKO_Old == _LIKO_Version then

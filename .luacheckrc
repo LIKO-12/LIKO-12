@@ -6,8 +6,6 @@ max_line_length = false --Disable max line length warnings.
 std = "luajit+love" --Lua and LuaJIT standard environment.
 
 globals = {
-	"_LVer", "_LVERSION", --LIKO-12 Version variables.
-
 	--Missing love globals.
 
 	"love.arg.parseGameArguments",
@@ -53,7 +51,6 @@ files["src/OS"] = {
 
 	allow_defined = true,
 	allow_defined_top = true,
-	not_globals = { "_LVer", "_LVERSION" }
 }
 
 --Ignore long line warnings for conf.lua
