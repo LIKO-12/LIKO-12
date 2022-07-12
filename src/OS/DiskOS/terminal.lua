@@ -1,9 +1,4 @@
 --The terminal !--
-local _LIKO_TAG = _LVer.tag
-local _LIKO_DEV = (_LIKO_TAG == "Development")
-local _LIKO_PRE = (_LIKO_TAG == "Pre-Release")
-local _LIKO_BUILD = _LVer.major ..".".. _LVer.minor ..".".. _LVer.patch
-
 local PATH = "D:/Programs/;C:/Programs/;" --The system PATH variable, used by the terminal to search for programs.
 local curdrive, curdir, curpath = "D", "/", "D:/" --The current active path in the terminal.
 
@@ -62,19 +57,41 @@ local function split(str)
   return unpack(t)
 end
 
+local versionTag = _LIKO_Version
+
+if _LIKO_BuildType == 'development' then
+  versionTag = versionTag:sub(1,7)
+elseif _LIKO_BuildType == 'experimental' then
+  versionTag = versionTag:sub(14,-1)
+end
+
+local buildTypeColor = ({
+  ['release'] = 11,
+  ['pre-release'] = 10,
+  ['experimental'] = 9,
+  ['development'] = 8,
+  ['custom'] = 14,
+})[_LIKO_BuildType]
+
+local buildTypeSymbol = ({
+  ['release'] = 'REL-',
+  ['pre-release'] = 'PRE-',
+  ['experimental'] = 'EXP-',
+  ['development'] = 'DEV-',
+  ['custom'] = versionTag == '' and 'CUSTOM' or 'CUS-',
+})[_LIKO_BuildType]
+
 local term = {} --The terminal API
 
 function term.init()
   editor = require("Editors") --Load the editors
   clear()
-  SpriteGroup(25,1,1,5,1,1,1,0,_SystemSheet)
-  printCursor(0,1,0)
-  color(_LIKO_DEV and 8 or (_LIKO_PRE and 9 or 11)) print(_LIKO_TAG,5*8+1,3)
-  flip() sleep(0.125)
-  color(7) print("V".._LIKO_BUILD,(_LIKO_DEV or _LIKO_PRE) and 53 or 43,10)
-  cam("translate",0,3) color(12) print("D",false) color(6) print("isk",false) color(12) print("OS") color(6) cam()
-  _SystemSheet:draw(60,(fw+1)*6+1,fh+3) flip() sleep(0.125)
-  color(6) print("\nhttps://liko-12.github.io")
+  
+  SpriteGroup(25,3,4,5,1,1,1,0,_SystemSheet)
+  color(buildTypeColor) print(buildTypeSymbol, 44, 5, false, false)
+  color(6) print(versionTag, 63, 5, false, false)
+  color(7) print("https://liko-12.github.io/", 4, 12)
+  printCursor(0,2,0)
 
   flip() sleep(0.0625)
   if fs.exists("D:/autoexec.lua") then
@@ -83,7 +100,7 @@ function term.init()
     term.executeFile("C:/autoexec.lua")
   else
     if _LIKO_Old then
-      color(7) print("\n Updated LIKO-12 Successfully.\n Type ",false)
+      color(7) print("Updated LIKO-12 Successfully.\nType ",false)
       color(6) print("help Whatsnew",false)
       color(7) print(" for changelog.\n")
     else
