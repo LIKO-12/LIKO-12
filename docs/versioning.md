@@ -5,11 +5,11 @@ It's decided that there will be 3 releases channels with 2 other non-releases pa
 
 ## Releases Types
 
-| Type         | Pattern                                    | Regex                                                    |
+| Type         | Pattern                                    | Regex (in Lua format)                                    |
 |--------------|--------------------------------------------|----------------------------------------------------------|
-| Release      | `(major).(minor).(patch)`                  | `^(%d+)\.(%d+)\.(%d+)$`                                  |
-| Pre-Release  | `(major).(minor).(patch)-(pre-release id)` | `^(%d+)\.(%d+)\.(%d+)\-(.*)$`                            |
-| Experimental | `experimental-YYYYMMDD-CCC`                | `^experimental\-(%d+)\-(%d+)$` and length should be `25` |
+| Release      | `(major).(minor).(patch)`                  | `^(%d+)%.(%d+)%.(%d+)$`                                  |
+| Pre-Release  | `(major).(minor).(patch)-(pre-release id)` | `^(%d+)%.(%d+)%.(%d+)\-(.*)$`                            |
+| Experimental | `experimental-YYYYMMDD-CCC`                | `^experimental%-(%d+)%-(%d+)$` and length should be `25` |
 | Development  | `(git commit id)`                          | `^%x$` and length should be `40`                         |
 | Custom       | `(any)`                                    | `.*`                                                     |
 
