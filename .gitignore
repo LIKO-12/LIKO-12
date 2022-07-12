@@ -1,5 +1,8 @@
 *.db
 .DS_Store
 
+# Version tag
+/src/version.txt
+
 # User Configuration files
 /OS/DiskOS/autoexec.lua
