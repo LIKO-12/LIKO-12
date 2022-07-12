@@ -86,7 +86,7 @@ local term = {} --The terminal API
 function term.init()
   editor = require("Editors") --Load the editors
   clear()
-  
+
   SpriteGroup(25,3,4,5,1,1,1,0,_SystemSheet)
   color(buildTypeColor) print(buildTypeSymbol, 44, 5, false, false)
   color(6) print(versionTag, 63, 5, false, false)
@@ -100,7 +100,7 @@ function term.init()
     term.executeFile("C:/autoexec.lua")
   else
     if _LIKO_Old then
-      color(7) print("Updated LIKO-12 Successfully.\nType ",false)
+      color(7) print("\nUpdated LIKO-12 Successfully.\nType ",false)
       color(6) print("help Whatsnew",false)
       color(7) print(" for changelog.\n")
     else
