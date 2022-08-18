@@ -1,6 +1,6 @@
 \BChangelog:
 
-\9V1.1.1 (WorkInProgress):
+\9(WorkInProgress):
 
 \FBugfixes:\7
 1. Fix `fset()` not actually settings the flags when supplied with the flags byte as a number.
