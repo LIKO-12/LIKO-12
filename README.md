@@ -1,14 +1,11 @@
 
-# ![LIKO-12](https://github.com/LIKO-12/Extras/raw/master/Readme-Screenshots/Header_Logo.png)
+# ![LIKO-12](https://github.com/LIKO-12/Extras/raw/main/Readme-Screenshots/Header_Logo.png)
 
 [![stars](https://badgen.net/github/stars/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12)
-[![commits](https://badgen.net/github/commits/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/commits/master)
+[![commits](https://badgen.net/github/commits/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/commits/main)
 [![github downloads](https://img.shields.io/github/downloads/LIKO-12/LIKO-12/total.svg)](https://github.com/LIKO-12/LIKO-12/releases)
 [![releases](https://badgen.net/github/tag/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/releases)
-[![license](https://badgen.net/github/license/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/blob/master/LICENSE)
-
-> The project have been unfortunately archived and no longer under development nor maintenance. Please feel free to fork the project.
-
+[![license](https://badgen.net/github/license/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/blob/main/LICENSE)
 ---
 
 ## About
@@ -40,13 +37,13 @@ The created games and programs are saved as disk files that can be easily shared
 |------------------------|-------------------------------|---------------------------------|---------------------------|-----------------------------|--------------------------|--------------------------|
 | ![BIOS POST][IMAGE_01] | ![DiskOS Installer][IMAGE_02] | ![Commandline Prompt][IMAGE_03] | ![Code Edittor][IMAGE_04] | ![Sprite Edittor][IMAGE_05] | ![Map Edittor][IMAGE_06] | ![WIP Edittor][IMAGE_07] |
 
-[IMAGE_01]: https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/BIOS_POST.png
-[IMAGE_02]: https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/DiskOS_Installer.png
-[IMAGE_03]: https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/DiskOS_Prompt.gif
-[IMAGE_04]: https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/Code_Editor.png
-[IMAGE_05]: https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/Sprite_Editor.png
-[IMAGE_06]: https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/Map_Editor.png
-[IMAGE_07]: https://raw.githubusercontent.com/LIKO-12/Extras/master/Readme-Screenshots/WIP_Editor.png
+[IMAGE_01]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/BIOS_POST.png
+[IMAGE_02]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/DiskOS_Installer.png
+[IMAGE_03]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/DiskOS_Prompt.gif
+[IMAGE_04]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/Code_Editor.png
+[IMAGE_05]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/Sprite_Editor.png
+[IMAGE_06]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/Map_Editor.png
+[IMAGE_07]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/WIP_Editor.png
 
 ## Documentation
 
@@ -72,9 +69,7 @@ As the project has grew over the years, it has been split into multiple reposito
 
 ## Project Status
 
-​The project is no longer under maintenance, Rami has to move on into other projects.
-
-It's very welcome to fork it, and if a fork gained much improvements it can be linked in the original repository.
+I've (Rami) returned to working on this project on my very scarce free time, perhaps with some slow development LIKO-12 can see the light of the day again. 
 
 ## Thanks to the LÖVE Community
 
