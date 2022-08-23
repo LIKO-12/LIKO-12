@@ -1,5 +1,5 @@
 
-# ![LIKO-12](https://github.com/LIKO-12/Extras/raw/master/Readme-Screenshots/Header_Logo.png)
+# ![LIKO-12](https://github.com/LIKO-12/extras/raw/main/Readme-Screenshots/Header_Logo.png)
 
 [![stars](https://badgen.net/github/stars/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12)
 [![commits](https://badgen.net/github/commits/LIKO-12/LIKO-12)](https://github.com/LIKO-12/LIKO-12/commits/main)
@@ -37,13 +37,13 @@ The created games and programs are saved as disk files that can be easily shared
 |------------------------|-------------------------------|---------------------------------|---------------------------|-----------------------------|--------------------------|--------------------------|
 | ![BIOS POST][IMAGE_01] | ![DiskOS Installer][IMAGE_02] | ![Commandline Prompt][IMAGE_03] | ![Code Edittor][IMAGE_04] | ![Sprite Edittor][IMAGE_05] | ![Map Edittor][IMAGE_06] | ![WIP Edittor][IMAGE_07] |
 
-[IMAGE_01]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/BIOS_POST.png
-[IMAGE_02]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/DiskOS_Installer.png
-[IMAGE_03]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/DiskOS_Prompt.gif
-[IMAGE_04]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/Code_Editor.png
-[IMAGE_05]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/Sprite_Editor.png
-[IMAGE_06]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/Map_Editor.png
-[IMAGE_07]: https://raw.githubusercontent.com/LIKO-12/Extras/main/Readme-Screenshots/WIP_Editor.png
+[IMAGE_01]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/BIOS_POST.png
+[IMAGE_02]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/DiskOS_Installer.png
+[IMAGE_03]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/DiskOS_Prompt.gif
+[IMAGE_04]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/Code_Editor.png
+[IMAGE_05]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/Sprite_Editor.png
+[IMAGE_06]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/Map_Editor.png
+[IMAGE_07]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/WIP_Editor.png
 
 ## Documentation
 
