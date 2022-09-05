@@ -1,6 +1,9 @@
 *.db
 .DS_Store
 
+# Build
+/dist
+
 # Version tag
 /src/version.txt
 
