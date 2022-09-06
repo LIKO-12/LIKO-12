@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=LIKO-12
+Comment=An open-source fantasy computer
+Exec=LIKO-12 %f
+Type=Application
+Categories=Development;Game;
+Terminal=false
+Icon=LIKO-12
+NoDisplay=true
