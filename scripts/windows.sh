@@ -38,14 +38,14 @@ fi
 section 'Download Building Materials';
 
 declare -A materials=(
-    ["dist/tools/7zr.exe"]="https://www.7-zip.org/a/7zr.exe"
-    ["dist/tools/7z-extra.7z"]="https://www.7-zip.org/a/7z2201-extra.7z"
-    ["dist/tools/rcedit-x64.exe"]="https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
+    ['dist/tools/7zr.exe']='https://www.7-zip.org/a/7zr.exe'
+    ['dist/tools/7z-extra.7z']='https://www.7-zip.org/a/7z2201-extra.7z'
+    ['dist/tools/rcedit-x64.exe']='https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe'
     ["dist/love/love_${LOVE_VERSION}_win64.zip"]="https://github.com/love2d/love/releases/download/${LOVE_VERSION}/love-${LOVE_VERSION}-win64.zip"
     ["dist/love/love_${LOVE_VERSION}_win32.zip"]="https://github.com/love2d/love/releases/download/${LOVE_VERSION}/love-${LOVE_VERSION}-win32.zip"
 );
 
-for filename in "${!materials[@]}"; do
+for filename in ${!materials[@]}; do
     if [ -a $filename ]; then
         echo "- Skipping $filename: already exists.";
         continue;
@@ -60,15 +60,14 @@ done
 section 'Extract Archives';
 
 declare -A extract=(
-    ["dist/temp/love_win64"]="dist/love/love_${LOVE_VERSION}_win64.zip"
-    ["dist/temp/love_win32"]="dist/love/love_${LOVE_VERSION}_win32.zip"
+    ['dist/temp/love_win64']="dist/love/love_${LOVE_VERSION}_win64.zip"
+    ['dist/temp/love_win32']="dist/love/love_${LOVE_VERSION}_win32.zip"
 );
 
-for destination in "${!extract[@]}"; do
+for destination in ${!extract[@]}; do
     if [ -a $destination ]; then
         continue;
-        echo "Error: failed to extract because of artifacts from a previous build." >&2;
-        echo "Run the cleaning script then retry." >&2;
+        echo "Error: $destination already exists!" >&2;
         exit 1;
     fi
 
@@ -78,7 +77,7 @@ for destination in "${!extract[@]}"; do
     echo "";
 done
 
-# 7zr can only extract .7z archives, so we extract the full 7za that works with zip archives.
+# 7zr can only extract .7z archives, so extract the full 7za that works with zip archives.
 
 echo "- Extracting dist/tools/7z-extra.7z/x64 -> dist/temp";
 dist/tools/7zr.exe e dist/tools/7z-extra.7z -odist/temp -y x64/*;
