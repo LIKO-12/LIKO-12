@@ -154,7 +154,7 @@ rm -rv 'dist/temp';
 
 #--------------------------------------------------------------------------------#
 
-section 'Completed Build Successfully';
+section 'Completed The Build Successfully';
 
 echo 'Check for the result files in the "dist/out" directory:';
 echo '';
