@@ -23,7 +23,7 @@ function section {
 #--------------------------------------------------------------------------------#
 
 if [ -d 'dist/temp' ]; then
-    section "Cleaning Up Previous Build Junk";
+    section 'Cleaning Up Previous Build Junk';
     rm -rv 'dist/temp';
 fi
 
