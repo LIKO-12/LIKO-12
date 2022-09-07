@@ -46,7 +46,7 @@ cp -rv src ../android/app/src/embed/assets;
 
 section 'Build Android Application';
 
-(cd ../android; ./gradlew --console=plain --build-cache assembleEmbedRelease bundleEmbedNoRecordRelease);
+(export VERSION_CODE=100000; cd ../android; ./gradlew --console=plain --build-cache assembleEmbedNoRecordStandaloneRelease bundleEmbedNoRecordGooglePlayRelease);
 
 #--------------------------------------------------------------------------------#
 
@@ -55,10 +55,18 @@ section 'Cleanup';
 rm -rv ../android/app/src/embed/assets/*;
 touch ../android/app/src/embed/assets/.gitkeep;
 
-# #--------------------------------------------------------------------------------#
+#--------------------------------------------------------------------------------#
 
-# section 'Completed The Build Successfully';
+section 'Collect Artifacts';
 
-# echo 'Check for the result files in the "dist/out" directory:';
-# echo '';
-# echo '- dist/out/liko_linux.AppImage';
+cp -v ../android/app/build/outputs/apk/embedNoRecordStandalone/release/app-embed-noRecord-standalone-release.apk dist/out/liko_android_standalone.apk
+cp -v ../android/app/build/outputs/bundle/embedNoRecordGooglePlayRelease/app-embed-noRecord-googlePlay-release.aab dist/out/liko_android_googeplay.aab
+
+#--------------------------------------------------------------------------------#
+
+section 'Completed The Build Successfully';
+
+echo 'Check for the result files in the "dist/out" directory:';
+echo '';
+echo '- dist/out/liko_android_standalone.apk';
+echo '- dist/out/liko_android_googleplay.aab';
