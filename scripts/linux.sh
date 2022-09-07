@@ -7,6 +7,11 @@ LIKO_VERSION='2.0.0';
 
 appimagetool='dist/tools/appimagetool.AppImage';
 
+if [ ! -d 'src' ]; then
+    echo "Error: The script should be run with the root of the repository as the working directory." >&2;
+    exit 1;
+fi
+
 #--------------------------------------------------------------------------------#
 
 function section {
