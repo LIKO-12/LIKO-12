@@ -60,7 +60,7 @@ touch ../android/app/src/embed/assets/.gitkeep;
 section 'Collect Artifacts';
 
 cp -v ../android/app/build/outputs/apk/embedNoRecordStandalone/release/app-embed-noRecord-standalone-release.apk dist/out/liko_android_standalone.apk
-cp -v ../android/app/build/outputs/bundle/embedNoRecordGooglePlayRelease/app-embed-noRecord-googlePlay-release.aab dist/out/liko_android_googeplay.aab
+cp -v ../android/app/build/outputs/bundle/embedNoRecordGooglePlayRelease/app-embed-noRecord-googlePlay-release.aab dist/out/liko_android_googleplay.aab
 
 #--------------------------------------------------------------------------------#
 
