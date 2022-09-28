@@ -58,4 +58,4 @@ interface L_JSON {
 }
 
 declare const json: L_JSON;
-export default json;
+export = json;

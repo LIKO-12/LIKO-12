@@ -1,4 +1,4 @@
-import json from "lib/json";
+import * as json from "lib/json";
 
 /**
  * An adapter to provide JS compatible JSON API, by using a pure Lua implementation to provide it.
