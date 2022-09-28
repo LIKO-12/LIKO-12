@@ -21,7 +21,7 @@ export default class EventsEmitter {
      */
     removeListener(eventName: string, listener: Listener) {
         const container = this.listeners[eventName];
-        if (container === undefined) return;
+        if (!container) return;
 
         const index = container.findIndex((entry) => entry === listener);
         if (index === -1) return false;
