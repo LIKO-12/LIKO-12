@@ -1,0 +1,34 @@
+{
+    "version": "2.0.0",
+    "window": {
+        "title": "LIKO-12 2.0.0",
+        "icon": "res/icon.png",
+        "width": 576,
+        "height": 384,
+        "resizable": true,
+        "minWidth": 192,
+        "minHeight": 128,
+        "vsync": 1,
+        "borderless": false,
+        "centered": false,
+        "x": null,
+        "y": null,
+        "fullscreen": false,
+        "fullscreenType": "desktop"
+    },
+    "modules": [
+        "events",
+        "storage",
+        "screen"
+    ],
+    "options": {
+        "storage": {
+            "capacity": 10485760,
+            "basePath": "storage"
+        },
+        "screen": {
+            "width": 192,
+            "height": 128
+        }
+    }
+}
