@@ -1,6 +1,10 @@
 *.db
 .DS_Store
 
+# TypeScript 2 Lua
+node_modules
+/out
+
 # Build
 /dist
 

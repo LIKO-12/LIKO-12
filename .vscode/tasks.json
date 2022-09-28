@@ -4,11 +4,24 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Build and watch for changes",
+            "type": "npm",
+            "script": "dev",
+            "problemMatcher": "$tsc-watch",
+            "isBackground": true,
+            "presentation": {
+                "echo": false,
+                "reveal": "never",
+                "panel": "shared",
+                "clear": true
+            },
+        },
+        {
             "label": "Run LIKO-12",
             "type": "shell",
-            "command": "love ${workspaceFolder}/src",
+            "command": "love ${workspaceFolder}/out",
             "windows": {
-                "command": "lovec ${workspaceFolder}\\src",
+                "command": "lovec ${workspaceFolder}\\out",
             },
             "group": {
                 "kind": "build",
@@ -22,7 +35,10 @@
                 "panel": "shared",
                 "showReuseMessage": true,
                 "clear": true
-            }
+            },
+            "dependsOn": [
+                "Build and watch for changes"
+            ]
         }
     ]
 }

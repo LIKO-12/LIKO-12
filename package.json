@@ -1,0 +1,19 @@
+{
+  "name": "liko-12",
+  "version": "2.0.0",
+  "description": "An open-source fantasy computer.",
+  "repository": "https://github.com/LIKO-12/LIKO-12.git",
+  "author": "Rami Sabbagh <rami.sab07@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tstl",
+    "dev": "tstl --watch"
+  },
+  "devDependencies": {
+    "love-typescript-definitions": "^0.24.3",
+    "lua-types": "^2.13.0",
+    "typescript": "^4.8.4",
+    "typescript-to-lua": "^1.10.1"
+  }
+}
