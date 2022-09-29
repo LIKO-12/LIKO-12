@@ -105,9 +105,9 @@ export default class Machine {
      * 
      * The pausing during initialization is achieved by initializing each module within a thread (coroutine).
      */
-    resolveModule(moduleName: string): MachineModule | undefined {
+    resolveModule<M extends MachineModule>(moduleName: string): M | undefined {
         if (this._initializingModules) while (!this._modules[moduleName]) coroutine.yield(moduleName);
-        return this._modules[moduleName];
+        return this._modules[moduleName] as M;
     }
 
     private _loadModules(modulesNames: string[], modulesOptions: Record<string, any>) {
