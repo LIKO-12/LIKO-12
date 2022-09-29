@@ -1,5 +1,7 @@
 import * as rawOptions from 'options.json';
 
+type KnownModules = 'events' | 'storage' | 'screen';
+
 interface Options {
     window: {
         title: string,
@@ -15,6 +17,19 @@ interface Options {
         borderless: boolean,
         fullscreen: boolean,
         fullscreenType: string,
+    },
+    modules: (KnownModules | string)[],
+    options: {
+        storage?: {
+            capacity: number,
+            basePath: string,
+        },
+        screen?: {
+            width: number,
+            height: number,
+        },
+
+        [key: string]: Record<string, any> | undefined,
     }
 }
 

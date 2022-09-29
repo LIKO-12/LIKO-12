@@ -131,7 +131,8 @@ export default class Machine {
         for (const moduleName of modulesNames) {
             const moduleOptions = modulesOptions[moduleName] ?? {};
 
-            const Module: typeof MachineModule = require(`../modules/${moduleName}`);
+            const modulePath = `modules.${moduleName}`;
+            const Module: typeof MachineModule = require(modulePath);
             if (Module.MACHINE_MODULE_SYMBOL !== MachineModule.MACHINE_MODULE_SYMBOL)
                 throw new Error('invalid module. should be a subclass of core/MachineModule');
 
