@@ -180,7 +180,7 @@ export default class EnvironmentBox {
     }
 
     /**
-     * Expose sub-standrd libraries which are `bit` (from luaJIT)` and `utf8`.
+     * Expose sub-standard libraries which are `bit` (from luaJIT)` and `utf8`.
      */
     private _exposeSafeSubStandardLibraries() {
         this.expose({
@@ -269,7 +269,7 @@ export default class EnvironmentBox {
                 running: () => {
                     // Disallow access to protected threads.
                     const thread = coroutine.running();
-                    if (this._protectedEnvironments[thread as any]) return undefined;
+                    if (this._protectedThreads[thread as any]) return undefined;
                     return thread;
                 },
                 yield: (...args: any[]) => {
