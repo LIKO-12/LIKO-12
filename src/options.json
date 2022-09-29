@@ -17,9 +17,7 @@
         "fullscreenType": "desktop"
     },
     "modules": [
-        "events",
-        "storage",
-        "screen"
+        "events"
     ],
     "options": {
         "storage": {
