@@ -3,8 +3,6 @@ io.stdout.setvbuf('no');
 import 'core/json-adapter';
 import options from 'core/options';
 
-print(JSON.stringify(options));
-
 love.conf = (t) => {
     t.identity = 'LIKO-12';
     t.appendidentity = false;
