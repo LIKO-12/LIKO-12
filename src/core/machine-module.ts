@@ -4,7 +4,7 @@ import Machine from "core/machine";
  * Base class for all machine modules.
  */
 export default class MachineModule {
-    static readonly MACHINE_MODULE_SYMBOL = Symbol('for identifying MachineModule subclasses');
+    static readonly IS_MACHINE_MODULE = true;
 
     /**
      * @param _options options table from `options.json`. defaults to `{}`.

@@ -132,9 +132,9 @@ export default class Machine {
             const moduleOptions = modulesOptions[moduleName] ?? {};
 
             const modulePath = `modules.${moduleName}`;
-            const Module: typeof MachineModule = require(modulePath);
-            if (Module.MACHINE_MODULE_SYMBOL !== MachineModule.MACHINE_MODULE_SYMBOL)
-                throw new Error('invalid module. should be a subclass of core/MachineModule');
+            const Module: typeof MachineModule = require(modulePath).default;
+            if (!Module.IS_MACHINE_MODULE)
+                throw new Error(`invalid module '${moduleName}' should be a subclass of core/MachineModule`);
 
             const thread = coroutine.create(() => this._modules[moduleName] = new Module(this, moduleOptions));
             pending[moduleName] = thread;
