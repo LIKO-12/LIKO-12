@@ -41,7 +41,8 @@ export default class Machine {
         if (!this._thread) throw new Error('no program is loaded to be resumed');
 
         this.events.emit('resumed');
-        assert(coroutine.resume(this._thread, ...args));
+        const [ok, message] = coroutine.resume(this._thread, ...args);
+        assert(ok, message);
         this.events.emit('suspended');
 
         // TODO: Execute a BSOD program with the same environment. This would allow doing crash dumps and saving user data.
