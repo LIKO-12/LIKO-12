@@ -1,3 +1,4 @@
+import { ScreenOptions } from 'modules/screen';
 import * as rawOptions from 'options.json';
 
 type KnownModules = 'events' | 'storage' | 'screen';
@@ -20,13 +21,10 @@ interface Options {
     },
     modules: (KnownModules | string)[],
     options: {
+        screen?: ScreenOptions,
         storage?: {
             capacity: number,
             basePath: string,
-        },
-        screen?: {
-            width: number,
-            height: number,
         },
 
         [key: string]: Record<string, any> | undefined,

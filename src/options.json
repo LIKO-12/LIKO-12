@@ -17,7 +17,8 @@
         "fullscreenType": "desktop"
     },
     "modules": [
-        "events"
+        "events",
+        "screen"
     ],
     "options": {
         "storage": {
@@ -26,7 +27,8 @@
         },
         "screen": {
             "width": 192,
-            "height": 128
+            "height": 128,
+            "pixelPerfect": true
         }
     }
 }
