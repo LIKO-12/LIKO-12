@@ -67,7 +67,7 @@ love.errorhandler = (msg: string) => {
         if (!love.graphics.isActive()) return;
 
         const pos = 70;
-        love.graphics.clear(89 / 255, 157 / 255, 220 / 255);
+        love.graphics.clear(0, 0, 0, 1);
         love.graphics.printf(p, pos, pos, love.graphics.getWidth() - pos);
         love.graphics.present();
     }
