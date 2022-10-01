@@ -1,5 +1,13 @@
 {
     "cSpell.words": [
-        "dpiscale"
+        "charpattern",
+        "dpiscale",
+        "gmatch",
+        "gsub",
+        "keypressed",
+        "lctrl",
+        "pcall",
+        "rctrl",
+        "touchpressed"
     ]
 }
