@@ -43,7 +43,9 @@ export interface ScreenOptions {
 
 export default class Screen extends MachineModule {
     protected readonly framebuffer: Canvas;
-    protected readonly palette: [r: number, g: number, b: number][] = [];
+    protected readonly palette: [r: number, g: number, b: number, a: number][] = [];
+
+    protected readonly displayShader = this.loadDisplayShader();
 
     x: number;
     y: number;
@@ -74,6 +76,7 @@ export default class Screen extends MachineModule {
         this.fitToWindow();
 
         this.loadPalette(assertOption(options.palette, 'palette', 'string'));
+        this.uploadPalette();
 
         machine.events.on('resumed', () => this.activate());
         machine.events.on('suspended', () => this.deactivate());
@@ -91,8 +94,12 @@ export default class Screen extends MachineModule {
     }
 
     render() {
+        love.graphics.setShader(this.displayShader);
+
         const { framebuffer, x, y, scaleX, scaleY } = this;
         love.graphics.draw(framebuffer, x, y, undefined, scaleX, scaleY);
+
+        love.graphics.setShader();
     }
 
     createAPI(_machine: Machine) {
@@ -131,8 +138,37 @@ export default class Screen extends MachineModule {
         const imageData = love.image.newImageData(path);
 
         imageData.mapPixel((_x: number, _y: number, r: number, g: number, b: number, a: number) => {
-            this.palette.push([r, g, b]);
+            this.palette.push([r, g, b, a]);
             return $multi(r, g, b, a);
         });
+    }
+
+    private loadDisplayShader() {
+        try {
+            const shader = love.graphics.newShader<{
+                u_palette: [r: number, g: number, b: number, a: number][]
+            }>('res/shaders/display.frag', 'res/shaders/default.vert');
+
+            const warnings = shader.getWarnings();
+            if (warnings !== 'vertex shader:\npixel shader:\n') print('[WARNING] display shader:', warnings);
+
+            return shader;
+        } catch (error: unknown) {
+            print(error);
+            print('[WARNING] failed to load standard display shader, falling back to compatibility one.');
+
+            const shader = love.graphics.newShader<{
+                u_palette: [r: number, g: number, b: number, a: number][]
+            }>('res/shaders/display-compat.frag', 'res/shaders/default.vert');
+
+            const warnings = shader.getWarnings();
+            if (warnings !== 'vertex shader:\npixel shader:\n') print('[WARNING] display-compat shader:', warnings);
+
+            return shader;
+        }
+    }
+
+    private uploadPalette() {
+        this.displayShader.send('u_palette', ...this.palette);
     }
 }

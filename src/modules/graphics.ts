@@ -12,14 +12,19 @@ export default class Graphics extends MachineModule {
         love.graphics.setLineStyle('rough');
     }
 
+    private setColor(color?: number) {
+        // TODO: check the range of the color.
+        love.graphics.setColor((color ?? this.activeColor) / 255.0, 0, 0, 1);
+    }
+
     createAPI(machine: Machine) {
         return {
             clear: (color?: number) => {
-                love.graphics.clear(color ?? this.activeColor, 0, 0, 1);
+                love.graphics.clear((color ?? this.activeColor) / 255.0, 0, 0, 1);
             },
 
             rectangle: (x: number, y: number, width: number, height: number, filled = false, color?: number) => {
-                love.graphics.setColor(color ?? this.activeColor, 0, 0, 1);
+                this.setColor(color);
                 love.graphics.rectangle(filled ? 'fill' : 'line', x, y, width, height);
             },
         };

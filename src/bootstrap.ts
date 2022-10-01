@@ -10,7 +10,9 @@ import Events from 'modules/events';
 const rawProgram = `
 print('hello from Lua');
 
-graphics.rectangle(1.5, 1.5, 3, 3);
+for i = 0, 15 do
+    graphics.rectangle(i * 12, 0, 12, 128, true, i)
+end
 
 print(coroutine.running());
 
