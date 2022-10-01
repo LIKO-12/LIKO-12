@@ -1,7 +1,7 @@
 {
     "version": "2.0.0",
     "window": {
-        "title": "LIKO-12 2.0.0",
+        "title": "LIKO-12",
         "icon": "res/icon.png",
         "width": 576,
         "height": 384,
@@ -18,7 +18,8 @@
     },
     "modules": [
         "events",
-        "screen"
+        "screen",
+        "graphics"
     ],
     "options": {
         "storage": {
@@ -28,6 +29,7 @@
         "screen": {
             "width": 192,
             "height": 128,
+            "palette": "res/palette.png",
             "pixelPerfect": true
         }
     }

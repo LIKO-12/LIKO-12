@@ -10,6 +10,11 @@ export interface ScreenOptions {
     height: number,
 
     /**
+     * Path to an image containing the palette colors.
+     */
+    palette: string,
+
+    /**
      * @default 0
      */
     x?: number,
@@ -38,6 +43,7 @@ export interface ScreenOptions {
 
 export default class Screen extends MachineModule {
     protected readonly framebuffer: Canvas;
+    protected readonly palette: [r: number, g: number, b: number][] = [];
 
     x: number;
     y: number;
@@ -58,15 +64,16 @@ export default class Screen extends MachineModule {
         this.scaleX = assertOption(options.scaleX ?? 1, 'scaleX', 'number');
         this.scaleY = assertOption(options.scaleY ?? 1, 'scaleY', 'number');
 
-        this.fitToWindow();
-        
         this.framebuffer = love.graphics.newCanvas(
             assertOption(options.width, 'width', 'number'),
             assertOption(options.height, 'height', 'number'),
             { dpiscale: 1 },
         );
-
         this.framebuffer.setFilter('nearest', 'nearest');
+
+        this.fitToWindow();
+
+        this.loadPalette(assertOption(options.palette, 'palette', 'string'));
 
         machine.events.on('resumed', () => this.activate());
         machine.events.on('suspended', () => this.deactivate());
@@ -86,6 +93,14 @@ export default class Screen extends MachineModule {
     render() {
         const { framebuffer, x, y, scaleX, scaleY } = this;
         love.graphics.draw(framebuffer, x, y, undefined, scaleX, scaleY);
+    }
+
+    createAPI(_machine: Machine) {
+        return {
+            getWidth: () => this.framebuffer.getWidth(),
+            getHeight: () => this.framebuffer.getHeight(),
+            getDimensions: () => this.framebuffer.getDimensions(),
+        };
     }
 
     private fitToWindow() {
@@ -111,11 +126,13 @@ export default class Screen extends MachineModule {
         if (love.window.getDisplayOrientation().startsWith('portrait')) this.x = 0;
     }
 
-    createAPI(_machine: Machine) {
-        return {
-            getWidth: () => this.framebuffer.getWidth(),
-            getHeight: () => this.framebuffer.getHeight(),
-            getDimensions: () => this.framebuffer.getDimensions(),
-        };
+    private loadPalette(path: string) {
+        if (!love.filesystem.getInfo(path, 'file')) throw new Error('options.palette points to a non-existing file');
+        const imageData = love.image.newImageData(path);
+
+        imageData.mapPixel((_x: number, _y: number, r: number, g: number, b: number, a: number) => {
+            this.palette.push([r, g, b]);
+            return $multi(r, g, b, a);
+        });
     }
 }
