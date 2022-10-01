@@ -10,6 +10,8 @@ import Events from 'modules/events';
 const rawProgram = `
 print('hello from Lua');
 
+graphics.rectangle(1.5, 1.5, 3, 3);
+
 print(coroutine.running());
 
 for eventName, a,b,c,d,e,f in events.pull do
@@ -37,4 +39,9 @@ loveEvents.on('load', () => {
     print('-p2');
     events.pushEvent('ping', 5);
     print('done');
+});
+
+loveEvents.on('keypressed', (key: string) => {
+    if (key !== '\\') return;
+    love.event.quit('restart');
 });
