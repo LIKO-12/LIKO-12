@@ -11,7 +11,8 @@ const rawProgram = `
 print('hello from Lua');
 
 for i = 0, 15 do
-    graphics.rectangle(i * 12, 0, 12, 128, true, i)
+    graphics.rectangle(i * 12, 0, 12, 128, true, i);
+    screen.flip();
 end
 
 graphics.lines({0,0, 192,128, 64,64}, 7);

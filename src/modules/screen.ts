@@ -55,7 +55,9 @@ export default class Screen extends MachineModule {
     shouldFitToWindow: boolean;
     pixelPerfect: boolean;
 
-    constructor(machine: Machine, options: ScreenOptions) {
+    private resumeWhenFlipped = false;
+
+    constructor(private machine: Machine, options: ScreenOptions) {
         super(machine, options);
 
         this.shouldFitToWindow = assertOption(options.fitToWindow ?? true, 'fitToWindow', 'boolean');
@@ -100,13 +102,33 @@ export default class Screen extends MachineModule {
         love.graphics.draw(framebuffer, x, y, undefined, scaleX, scaleY);
 
         love.graphics.setShader();
+
+        if (this.resumeWhenFlipped) {
+            this.resumeWhenFlipped = false;
+            this.machine.resume();
+        }
     }
 
     createAPI(_machine: Machine) {
         return {
+            /**
+             * Get the width of the screen in pixels.
+             */
             getWidth: () => this.framebuffer.getWidth(),
+            /**
+             * Get the height of the screen in pixels.
+             */
             getHeight: () => this.framebuffer.getHeight(),
-            getDimensions: () => this.framebuffer.getDimensions(),
+
+            /**
+             * Wait until the screen is applied and shown to the user.
+             * 
+             * Helpful when doing some loading operations.
+             */
+            flip: () => {
+                this.resumeWhenFlipped = true;
+                coroutine.yield();
+            },
         };
     }
 
