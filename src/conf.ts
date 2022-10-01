@@ -1,6 +1,7 @@
 io.stdout.setvbuf('no');
 
 import 'core/json-adapter';
+import 'core/error-handler';
 import options from 'core/options';
 
 love.conf = (t) => {
