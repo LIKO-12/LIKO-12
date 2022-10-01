@@ -141,12 +141,15 @@ export default class Screen extends MachineModule {
             this.palette.push([r, g, b, a]);
             return $multi(r, g, b, a);
         });
+
+        for (let i = this.palette.length; i < 256; i++)
+            this.palette.push([1, 0, 1, 1]);
     }
 
     private loadDisplayShader() {
         try {
             const shader = love.graphics.newShader<{
-                u_palette: [r: number, g: number, b: number, a: number][]
+                u_palette: [r: number, g: number, b: number, a: number][],
             }>('res/shaders/display.frag', 'res/shaders/default.vert');
 
             const warnings = shader.getWarnings();
@@ -155,10 +158,10 @@ export default class Screen extends MachineModule {
             return shader;
         } catch (error: unknown) {
             print(error);
-            print('[WARNING] failed to load standard display shader, falling back to compatibility one.');
+            print('[WARNING] failed to load standard display shader, falling back to the compatibility one.');
 
             const shader = love.graphics.newShader<{
-                u_palette: [r: number, g: number, b: number, a: number][]
+                u_palette: [r: number, g: number, b: number, a: number][],
             }>('res/shaders/display-compat.frag', 'res/shaders/default.vert');
 
             const warnings = shader.getWarnings();
