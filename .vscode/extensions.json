@@ -1,5 +1,6 @@
 {
     "recommendations": [
-        "typescript-to-lua.vscode-typescript-to-lua"
+        "typescript-to-lua.vscode-typescript-to-lua",
+        "slevesque.shader"
     ]
 }
