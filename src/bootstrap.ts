@@ -14,6 +14,8 @@ for i = 0, 15 do
     graphics.rectangle(i * 12, 0, 12, 128, true, i)
 end
 
+graphics.lines({0,0, 192,128, 64,64}, 7);
+
 print(coroutine.running());
 
 for eventName, a,b,c,d,e,f in events.pull do

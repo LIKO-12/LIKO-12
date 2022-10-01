@@ -42,20 +42,148 @@ export default class Graphics extends MachineModule {
         love.graphics.setShader();
     }
 
-    private setColor(color?: number) {
+    private activateColor(color = this.activeColor) {
         // TODO: check the range of the color.
-        love.graphics.setColor((color ?? this.activeColor) / 255.0, 1, 1, 1);
+        love.graphics.setColor(color / 255.0, 1, 1, 1);
     }
 
-    createAPI(machine: Machine) {
+    createAPI(_machine: Machine) {
         return {
-            clear: (color?: number) => {
+            ...this.createShapesAPI(),
+        }
+    }
+
+    createShapesAPI() {
+        return {
+            /**
+             * Get and/or set the active color.
+             * 
+             * @param color The new color to set.
+             * @returns The currently active / newly set color.
+             */
+            color: (color = this.activeColor): number => {
+                this.activeColor = color ?? this.activeColor;
+                return this.activeColor;
+            },
+
+            /**
+             * Clear the screen and fill it with a specific color.
+             * 
+             * @param color The color to use. Defaults to the active color.
+             */
+            clear: (color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
                 love.graphics.clear((color ?? this.activeColor) / 255.0, 1, 1, 1);
             },
 
-            rectangle: (x: number, y: number, width: number, height: number, filled = false, color?: number) => {
-                this.setColor(color);
+            /**
+             * Draw a point on the screen.
+             * 
+             * @param color The color to use. Defaults to the active color.
+             */
+            point: (x: number, y: number, color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.activateColor(color);
+                love.graphics.points(x, y);
+            },
+
+            /**
+             * Draw multiple points on the screen.
+             * 
+             * @example points([16,16, 32,16, 16,32, 32,32], 7);
+             * 
+             * @param coords The coordinates of the points, **must contain an even number of elements.**
+             * @param color The color to use. Defaults to the active color.
+             */
+            points: (coords: number[], color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.activateColor(color);
+                love.graphics.points(coords);
+            },
+
+            /**
+             * Draw a line on the screen.
+             * 
+             * @param color The color to use. Defaults to the active color.
+             */
+            line: (x1: number, y1: number, x2: number, y2: number, color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.activateColor(color);
+                love.graphics.line(x1, y1, x2, y2);
+            },
+
+            /**
+             * Draw multiple lines on the screen.
+             * 
+             * @example lines([16,16, 32,16, 16,32, 32,32], 7);
+             * 
+             * @param coords The coordinates of the line vertices, **must contain an even number of elements.**
+             * @param color The color to use. Defaults to the active color.
+             */
+            lines: (coords: number[], color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.activateColor(color);
+                love.graphics.line(coords);
+            },
+
+            /**
+             * Draw a triangle on the screen.
+             * 
+             * @param filled Whether to fill or only outline. Defaults to false (outline).
+             * @param color The color to use. Defaults to the active color.
+             */
+            triangle: (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, filled = false, color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.activateColor(color);
+                love.graphics.polygon(filled ? 'fill' : 'line', x1, y1, x2, y2, x3, y3);
+            },
+
+            /**
+             * Draw a rectangle on the screen.
+             * 
+             * @param filled Whether to fill or only outline. Defaults to false (outline).
+             * @param color The color to use. Defaults to the active color.
+             */
+            rectangle: (x: number, y: number, width: number, height: number, filled = false, color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.activateColor(color);
                 love.graphics.rectangle(filled ? 'fill' : 'line', x, y, width, height);
+            },
+
+            /**
+             * Draw a polygon on the screen.
+             * 
+             * @param filled Whether to fill or only outline. Defaults to false (outline).
+             * @param color The color to use. Defaults to the active color.
+             */
+            polygon: (vertices: number[], filled = false, color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.activateColor(color);
+                love.graphics.polygon(filled ? 'fill' : 'line', vertices);
+            },
+
+            /**
+             * Draw a circle on the screen.
+             * 
+             * @param filled Whether to fill or only outline. Defaults to false (outline).
+             * @param color The color to use. Defaults to the active color.
+             */
+            circle: (centerX: number, centerY: number, radius: number, filled = false, color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.activateColor(color);
+                love.graphics.circle(filled ? 'fill' : 'line', centerX, centerY, radius);
+            },
+
+            /**
+             * Draw an ellipse on the screen.
+             * 
+             * @param filled Whether to fill or only outline. Defaults to false (outline).
+             * @param color The color to use. Defaults to the active color.
+             */
+            ellipse: (centerX: number, centerY: number, radiusX: number, radiusY: number, filled = false, color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.activateColor(color);
+                love.graphics.ellipse(filled ? 'fill' : 'line', centerX, centerY, radiusX, radiusY);
             },
         };
     }
