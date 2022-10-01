@@ -7,14 +7,22 @@ import loveEvents from 'core/love-events';
 import Machine from 'core/machine';
 import Events from 'modules/events';
 
+math.randomseed(os.time());
+
 const rawProgram = `
 print('hello from Lua');
 
+function rand()
+    return math.random(0,255)
+end
+
 for i = 0, 15 do
+    screen.setPaletteColor(i, rand(), rand(), rand());
     graphics.rectangle(i * 12, 0, 12, 128, true, i);
     screen.flip();
 end
 
+graphics.remapColor(7, 0);
 graphics.lines({0,0, 192,128, 64,64}, 7);
 
 print(coroutine.running());

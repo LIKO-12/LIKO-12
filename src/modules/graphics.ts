@@ -50,9 +50,13 @@ export default class Graphics extends MachineModule {
     createAPI(_machine: Machine) {
         return {
             ...this.createShapesAPI(),
+            ...this.createEffectsAPI(),
         }
     }
 
+    /**
+     * For drawing shapes on the screen.
+     */
     createShapesAPI() {
         return {
             /**
@@ -62,6 +66,7 @@ export default class Graphics extends MachineModule {
              * @returns The currently active / newly set color.
              */
             color: (color = this.activeColor): number => {
+                // FIXME: strong validate the parameters.
                 this.activeColor = color ?? this.activeColor;
                 return this.activeColor;
             },
@@ -184,6 +189,51 @@ export default class Graphics extends MachineModule {
                 // FIXME: strong validate the parameters.
                 this.activateColor(color);
                 love.graphics.ellipse(filled ? 'fill' : 'line', centerX, centerY, radiusX, radiusY);
+            },
+        };
+    }
+
+    /**
+     * For applying some graphics effects.
+     */
+    createEffectsAPI() {
+        return {
+            // TODO: clipping (setClip).
+            // TODO: patterns (setDrawingPattern).
+            // TODO: transformations (setMatrix, getMatrix).
+
+            /**
+             * Remaps a color on all drawing operations.
+             * 
+             * @param from The color to replace.
+             * @param to The color which will replace `from`.
+             */
+            remapColor: (from: number, to: number): void => {
+                // FIXME: strong validate the parameters.
+                this.paletteRemap[from] = to;
+                this.uploadPaletteRemap();
+            },
+
+            /**
+             * Make a specific color transparent (invisible) when drawing an image.
+             * 
+             * @param color The target. Defaults to the active color.
+             */
+            makeColorTransparent: (color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.paletteTransparency[color] = 1;
+                this.uploadPaletteTransparency();
+            },
+
+            /**
+             * Make a specific color opaque (visible) when drawing an image.
+             * 
+             * @param color @param color The target. Defaults to the active color.
+             */
+            makeColorOpaque: (color = this.activeColor): void => {
+                // FIXME: strong validate the parameters.
+                this.paletteTransparency[color] = 1;
+                this.uploadPaletteTransparency();
             },
         };
     }
