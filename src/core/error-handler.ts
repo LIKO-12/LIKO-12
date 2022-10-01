@@ -110,5 +110,3 @@ love.errorhandler = (msg: string) => {
         love.timer?.sleep(0.1);
     }
 }
-
-error('TEST MAN');
