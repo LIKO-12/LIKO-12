@@ -7,6 +7,11 @@ import loveEvents from 'core/love-events';
 import Machine from 'core/machine';
 import Events from 'modules/events';
 
+// TODO: Setup eslint for the project.
+// TODO: Create eslint rule to warn about missing "validateParameters" call.
+// TODO: Create eslint rule for returning a non-proxy object.
+// TODO: Create eslint rule for possibly object-exposing actions.
+
 math.randomseed(os.time());
 
 const [rawProgram] = love.filesystem.read('res/init.lua');
