@@ -4,6 +4,7 @@ const patchedMethods: Record<any, any> = setmetatable({}, {
         const patched = (key: any, ...args: any[]) => {
             const originalObject = originalObjects[key];
             if (originalObject === undefined) error('call using : instead of .', 2);
+            // TODO: Find a better error message that's more clear (check love's one).
             
             const result = pcall(method, originalObject, ...args);
             if (result[1] === originalObject) result[1] = key;
