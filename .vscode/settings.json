@@ -8,6 +8,7 @@
         "lctrl",
         "pcall",
         "rctrl",
-        "touchpressed"
+        "touchpressed",
+        "userdata"
     ]
 }
