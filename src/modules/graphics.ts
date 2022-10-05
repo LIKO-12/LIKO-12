@@ -1,5 +1,6 @@
 import Machine from "core/machine";
 import MachineModule from "core/machine-module";
+import { clamp, validateParameters } from "core/utilities";
 
 export default class Graphics extends MachineModule {
     protected activeColor = 0;
@@ -66,9 +67,10 @@ export default class Graphics extends MachineModule {
              * @returns The currently active / newly set color.
              */
             color: (color = this.activeColor): number => {
-                // FIXME: strong validate the parameters.
-                this.activeColor = color ?? this.activeColor;
-                return this.activeColor;
+                validateParameters();
+
+                this.activeColor = clamp(color, 0, 255, true);
+                return color;
             },
 
             /**
@@ -77,8 +79,9 @@ export default class Graphics extends MachineModule {
              * @param color The color to use. Defaults to the active color.
              */
             clear: (color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
-                love.graphics.clear((color ?? this.activeColor) / 255.0, 1, 1, 1);
+                validateParameters();
+
+                love.graphics.clear(clamp(color, 0, 255) / 255, 1, 1, 1);
             },
 
             /**
@@ -87,7 +90,8 @@ export default class Graphics extends MachineModule {
              * @param color The color to use. Defaults to the active color.
              */
             point: (x: number, y: number, color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.activateColor(color);
                 love.graphics.points(x, y);
             },
@@ -101,7 +105,8 @@ export default class Graphics extends MachineModule {
              * @param color The color to use. Defaults to the active color.
              */
             points: (coords: number[], color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.activateColor(color);
                 love.graphics.points(coords);
             },
@@ -112,7 +117,8 @@ export default class Graphics extends MachineModule {
              * @param color The color to use. Defaults to the active color.
              */
             line: (x1: number, y1: number, x2: number, y2: number, color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.activateColor(color);
                 love.graphics.line(x1, y1, x2, y2);
             },
@@ -126,7 +132,8 @@ export default class Graphics extends MachineModule {
              * @param color The color to use. Defaults to the active color.
              */
             lines: (coords: number[], color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.activateColor(color);
                 love.graphics.line(coords);
             },
@@ -138,7 +145,8 @@ export default class Graphics extends MachineModule {
              * @param color The color to use. Defaults to the active color.
              */
             triangle: (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, filled = false, color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.activateColor(color);
                 love.graphics.polygon(filled ? 'fill' : 'line', x1, y1, x2, y2, x3, y3);
             },
@@ -150,7 +158,8 @@ export default class Graphics extends MachineModule {
              * @param color The color to use. Defaults to the active color.
              */
             rectangle: (x: number, y: number, width: number, height: number, filled = false, color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.activateColor(color);
                 love.graphics.rectangle(filled ? 'fill' : 'line', x, y, width, height);
             },
@@ -162,7 +171,8 @@ export default class Graphics extends MachineModule {
              * @param color The color to use. Defaults to the active color.
              */
             polygon: (vertices: number[], filled = false, color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.activateColor(color);
                 love.graphics.polygon(filled ? 'fill' : 'line', vertices);
             },
@@ -174,7 +184,8 @@ export default class Graphics extends MachineModule {
              * @param color The color to use. Defaults to the active color.
              */
             circle: (centerX: number, centerY: number, radius: number, filled = false, color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.activateColor(color);
                 love.graphics.circle(filled ? 'fill' : 'line', centerX, centerY, radius);
             },
@@ -186,7 +197,8 @@ export default class Graphics extends MachineModule {
              * @param color The color to use. Defaults to the active color.
              */
             ellipse: (centerX: number, centerY: number, radiusX: number, radiusY: number, filled = false, color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.activateColor(color);
                 love.graphics.ellipse(filled ? 'fill' : 'line', centerX, centerY, radiusX, radiusY);
             },
@@ -209,7 +221,8 @@ export default class Graphics extends MachineModule {
              * @param to The color which will replace `from`.
              */
             remapColor: (from: number, to: number): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.paletteRemap[from] = to;
                 this.uploadPaletteRemap();
             },
@@ -220,7 +233,8 @@ export default class Graphics extends MachineModule {
              * @param color The target. Defaults to the active color.
              */
             makeColorTransparent: (color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+
                 this.paletteTransparency[color] = 1;
                 this.uploadPaletteTransparency();
             },
@@ -231,7 +245,8 @@ export default class Graphics extends MachineModule {
              * @param color @param color The target. Defaults to the active color.
              */
             makeColorOpaque: (color = this.activeColor): void => {
-                // FIXME: strong validate the parameters.
+                validateParameters();
+                
                 this.paletteTransparency[color] = 1;
                 this.uploadPaletteTransparency();
             },

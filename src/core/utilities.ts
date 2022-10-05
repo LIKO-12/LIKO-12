@@ -62,3 +62,68 @@ export function assertOption<V>(value: V, optionName: string, type1: string, typ
 
     return value;
 }
+
+type TypeToken = 'number' | 'string' | 'boolean' | 'undefined' | 'null';
+type TypesTokens = (TypeToken | TypesTokens)[];
+type Parameter = [value: unknown, name: string, tokens: TypesTokens];
+
+function formatTypes(tokens: TypesTokens) {
+    const simplified = tokens.map(token => typeof token === 'string' ? token : 'table');
+    const lastToken = simplified.pop();
+
+    if (simplified.length === 0) return lastToken;
+    return `${simplified.join(', ')} or ${lastToken}`;
+}
+
+function validateParameter(methodName: string, position: number, value: unknown, name: string, tokens: TypesTokens): string | void {
+    if (tokens.length === 0) return;
+
+    for (const token of tokens) {
+        if (token === 'undefined' && value === undefined) return;
+        if (token === 'null' && value === null) return;
+        if (typeof value === token) return;
+
+        if (typeof token !== 'string' && typeof value === 'object') {
+            for (const [key, entry] of pairs(value as any)) {
+                const errMessage = validateParameter(methodName, position, entry, `${name}[${tostring(key)}]`, token);
+                if (errMessage !== undefined) return errMessage;
+            }
+
+            return;
+        }
+
+        return `bad argument #${position} '${name}' to ${methodName} (${formatTypes(tokens)} expected, got ${type(value)})`;
+    }
+}
+
+/**
+ * https://github.com/Rami-Sabbagh/ts-inject-parameters-metadata
+ * TODO: Document this.
+ */
+export function validateParameters(): void;
+export function validateParameters(methodName: string | undefined, parameters: Parameter[]): void;
+export function validateParameters(methodName?: string | undefined, parameters?: Parameter[]) {
+    if (!parameters) throw new Error('the parameters have not been resolved by the transformer.');
+    const formattedMethodName = `'${methodName ?? '(no name)'}'`;
+
+    for (let position = 0; position < parameters.length; position++) {
+        const [value, name, type] = parameters[position];
+        const errMessage = validateParameter(formattedMethodName, position, value, name, type);
+        if (errMessage !== undefined) error(errMessage, 3);
+    }
+
+    /*
+    "bad argument '{argName}' #{pos} to '{methodName}' ({type} expected, got {type})"
+    "bad argument '{argName}' #{pos} to '{methodName}' ({type} or {type} expected, got {type})"
+    "bad argument '{argName}' #{pos} to '{methodName}' ({type}, {type} or {type} expected, got {type})"
+    "bad argument '{argName}' #{pos} to '{methodName}' ({type}, {type} or {type} expected, got {type} in {argName}[index])"
+    */
+}
+
+/**
+ * Ensures that a number is within a specific range and floors it optionally.
+ */
+export function clamp(value: number, min = 0, max = 1, floor = false): number {
+    const result = Math.min(Math.max(value, min), max);
+    return floor ? Math.floor(result) : result;
+}

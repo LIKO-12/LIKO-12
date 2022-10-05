@@ -1,7 +1,7 @@
 import loveEvents from "core/love-events";
 import Machine from "core/machine";
 import MachineModule from "core/machine-module";
-import { assertOption } from "core/utilities";
+import { assertOption, clamp, validateParameters } from "core/utilities";
 
 import { Canvas } from "love.graphics";
 
@@ -141,6 +141,10 @@ export default class Screen extends MachineModule {
              * @param b     The blue channel value [0-255].
              */
             setPaletteColor: (color: number, r: number, g: number, b: number): void => {
+                validateParameters();
+
+                color = clamp(color, 0, 255, true), r = clamp(r, 0, 255), g = clamp(g, 0, 255), b = clamp(b, 0, 255);
+
                 this.palette[color] = [r / 255, g / 255, b / 255, 1];
                 this.uploadPalette();
             },
