@@ -3,9 +3,9 @@
 
 
 "@rami-sabbagh/ts-inject-parameters-metadata@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@rami-sabbagh/ts-inject-parameters-metadata/-/ts-inject-parameters-metadata-1.0.0.tgz#16a6a84406f337450e105db0b4296a0573b29304"
-  integrity sha512-OXJxgKD5j9rGf8yO1NtFs4xpc4r5DpyM9LcJgb0VSON8nEViWt86hF6SGCZt8Z0nWBUvj13weChOMy/W7vv57A==
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@rami-sabbagh/ts-inject-parameters-metadata/-/ts-inject-parameters-metadata-1.0.1.tgz#f9b58c8383b2d855cabf0e13999a833b29aa729e"
+  integrity sha512-R4ZujAU8BWVMx8XDKnhdlXsz2L3u+bFsiNCSDTw6AWe8+C55vBIywFxr8wkHoKRbEaRGvs51Zjnhx9yVfwdBOA==
 
 "@typescript-to-lua/language-extensions@1.0.0":
   version "1.0.0"
