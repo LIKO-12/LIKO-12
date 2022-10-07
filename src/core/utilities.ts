@@ -63,7 +63,7 @@ export function assertOption<V>(value: V, optionName: string, type1: string, typ
     return value;
 }
 
-type TypeToken = 'number' | 'string' | 'boolean' | 'undefined' | 'null';
+type TypeToken = 'number' | 'string' | 'boolean' | 'function' | 'undefined' | 'null';
 type TypesTokens = (TypeToken | TypesTokens)[];
 type Parameter = [value: unknown, name: string, tokens: TypesTokens];
 
