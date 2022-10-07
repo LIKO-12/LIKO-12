@@ -14,7 +14,7 @@
     "dev": "tstl --watch"
   },
   "devDependencies": {
-    "@rami-sabbagh/ts-inject-parameters-metadata": "^1.0.3",
+    "@rami-sabbagh/ts-inject-parameters-metadata": "^1.1.0",
     "copyfiles": "^2.4.1",
     "love-typescript-definitions": "^0.24.3",
     "lua-types": "^2.13.0",
