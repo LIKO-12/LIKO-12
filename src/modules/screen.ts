@@ -109,6 +109,20 @@ export default class Screen extends MachineModule {
         }
     }
 
+    getColorsCount() {
+        return this.palette.length;
+    }
+
+    getColor(color: number) {
+        const rgba = this.palette[color] ?? [];
+        return $multi(...rgba);
+    }
+
+    findColor(r: number, g: number, b: number): number {
+        const color = this.palette.findIndex(([pr, pg, pb]) => pr === r && pg === g && pb === b);
+        return color === -1 ? 0 : color;
+    }
+
     createAPI(_machine: Machine) {
         return {
             /**
