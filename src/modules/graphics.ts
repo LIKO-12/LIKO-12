@@ -81,7 +81,8 @@ export default class Graphics extends MachineModule {
             clear: (color = this.activeColor): void => {
                 validateParameters();
 
-                love.graphics.clear(clamp(color, 0, 255) / 255, 1, 1, 1);
+                color = this.paletteRemap[clamp(color, 0, 255)];
+                love.graphics.clear(color / 255, 1, 1, 1);
             },
 
             /**
