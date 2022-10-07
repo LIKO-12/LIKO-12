@@ -198,7 +198,7 @@ export default class Screen extends MachineModule {
         });
 
         for (let i = this.palette.length; i < 256; i++)
-            this.palette.push([1, 0, 1, 1]);
+            this.palette.push([1, 1, 1, 1]);
     }
 
     private loadDisplayShader() {
