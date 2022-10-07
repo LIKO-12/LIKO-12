@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@rami-sabbagh/ts-inject-parameters-metadata@^1.0.0":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@rami-sabbagh/ts-inject-parameters-metadata/-/ts-inject-parameters-metadata-1.0.2.tgz#3190a2280a65d6f89428fa063cc877c51d4c0626"
-  integrity sha512-t0PicGYqICYtBvKVd0ftEGoyLUcLZnTGNndj7wv5z+bV3CFUQWYwwRkbgQCRtL+1/cC9mDOpS7GoXQihZzRnfg==
+"@rami-sabbagh/ts-inject-parameters-metadata@^1.0.2":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@rami-sabbagh/ts-inject-parameters-metadata/-/ts-inject-parameters-metadata-1.0.3.tgz#a60632e9465ecd29485d041d9af118847bdfa541"
+  integrity sha512-7BOi9RgSPlGv7ZhnSXSOCfjCEW0CoZ7e9QwRYDg27CQ3wuf2iNhZ2aFMBa5W1puOiMRSkc161skFGBNRUJcJLg==
 
 "@typescript-to-lua/language-extensions@1.0.0":
   version "1.0.0"
