@@ -51,3 +51,7 @@ export function proxy<T>(object: T): T {
     originalObjects[proxyObject] = object;
     return proxyObject as T;
 }
+
+export function unproxy<T>(object: T): T {
+    return originalObjects[object] ?? object;
+}

@@ -9,6 +9,7 @@
         "pcall",
         "rctrl",
         "touchpressed",
+        "unproxy",
         "userdata"
     ]
 }
