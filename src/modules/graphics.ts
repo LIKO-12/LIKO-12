@@ -14,7 +14,7 @@ export default class Graphics extends MachineModule {
      * 
      * by default all colors are opaque except color 0.
      */
-    protected readonly paletteTransparency: number[] = [1];
+    protected readonly paletteTransparency: number[] = [];
 
     protected readonly paletteRemap: number[] = [];
 
@@ -22,8 +22,12 @@ export default class Graphics extends MachineModule {
     constructor(machine: Machine, options: {}) {
         super(machine, options);
 
-        // Initialize the palette remapping array.
-        for (let i = 0; i < 256; i++) this.paletteRemap[i] = i;
+        // Initialize the palettes effects arrays.
+        for (let i = 0; i < 256; i++) {
+            this.paletteRemap[i] = i;
+            this.paletteTransparency[i] = 0;
+        };
+        this.paletteTransparency[0] = 1;
         this.uploadPaletteTransparency();
         this.uploadPaletteRemap();
 
