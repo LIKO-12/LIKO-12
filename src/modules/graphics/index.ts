@@ -267,7 +267,7 @@ export default class Graphics extends MachineModule {
             makeColorOpaque: (color = this.activeColor): void => {
                 validateParameters();
 
-                this.paletteTransparency[color] = 1;
+                this.paletteTransparency[color] = 0;
                 this.uploadPaletteTransparency();
             },
         };
