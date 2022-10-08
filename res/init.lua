@@ -12,7 +12,7 @@ function rand()
 end
 
 for i = 0, 15 do
-    screen.setPaletteColor(i, rand(), rand(), rand());
+    -- screen.setPaletteColor(i, rand(), rand(), rand());
     graphics.rectangle(i * 12, 0, 12, 128, true, i);
     screen.flip();
 end
@@ -20,18 +20,19 @@ end
 graphics.remapColor(7, 0);
 graphics.lines({0,0, 192,128, 64,64}, 7);
 
-function drawImageData(id)
-    local w = id:getWidth();
-    local h = id:getHeight();
+local sw, sh = screen.getWidth(), screen.getHeight();
 
-    for x=0,w-1 do
-        for y=0,h-1 do
-            graphics.rectangle(x*4+5, y*4+5, 4, 4, true, id:getPixel(x,y));
-        end
-    end
+local img = imgdata:toImage();
+img:draw(4, 4, 0, 4, 4);
+
+local r = 0
+graphics.makeColorOpaque(0)
+
+for i=1,100 do
+    r = r + math.pi * 0.02;
+    img:draw(sw/2, sh/2, r, 2, 2);
+    screen.flip();
 end
-
-drawImageData(imgdata);
 
 for eventName, a,b,c,d,e,f in events.pull do
     print(eventName, a,b,c,d,e,f);
