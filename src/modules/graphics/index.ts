@@ -7,6 +7,8 @@ import Screen from "../screen";
 import { ImageData, LovePixelFunction } from "./image-data";
 
 // TODO: palette soft-limit
+// TODO: automatic offset detection
+// TODO: possibly break each api into a file
 
 export default class Graphics extends MachineModule {
     protected activeColor = 0;
