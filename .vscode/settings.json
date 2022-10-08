@@ -1,15 +1,23 @@
 {
     "cSpell.words": [
+        "borderless",
         "charpattern",
         "dpiscale",
+        "fullscreentype",
         "gmatch",
         "gsub",
+        "highdpi",
         "keypressed",
         "lctrl",
+        "minheight",
+        "minwidth",
+        "msaa",
         "pcall",
         "rctrl",
         "touchpressed",
         "unproxy",
-        "userdata"
+        "usedpiscale",
+        "userdata",
+        "vsync"
     ]
 }
