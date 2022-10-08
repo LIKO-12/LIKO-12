@@ -1,11 +1,19 @@
-import { Image as LoveImage } from 'love.graphics';
+import { validateParameters } from 'core/utilities';
 
-interface Test {
-    
-}
+import { Image as LoveImage, Quad } from 'love.graphics';
+import { ImageData as LoveImageData } from 'love.image';
 
 export class Image {
-    constructor(image: LoveImage) {
+    protected readonly image: LoveImage;
+    protected readonly quad: Quad;
+
+    constructor(protected readonly imageData: LoveImageData) {
+        this.image = love.graphics.newImage(imageData);
+        this.image.setFilter('nearest', 'nearest');
+        this.image.setWrap('repeat', 'repeat');
+
+        const [width, height] = this.image.getDimensions();
+        this.quad = love.graphics.newQuad(0, 0, width, height, width, height);
     }
 
     /**
@@ -14,7 +22,7 @@ export class Image {
      * @return The width of the image in pixels.
      */
     getWidth(): number {
-        throw new Error('Method not implemented.'); // FIXME: Unimplemented method.
+        return this.image.getWidth();
     }
 
     /**
@@ -23,7 +31,7 @@ export class Image {
      * @return The height of the image in pixels.
      */
     getHeight(): number {
-        throw new Error('Method not implemented.'); // FIXME: Unimplemented method.
+        return this.image.getHeight();
     }
 
     /**
@@ -39,14 +47,24 @@ export class Image {
      * @param srcWidth  The width of the region to draw from the image in pixels. Defaults to the image's width.
      * @param srcHeight The height of the region to draw from the image in pixels. Defaults to the image's height.
      */
-    draw(x?: number, y?: number, rotation?: number, scaleX?: number, scaleY?: number, srcX?: number, srcY?: number, srcWidth?: number, srcHeight?: number): void {
-        throw new Error('Method not implemented.'); // FIXME: Unimplemented method.
+    draw(x?: number, y?: number, rotation?: number, scaleX?: number, scaleY?: number, srcX?: number, srcY?: number, srcWidth?: number, srcHeight?: number): Image {
+        validateParameters();
+
+        if (srcX !== undefined || srcY !== undefined || srcWidth !== undefined || srcHeight !== undefined) {
+            this.quad.setViewport(srcX ?? 0, srcY ?? 0, srcWidth ?? this.image.getWidth(), srcHeight ?? this.image.getHeight());
+            love.graphics.draw(this.image, this.quad, x, y, rotation, scaleX, scaleY);
+        } else {
+            love.graphics.draw(this.image, this.quad, x, y, rotation, scaleX, scaleY);
+        }
+
+        return this;
     }
 
     /**
      * Updates the image's content from the ImageData used to create the image.
      */
-    refresh(): void {
-        throw new Error('Method not implemented.'); // FIXME: Unimplemented method.
+    refresh(): Image {
+        this.image.replacePixels(this.imageData, 0);
+        return this;
     }
 }
