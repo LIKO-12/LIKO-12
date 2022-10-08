@@ -146,6 +146,8 @@ export default class Screen extends MachineModule {
 
             // TODO: initialize the screen module with no palette pre-loaded.
 
+            // TODO: take screenshot imagedata
+
             /**
              * Set the RGB values of a palette color.
              * 
