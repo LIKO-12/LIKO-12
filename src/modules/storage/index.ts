@@ -66,7 +66,7 @@ function getDirectorySizeRecursively(path: string): number {
     return totalSize;
 }
 
-interface StorageOptions {
+export interface StorageOptions {
     capacity: number,
     basePath: string,
 }
