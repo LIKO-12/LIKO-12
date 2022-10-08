@@ -197,6 +197,7 @@ export default class Screen extends MachineModule {
             return $multi(r, g, b, a);
         });
 
+        // TODO: no longer overfill the palette
         for (let i = this.palette.length; i < 256; i++)
             this.palette.push([1, 1, 1, 1]);
     }
