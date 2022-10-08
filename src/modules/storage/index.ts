@@ -36,7 +36,7 @@ function resolve(path: string): string {
  *  - `"\/"` are not matched because they are valid in paths but not in filenames.
  */
 function isClean(path: string): boolean {
-    return !string.find(path, '[<>:"|%?%*]');
+    return !string.find(path, '[<>:"|%?%*]')[0];
 }
 
 /**
@@ -99,7 +99,11 @@ export default class Storage extends MachineModule {
         super(machine, options);
 
         this.totalSpace = assertOption(options.capacity, 'capacity', 'number');
-        this.basePath = assertAndResolvePath(assertOption(options.basePath, 'basePath', 'string'));
+        try {
+            this.basePath = assertAndResolvePath(assertOption(options.basePath, 'basePath', 'string'));
+        } catch(err: unknown) {
+            error(tostring(err));
+        }
 
         this.createBasePathIfNotExists();
         this.refreshSpaceUsage();
