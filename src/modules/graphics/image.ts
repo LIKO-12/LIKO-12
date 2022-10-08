@@ -47,14 +47,14 @@ export class Image {
      * @param srcWidth  The width of the region to draw from the image in pixels. Defaults to the image's width.
      * @param srcHeight The height of the region to draw from the image in pixels. Defaults to the image's height.
      */
-    draw(x?: number, y?: number, rotation?: number, scaleX?: number, scaleY?: number, srcX?: number, srcY?: number, srcWidth?: number, srcHeight?: number): Image {
+    draw(x = 0, y = 0, rotation = 0, scaleX = 1, scaleY = 1, srcX = 0, srcY = 0, srcWidth = this.getWidth(), srcHeight = this.getHeight()): Image {
         validateParameters();
 
-        if (srcX !== undefined || srcY !== undefined || srcWidth !== undefined || srcHeight !== undefined) {
-            this.quad.setViewport(srcX ?? 0, srcY ?? 0, srcWidth ?? this.image.getWidth(), srcHeight ?? this.image.getHeight());
+        if (srcX !== 0 || srcY !== 0 || srcWidth !== this.getWidth() || srcHeight !== this.getHeight()) {
+            this.quad.setViewport(srcX, srcY, srcWidth, srcHeight);
             love.graphics.draw(this.image, this.quad, x, y, rotation, scaleX, scaleY);
         } else {
-            love.graphics.draw(this.image, this.quad, x, y, rotation, scaleX, scaleY);
+            love.graphics.draw(this.image, x, y, rotation, scaleX, scaleY);
         }
 
         return this;
