@@ -91,9 +91,9 @@ function validateParameter(methodName: string, position: number, value: unknown,
 
             return;
         }
-
-        return `bad argument #${position} '${name}' to ${methodName} (${formatTypes(tokens)} expected, got ${type(value)})`;
     }
+
+    return `bad argument #${position + 1} '${name}' to ${methodName} (${formatTypes(tokens)} expected, got ${type(value)})`;
 }
 
 /**
