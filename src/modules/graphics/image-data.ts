@@ -1,3 +1,4 @@
+import { proxy } from 'core/object-proxy';
 import { clamp, validateParameters } from 'core/utilities';
 import { ImageData as LoveImageData } from 'love.image';
 
@@ -10,8 +11,10 @@ export type PixelFunction = (x: number, y: number, color: number) => number;
 // TODO: palette soft-limit
 
 export class ImageData {
-    constructor(private graphics: Graphics, private imageData: LoveImageData) {
-    }
+    constructor(
+        protected readonly graphics: Graphics,
+        protected readonly imageData: LoveImageData,
+    ) { }
 
     /**
      * Gets the width of the imageData.
@@ -85,7 +88,6 @@ export class ImageData {
     }
 
     // TODO: paste
-    // TODO: toImage
     // TODO: export
 
     /**
@@ -99,7 +101,7 @@ export class ImageData {
      * @param srcWidth  The width of the region to paste from the source imageData in pixels. Defaults to the source imageData's width.
      * @param srcHeight The height of the region to paste from the source imageData in pixels. Defaults to the source imageData's height.
      */
-    paste(source: ImageData, destX?: number, destY?: number, srcX?: number, srcY?: number, srcWidth?: number, srcHeight?: number): void {
+    paste(source: ImageData, destX?: number, destY?: number, srcX?: number, srcY?: number, srcWidth?: number, srcHeight?: number): ImageData {
         throw new Error('Method not implemented.'); // FIXME: Unimplemented method.
     }
 
@@ -110,7 +112,8 @@ export class ImageData {
      * @return The created drawable Image.
      */
     toImage(): Image {
-        throw new Error('Method not implemented.'); // FIXME: Unimplemented method.
+        const image = new Image(this.imageData);
+        return proxy(image);
     }
 
     /**
@@ -122,7 +125,7 @@ export class ImageData {
         throw new Error('Method not implemented.'); // FIXME: Unimplemented method.
     }
 
-    private static _initializeEmptyImage: LovePixelFunction = () => {
+    protected static _initializeEmptyImage: LovePixelFunction = () => {
         // Important: the blue channel must be 0.0 for the effects shader to work.
         return $multi(0, 0, 0, 1); // r,g,b,a
     };
