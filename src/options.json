@@ -19,7 +19,8 @@
     "modules": [
         "events",
         "screen",
-        "graphics"
+        "graphics",
+        "storage"
     ],
     "options": {
         "storage": {
