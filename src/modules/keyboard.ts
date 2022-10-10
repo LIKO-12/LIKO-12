@@ -20,7 +20,7 @@ export default class Keyboard extends MachineModule {
         });
 
         loveEvents.on('keyreleased', (key: KeyConstant, scancode: Scancode) => {
-            events.pushEvent('keyreleased', key);
+            events.pushEvent('keyreleased', key, scancode);
         });
 
         loveEvents.on('textinput', (key: string) => {
