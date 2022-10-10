@@ -127,3 +127,15 @@ export function clamp(value: number, min = 0, max = 1, floor = false): number {
     const result = Math.min(Math.max(value, min), max);
     return floor ? Math.floor(result) : result;
 }
+
+/**
+ * Escaped safe call. When the called method fails.
+ * The error is propagated 1 level behind the caller.
+ * Useful for encapsulating and patching existing functions
+ * while keeping their error messages.
+ */
+export function escapedCall<T = any>(func: (...args: any[]) => any, ...args: any[]): T {
+    const result = pcall(func, ...args);
+    if (result[1]) return select(2, ...result) as T;
+    error(result[2], 3);
+}

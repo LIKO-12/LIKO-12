@@ -11,6 +11,8 @@ import Events from 'modules/events';
 // TODO: Create eslint rule to warn about missing "validateParameters" call.
 // TODO: Create eslint rule for returning a non-proxy object.
 // TODO: Create eslint rule for possibly object-exposing actions.
+// TODO: Figure out a way to type the events emitter.
+// TODO: Figure out a way to document the emitted events.
 
 math.randomseed(os.time());
 

@@ -20,7 +20,8 @@
         "events",
         "screen",
         "graphics",
-        "storage"
+        "storage",
+        "keyboard"
     ],
     "options": {
         "storage": {
