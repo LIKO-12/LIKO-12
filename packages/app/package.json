@@ -4,7 +4,6 @@
   "description": "The core of LIKO-12 which provides the virtual machine.",
   "private": true,
   "scripts": {
-    "install": "yarn symlink",
     "symlink": "node scripts/setup-symlinks.js",
     "build": "tstl",
     "dev": "tstl --watch"

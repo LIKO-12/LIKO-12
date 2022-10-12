@@ -10,6 +10,7 @@
     "packages/*"
   ],
   "scripts": {
+    "install": "yarn --cwd packages/app symlink",
     "symlink": "yarn --cwd packages/app symlink",
     "build": "yarn --cwd packages/app build",
     "dev": "yarn --cwd packages/app dev"

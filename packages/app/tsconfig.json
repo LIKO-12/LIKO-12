@@ -3,7 +3,6 @@
       "baseUrl": "src",
       "rootDir": "src",
       "outDir": "out",
-      "declarationDir": "out",
 
       "target": "esnext",
       "lib": ["esnext"],
