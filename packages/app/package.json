@@ -1,0 +1,20 @@
+{
+  "name": "@liko-12/app",
+  "version": "2.0.0",
+  "description": "The core of LIKO-12 which provides the virtual machine.",
+  "private": true,
+  "scripts": {
+    "install": "yarn symlink",
+    "symlink": "node scripts/setup-symlinks.js",
+    "build": "tstl",
+    "dev": "tstl --watch"
+  },
+  "devDependencies": {
+    "@rami-sabbagh/ts-inject-parameters-metadata": "^1.1.0",
+    "@types/node": "^18.7.6",
+    "love-typescript-definitions": "^0.24.3",
+    "lua-types": "^2.13.0",
+    "typescript": "^4.8.4",
+    "typescript-to-lua": "^1.10.1"
+  }
+}

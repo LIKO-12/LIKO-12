@@ -19,9 +19,9 @@
         {
             "label": "Run LIKO-12",
             "type": "shell",
-            "command": "love ${workspaceFolder}/out",
+            "command": "love ${workspaceFolder}/packages/app/out",
             "windows": {
-                "command": "lovec ${workspaceFolder}\\out",
+                "command": "lovec ${workspaceFolder}\\packages\\app\\out",
             },
             "group": {
                 "kind": "build",
