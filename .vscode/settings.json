@@ -3,6 +3,7 @@
         "borderless",
         "charpattern",
         "dpiscale",
+        "fullscreen",
         "fullscreentype",
         "gmatch",
         "gsub",
