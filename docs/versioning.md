@@ -62,9 +62,13 @@ Such builds would be made by unofficial developers.
 
 ## Tagging a build
 
+<!-- FIXME: This section needs to be updated as the codebase is being rewritten. -->
+
 For releases, pre-releases and experimental builds there would be a single-line text file at `src/version.txt` containing the version tag.
 
 ## Detecting version
+
+<!-- FIXME: This section needs to be updated as the codebase is being rewritten. -->
 
 1. Check for the existence of `version.txt`, if so read the release tag from it.
     1. Determine the type of the release by checking the patterns in the order defined in the table above.
