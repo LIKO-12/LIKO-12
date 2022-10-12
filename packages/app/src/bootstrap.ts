@@ -13,6 +13,7 @@ import Events from 'modules/events';
 // TODO: Create eslint rule for possibly object-exposing actions.
 // TODO: Figure out a way to type the events emitter.
 // TODO: Figure out a way to document the emitted events.
+// TODO: Make sure that the repository satisfies the open-source community standards.
 
 math.randomseed(os.time());
 
