@@ -7,7 +7,7 @@ interface Node<T> {
  * Simple implementation of a linked FIFO queue
  * that doesn't throw any errors/exceptions.
  */
-export default class Queue<T> {
+export class Queue<T> {
     private _length = 0;
 
     private _head?: Node<T>;

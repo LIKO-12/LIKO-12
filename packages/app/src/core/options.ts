@@ -29,5 +29,4 @@ interface Options {
     }
 }
 
-const options: Options = rawOptions;
-export default options;
+export const options: Options = rawOptions;

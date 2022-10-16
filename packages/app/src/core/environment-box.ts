@@ -27,7 +27,7 @@ function isBytecode(data: unknown) {
 
 type Environment = Record<any, any>;
 
-export default class EnvironmentBox {
+export class EnvironmentBox {
     private _protectedEnvironments: Record<symbol, boolean | undefined> = {};
     private _protectedThreads: Record<symbol, boolean | undefined> = {};
 

@@ -1,5 +1,5 @@
-import EventsEmitter from "core/events-emitter";
-import EnvironmentBox from "./environment-box";
+import { EventsEmitter } from "core/events-emitter";
+import { EnvironmentBox } from "./environment-box";
 import MachineModule from "./machine-module";
 
 export default class Machine {
@@ -146,14 +146,14 @@ export default class Machine {
         this._initializingModules = true; // For Machine.resolveModule to yield when resolving an unloaded dependency.
 
         // Notice the 1 extra iteration for looking up what's the stuck dependencies and forming the error message.
-        for (let i=modulesNames.length; i >= 0; i--) {
+        for (let i = modulesNames.length; i >= 0; i--) {
             for (const moduleName in pending) {
                 const thread = pending[moduleName];
                 if (!thread) continue;
 
                 const [ok, requestedModule] = coroutine.resume(thread);
                 assert(ok, requestedModule);
-                
+
                 if (coroutine.status(thread) === 'dead') delete pending[moduleName];
 
                 if (i === 0 && requestedModule)

@@ -2,8 +2,8 @@
  * Bootstraps the standard LIKO-12 application which runs a single machine.
  */
 
-import options from 'core/options';
-import loveEvents from 'core/love-events';
+import { options } from 'core/options';
+import { loveEvents } from 'core/love-events';
 import Machine from 'core/machine';
 import Events from 'modules/events';
 
@@ -11,6 +11,7 @@ import Events from 'modules/events';
 // TODO: Create eslint rule to warn about missing "validateParameters" call.
 // TODO: Create eslint rule for returning a non-proxy object.
 // TODO: Create eslint rule for possibly object-exposing actions.
+// TODO: Apply the eslint rule to not use default exports (except in MachineModules).
 // TODO: Figure out a way to type the events emitter.
 // TODO: Figure out a way to document the emitted events.
 // TODO: Make sure that the repository satisfies the open-source community standards.

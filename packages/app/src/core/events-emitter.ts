@@ -1,6 +1,6 @@
 type Listener = (...args: any[]) => void;
 
-export default class EventsEmitter {
+export class EventsEmitter {
     public listeners: Record<string, Listener[] | undefined> = {};
 
     /**
@@ -26,10 +26,10 @@ export default class EventsEmitter {
         const index = container.findIndex((entry) => entry === listener);
         if (index === -1) return false;
 
-        const lastIndex = container.length -1;
+        const lastIndex = container.length - 1;
 
         for (let i = index + 1; i < lastIndex; i++)
-            container[i-1] = container[i];
+            container[i - 1] = container[i];
 
         delete container[lastIndex];
 
