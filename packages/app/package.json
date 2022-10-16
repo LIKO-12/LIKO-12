@@ -3,6 +3,8 @@
   "version": "2.0.0",
   "description": "The core of LIKO-12 which provides the virtual machine.",
   "private": true,
+  "main": "out/index",
+  "types": "out/index",
   "scripts": {
     "symlink": "node scripts/setup-symlinks.js",
     "build": "tstl",
