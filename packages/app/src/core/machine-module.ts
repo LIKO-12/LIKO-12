@@ -3,7 +3,7 @@ import { Machine } from "core/machine";
 /**
  * Base class for all machine modules.
  */
-export default class MachineModule {
+export class MachineModule {
     static readonly IS_MACHINE_MODULE = true;
 
     /**

@@ -2,7 +2,7 @@ import { KeyConstant, Scancode } from "love.keyboard";
 
 import { loveEvents } from 'core/love-events';
 import { Machine } from "core/machine";
-import MachineModule from "core/machine-module";
+import { MachineModule } from "core/machine-module";
 import { escapedCall, validateParameters } from "core/utilities";
 
 import Events from "modules/events";

@@ -1,5 +1,5 @@
 import { Machine } from "core/machine";
-import MachineModule from "core/machine-module";
+import { MachineModule } from "core/machine-module";
 import { proxy } from "core/object-proxy";
 import { assertOption, validateParameters } from "core/utilities";
 
