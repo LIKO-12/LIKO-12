@@ -4,7 +4,7 @@
 
 import { options } from 'core/options';
 import { loveEvents } from 'core/love-events';
-import Machine from 'core/machine';
+import { Machine } from 'core/machine';
 import Events from 'modules/events';
 
 // TODO: Setup eslint for the project.

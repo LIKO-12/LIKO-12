@@ -1,4 +1,4 @@
-import Machine from "core/machine";
+import { Machine } from "core/machine";
 import MachineModule from "core/machine-module";
 import { Queue } from "core/queue";
 

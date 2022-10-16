@@ -1,4 +1,4 @@
-import Machine from "core/machine";
+import { Machine } from "core/machine";
 
 /**
  * Base class for all machine modules.
@@ -9,7 +9,7 @@ export default class MachineModule {
     /**
      * @param _options options table from `options.json`. defaults to `{}`.
      */
-    constructor(_machine: Machine, _options: Record<string, any>) {}
+    constructor(_machine: Machine, _options: Record<string, any>) { }
 
     /**
      * Construct an instance of a usable API to be exposed to the machine environment as a global.

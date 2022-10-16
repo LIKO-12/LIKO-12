@@ -2,7 +2,7 @@ import { EventsEmitter } from "core/events-emitter";
 import { EnvironmentBox } from "./environment-box";
 import MachineModule from "./machine-module";
 
-export default class Machine {
+export class Machine {
     readonly events = new EventsEmitter();
 
     private _environmentBox!: EnvironmentBox; // Initialized by the constructor's call to `resetEnvironment`.

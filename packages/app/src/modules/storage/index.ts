@@ -1,4 +1,4 @@
-import Machine from "core/machine";
+import { Machine } from "core/machine";
 import MachineModule from "core/machine-module";
 import { proxy } from "core/object-proxy";
 import { assertOption, validateParameters } from "core/utilities";
@@ -101,7 +101,7 @@ export default class Storage extends MachineModule {
         this.totalSpace = assertOption(options.capacity, 'capacity', 'number');
         try {
             this.basePath = assertAndResolvePath(assertOption(options.basePath, 'basePath', 'string'));
-        } catch(err: unknown) {
+        } catch (err: unknown) {
             error(tostring(err));
         }
 
