@@ -2,10 +2,10 @@
  * Bootstraps the standard LIKO-12 application which runs a single machine.
  */
 
-import { options } from 'core/options';
-import { loveEvents } from 'core/love-events';
-import { Machine } from 'core/machine';
-import Events from 'modules/events';
+import { options } from './core/options';
+import { loveEvents } from './core/love-events';
+import { Machine } from './core/machine';
+import Events from './modules/events';
 
 // TODO: Setup eslint for the project.
 // TODO: Create eslint rule to warn about missing "validateParameters" call.

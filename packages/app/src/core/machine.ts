@@ -1,4 +1,4 @@
-import { EventsEmitter } from 'core/events-emitter';
+import { EventsEmitter } from './events-emitter';
 import { EnvironmentBox } from './environment-box';
 import { MachineModule } from './machine-module';
 

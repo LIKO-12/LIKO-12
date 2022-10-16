@@ -1,4 +1,4 @@
-import { validateParameters } from 'core/utilities';
+import { validateParameters } from '../../core/utilities';
 import { BufferMode, File } from 'love.filesystem';
 import Storage, { TextFileMode } from '.';
 

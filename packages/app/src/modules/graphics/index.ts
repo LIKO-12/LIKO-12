@@ -1,7 +1,7 @@
-import { Machine } from 'core/machine';
-import { MachineModule } from 'core/machine-module';
-import { proxy } from 'core/object-proxy';
-import { clamp, validateParameters } from 'core/utilities';
+import { Machine } from '../../core/machine';
+import { MachineModule } from '../../core/machine-module';
+import { proxy } from '../../core/object-proxy';
+import { clamp, validateParameters } from '../../core/utilities';
 
 import Screen from '../screen';
 import { ImageData, LovePixelFunction } from './image-data';

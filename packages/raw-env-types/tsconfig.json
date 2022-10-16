@@ -1,7 +1,7 @@
 {
     // TODO: Have a shared base for tsconfig? some extends logic?
   "compilerOptions": {
-      "baseUrl": "src",
+    //   "baseUrl": "src",
       "rootDir": "src",
       "outDir": "out",
 
@@ -10,6 +10,7 @@
       "moduleResolution": "node",
       "resolveJsonModule": true,
       "types": [
+          "love-typescript-definitions",
           "@typescript-to-lua/language-extensions",
       ],
 

@@ -1,6 +1,6 @@
-import { ScreenOptions } from 'modules/screen';
-import { StorageOptions } from 'modules/storage';
-import * as rawOptions from 'options.json';
+import { ScreenOptions } from '../modules/screen';
+import { StorageOptions } from '../modules/storage';
+import * as rawOptions from '../options.json';
 
 type KnownModules = 'events' | 'storage' | 'screen';
 

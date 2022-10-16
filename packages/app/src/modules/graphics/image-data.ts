@@ -1,5 +1,5 @@
-import { proxy } from 'core/object-proxy';
-import { clamp, validateParameters } from 'core/utilities';
+import { proxy } from '../../core/object-proxy';
+import { clamp, validateParameters } from '../../core/utilities';
 import { ImageData as LoveImageData } from 'love.image';
 
 import Graphics from '.';

@@ -1,5 +1,5 @@
 import 'bootstrap';
-import { loveEvents } from 'core/love-events';
+import { loveEvents } from './core/love-events';
 
 love.run = () => {
     loveEvents.emit('load', love.arg.parseGameArguments(arg), arg);

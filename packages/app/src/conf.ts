@@ -3,7 +3,7 @@ love.filesystem.setRequirePath(`${love.filesystem.getRequirePath()};?/index.lua`
 
 import 'core/json-adapter';
 import 'core/error-handler';
-import { options } from 'core/options';
+import { options } from './core/options';
 
 love.conf = (t) => {
     t.identity = 'LIKO-12';

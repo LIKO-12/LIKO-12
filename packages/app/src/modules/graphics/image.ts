@@ -1,4 +1,4 @@
-import { validateParameters } from 'core/utilities';
+import { validateParameters } from '../../core/utilities';
 
 import { Image as LoveImage, Quad } from 'love.graphics';
 import { ImageData as LoveImageData } from 'love.image';
