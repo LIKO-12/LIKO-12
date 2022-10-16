@@ -2,7 +2,7 @@ import { proxy } from 'core/object-proxy';
 import { clamp, validateParameters } from 'core/utilities';
 import { ImageData as LoveImageData } from 'love.image';
 
-import Graphics from ".";
+import Graphics from '.';
 import { Image } from './image';
 
 export type LovePixelFunction = (x: number, y: number, r: number, g: number, b: number, a: number) => LuaMultiReturn<[r: number, g: number, b: number, a: number]>;

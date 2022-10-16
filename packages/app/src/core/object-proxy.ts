@@ -1,4 +1,4 @@
-import { assertParameter } from "./utilities";
+import { assertParameter } from './utilities';
 
 const originalObjects: Record<any, any> = setmetatable({}, { __mode: 'k' });
 const patchedMethods: Record<any, any> = setmetatable({}, { __mode: 'k' });

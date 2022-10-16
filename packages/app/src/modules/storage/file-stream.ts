@@ -1,6 +1,6 @@
-import { validateParameters } from "core/utilities";
-import { BufferMode, File } from "love.filesystem";
-import Storage, { TextFileMode } from ".";
+import { validateParameters } from 'core/utilities';
+import { BufferMode, File } from 'love.filesystem';
+import Storage, { TextFileMode } from '.';
 
 /**
  * File object for reading and writing into a file.
@@ -64,7 +64,7 @@ export default class FileStream {
 
             if (length > availableStorage + overridableLength)
                 return $multi(false, 'out of storage space');
-            
+
             if (overridableLength === 0)
                 availableStorage -= length;
             else {
@@ -105,7 +105,7 @@ export default class FileStream {
             offset += this.file.getSize();
         else if (whence !== 'set')
             error(`bad argument #1 to 'seek' (invalid option '${whence}')`, 2);
-        
+
         // out of bounds seeks cause the seek to fail without error message.
         if (offset < 0) offset = 0;
         if (offset > this.file.getSize()) offset = this.file.getSize();
@@ -113,7 +113,7 @@ export default class FileStream {
         try {
             assert(this.file.seek(offset));
             return this.file.tell();
-        } catch(message: unknown) {
+        } catch (message: unknown) {
             return $multi(false, tostring(message));
         }
     }
@@ -136,7 +136,7 @@ export default class FileStream {
 
         if (mode !== 'no' && mode !== 'full' && mode !== 'line')
             error(`bad argument #1 to 'setvbuf' (invalid option '${mode}')`, 2);
-        
+
         let loveMode: BufferMode = mode === 'no' ? 'none' : mode;
         return this.file.setBuffer(loveMode, size);
     }

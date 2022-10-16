@@ -1,10 +1,10 @@
-import { Machine } from "core/machine";
-import { MachineModule } from "core/machine-module";
-import { proxy } from "core/object-proxy";
-import { assertOption, validateParameters } from "core/utilities";
+import { Machine } from 'core/machine';
+import { MachineModule } from 'core/machine-module';
+import { proxy } from 'core/object-proxy';
+import { assertOption, validateParameters } from 'core/utilities';
 
 import { FileMode as LoveFileMode } from 'love.filesystem';
-import FileStream from "./file-stream";
+import FileStream from './file-stream';
 
 const lf = love.filesystem;
 

@@ -1,10 +1,10 @@
-import { Machine } from "core/machine";
-import { MachineModule } from "core/machine-module";
-import { proxy } from "core/object-proxy";
-import { clamp, validateParameters } from "core/utilities";
+import { Machine } from 'core/machine';
+import { MachineModule } from 'core/machine-module';
+import { proxy } from 'core/object-proxy';
+import { clamp, validateParameters } from 'core/utilities';
 
-import Screen from "../screen";
-import { ImageData, LovePixelFunction } from "./image-data";
+import Screen from '../screen';
+import { ImageData, LovePixelFunction } from './image-data';
 
 // TODO: palette soft-limit
 // TODO: automatic offset detection

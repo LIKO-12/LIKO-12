@@ -1,4 +1,4 @@
-import { EventsEmitter } from "./events-emitter";
+import { EventsEmitter } from './events-emitter';
 
 /**
  * A LÖVE Events Emitter.

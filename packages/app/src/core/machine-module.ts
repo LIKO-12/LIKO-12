@@ -1,4 +1,4 @@
-import { Machine } from "core/machine";
+import { Machine } from 'core/machine';
 
 /**
  * Base class for all machine modules.

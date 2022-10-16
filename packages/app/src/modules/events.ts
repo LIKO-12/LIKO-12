@@ -1,6 +1,6 @@
-import { Machine } from "core/machine";
-import { MachineModule } from "core/machine-module";
-import { Queue } from "core/queue";
+import { Machine } from 'core/machine';
+import { MachineModule } from 'core/machine-module';
+import { Queue } from 'core/queue';
 
 export default class Events extends MachineModule {
     private machineListening = false;

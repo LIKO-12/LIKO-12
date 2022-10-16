@@ -1,9 +1,9 @@
 import { loveEvents } from 'core/love-events';
-import { Machine } from "core/machine";
-import { MachineModule } from "core/machine-module";
-import { assertOption, clamp, validateParameters } from "core/utilities";
+import { Machine } from 'core/machine';
+import { MachineModule } from 'core/machine-module';
+import { assertOption, clamp, validateParameters } from 'core/utilities';
 
-import { Canvas } from "love.graphics";
+import { Canvas } from 'love.graphics';
 
 export interface ScreenOptions {
     width: number,
