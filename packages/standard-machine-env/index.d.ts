@@ -1,27 +1,31 @@
 /// <reference types="@liko-12/standard-modules-apis" />
 /// <reference types="lua-types/jit" />
 
-/**
- * The screen module API if loaded.
- */
-declare var screen: StandardModules.ScreenAPI | undefined;
+interface LikoAPIs {
+    /**
+     * The screen module API if loaded.
+     */
+    screen?: StandardModules.ScreenAPI;
 
-/**
- * The keyboard module API if loaded.
- */
-declare var keyboard: StandardModules.KeyboardAPI | undefined;
+    /**
+     * The keyboard module API if loaded.
+     */
+    keyboard?: StandardModules.KeyboardAPI;
 
-/**
- * The events module API if loaded.
- */
-declare var events: StandardModules.EventsAPI | undefined;
+    /**
+     * The events module API if loaded.
+     */
+    events?: StandardModules.EventsAPI;
 
-/**
- * The storage module API if loaded.
- */
-declare var storage: StandardModules.StorageAPI | undefined;
+    /**
+     * The storage module API if loaded.
+     */
+    storage?: StandardModules.StorageAPI;
 
-/**
- * The graphics module API if loaded.
- */
-declare var graphics: StandardModules.GraphicsAPI | undefined;
+    /**
+     * The graphics module API if loaded.
+     */
+    graphics?: StandardModules.GraphicsAPI;
+}
+
+declare var liko: LikoAPIs;

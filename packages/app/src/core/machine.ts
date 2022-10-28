@@ -173,6 +173,6 @@ export class Machine {
         for (const moduleName in this._modules)
             apis[moduleName] = this._modules[moduleName].createAPI(this);
 
-        this._environmentBox.expose(apis);
+        this._environmentBox.expose({ liko: apis });
     }
 }
