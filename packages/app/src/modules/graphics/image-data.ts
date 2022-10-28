@@ -6,41 +6,23 @@ import Graphics from ".";
 import { Image } from './image';
 
 export type LovePixelFunction = (x: number, y: number, r: number, g: number, b: number, a: number) => LuaMultiReturn<[r: number, g: number, b: number, a: number]>;
-export type PixelFunction = (x: number, y: number, color: number) => number;
 
 // TODO: palette soft-limit
 
-export class ImageData {
+export class ImageData implements StandardModules.Graphics.ImageData {
     constructor(
         protected readonly graphics: Graphics,
         protected readonly imageData: LoveImageData,
     ) { }
 
-    /**
-     * Gets the width of the imageData.
-     *
-     * @return The width of the image in pixels.
-     */
     getWidth(): number {
         return this.imageData.getWidth();
     }
 
-    /**
-     * Gets the height of the imageData.
-     *
-     * @return The height of the image in pixels.
-     */
     getHeight(): number {
         return this.imageData.getHeight();
     }
 
-    /**
-     * Gets the color of a pixel in the imageData.
-     *
-     * @param x The X coordinates of the pixel.
-     * @param y The Y coordinates of the pixel.
-     * @return The color of the pixel.
-     */
     getPixel(x: number, y: number): number {
         validateParameters();
 
@@ -51,13 +33,6 @@ export class ImageData {
         return r * 255;
     }
 
-    /**
-     * Sets the color of a pixel in the imageData.
-     *
-     * @param x     The X coordinates of the pixel.
-     * @param y     The Y coordinates of the pixel.
-     * @param color The new color of the pixel.
-     */
     setPixel(x: number, y: number, color: number): ImageData {
         validateParameters();
 
@@ -70,12 +45,7 @@ export class ImageData {
         return this;
     }
 
-    /**
-     * Applies a `PixelFunction` on all the pixels of the imageData.
-     *
-     * @param mapper The `PixelFunction` to apply on all the pixels.
-     */
-    mapPixels(mapper: PixelFunction): ImageData {
+    mapPixels(mapper: StandardModules.Graphics.PixelFunction): ImageData {
         validateParameters();
 
         this.imageData.mapPixel((x: number, y: number, r: number) => {
@@ -87,40 +57,15 @@ export class ImageData {
         return this;
     }
 
-    // TODO: paste
-    // TODO: export
-
-    /**
-     * Pastes the content of another imageData into this imageData.
-     *
-     * @param source    The source imageData, can't be null!
-     * @param destX     The destination's top-left corner X coordinates to paste the image at. Defaults to 0.
-     * @param destY     The destination's top-left corner Y coordinates to paste the image at. Defaults to 0.
-     * @param srcX      The X coordinates of the region to paste from the source imageData. Defaults to 0.
-     * @param srcY      The Y coordinates of the region to paste from the source imageData. Defaults to 0.
-     * @param srcWidth  The width of the region to paste from the source imageData in pixels. Defaults to the source imageData's width.
-     * @param srcHeight The height of the region to paste from the source imageData in pixels. Defaults to the source imageData's height.
-     */
     paste(source: ImageData, destX?: number, destY?: number, srcX?: number, srcY?: number, srcWidth?: number, srcHeight?: number): ImageData {
         throw new Error('Method not implemented.'); // FIXME: Unimplemented method.
     }
 
-    /**
-     * Creates a drawable Image from this ImageData.
-     * The content of the created Image can be updated using {@code Image.refresh()}.
-     *
-     * @return The created drawable Image.
-     */
     toImage(): Image {
         const image = new Image(this.imageData);
         return proxy(image);
     }
 
-    /**
-     * Encodes the imageData into a PNG image, using the current active colorPalette.
-     *
-     * @return The encoded PNG binary data as a bytes array.
-     */
     export(): string {
         throw new Error('Method not implemented.'); // FIXME: Unimplemented method.
     }

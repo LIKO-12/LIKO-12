@@ -68,7 +68,7 @@ export default class Graphics extends MachineModule {
         love.graphics.setColor(color / 255.0, 1, 1, 1);
     }
 
-    createAPI(_machine: Machine) {
+    createAPI(_machine: Machine): StandardModules.GraphicsAPI {
         return {
             ...this.createShapesAPI(),
             ...this.createEffectsAPI(),
@@ -79,14 +79,8 @@ export default class Graphics extends MachineModule {
     /**
      * For drawing shapes on the screen.
      */
-    createShapesAPI() {
+    createShapesAPI(): StandardModules.Graphics.ShapesAPI {
         return {
-            /**
-             * Get and/or set the active color.
-             * 
-             * @param color The new color to set.
-             * @returns The currently active / newly set color.
-             */
             color: (color = this.activeColor): number => {
                 validateParameters();
 
@@ -94,11 +88,6 @@ export default class Graphics extends MachineModule {
                 return color;
             },
 
-            /**
-             * Clear the screen and fill it with a specific color.
-             * 
-             * @param color The color to use. Defaults to the active color.
-             */
             clear: (color = this.activeColor): void => {
                 validateParameters();
 
@@ -106,11 +95,6 @@ export default class Graphics extends MachineModule {
                 love.graphics.clear(color / 255, 1, 1, 1);
             },
 
-            /**
-             * Draw a point on the screen.
-             * 
-             * @param color The color to use. Defaults to the active color.
-             */
             point: (x: number, y: number, color = this.activeColor): void => {
                 validateParameters();
 
@@ -118,14 +102,6 @@ export default class Graphics extends MachineModule {
                 love.graphics.points(x, y);
             },
 
-            /**
-             * Draw multiple points on the screen.
-             * 
-             * @example points([16,16, 32,16, 16,32, 32,32], 7);
-             * 
-             * @param coords The coordinates of the points, **must contain an even number of elements.**
-             * @param color The color to use. Defaults to the active color.
-             */
             points: (coords: number[], color = this.activeColor): void => {
                 validateParameters();
 
@@ -133,11 +109,6 @@ export default class Graphics extends MachineModule {
                 love.graphics.points(coords);
             },
 
-            /**
-             * Draw a line on the screen.
-             * 
-             * @param color The color to use. Defaults to the active color.
-             */
             line: (x1: number, y1: number, x2: number, y2: number, color = this.activeColor): void => {
                 validateParameters();
 
@@ -145,14 +116,6 @@ export default class Graphics extends MachineModule {
                 love.graphics.line(x1, y1, x2, y2);
             },
 
-            /**
-             * Draw multiple lines on the screen.
-             * 
-             * @example lines([16,16, 32,16, 16,32, 32,32], 7);
-             * 
-             * @param coords The coordinates of the line vertices, **must contain an even number of elements.**
-             * @param color The color to use. Defaults to the active color.
-             */
             lines: (coords: number[], color = this.activeColor): void => {
                 validateParameters();
 
@@ -160,12 +123,6 @@ export default class Graphics extends MachineModule {
                 love.graphics.line(coords);
             },
 
-            /**
-             * Draw a triangle on the screen.
-             * 
-             * @param filled Whether to fill or only outline. Defaults to false (outline).
-             * @param color The color to use. Defaults to the active color.
-             */
             triangle: (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, filled = false, color = this.activeColor): void => {
                 validateParameters();
 
@@ -173,12 +130,6 @@ export default class Graphics extends MachineModule {
                 love.graphics.polygon(filled ? 'fill' : 'line', x1, y1, x2, y2, x3, y3);
             },
 
-            /**
-             * Draw a rectangle on the screen.
-             * 
-             * @param filled Whether to fill or only outline. Defaults to false (outline).
-             * @param color The color to use. Defaults to the active color.
-             */
             rectangle: (x: number, y: number, width: number, height: number, filled = false, color = this.activeColor): void => {
                 validateParameters();
 
@@ -186,12 +137,6 @@ export default class Graphics extends MachineModule {
                 love.graphics.rectangle(filled ? 'fill' : 'line', x, y, width, height);
             },
 
-            /**
-             * Draw a polygon on the screen.
-             * 
-             * @param filled Whether to fill or only outline. Defaults to false (outline).
-             * @param color The color to use. Defaults to the active color.
-             */
             polygon: (vertices: number[], filled = false, color = this.activeColor): void => {
                 validateParameters();
 
@@ -199,12 +144,6 @@ export default class Graphics extends MachineModule {
                 love.graphics.polygon(filled ? 'fill' : 'line', vertices);
             },
 
-            /**
-             * Draw a circle on the screen.
-             * 
-             * @param filled Whether to fill or only outline. Defaults to false (outline).
-             * @param color The color to use. Defaults to the active color.
-             */
             circle: (centerX: number, centerY: number, radius: number, filled = false, color = this.activeColor): void => {
                 validateParameters();
 
@@ -212,12 +151,6 @@ export default class Graphics extends MachineModule {
                 love.graphics.circle(filled ? 'fill' : 'line', centerX, centerY, radius);
             },
 
-            /**
-             * Draw an ellipse on the screen.
-             * 
-             * @param filled Whether to fill or only outline. Defaults to false (outline).
-             * @param color The color to use. Defaults to the active color.
-             */
             ellipse: (centerX: number, centerY: number, radiusX: number, radiusY: number, filled = false, color = this.activeColor): void => {
                 validateParameters();
 
@@ -230,18 +163,8 @@ export default class Graphics extends MachineModule {
     /**
      * For applying some graphics effects.
      */
-    createEffectsAPI() {
+    createEffectsAPI(): StandardModules.Graphics.EffectsAPI {
         return {
-            // TODO: clipping (setClip).
-            // TODO: patterns (setDrawingPattern).
-            // TODO: transformations (setMatrix, getMatrix).
-
-            /**
-             * Remaps a color on all drawing operations.
-             * 
-             * @param from The color to replace.
-             * @param to The color which will replace `from`.
-             */
             remapColor: (from: number, to: number): void => {
                 validateParameters();
 
@@ -249,11 +172,6 @@ export default class Graphics extends MachineModule {
                 this.uploadPaletteRemap();
             },
 
-            /**
-             * Make a specific color transparent (invisible) when drawing an image.
-             * 
-             * @param color The target. Defaults to the active color.
-             */
             makeColorTransparent: (color = this.activeColor): void => {
                 validateParameters();
 
@@ -261,11 +179,6 @@ export default class Graphics extends MachineModule {
                 this.uploadPaletteTransparency();
             },
 
-            /**
-             * Make a specific color opaque (visible) when drawing an image.
-             * 
-             * @param color @param color The target. Defaults to the active color.
-             */
             makeColorOpaque: (color = this.activeColor): void => {
                 validateParameters();
 
@@ -275,11 +188,8 @@ export default class Graphics extends MachineModule {
         };
     }
 
-    createImagesAPI() {
+    createImagesAPI(): StandardModules.Graphics.ImagesAPI {
         return {
-            /**
-             * Create a new ImageData with specific dimensions, and zero-fill it.
-             */
             newImageData: (width: number, height: number): ImageData => {
                 validateParameters();
 
@@ -289,10 +199,6 @@ export default class Graphics extends MachineModule {
                 return proxy(ImageData._newImageData(this, width, height));
             },
 
-            /**
-             * Create an ImageData from a PNG image.
-             * @param data The binary representation of the PNG image to import.
-             */
             importImageData: (data: string): ImageData => {
                 validateParameters();
                 return proxy(ImageData._importImageData(this, data));

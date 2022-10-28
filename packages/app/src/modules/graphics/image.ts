@@ -3,7 +3,7 @@ import { validateParameters } from 'core/utilities';
 import { Image as LoveImage, Quad } from 'love.graphics';
 import { ImageData as LoveImageData } from 'love.image';
 
-export class Image {
+export class Image implements StandardModules.Graphics.Image {
     protected readonly image: LoveImage;
     protected readonly quad: Quad;
 
@@ -16,37 +16,14 @@ export class Image {
         this.quad = love.graphics.newQuad(0, 0, width, height, width, height);
     }
 
-    /**
-     * Gets the width of the image.
-     *
-     * @return The width of the image in pixels.
-     */
     getWidth(): number {
         return this.image.getWidth();
     }
 
-    /**
-     * Gets the height of the image.
-     *
-     * @return The height of the image in pixels.
-     */
     getHeight(): number {
         return this.image.getHeight();
     }
 
-    /**
-     * Draw the image on the screen.
-     * 
-     * @param x         The X coordinates of the top-left image's corner.
-     * @param y         The Y coordinates of the top-left image's corner.
-     * @param rotation  The rotation of the image in radians. Defaults to 0.
-     * @param scaleX    The scale of the image on the X-axis. Defaults to 1.
-     * @param scaleY    The scale of the image on the Y-axis. Defaults to 1.
-     * @param srcX      The X coordinates of the region to draw from the image. Defaults to 0.
-     * @param srcY      The Y coordinates of the region to draw from the image. Defaults to 0.
-     * @param srcWidth  The width of the region to draw from the image in pixels. Defaults to the image's width.
-     * @param srcHeight The height of the region to draw from the image in pixels. Defaults to the image's height.
-     */
     draw(x = 0, y = 0, rotation = 0, scaleX = 1, scaleY = 1, srcX = 0, srcY = 0, srcWidth = this.getWidth(), srcHeight = this.getHeight()): Image {
         validateParameters();
 
@@ -60,9 +37,6 @@ export class Image {
         return this;
     }
 
-    /**
-     * Updates the image's content from the ImageData used to create the image.
-     */
     refresh(): Image {
         this.image.replacePixels(this.imageData, 0);
         return this;

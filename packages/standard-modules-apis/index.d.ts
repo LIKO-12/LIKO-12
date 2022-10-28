@@ -8,17 +8,17 @@
 /// <reference path="./modules/keyboard.d.ts" />
 /// <reference path="./modules/events.d.ts" />
 /// <reference path="./modules/storage.d.ts" />
+/// <reference path="./modules/graphics/index.d.ts" />
 
+// TODO: remove this and use the namespaces types only.
 declare module "@liko-12/standard-modules-apis" {
+    // TODO: Name space the constants under the Keyboard module.
     export type KeyConstant = StandardModules.KeyConstant;
     export type Scancode = StandardModules.Scancode;
 
-    export type EventsAPI = StandardModules.EventsAPI;
     export type KeyboardAPI = StandardModules.KeyboardAPI;
+    export type EventsAPI = StandardModules.EventsAPI;
     export type ScreenAPI = StandardModules.ScreenAPI;
     export type StorageAPI = StandardModules.StorageAPI;
-    
-    export type FileMode = StandardModules.FileMode;
-    export type FileInfo = StandardModules.FileInfo;
-    export type FileStream = StandardModules.FileStream;
+    export type GraphicsAPI = StandardModules.GraphicsAPI;
 }

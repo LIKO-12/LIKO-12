@@ -1,5 +1,3 @@
-import { FileStream as IFileStream } from '@liko-12/standard-modules-apis';
-
 import { validateParameters } from "core/utilities";
 import { BufferMode, File } from "love.filesystem";
 import Storage, { TextFileMode } from ".";
@@ -14,7 +12,7 @@ import Storage, { TextFileMode } from ".";
  *  - `file:lines` is not implemented.
  *  - possibly some difference in error messages.
  */
-export default class FileStream implements IFileStream {
+export default class FileStream implements StandardModules.Storage.FileStream {
     protected readonly readAllowed: boolean;
     protected readonly writeAllowed: boolean;
     protected readonly appendMode: boolean;
