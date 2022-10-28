@@ -1,5 +1,5 @@
-declare namespace StandardModules {
-    interface Screen {
+declare module "@liko-12/standard-modules-types" {
+    export interface ScreenAPI {
         /**
          * Get the width of the screen in pixels.
          */

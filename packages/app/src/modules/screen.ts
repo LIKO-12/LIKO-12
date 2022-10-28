@@ -1,9 +1,11 @@
+import { ScreenAPI } from '@liko-12/standard-modules-types';
+import { Canvas } from "love.graphics";
+
 import { loveEvents } from 'core/love-events';
 import { Machine } from "core/machine";
 import { MachineModule } from "core/machine-module";
 import { assertOption, clamp, validateParameters } from "core/utilities";
 
-import { Canvas } from "love.graphics";
 
 export interface ScreenOptions {
     width: number,
@@ -123,7 +125,7 @@ export default class Screen extends MachineModule {
         return color === -1 ? 0 : color;
     }
 
-    createAPI(_machine: Machine): StandardModules.Screen {
+    createAPI(_machine: Machine): ScreenAPI {
         return {
             getWidth: (): number => this.framebuffer.getWidth(),
             getHeight: (): number => this.framebuffer.getHeight(),
