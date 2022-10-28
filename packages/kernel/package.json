@@ -5,7 +5,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tstl"
+    "build": "tstl",
+    "dev": "tstl --watch"
   },
   "devDependencies": {
     "@liko-12/standard-machine-env": "*",

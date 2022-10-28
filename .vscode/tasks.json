@@ -4,9 +4,22 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build and watch for changes",
+            "label": "Build [app] and watch for changes",
             "type": "npm",
-            "script": "dev",
+            "script": "dev:app",
+            "problemMatcher": "$tsc-watch",
+            "isBackground": true,
+            "presentation": {
+                "echo": false,
+                "reveal": "never",
+                "panel": "shared",
+                "clear": true
+            },
+        },
+        {
+            "label": "Build [kernel] and watch for changes",
+            "type": "npm",
+            "script": "dev:kernel",
             "problemMatcher": "$tsc-watch",
             "isBackground": true,
             "presentation": {
@@ -37,7 +50,8 @@
                 "clear": true
             },
             "dependsOn": [
-                "Build and watch for changes"
+                "Build [app] and watch for changes",
+                "Build [kernel] and watch for changes",
             ]
         }
     ]

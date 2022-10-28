@@ -12,8 +12,12 @@
   "scripts": {
     "install": "yarn --cwd packages/app symlink",
     "symlink": "yarn --cwd packages/app symlink",
-    "build": "yarn --cwd packages/app build",
-    "dev": "yarn --cwd packages/app dev"
+
+    "build:app": "yarn --cwd packages/app build",
+    "dev:app": "yarn --cwd packages/app dev",
+
+    "build:kernel": "yarn --cwd packages/kernel build",
+    "dev:kernel": "yarn --cwd packages/kernel dev"
   },
   "devDependencies": {},
   "engines": {

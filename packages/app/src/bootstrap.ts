@@ -18,28 +18,30 @@ import Events from 'modules/events';
 
 math.randomseed(os.time());
 
-const [rawProgram] = love.filesystem.read('res/init.lua');
+const [rawProgram] = love.filesystem.read('res/kernel/init.lua');
+
+// TODO: Cleanup the load procedure.
 
 loveEvents.on('load', () => {
     const machine = new Machine(options.modules, options.options);
     const events = machine.resolveModule<Events>('events');
-    if (!events) throw 'WHERE EVENTS';
+    if (!events) throw 'WHERE EVENTS?';
 
     const [program, compileError] = loadstring(rawProgram ?? '', 'program');
     if (!program) throw compileError;
 
     machine.load(program);
-    events.pushEvent('ping', 1);
-    events.pushEvent('ping', 2);
+    // events.pushEvent('ping', 1);
+    // events.pushEvent('ping', 2);
     machine.resume();
 
-    print('yielded', 'dead:', machine.isDead());
-    events.pushEvent('ping', 3);
-    print('-p1');
-    events.pushEvent('ping', 4);
-    print('-p2');
-    events.pushEvent('ping', 5);
-    print('done');
+    // print('yielded', 'dead:', machine.isDead());
+    // events.pushEvent('ping', 3);
+    // print('-p1');
+    // events.pushEvent('ping', 4);
+    // print('-p2');
+    // events.pushEvent('ping', 5);
+    // print('done');
 });
 
 loveEvents.on('keypressed', (key: string) => {
