@@ -1,4 +1,4 @@
-import { ScreenAPI } from '@liko-12/standard-modules-types';
+import { ScreenAPI } from '@liko-12/standard-modules-apis';
 import { Canvas } from "love.graphics";
 
 import { loveEvents } from 'core/love-events';

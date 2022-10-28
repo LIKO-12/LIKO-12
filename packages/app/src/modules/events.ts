@@ -1,4 +1,4 @@
-import { EventsAPI } from '@liko-12/standard-modules-types';
+import { EventsAPI } from '@liko-12/standard-modules-apis';
 
 import { Machine } from "core/machine";
 import { MachineModule } from "core/machine-module";

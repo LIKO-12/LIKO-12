@@ -1,7 +1,7 @@
 /// <reference path="../constants/keys.d.ts" />
 /// <reference path="../constants/scancode.d.ts" />
 
-declare module "@liko-12/standard-modules-types" {
+declare module "@liko-12/standard-modules-apis" {
     export interface KeyboardAPI {
         /**
          * Enable or disable text input events.

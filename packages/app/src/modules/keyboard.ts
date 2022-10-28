@@ -1,4 +1,4 @@
-import { KeyboardAPI, KeyConstant, Scancode } from '@liko-12/standard-modules-types';
+import { KeyboardAPI, KeyConstant, Scancode } from '@liko-12/standard-modules-apis';
 
 import { loveEvents } from 'core/love-events';
 import { Machine } from "core/machine";
