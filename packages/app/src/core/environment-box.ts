@@ -28,8 +28,8 @@ function isBytecode(data: unknown) {
 type Environment = Record<any, any>;
 
 export class EnvironmentBox {
-    private _protectedEnvironments: Record<symbol, boolean | undefined> = {};
-    private _protectedThreads: Record<symbol, boolean | undefined> = {};
+    private _protectedEnvironments = new LuaSet<object>();
+    private _protectedThreads = new LuaSet<LuaThread>();
 
     private _externalYield = true;
 
@@ -57,12 +57,12 @@ export class EnvironmentBox {
      * Protects an environment/globals from being accessed by the encapsulated code.
      */
     protectEnvironment(environment: Environment) {
-        this._protectedEnvironments[environment as any] = true;
+        this._protectedEnvironments.add(environment);
         return this;
     }
 
     unprotectEnvironment(environment: Environment) {
-        this._protectedEnvironments[environment as any] = undefined;
+        this._protectedEnvironments.delete(environment);
         return this;
     }
 
@@ -73,12 +73,12 @@ export class EnvironmentBox {
      * the unprotected threads running within a protected one.
      */
     protectThread(thread: LuaThread) {
-        this._protectedThreads[thread as any] = true;
+        this._protectedThreads.add(thread);
         return this;
     }
 
     unprotectThread(thread: LuaThread) {
-        this._protectedThreads[thread as any] = undefined;
+        this._protectedThreads.delete(thread);
         return this;
     }
 
@@ -225,14 +225,14 @@ export class EnvironmentBox {
             getfenv: (func: any) => {
                 // Disallow access to protected environments.
                 const [env] = ecall(getfenv, func);
-                if (this._protectedEnvironments[env as any]) return undefined;
+                if (this._protectedEnvironments.has(env)) return undefined;
                 return env;
             },
             setfenv: (func: any, env: any) => {
                 // Disallow kidnapping functions with protected environments.
                 // (Disallow replacing their protected environment)
                 const [existingEnv] = ecall(getfenv, func);
-                if (this._protectedEnvironments[existingEnv as any]) return;
+                if (this._protectedEnvironments.has(existingEnv)) return;
                 return ecall(setfenv, func, env);
             },
             loadstring: (data: unknown, chunkName: any) => {
@@ -269,14 +269,14 @@ export class EnvironmentBox {
                 running: () => {
                     // Disallow access to protected threads.
                     const thread = coroutine.running();
-                    if (this._protectedThreads[thread as any]) return undefined;
+                    if (thread !== undefined && this._protectedThreads.has(thread)) return undefined;
                     return thread;
                 },
                 yield: (...args: any[]) => {
                     // Prevent yielding out of a protected thread.
                     const thread = coroutine.running();
 
-                    if (this._protectedThreads[thread as any])
+                    if (thread !== undefined && this._protectedThreads.has(thread))
                         return error('attempt to yield across C-call boundary');
 
                     // Set the flag to indicate this is an internal yield.
