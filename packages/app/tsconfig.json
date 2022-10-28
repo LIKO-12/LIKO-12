@@ -11,6 +11,7 @@
       "types": [
           "love-typescript-definitions",
           "@typescript-to-lua/language-extensions",
+          "@liko-12/standard-modules-apis",
           "lua-types/jit",
       ],
 

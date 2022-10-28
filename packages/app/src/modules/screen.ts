@@ -1,4 +1,3 @@
-import { ScreenAPI } from '@liko-12/standard-modules-apis';
 import { Canvas } from "love.graphics";
 
 import { loveEvents } from 'core/love-events';
@@ -125,7 +124,7 @@ export default class Screen extends MachineModule {
         return color === -1 ? 0 : color;
     }
 
-    createAPI(_machine: Machine): ScreenAPI {
+    createAPI(_machine: Machine): StandardModules.ScreenAPI {
         return {
             getWidth: (): number => this.framebuffer.getWidth(),
             getHeight: (): number => this.framebuffer.getHeight(),

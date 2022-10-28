@@ -1,4 +1,4 @@
-import { KeyboardAPI, KeyConstant, Scancode } from '@liko-12/standard-modules-apis';
+import { KeyConstant, Scancode } from 'love.keyboard';
 
 import { loveEvents } from 'core/love-events';
 import { Machine } from "core/machine";
@@ -28,7 +28,11 @@ export default class Keyboard extends MachineModule {
         });
     }
 
-    createAPI(_machine: Machine): KeyboardAPI {
+    createAPI(_machine: Machine): StandardModules.KeyboardAPI {
+        // Keep the implementation referencing the `KeyConstant` and `Scancode` of LÖVE,
+        // that way we're taking advantage of the typescript compiler that
+        // it makes sure LIKO-12's constants and LÖVE's one are in sync.
+
         return {
             setTextInput: (enable: boolean) => {
                 validateParameters();

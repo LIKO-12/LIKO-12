@@ -1,5 +1,5 @@
-/// <reference path="../constants/keys.d.ts" />
-/// <reference path="../constants/scancodes.d.ts" />
+/// <reference path="./keys.d.ts" />
+/// <reference path="./scancodes.d.ts" />
 
 declare namespace StandardModules {
     export interface KeyboardAPI {
@@ -20,22 +20,22 @@ declare namespace StandardModules {
          * Get the hardware scancode corresponding to the given key.
          * @returns `"unknown"` if the given key has no known physical representation on the current system.
          */
-        getScancodeFromKey(this: void, key: KeyConstant): Scancode;
+        getScancodeFromKey(this: void, key: Keyboard.KeyConstant): Keyboard.Scancode;
 
         /**
          * Get the key corresponding to the given hardware scancode.
          * @returns `"unknown"` if the scancode doesn't map to a KeyConstant on the current system.
          */
-        getKeyFromScancode(this: void, scancode: Scancode): KeyConstant;
+        getKeyFromScancode(this: void, scancode: Keyboard.Scancode): Keyboard.KeyConstant;
 
         /**
          * Checks whether one at least of the provided keys is down (this: void, pressed).
          */
-        isDown(this: void, ...keys: KeyConstant[]): boolean;
+        isDown(this: void, ...keys: Keyboard.KeyConstant[]): boolean;
 
         /**
          * Checks whether one at least of the provided scancodes is down (this: void, pressed).
          */
-        isScancodeDown(this: void, ...scancodes: Scancode[]): boolean;
+        isScancodeDown(this: void, ...scancodes: Keyboard.Scancode[]): boolean;
     }
 }
