@@ -29,30 +29,22 @@ export default class FileStream implements StandardModules.Storage.FileStream {
         this.appendMode = (mode === 'a' || mode === 'a+');
     }
 
-    /**
-     * @param byteCount (defaults to all).
-     * @returns The data read or `undefined` when the end is reached.
-     *          Otherwise it's `false` and the error message on failure.
-     */
     read(byteCount?: number) {
         validateParameters();
 
         try {
             const [content] = this.file.read(byteCount);
-            return content;
+            return $multi(content);
         } catch (message: unknown) {
-            if (message === undefined) return undefined;
-            else return $multi(false, tostring(message));
+            if (message === undefined) return $multi(undefined);
+            else return $multi(undefined, tostring(message));
         }
     }
 
-    /**
-     * @return `true` on success. Otherwise it's `false` and the error message on failure.
-     */
     write(...values: (string | number)[]) {
         validateParameters();
 
-        if (!this.writeAllowed) return $multi(false, 'Bad file descriptor');
+        if (!this.writeAllowed) return $multi(undefined, 'Bad file descriptor');
         if (this.appendMode) this.file.seek(this.file.getSize());
 
         let availableStorage = this.storage.totalSpace - this.storage.usedSpace;
@@ -63,7 +55,7 @@ export default class FileStream implements StandardModules.Storage.FileStream {
             let length = value.length;
 
             if (length > availableStorage + overridableLength)
-                return $multi(false, 'out of storage space');
+                return $multi(undefined, 'out of storage space');
             
             if (overridableLength === 0)
                 availableStorage -= length;
@@ -78,24 +70,14 @@ export default class FileStream implements StandardModules.Storage.FileStream {
             try {
                 assert(this.file.write(value));
             } catch (message: unknown) {
-                return $multi(false, tostring(message));
+                return $multi(undefined, tostring(message));
             }
         }
 
-        return true;
+        const stream: FileStream = this;
+        return $multi(stream);
     }
 
-    /**
-     * Sets and gets the file position, measured from the beginning of the file,
-     * to the position given by offset plus a base specified by the string whence, as follows:
-     * 
-     * - `set`: base is position 0 (beginning of the file).
-     * - `cur`: base is current position.
-     * - `end`: base is end of file.
-     * 
-     * @return Position (relative to the start) after seeking.
-     *         Otherwise it's `false` and the error message on failure.
-     */
     seek(whence: 'set' | 'cur' | 'end' = 'cur', offset = 0) {
         validateParameters();
 
@@ -112,25 +94,12 @@ export default class FileStream implements StandardModules.Storage.FileStream {
 
         try {
             assert(this.file.seek(offset));
-            return this.file.tell();
+            return $multi(this.file.tell());
         } catch(message: unknown) {
-            return $multi(false, tostring(message));
+            return $multi(undefined, tostring(message));
         }
     }
 
-    /**
-     * Sets the buffering mode for an output file. There are three available modes:
-     * 
-     * - `no`: no buffering; the result of any output operation appears immediately.
-     * - `full`: full buffering; output operation is performed only when the buffer is full
-     * (or when you explicitly flush the file (see io.flush)).
-     * - `line`: line buffering; output is buffered until a newline is output or there is any input
-     * from some special files (such as a terminal device).
-     * 
-     * For the last two cases, size specifies the size of the buffer, in bytes. The default is an appropriate size.
-     * 
-     * @returns `true` on success. Otherwise it's `false` and the error message on failure.
-     */
     setvbuff(mode: 'no' | 'full' | 'line', size?: number) {
         validateParameters();
 
@@ -141,19 +110,10 @@ export default class FileStream implements StandardModules.Storage.FileStream {
         return this.file.setBuffer(loveMode, size);
     }
 
-    /**
-     * Flushes any buffered written data in the file to the disk.
-     * @returns `true` on success. Otherwise it's `false` and the error message on failure.
-     */
     flush() {
         return this.file.flush();
     }
 
-    /**
-     * Note that files are automatically closed when their handles are garbage collected,
-     * but that takes an unpredictable amount of time to happen.
-     * @return Always `true` (doesn't fail, _hopefully_).
-     */
     close() {
         return this.file.close();
     }
