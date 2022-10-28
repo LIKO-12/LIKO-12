@@ -1,6 +1,9 @@
 
 # Contribution Guide
 
+<!-- TODO: Update the contribution guide -->
+<!-- TODO: Setup commits linter https://commitlint.js.org/#/ -->
+
 ## Building LIKO-12
 
 ### Packing a universal `.love` file

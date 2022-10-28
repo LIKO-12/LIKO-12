@@ -123,22 +123,11 @@ export default class Screen extends MachineModule {
         return color === -1 ? 0 : color;
     }
 
-    createAPI(_machine: Machine) {
+    createAPI(_machine: Machine): StandardModules.Screen {
         return {
-            /**
-             * Get the width of the screen in pixels.
-             */
             getWidth: (): number => this.framebuffer.getWidth(),
-            /**
-             * Get the height of the screen in pixels.
-             */
             getHeight: (): number => this.framebuffer.getHeight(),
 
-            /**
-             * Wait until the screen is applied and shown to the user.
-             * 
-             * Helpful when doing some loading operations.
-             */
             flip: (): void => {
                 this.resumeWhenFlipped = true;
                 coroutine.yield();
@@ -146,16 +135,6 @@ export default class Screen extends MachineModule {
 
             // TODO: initialize the screen module with no palette pre-loaded.
 
-            // TODO: take screenshot imagedata
-
-            /**
-             * Set the RGB values of a palette color.
-             * 
-             * @param color The palette's color to set.
-             * @param r     The red channel value [0-255]
-             * @param g     The green channel value [0-255].
-             * @param b     The blue channel value [0-255].
-             */
             setPaletteColor: (color: number, r: number, g: number, b: number): void => {
                 validateParameters();
 

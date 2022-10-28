@@ -12,6 +12,7 @@
           "love-typescript-definitions",
           "@typescript-to-lua/language-extensions",
           "lua-types/jit",
+          "@liko-12/standard-modules-types",
       ],
 
       "declaration": true,                                 /* Generate .d.ts files from TypeScript and JavaScript files in your project. */

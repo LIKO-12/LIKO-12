@@ -1,0 +1,8 @@
+{
+  "name": "@liko-12/standard-modules-types",
+  "version": "2.0.0",
+  "description": "The declarations for the interfaces of the standard LIKO-12 machine modules.",
+  "license": "MIT",
+  "private": true,
+  "types": "."
+}

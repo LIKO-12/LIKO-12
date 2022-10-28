@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@rami-sabbagh/ts-inject-parameters-metadata": "^1.1.0",
+    "@liko-12/standard-modules-types": "*",
     "love-typescript-definitions": "^0.24.3",
     "lua-types": "^2.13.0",
     "typescript": "^4.8.4",
