@@ -1,4 +1,4 @@
-declare module "@liko-12/standard-modules-apis" {
+declare namespace StandardModules {
     export interface ScreenAPI {
         /**
          * Get the width of the screen in pixels.

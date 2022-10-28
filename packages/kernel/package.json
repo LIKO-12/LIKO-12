@@ -1,0 +1,17 @@
+{
+  "name": "@liko-12/kernel",
+  "version": "2.0.0",
+  "description": "The standard LIKO-12 machine kernel.",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tstl"
+  },
+  "devDependencies": {
+    "@liko-12/standard-machine-env": "*",
+    "@rami-sabbagh/ts-inject-parameters-metadata": "^1.1.0",
+    "@typescript-to-lua/language-extensions": "^1.0.0",
+    "typescript": "^4.8.4",
+    "typescript-to-lua": "^1.10.1"
+  }
+}

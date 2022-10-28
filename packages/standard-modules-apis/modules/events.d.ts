@@ -1,6 +1,6 @@
 /// <reference types='@typescript-to-lua/language-extensions'/>
 
-declare module "@liko-12/standard-modules-apis" {
+declare namespace StandardModules {
     export interface EventsAPI {
         /**
          * Pull an event actively which could suspend the machine until an event is pushed.

@@ -1,7 +1,7 @@
 /// <reference path="../constants/keys.d.ts" />
-/// <reference path="../constants/scancode.d.ts" />
+/// <reference path="../constants/scancodes.d.ts" />
 
-declare module "@liko-12/standard-modules-apis" {
+declare namespace StandardModules {
     export interface KeyboardAPI {
         /**
          * Enable or disable text input events.
@@ -21,6 +21,7 @@ declare module "@liko-12/standard-modules-apis" {
          * @returns `"unknown"` if the given key has no known physical representation on the current system.
          */
         getScancodeFromKey(this: void, key: KeyConstant): Scancode;
+
         /**
          * Get the key corresponding to the given hardware scancode.
          * @returns `"unknown"` if the scancode doesn't map to a KeyConstant on the current system.

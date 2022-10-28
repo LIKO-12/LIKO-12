@@ -5,6 +5,9 @@
   "license": "MIT",
   "private": true,
   "types": ".",
+  "dependencies": {
+    "lua-types": "^2.13.0"
+  },
   "devDependencies": {
     "@typescript-to-lua/language-extensions": "^1.0.0"
   }

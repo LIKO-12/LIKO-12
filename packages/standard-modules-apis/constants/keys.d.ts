@@ -1,4 +1,4 @@
-declare module "@liko-12/standard-modules-apis" {
+declare namespace StandardModules {
     /**
      * All the keys you can press. Note that some keys may not be available on your
      * keyboard or system.

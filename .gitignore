@@ -65,6 +65,7 @@ node_modules
 
 # Build
 /dist
+/packages/*/out
 
 # Version tag
 /src/version.txt

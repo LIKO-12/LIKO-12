@@ -1,0 +1,12 @@
+{
+  "name": "@liko-12/standard-machine-env",
+  "version": "2.0.0",
+  "description": "The declarations for the global environment available for the LIKO-12 system without any modifications.",
+  "license": "MIT",
+  "private": true,
+  "types": ".",
+  "dependencies": {
+    "@liko-12/standard-modules-apis": "*",
+    "lua-types": "^2.13.0"
+  }
+}
