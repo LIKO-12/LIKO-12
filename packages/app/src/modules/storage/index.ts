@@ -112,30 +112,18 @@ export default class Storage extends MachineModule {
 
     createAPI(): StandardModules.StorageAPI {
         return {
-            /**
-             * @returns Total space in bytes.
-             */
             getTotalSpace: () => {
                 return this.totalSpace;
             },
 
-            /**
-             * @returns Used space in bytes.
-             */
             getUsedSpace: () => {
                 return this.usedSpace;
             },
 
-            /**
-             * @returns Available space in bytes.
-             */
             getAvailableSpace: () => {
                 return this.totalSpace - this.usedSpace;
             },
 
-            /**
-             * @returns the file stream on success, otherwise false and the error message on failure.
-             */
             open: (path: string, mode: FileMode = 'r') => {
                 validateParameters();
                 if (!validFileModes.includes(mode)) error(`invalid mode ${mode}`, 2);
