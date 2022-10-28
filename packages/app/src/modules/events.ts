@@ -1,3 +1,5 @@
+import { EventsAPI } from '@liko-12/standard-modules-types';
+
 import { Machine } from "core/machine";
 import { MachineModule } from "core/machine-module";
 import { Queue } from "core/queue";
@@ -19,13 +21,8 @@ export default class Events extends MachineModule {
         return this.machineListening;
     }
 
-    createAPI(_machine: Machine) {
-        const eventsAPI = {
-            /**
-             * Pull an event actively which could suspend the machine until an event is pushed.
-             * @returns `eventName: string`.
-             * @returns `...args: any[]`.
-             */
+    createAPI(_machine: Machine): EventsAPI {
+        return {
             pull: () => {
                 if (this.eventsQueue.isEmpty()) {
                     this.machineListening = true;
@@ -36,50 +33,28 @@ export default class Events extends MachineModule {
                         throw 'CRITICAL: the machine was resumed without an event added to the queue';
                 }
 
-                return unpack(this.eventsQueue.pop() || []);
+                return unpack(this.eventsQueue.pop() ?? error('CRITICAL: invalid state'));
             },
 
-            /**
-             * Pull an event without suspending the machine if there was none.
-             * But instead `undefined` will simply be returned.
-             * @returns `eventName: string | undefined`.
-             * @returns `...args: any[]`.
-             */
             pullPassively: () => {
                 return unpack(this.eventsQueue.pop() || []);
             },
 
-            /**
-             * Peek into the upcoming event without remove it from the queue.
-             * @returns `eventName: string | undefined`.
-             * @returns `...args: any[]`.
-             */
             peek: () => {
                 return unpack(this.eventsQueue.front || [])
             },
 
-            /**
-             * Clear the events queue.
-             */
             clear: () => {
                 this.eventsQueue.clear();
             },
 
-            /**
-             * Get the count of the events queued.
-             */
             getCount: () => {
                 return this.eventsQueue.length;
             },
 
-            /**
-             * Check whether there are no events queued or not.
-             */
             isEmpty: () => {
                 return this.eventsQueue.isEmpty();
             }
         };
-
-        return eventsAPI;
     }
 }

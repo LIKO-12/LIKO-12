@@ -4,5 +4,8 @@
   "description": "The declarations for the interfaces of the standard LIKO-12 machine modules.",
   "license": "MIT",
   "private": true,
-  "types": "."
+  "types": ".",
+  "devDependencies": {
+    "@typescript-to-lua/language-extensions": "^1.0.0"
+  }
 }

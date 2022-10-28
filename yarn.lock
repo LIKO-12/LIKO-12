@@ -7,7 +7,7 @@
   resolved "https://registry.yarnpkg.com/@rami-sabbagh/ts-inject-parameters-metadata/-/ts-inject-parameters-metadata-1.1.0.tgz#b40fc256a12f24e7766aa6a79beb10b4649d4f50"
   integrity sha512-r2zvE5I6MhJD3axMwFlM+GX4PAsui3MIlZpD5MJSuYGaeoiZYDSI5+aCVm79tnZN1vjCx4KP8XLnD95TX1g+WA==
 
-"@typescript-to-lua/language-extensions@1.0.0":
+"@typescript-to-lua/language-extensions@1.0.0", "@typescript-to-lua/language-extensions@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@typescript-to-lua/language-extensions/-/language-extensions-1.0.0.tgz#fad73b01c21ace67abbd1477cd2b1f8b3ce7287b"
   integrity sha512-GtmhFqyg+txpGgGLM3mlS3R6AEG9MQhKALxxcbr6SBzg9u7YAXcPKqUBaBYd6nH+Pi/eQLcWz4BNOLhz8v4TjQ==
