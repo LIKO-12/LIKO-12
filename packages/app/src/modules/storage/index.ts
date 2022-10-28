@@ -1,9 +1,11 @@
+import { StorageAPI } from '@liko-12/standard-modules-apis';
+import { FileMode as LoveFileMode } from 'love.filesystem';
+
 import { Machine } from "core/machine";
 import { MachineModule } from "core/machine-module";
 import { proxy } from "core/object-proxy";
 import { assertOption, validateParameters } from "core/utilities";
 
-import { FileMode as LoveFileMode } from 'love.filesystem';
 import FileStream from "./file-stream";
 
 const lf = love.filesystem;
@@ -109,7 +111,7 @@ export default class Storage extends MachineModule {
         this.refreshSpaceUsage();
     }
 
-    createAPI() {
+    createAPI(): StorageAPI {
         return {
             /**
              * @returns Total space in bytes.
