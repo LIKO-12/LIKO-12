@@ -20,3 +20,8 @@ declare var events: StandardModules.EventsAPI | undefined;
  * The storage module API if loaded.
  */
 declare var storage: StandardModules.StorageAPI | undefined;
+
+/**
+ * The graphics module API if loaded.
+ */
+declare var graphics: StandardModules.GraphicsAPI | undefined;
