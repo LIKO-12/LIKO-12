@@ -9,32 +9,32 @@ declare module "@liko-12/standard-modules-types" {
                      * 
                      * It would also show the on-screen keyboard for touch devices.
                      */
-        setTextInput(enable: boolean): void;
+        setTextInput(this: void, enable: boolean): void;
 
         /**
          * Get whether text input events are enabled.
          */
-        hasTextInput(): boolean;
+        hasTextInput(this: void): boolean;
 
         /**
          * Get the hardware scancode corresponding to the given key.
          * @returns `"unknown"` if the given key has no known physical representation on the current system.
          */
-        getScancodeFromKey(key: KeyConstant): Scancode;
+        getScancodeFromKey(this: void, key: KeyConstant): Scancode;
         /**
          * Get the key corresponding to the given hardware scancode.
          * @returns `"unknown"` if the scancode doesn't map to a KeyConstant on the current system.
          */
-        getKeyFromScancode(scancode: Scancode): KeyConstant;
+        getKeyFromScancode(this: void, scancode: Scancode): KeyConstant;
 
         /**
-         * Checks whether one at least of the provided keys is down (pressed).
+         * Checks whether one at least of the provided keys is down (this: void, pressed).
          */
-        isDown(...keys: KeyConstant[]): boolean;
+        isDown(this: void, ...keys: KeyConstant[]): boolean;
 
         /**
-         * Checks whether one at least of the provided scancodes is down (pressed).
+         * Checks whether one at least of the provided scancodes is down (this: void, pressed).
          */
-        isScancodeDown(...scancodes: Scancode[]): boolean;
+        isScancodeDown(this: void, ...scancodes: Scancode[]): boolean;
     }
 }
