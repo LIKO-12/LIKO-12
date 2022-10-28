@@ -1,6 +1,6 @@
 declare namespace StandardModules {
     export namespace Graphics {
-        export type PixelFunction = (x: number, y: number, color: number) => number;
+        export type PixelFunction = (this: void, x: number, y: number, color: number) => number;
 
         export interface ImageData {
             /**

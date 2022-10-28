@@ -14,7 +14,7 @@
  * @noResolution
  * @link [utf8](https://www.lua.org/manual/5.3/manual.html#6.5)
  */
- declare module "utf8" {
+declare module "utf8" {
     /**
      * Receives zero or more integers, converts each one to its corresponding UTF-8
      * byte sequence and returns a string with the concatenation of all these

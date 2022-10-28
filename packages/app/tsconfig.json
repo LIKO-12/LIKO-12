@@ -55,6 +55,5 @@
       "luaTarget": "JIT",
       "noImplicitSelf": true,
       "sourceMapTraceback": true,
-      "buildMode": "library",
   }
 }
