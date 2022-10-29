@@ -13,11 +13,15 @@
     "install": "yarn --cwd packages/app symlink",
     "symlink": "yarn --cwd packages/app symlink",
 
+    "build": "yarn build:lust && yarn build:kernel && yarn build:app",
+
     "build:app": "yarn --cwd packages/app build",
     "dev:app": "yarn --cwd packages/app dev",
 
     "build:kernel": "yarn --cwd packages/kernel build",
-    "dev:kernel": "yarn --cwd packages/kernel dev"
+    "dev:kernel": "yarn --cwd packages/kernel dev",
+
+    "build:lust": "yarn --cwd packages/lust build"
   },
   "devDependencies": {},
   "engines": {

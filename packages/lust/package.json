@@ -1,0 +1,21 @@
+{
+  "name": "@liko-12/lust",
+  "version": "0.1.0",
+  "description": "A third-party library: Lightweight Lua test framework",
+  "main": "src/lust",
+  "repository": "https://github.com/bjornbytes/lust",
+  "author": "Bjorn Swenson <https://github.com/bjornbytes>",
+  "contributors": [
+    "Rami Sabbagh <rami.sab07@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tstl"
+  },
+  "devDependencies": {
+    "@typescript-to-lua/language-extensions": "^1.0.0",
+    "typescript": "^4.8.4",
+    "typescript-to-lua": "^1.10.1"
+  }
+}
