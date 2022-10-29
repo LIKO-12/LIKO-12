@@ -32,12 +32,14 @@ export default class FileStream implements StandardModules.Storage.FileStream {
     read(byteCount?: number) {
         validateParameters();
 
+        if (!this.readAllowed) return $multi(false, 'Bad file descriptor');
+
         try {
             const [content] = this.file.read(byteCount);
             return $multi(content);
         } catch (message: unknown) {
             if (message === undefined) return $multi(undefined);
-            else return $multi(undefined, tostring(message));
+            else return $multi(false, tostring(message));
         }
     }
 

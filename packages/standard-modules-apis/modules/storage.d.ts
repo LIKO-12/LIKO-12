@@ -21,13 +21,15 @@ declare namespace StandardModules {
             modtime?: number;
         };
 
+        // FIXME: Remove undefined return values.
+
         export interface FileStream {
             /**
              * @param byteCount (defaults to all).
              * @returns The data read or `undefined` when the end is reached.
              *          Otherwise it's `false` and the error message on failure.
              */
-            read(this: FileStream, byteCount?: number): LuaMultiReturn<[string] | [undefined] | [success: undefined, message: string]>;
+            read(this: FileStream, byteCount?: number): LuaMultiReturn<[string] | [undefined] | [success: boolean, message: string]>;
 
             /**
              * @return the file itself on success. Otherwise it's `false` and the error message on failure.

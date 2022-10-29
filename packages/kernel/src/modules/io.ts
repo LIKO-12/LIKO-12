@@ -1,3 +1,5 @@
+// TODO: disallow read/write when the file mode doesn't allow.
+
 class File implements LuaFile {
     constructor(private fileStream: StandardModules.Storage.FileStream) { }
 
@@ -30,6 +32,8 @@ class File implements LuaFile {
         const results: (string | number | undefined)[] = [];
         let parameterPosition = 0;
 
+        if (formats.length === 0) formats.push('*a');
+
         for (const format of formats) {
             parameterPosition++;
 
@@ -45,7 +49,8 @@ class File implements LuaFile {
 
                 while (true) {
                     const [char] = this.fileStream.read(1);
-                    if (!char) break;
+                    if (typeof char !== 'string') break;
+
 
                     if (char !== '\n' || format === '*L') buffer.push(char);
                     if (char === '\n') break;
@@ -79,7 +84,7 @@ class File implements LuaFile {
     }
 
     __tostring(): string {
-        return `file (${string.sub(tostring(this), 8, -1)})`;
+        return `file (${string.sub(tostring(this.fileStream), 11, -1)})`;
     }
 }
 
@@ -89,10 +94,10 @@ class File implements LuaFile {
 
     const virtualIO: Partial<typeof io> = {
         open: (filename, mode) => {
-            const [fileSteam, message] = storage.open(filename, mode as StandardModules.Storage.FileMode | undefined);
-            if (typeof fileSteam === 'boolean') return $multi(undefined, tostring(message), 1);
+            const [fileStream, message] = storage.open(filename, mode as StandardModules.Storage.FileMode | undefined);
+            if (fileStream === true || fileStream === false) return $multi(undefined, tostring(message), 1);
 
-            return $multi(new File(fileSteam));
+            return $multi(new File(fileStream));
         }
     };
 
