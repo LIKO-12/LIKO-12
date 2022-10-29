@@ -2,6 +2,8 @@
 // Project: LIKO-12
 // Definitions by: Rami Sabbagh <https://github.com/Rami-Sabbagh/>
 
+/// <reference types='lua-types/jit' />
+
 /** @noSelfInFile */
 
 // TODO: Publish this package independently so other tstl users can benefit from it.
