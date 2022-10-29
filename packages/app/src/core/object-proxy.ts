@@ -47,7 +47,7 @@ const proxyMetatable: LuaMetatable<any> = {
 export function proxy<T>(object: T): T {
     assertParameter(object, 'table', 1, 'proxy');
 
-    const proxyObject: any = setmetatable({}, proxyMetatable);
+    const proxyObject = setmetatable({}, proxyMetatable);
     originalObjects.set(proxyObject, object as any);
     return proxyObject as T;
 }
