@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "A third-party library: Lightweight Lua test framework",
   "main": "src/lust",
+  "types": "src/lust",
   "repository": "https://github.com/bjornbytes/lust",
   "author": "Bjorn Swenson <https://github.com/bjornbytes>",
   "contributors": [
