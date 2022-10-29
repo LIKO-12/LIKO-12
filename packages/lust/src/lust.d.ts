@@ -4,19 +4,17 @@
 
 /// <reference types='lua-types/jit' />
 
-/** @noSelfInFile */
-
 // TODO: Publish this package independently so other tstl users can benefit from it.
 // TODO: Port README.md to TS.
 
-type Func = (...args: any[]) => any;
+type Func = (this: void, ...args: any[]) => any;
 
 interface Lust {
     /**
      * Disable ANSI color escape sequences.
      * Useful when not running in a console environment that understands ANSI color escapes.
      */
-    nocolor(): Lust;
+    nocolor(this: void): Lust;
 
     /**
      * Declare a group of tests, nested groups are allowed.
@@ -24,7 +22,7 @@ interface Lust {
      * @param name group description.
      * @param func a function containing all tests and `describe` blocks in the group.
      */
-    describe(name: string, func: Func): void;
+    describe(this: void, name: string, func: Func): void;
 
     /**
      * Declare a test.
@@ -32,31 +30,31 @@ interface Lust {
      * @param name test description.
      * @param func a function containing the assertions.
      */
-    it(name: string, func: Func): void;
+    it(this: void, name: string, func: Func): void;
 
     /**
      * Define a function that is called before every call to `lust.it`.
      * Scoped to the `describe` block containing it.
      */
-    before(func: Func): void;
+    before(this: void, func: Func): void;
 
     /**
      * Define a function that is called after every call to `lust.it`.
      * Scoped to the `describe` block containing it.
      */
-    after(func: Func): void;
+    after(this: void, func: Func): void;
 
     /**
      * Assertion.
      */
-    expect(x: unknown): LustExpect;
+    expect(this: void, x: unknown): LustExpect;
 
     /**
      * Spies on a function and tracks the number of times it was called and the arguments it was called with.
      * @param func The target function.
      * @param run a function that will be called immediately upon creation of the spy.
      */
-    spy<T extends Func = Func>(func: T | undefined, run: Func): LustSpy<T>;
+    spy<T extends Func = Func>(this: void, func: T | undefined, run: Func): LustSpy<T>;
 
     /**
      * Spies on a function and tracks the number of times it was called and the arguments it was called with.
@@ -64,7 +62,7 @@ interface Lust {
      * @param name the name of the function in the object.
      * @param run a function that will be called immediately upon creation of the spy.
      */
-    spy<O extends Record<string, Func>, N extends keyof O>(obj: O, name: N, run: Func): LustSpy<O[N]>;
+    spy<O extends Record<string, Func>, N extends keyof O>(this: void, obj: O, name: N, run: Func): LustSpy<O[N]>;
 
     /**
      * Spies on a function and tracks the number of times it was called and the arguments it was called with.
@@ -72,7 +70,7 @@ interface Lust {
      * @param name the name of the function in the object.
      * @param run a function that will be called immediately upon creation of the spy.
      */
-    spy(obj: Object, name: string, run: Func): LustSpy<Func>;
+    spy(this: void, obj: Object, name: string, run: Func): LustSpy<Func>;
 
     // TODO: Custom Assertions
 }
@@ -97,7 +95,7 @@ interface LustExpectTo {
     /**
      * Fails if `x` is `undefined`.
      */
-    exist(): void;
+    exist(this: void): void;
 
     /**
      * Performs a strict equality test, failing if x and y have different types or values.
@@ -105,7 +103,7 @@ interface LustExpectTo {
      * 
      * Metatables are not taken into consideration.
      */
-    equal(y: unknown): void;
+    equal(this: void, y: unknown): void;
 
     be: LustExpectToBeMethod & LustExpectToBe;
 
@@ -115,40 +113,40 @@ interface LustExpectTo {
      * 
      * If `x` is not an object, this assertion fails.
      */
-    have(y: unknown): void;
+    have(this: void, y: unknown): void;
 
     /**
      * Ensures that the function `x` causes an error when it's run.
      */
-    fail(): void;
+    fail(this: void): void;
 
     /**
      * Fails if the string representation of `x` does not match the pattern `p`.
      * @param p a Lua regex pattern.
      */
-    match(p: string): void;
+    match(this: void, p: string): void;
 }
 
 /**
  * Performs an equality test using the `==` operator. Fails if `x != y`.
  */
-type LustExpectToBeMethod = (y: unknown) => void;
+type LustExpectToBeMethod = (this: void, y: unknown) => void;
 
 interface LustExpectToBe {
     /**
      * Fails if `x` is `undefined` or `false`.
      */
-    truthy(): void;
+    truthy(this: void): void;
 
     /**
      * Fails if `type(x)` is not equal to `y`.
      */
-    a(y: ReturnType<typeof type>): void;
+    a(this: void, y: ReturnType<typeof type>): void;
 
     /**
      * Walks up `x`'s metatable chain and fails if `y` is not encountered.
      */
-    a(y: Object): void;
+    a(this: void, y: Object): void;
 }
 
 declare const lust: Lust;
