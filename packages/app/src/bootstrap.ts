@@ -23,6 +23,8 @@ const [rawProgram] = love.filesystem.read('res/kernel/init.lua');
 // TODO: Cleanup the load procedure.
 
 loveEvents.on('load', () => {
+    io.write('\x1B[2J'); // clear the terminal using ANSI escape sequence.
+
     const machine = new Machine(options.modules, options.options);
     const events = machine.resolveModule<Events>('events');
     if (!events) throw 'WHERE EVENTS?';

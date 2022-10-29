@@ -8,6 +8,9 @@
     "build": "tstl",
     "dev": "tstl --watch"
   },
+  "dependencies": {
+    "@liko-12/lust": "*"
+  },
   "devDependencies": {
     "@liko-12/standard-machine-env": "*",
     "@rami-sabbagh/ts-inject-parameters-metadata": "^1.1.0",
