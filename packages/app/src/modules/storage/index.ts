@@ -101,7 +101,7 @@ export default class Storage extends MachineModule {
 
         this.totalSpace = assertOption(options.capacity, 'capacity', 'number');
         try {
-            this.basePath = assertAndResolvePath(assertOption(options.basePath, 'basePath', 'string'));
+            this.basePath = assertAndResolvePath(assertOption(options.basePath, 'basePath', 'string')) + '/';
         } catch (err: unknown) {
             error(tostring(err));
         }
@@ -148,10 +148,11 @@ export default class Storage extends MachineModule {
                 try {
                     const info = assert(lf.getInfo(path));
                     if (info.type !== 'file' && info.type !== 'directory') info.type = 'other';
-                    return info;
+                    return $multi(info);
 
                 } catch (message: unknown) {
-                    return $multi(false, string.gsub(tostring(message), `^${this.basePath}`, '')[0]);
+                    const [failMessage] = string.gsub(tostring(message), `^${this.basePath}`, '');
+                    return $multi(false, failMessage);
                 }
             },
 
@@ -159,7 +160,7 @@ export default class Storage extends MachineModule {
                 validateParameters();
                 path = `${this.basePath}${assertAndResolvePath(path)}`;
 
-                const info = lf.getInfo(path);
+                const info = lf.getInfo(path, 'file');
                 if (!info) return $multi(false, `${path.substring(this.basePath.length + 1)} is not a file or doesn't exist`);
 
                 this.usedSpace -= info.size ?? 0;
@@ -191,7 +192,7 @@ export default class Storage extends MachineModule {
                 if (!lf.getInfo(path, 'directory')) return $multi(false, `${path.substring(this.basePath.length + 1)} is not a file or doesn't exist`);
                 if (lf.getDirectoryItems(path).length !== 0) return $multi(false, 'directory is not empty');
 
-                if (lf.remove(path)) return $multi(true);
+                if (path !== this.basePath && lf.remove(path)) return $multi(true);
                 else return $multi(false, 'failed to remove directory');
             },
 
@@ -201,7 +202,7 @@ export default class Storage extends MachineModule {
 
                 if (!lf.getInfo(path, 'directory')) return $multi(false, `${path.substring(this.basePath.length + 1)} is not a file or doesn't exist`);
                 try {
-                    return $multi(assert(lf.getDirectoryItems(path)));
+                    return lf.getDirectoryItems(path) as any;
                 } catch (message: unknown) {
                     return $multi(false, string.gsub(tostring(message), `^${this.basePath}`, '')[0]);
                 }

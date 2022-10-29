@@ -106,10 +106,13 @@ declare namespace StandardModules {
          */
         open(this: void, path: string, mode?: Storage.FileMode): LuaMultiReturn<[Storage.FileStream] | [boolean, string]>;
 
-        getInfo(this: void, path: string): Storage.FileInfo | LuaMultiReturn<[boolean, string]>;
+        getInfo(this: void, path: string): LuaMultiReturn<[Storage.FileInfo] | [boolean, string]>;
 
         delete(this: void, path: string): LuaMultiReturn<[boolean] | [boolean, string]>;
 
+        /**
+         * Creates a directory and any parent directories needed.
+         */
         createDirectory(this: void, path: string): LuaMultiReturn<[boolean] | [boolean, string]>;
 
         deleteDirectory(this: void, path: string): LuaMultiReturn<[boolean] | [boolean, string]>;
