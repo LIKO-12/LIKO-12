@@ -177,6 +177,9 @@ export default class Storage extends MachineModule {
                 validateParameters();
                 path = `${this.basePath}${assertAndResolvePath(path)}`;
 
+                const info = lf.getInfo(path);
+                if (info) return $multi(false, `${path.substring(this.basePath.length + 1)} already exists`);
+
                 try {
                     assert(lf.createDirectory(path));
                     return $multi(true);

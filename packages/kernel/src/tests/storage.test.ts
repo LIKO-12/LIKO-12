@@ -42,25 +42,37 @@ describe("'liko.storage' module", () => {
     it('directory operations', () => {
         const path = generateFilename();
 
+        // get info of a non-existing directory.
         expect(() => assert(...storage.getInfo(path))).to.fail();
 
         // parent directory should be automatically created.
         assert(...storage.createDirectory(`${path}/${path}`));
 
+        // directory already created.
+        expect(() => assert(...storage.createDirectory(`${path}/${path}`))).to.fail();
+
+        // verify file info.
         const info = assert<FileInfo>(...storage.getInfo(path));
         expect(info.type).to.be('directory');
         expect(info.size).to.be(0);
         expect(info.modtime).to.be.a('number');
 
+        // verify directory content.
         const content = assert<string[]>(...storage.readDirectory(path));
         expect(content).to.equal([path]);
 
+        // deleting a non-empty directory should fail.
         expect(() => assert(...storage.deleteDirectory(path))).to.fail();
 
+        // remove the created directories properly.
         assert(...storage.deleteDirectory(`${path}/${path}`));
         assert(...storage.deleteDirectory(path));
-
+        
+        // getting file info of non-existing ones should fail.
         expect(() => assert(...storage.getInfo(path))).to.fail();
+        
+        // deleting a non-existing directory.
+        expect(() => assert(...storage.deleteDirectory(path))).to.fail();
     });
 
 });
