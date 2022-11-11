@@ -5,6 +5,8 @@ type FileStream = StandardModules.Storage.FileStream;
 type FileMode = StandardModules.Storage.FileMode;
 type FileInfo = StandardModules.Storage.FileInfo;
 
+// TODO: Further more extensive unit tests for the storage module.
+
 describe("'liko.storage' module", () => {
     const storage = liko.storage!;
     it('is loaded', () => expect(storage).to.exist());
@@ -19,24 +21,63 @@ describe("'liko.storage' module", () => {
         return assert<FileStream>(...storage.open(path, mode));
     }
 
-    it('valid space usage metrics', () => {
-        const totalSpace = storage.getTotalSpace();
-        const usedSpace = storage.getUsedSpace();
-        const availableSpace = storage.getAvailableSpace();
+    it('basic file operations', () => {
+        const path = generateFilename();
 
-        expect(totalSpace).to.be.a('number');
-        expect(usedSpace).to.be.a('number');
-        expect(availableSpace).to.be.a('number');
+        // get info of a non-existing file.
+        expect(() => assert(...storage.getInfo(path))).to.fail();
 
-        expect(totalSpace >= 0).to.be.truthy();
-        expect(usedSpace >= 0).to.be.truthy();
-        expect(availableSpace >= 0).to.be.truthy();
+        // create a file with simple content.
+        {
+            const file = open(path, 'w');
+            assert(...file.write(path));
+            assert(...file.flush());
+            assert(file.close());
+        }
 
-        expect(totalSpace === Math.floor(totalSpace)).to.be.truthy();
-        expect(usedSpace === Math.floor(usedSpace)).to.be.truthy();
-        expect(availableSpace === Math.floor(availableSpace)).to.be.truthy();
+        // verify information of the created file.
+        {
+            const info = assert<FileInfo>(...storage.getInfo(path));
+            expect(info.type).to.be('file');
+            expect(info.size).to.be(path.length);
+            expect(info.modtime).to.be.a('number');
+        }
 
-        expect(usedSpace + availableSpace === availableSpace).to.be.truthy();
+        // read content of the created file.
+        {
+            const file = open(path, 'r');
+            expect(assert(...file.read())).to.be(path);
+            file.close();
+        }
+
+        // append content to the created file.
+        {
+            const file = open(path, 'a');
+            assert(...file.write(path));
+            assert(...file.flush());
+            assert(file.close());
+        }
+
+        // verify the information of the file after being updated.
+        {
+            const info = assert<FileInfo>(...storage.getInfo(path));
+            expect(info.type).to.be('file');
+            expect(info.size).to.be(path.length * 2);
+            expect(info.modtime).to.be.a('number');
+        }
+
+        // verify the content of the file after being updated.
+        {
+            const file = open(path, 'r');
+            expect(assert(...file.read())).to.be(`${path}${path}`);
+            assert(file.close());
+        }
+
+        // delete the file.
+        assert(...storage.delete(path))
+
+        // deleting a non-existing file should fail.
+        expect(() => assert(...storage.delete(path))).to.fail();
     });
 
     it('directory operations', () => {
@@ -61,6 +102,9 @@ describe("'liko.storage' module", () => {
         const content = assert<string[]>(...storage.readDirectory(path));
         expect(content).to.equal([path]);
 
+        // deleting a directory using the normal file deletion should fail.
+        expect(() => assert(...storage.delete(`${path}/${path}`))).to.fail();
+
         // deleting a non-empty directory should fail.
         expect(() => assert(...storage.deleteDirectory(path))).to.fail();
 
@@ -73,6 +117,26 @@ describe("'liko.storage' module", () => {
         
         // deleting a non-existing directory.
         expect(() => assert(...storage.deleteDirectory(path))).to.fail();
+    });
+
+    it('valid space usage metrics', () => {
+        const totalSpace = storage.getTotalSpace();
+        const usedSpace = storage.getUsedSpace();
+        const availableSpace = storage.getAvailableSpace();
+
+        expect(totalSpace).to.be.a('number');
+        expect(usedSpace).to.be.a('number');
+        expect(availableSpace).to.be.a('number');
+
+        expect(totalSpace >= 0).to.be.truthy();
+        expect(usedSpace >= 0).to.be.truthy();
+        expect(availableSpace >= 0).to.be.truthy();
+
+        expect(totalSpace === Math.floor(totalSpace)).to.be.truthy();
+        expect(usedSpace === Math.floor(usedSpace)).to.be.truthy();
+        expect(availableSpace === Math.floor(availableSpace)).to.be.truthy();
+
+        expect(usedSpace + availableSpace === totalSpace).to.be.truthy();
     });
 
 });
