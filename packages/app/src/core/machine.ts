@@ -2,6 +2,14 @@ import { EventsEmitter } from "core/events-emitter";
 import { EnvironmentBox } from "./environment-box";
 import { MachineModule } from "./machine-module";
 
+export interface MachineOptions {
+    /**
+     * **⚠️ UNSAFE ⚠️** Whether to expose the standard `debug` api or not.
+     * Disabled by default because it allows to escape the sandbox.
+     */
+    debugMode?: boolean;
+}
+
 export class Machine {
     readonly events = new EventsEmitter();
 
@@ -15,7 +23,11 @@ export class Machine {
      */
     private _thread?: LuaThread;
 
-    constructor(modulesNames: string[], modulesOptions: Record<string, any>) {
+    constructor(
+        modulesNames: string[],
+        modulesOptions: Record<string, any>,
+        private machineOptions: MachineOptions = {},
+    ) {
         this._loadModules(modulesNames, modulesOptions);
         this.resetEnvironment();
     }
@@ -89,6 +101,8 @@ export class Machine {
 
         this._environmentBox = new EnvironmentBox();
         this._environmentBox.protectEnvironment(_G);
+
+        if (this.machineOptions.debugMode) this._environmentBox.expose({ debug });
 
         this._exposeModulesAPIs();
         return this;

@@ -32,9 +32,10 @@
         {
             "label": "Run LIKO-12",
             "type": "shell",
-            "command": "love ${workspaceFolder}/packages/app/out",
+            "command": "love",
+            "args": [ "${workspaceFolder}/packages/app/out", "--debug" ],
             "windows": {
-                "command": "lovec ${workspaceFolder}\\packages\\app\\out",
+                "command": "lovec",
             },
             "group": {
                 "kind": "build",
