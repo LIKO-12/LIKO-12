@@ -30,7 +30,9 @@ describe("'liko.storage' module", () => {
         // create a file with simple content.
         {
             const file = open(path, 'w');
+            expect(assert(...file.seek())).to.be(0);
             assert(...file.write(path));
+            expect(assert(...file.seek())).to.be(path.length);
             assert(...file.flush());
             assert(file.close());
         }
@@ -46,14 +48,18 @@ describe("'liko.storage' module", () => {
         // read content of the created file.
         {
             const file = open(path, 'r');
+            expect(assert(...file.seek())).to.be(0);
             expect(assert(...file.read())).to.be(path);
+            expect(assert(...file.seek())).to.be(path.length);
             file.close();
         }
 
         // append content to the created file.
         {
             const file = open(path, 'a');
+            expect(assert(...file.seek())).to.be(path.length);
             assert(...file.write(path));
+            expect(assert(...file.seek())).to.be(path.length * 2);
             assert(...file.flush());
             assert(file.close());
         }
@@ -69,7 +75,9 @@ describe("'liko.storage' module", () => {
         // verify the content of the file after being updated.
         {
             const file = open(path, 'r');
+            expect(assert(...file.seek())).to.be(0);
             expect(assert(...file.read())).to.be(`${path}${path}`);
+            expect(assert(...file.seek())).to.be(path.length * 2);
             assert(file.close());
         }
 
