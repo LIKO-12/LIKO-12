@@ -5,7 +5,6 @@ class File implements LuaFile {
 
     seek(whence?: 'set' | 'cur' | 'end' | undefined, offset?: number | undefined): LuaMultiReturn<[undefined, string] | [number]> {
         return this.fileStream.seek(whence, offset);
-
     }
 
     setvbuf(mode: 'no' | 'full' | 'line', size?: number | undefined): void {
