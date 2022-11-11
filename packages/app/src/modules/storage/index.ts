@@ -200,7 +200,7 @@ export default class Storage extends MachineModule {
                 validateParameters();
                 path = `${this.basePath}${assertAndResolvePath(path)}`;
 
-                if (!lf.getInfo(path, 'directory')) return $multi(false, `${path.substring(this.basePath.length + 1)} is not a file or doesn't exist`);
+                if (!lf.getInfo(path, 'directory')) return $multi(false, `${path.substring(this.basePath.length + 1)} is not a directory or doesn't exist`);
                 try {
                     return lf.getDirectoryItems(path) as any;
                 } catch (message: unknown) {
