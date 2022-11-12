@@ -7,7 +7,7 @@ type FileInfo = StandardModules.Storage.FileInfo;
 
 // TODO: Further more extensive unit tests for the storage module.
 
-describe("'liko.storage' module", () => {
+describe("liko 'storage' module", () => {
     const storage = liko.storage!;
     it('is loaded', () => expect(storage).to.exist());
 
