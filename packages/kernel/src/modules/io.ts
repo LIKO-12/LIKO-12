@@ -1,19 +1,26 @@
 // TODO: disallow read/write when the file mode doesn't allow.
 
 class File implements LuaFile {
+    private closed = false;
+
     constructor(private fileStream: StandardModules.Storage.FileStream) { }
 
     seek(whence?: 'set' | 'cur' | 'end' | undefined, offset?: number | undefined): LuaMultiReturn<[undefined, string] | [number]> {
+        if (this.closed) error('attempt to use a closed file', 2);
         return this.fileStream.seek(whence, offset);
     }
 
     setvbuf(mode: 'no' | 'full' | 'line', size?: number | undefined): void {
+        if (this.closed) error('attempt to use a closed file', 2);
+
         const [success, message] = this.fileStream.setvbuff(mode, size);
         assert(success, message);
     }
 
 
     lines<T extends io.FileReadFormat[]>(...formats: T): LuaIterable<LuaMultiReturn<[] extends T ? [string] : { [P in keyof T]: io.FileReadFormatToType<T[P]>; }>, undefined> {
+        if (this.closed) error('attempt to use a closed file', 2);
+
         formats.reverse();
 
         const iterator: any =  () => {
@@ -28,6 +35,8 @@ class File implements LuaFile {
     read<T extends io.FileReadFormat>(format: T): io.FileReadFormatToType<T> | undefined;
     read<T extends io.FileReadFormat[]>(...formats: T): LuaMultiReturn<{ [P in keyof T]?: io.FileReadFormatToType<T[P]> | undefined; }>;
     read(...formats: io.FileReadFormat[]): string | number | undefined | LuaMultiReturn<(string | number | undefined)[]> {
+        if (this.closed) error('attempt to use a closed file', 2);
+
         const results: (string | number | undefined)[] = [];
         let parameterPosition = 0;
 
@@ -67,6 +76,8 @@ class File implements LuaFile {
     }
 
     write(...args: (string | number)[]): LuaMultiReturn<[LuaFile] | [undefined, string]> {
+        if (this.closed) error('attempt to use a closed file', 2);
+
         const [success, message] = this.fileStream.write(...args);
 
         if (success) return $multi(this);
@@ -74,16 +85,21 @@ class File implements LuaFile {
     }
 
     flush(): boolean {
+        if (this.closed) error('attempt to use a closed file', 2);
+
         const [success] = this.fileStream.flush();
         return success;
     }
 
     close(): boolean {
-        return this.fileStream.close();
+        if (this.closed) error('attempt to use a closed file', 2);
+        
+        this.closed = this.fileStream.close();
+        return this.closed;
     }
 
     __tostring(): string {
-        return `file (${string.sub(tostring(this.fileStream), 11, -1)})`;
+        return this.closed ? 'file (closed)' : `file (${string.sub(tostring(this.fileStream), 11, -1)})`;
     }
 }
 
