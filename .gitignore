@@ -6,3 +6,7 @@
 
 # User Configuration files
 /OS/DiskOS/autoexec.lua
+
+# Miscellaneous
+node_modules
+/dist
