@@ -1,9 +1,6 @@
 import { describe, it, expect } from '@liko-12/lust';
-import { assert } from 'lib/utils';
 
-type FileStream = StandardModules.Storage.FileStream;
 type FileMode = StandardModules.Storage.FileMode;
-type FileInfo = StandardModules.Storage.FileInfo;
 
 // TODO: Further more extensive unit tests for the storage module.
 
@@ -17,29 +14,25 @@ describe("liko 'storage' module", () => {
         return tostring(math.random(1_000_000_000, 9_999_999_999));
     }
 
-    function open(path: string, mode: FileMode = 'w') {
-        return assert<FileStream>(...storage.open(path, mode));
-    }
-
     it('basic file operations', () => {
         const path = generateFilename();
 
         // get info of a non-existing file.
-        expect(() => assert(...storage.getInfo(path))).to.fail();
+        expect(() => storage.getInfo(path)).to.fail();
 
         // create a file with simple content.
         {
-            const file = open(path, 'w');
-            expect(assert(...file.seek())).to.be(0);
-            assert(...file.write(path));
-            expect(assert(...file.seek())).to.be(path.length);
-            assert(...file.flush());
-            assert(file.close());
+            const file = storage.open(path, 'w');
+            expect(file.seek()).to.be(0);
+            file.write(path);
+            expect(file.seek()).to.be(path.length);
+            file.flush();
+            file.close();
         }
 
         // verify information of the created file.
         {
-            const info = assert<FileInfo>(...storage.getInfo(path));
+            const info = storage.getInfo(path);
             expect(info.type).to.be('file');
             expect(info.size).to.be(path.length);
             expect(info.modtime).to.be.a('number');
@@ -47,26 +40,26 @@ describe("liko 'storage' module", () => {
 
         // read content of the created file.
         {
-            const file = open(path, 'r');
-            expect(assert(...file.seek())).to.be(0);
-            expect(assert(...file.read())).to.be(path);
-            expect(assert(...file.seek())).to.be(path.length);
+            const file = storage.open(path, 'r');
+            expect(file.seek()).to.be(0);
+            expect(file.read()).to.be(path);
+            expect(file.seek()).to.be(path.length);
             file.close();
         }
 
         // append content to the created file.
         {
-            const file = open(path, 'a');
-            expect(assert(...file.seek())).to.be(path.length);
-            assert(...file.write(path));
-            expect(assert(...file.seek())).to.be(path.length * 2);
-            assert(...file.flush());
-            assert(file.close());
+            const file = storage.open(path, 'a');
+            expect(file.seek()).to.be(path.length);
+            file.write(path);
+            expect(file.seek()).to.be(path.length * 2);
+            file.flush();
+            file.close()
         }
 
         // verify the information of the file after being updated.
         {
-            const info = assert<FileInfo>(...storage.getInfo(path));
+            const info = storage.getInfo(path);
             expect(info.type).to.be('file');
             expect(info.size).to.be(path.length * 2);
             expect(info.modtime).to.be.a('number');
@@ -74,57 +67,57 @@ describe("liko 'storage' module", () => {
 
         // verify the content of the file after being updated.
         {
-            const file = open(path, 'r');
-            expect(assert(...file.seek())).to.be(0);
-            expect(assert(...file.read())).to.be(`${path}${path}`);
-            expect(assert(...file.seek())).to.be(path.length * 2);
-            assert(file.close());
+            const file = storage.open(path, 'r');
+            expect(file.seek()).to.be(0);
+            expect(file.read()).to.be(`${path}${path}`);
+            expect(file.seek()).to.be(path.length * 2);
+            file.close()
         }
 
         // delete the file.
-        assert(...storage.delete(path))
+        storage.delete(path)
 
         // deleting a non-existing file should fail.
-        expect(() => assert(...storage.delete(path))).to.fail();
+        expect(() => storage.delete(path)).to.fail();
     });
 
     it('directory operations', () => {
         const path = generateFilename();
 
         // get info of a non-existing directory.
-        expect(() => assert(...storage.getInfo(path))).to.fail();
+        expect(() => storage.getInfo(path)).to.fail();
 
         // parent directory should be automatically created.
-        assert(...storage.createDirectory(`${path}/${path}`));
+        storage.createDirectory(`${path}/${path}`);
 
         // directory already created.
-        expect(() => assert(...storage.createDirectory(`${path}/${path}`))).to.fail();
+        expect(() => storage.createDirectory(`${path}/${path}`)).to.fail();
 
         // verify file info.
-        const info = assert<FileInfo>(...storage.getInfo(path));
+        const info = storage.getInfo(path);
         expect(info.type).to.be('directory');
         expect(info.size).to.be(0);
         expect(info.modtime).to.be.a('number');
 
         // verify directory content.
-        const content = assert<string[]>(...storage.readDirectory(path));
+        const content = storage.readDirectory(path);
         expect(content).to.equal([path]);
 
         // deleting a directory using the normal file deletion should fail.
-        expect(() => assert(...storage.delete(`${path}/${path}`))).to.fail();
+        expect(() => storage.delete(`${path}/${path}`)).to.fail();
 
         // deleting a non-empty directory should fail.
-        expect(() => assert(...storage.deleteDirectory(path))).to.fail();
+        expect(() => storage.deleteDirectory(path)).to.fail();
 
         // remove the created directories properly.
-        assert(...storage.deleteDirectory(`${path}/${path}`));
-        assert(...storage.deleteDirectory(path));
+        storage.deleteDirectory(`${path}/${path}`);
+        storage.deleteDirectory(path);
         
         // getting file info of non-existing ones should fail.
-        expect(() => assert(...storage.getInfo(path))).to.fail();
+        expect(() => storage.getInfo(path)).to.fail();
         
         // deleting a non-existing directory.
-        expect(() => assert(...storage.deleteDirectory(path))).to.fail();
+        expect(() => storage.deleteDirectory(path)).to.fail();
     });
 
     it('valid space usage metrics', () => {

@@ -135,9 +135,9 @@ export default class Storage extends MachineModule {
                 try {
                     assert(file.open(mode[0] as LoveFileMode));
                     const fileStream = new FileStream(this, file, mode.replaceAll('b', '') as TextFileMode);
-                    return $multi(proxy(fileStream));
+                    return proxy(fileStream);
                 } catch (message) {
-                    return $multi(false, string.gsub(tostring(message), `^${this.basePath}`, '')[0]);
+                    error(string.gsub(tostring(message), `^${this.basePath}`, '')[0], 2);
                 }
             },
 
@@ -148,11 +148,10 @@ export default class Storage extends MachineModule {
                 try {
                     const info = assert(lf.getInfo(path));
                     if (info.type !== 'file' && info.type !== 'directory') info.type = 'other';
-                    return $multi(info);
+                    return info;
 
                 } catch (message: unknown) {
-                    const [failMessage] = string.gsub(tostring(message), `^${this.basePath}`, '');
-                    return $multi(false, failMessage);
+                    error(string.gsub(tostring(message), `^${this.basePath}`, '')[0], 2);
                 }
             },
 
@@ -161,15 +160,14 @@ export default class Storage extends MachineModule {
                 path = `${this.basePath}${assertAndResolvePath(path)}`;
 
                 const info = lf.getInfo(path, 'file');
-                if (!info) return $multi(false, `${path.substring(this.basePath.length + 1)} is not a file or doesn't exist`);
+                if (!info) error(`${path.substring(this.basePath.length + 1)} is not a file or doesn't exist`, 2);
 
                 this.usedSpace -= info.size ?? 0;
                 try {
                     assert(lf.remove(path));
-                    return $multi(true);
                 } catch (message: unknown) {
                     this.refreshSpaceUsage();
-                    return $multi(false, string.gsub(tostring(message), `^${this.basePath}`, '')[0]);
+                    error(string.gsub(tostring(message), `^${this.basePath}`, '')[0], 2);
                 }
             },
 
@@ -178,13 +176,12 @@ export default class Storage extends MachineModule {
                 path = `${this.basePath}${assertAndResolvePath(path)}`;
 
                 const info = lf.getInfo(path);
-                if (info) return $multi(false, `${path.substring(this.basePath.length + 1)} already exists`);
+                if (info) error(`${path.substring(this.basePath.length + 1)} already exists`, 2);
 
                 try {
                     assert(lf.createDirectory(path));
-                    return $multi(true);
                 } catch (message: unknown) {
-                    return $multi(false, string.gsub(tostring(message), `^${this.basePath}`, '')[0]);
+                    error(string.gsub(tostring(message), `^${this.basePath}`, '')[0]);
                 }
             },
 
@@ -192,22 +189,22 @@ export default class Storage extends MachineModule {
                 validateParameters();
                 path = `${this.basePath}${assertAndResolvePath(path)}`;
 
-                if (!lf.getInfo(path, 'directory')) return $multi(false, `${path.substring(this.basePath.length + 1)} is not a file or doesn't exist`);
-                if (lf.getDirectoryItems(path).length !== 0) return $multi(false, 'directory is not empty');
+                if (!lf.getInfo(path, 'directory')) error(`${path.substring(this.basePath.length + 1)} is not a file or doesn't exist`, 2);
+                if (lf.getDirectoryItems(path).length !== 0) error('directory is not empty', 2);
 
-                if (path !== this.basePath && lf.remove(path)) return $multi(true);
-                else return $multi(false, 'failed to remove directory');
+                if (path !== this.basePath && lf.remove(path)) return;
+                else return error('failed to remove directory', 2);
             },
 
             readDirectory: (path: string) => {
                 validateParameters();
                 path = `${this.basePath}${assertAndResolvePath(path)}`;
 
-                if (!lf.getInfo(path, 'directory')) return $multi(false, `${path.substring(this.basePath.length + 1)} is not a directory or doesn't exist`);
+                if (!lf.getInfo(path, 'directory')) error(`${path.substring(this.basePath.length + 1)} is not a directory or doesn't exist`, 2);
                 try {
-                    return lf.getDirectoryItems(path) as any;
+                    return lf.getDirectoryItems(path);
                 } catch (message: unknown) {
-                    return $multi(false, string.gsub(tostring(message), `^${this.basePath}`, '')[0]);
+                    error(string.gsub(tostring(message), `^${this.basePath}`, '')[0], 2);
                 }
             },
         };

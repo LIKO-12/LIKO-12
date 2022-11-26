@@ -32,21 +32,21 @@ export default class FileStream implements StandardModules.Storage.FileStream {
     read(byteCount?: number) {
         validateParameters();
 
-        if (!this.readAllowed) return $multi(false, 'Bad file descriptor');
+        if (!this.readAllowed) error('Bad file descriptor', 2);
 
         try {
             const [content] = this.file.read(byteCount);
-            return $multi(content);
+            return content;
         } catch (message: unknown) {
-            if (message === undefined) return $multi(undefined);
-            else return $multi(false, tostring(message));
+            if (message === undefined) return undefined;
+            else error(tostring(message), 2);
         }
     }
 
     write(...values: (string | number)[]) {
         validateParameters();
 
-        if (!this.writeAllowed) return $multi(undefined, 'Bad file descriptor');
+        if (!this.writeAllowed) error('Bad file descriptor', 2);
         if (this.appendMode) this.file.seek(this.file.getSize());
 
         let availableStorage = this.storage.totalSpace - this.storage.usedSpace;
@@ -57,7 +57,7 @@ export default class FileStream implements StandardModules.Storage.FileStream {
             let length = value.length;
 
             if (length > availableStorage + overridableLength)
-                return $multi(undefined, 'out of storage space');
+                error('out of storage space', 2);
             
             if (overridableLength === 0)
                 availableStorage -= length;
@@ -72,12 +72,11 @@ export default class FileStream implements StandardModules.Storage.FileStream {
             try {
                 assert(this.file.write(value));
             } catch (message: unknown) {
-                return $multi(undefined, tostring(message));
+                error(tostring(message), 2);
             }
         }
 
-        const stream: FileStream = this;
-        return $multi(stream);
+        return this;
     }
 
     seek(whence: 'set' | 'cur' | 'end' = 'cur', offset = 0) {
@@ -96,9 +95,9 @@ export default class FileStream implements StandardModules.Storage.FileStream {
 
         try {
             assert(this.file.seek(offset));
-            return $multi(this.file.tell());
+            return this.file.tell();
         } catch(message: unknown) {
-            return $multi(undefined, tostring(message));
+            error(tostring(message), 2);
         }
     }
 
@@ -109,14 +108,26 @@ export default class FileStream implements StandardModules.Storage.FileStream {
             error(`bad argument #1 to 'setvbuf' (invalid option '${mode}')`, 2);
         
         let loveMode: BufferMode = mode === 'no' ? 'none' : mode;
-        return this.file.setBuffer(loveMode, size);
+        try {
+            assert(this.file.setBuffer(loveMode, size));
+        } catch(message: unknown) {
+            error(tostring(message), 2);
+        }
     }
 
     flush() {
-        return this.file.flush();
+        try {
+            assert(this.file.flush());
+        } catch(message: unknown) {
+            error(tostring(message), 2);
+        }
     }
 
     close() {
-        return this.file.close();
+        try {
+            assert(this.file.close());
+        } catch(message: unknown) {
+            error(tostring(message), 2);
+        }
     }
 }
