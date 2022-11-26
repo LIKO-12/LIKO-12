@@ -12,7 +12,8 @@ function link(source, target) {
     source = path.resolve(__dirname, source);
     target = path.resolve(__dirname, target);
 
-    fs.mkdirSync(path.basename(target), { recursive: true });
+    if (!fs.existsSync(source)) fs.mkdirSync(source, { recursive: true });
+    fs.mkdirSync(path.dirname(target), { recursive: true });
 
     if (fs.existsSync(target)) {
         if (!fs.lstatSync(target).isSymbolicLink())
