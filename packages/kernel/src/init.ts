@@ -1,8 +1,5 @@
 import 'tests/storage.test';
 
-import 'modules/io';
-import 'modules/io.test';
-
 function pullEvents(): LuaIterable<LuaMultiReturn<[string, ...any]>> {
     const { events } = liko;
     if (!events) throw 'events module is not loaded!';
