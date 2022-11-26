@@ -1,13 +1,13 @@
 import { validateParameters } from "core/utilities";
 import { BufferMode, File } from "love.filesystem";
-import Storage, { TextFileMode } from ".";
+import Storage, { FileMode } from ".";
 
 /**
  * File object for reading and writing into a file.
  * 
  * Close to standard Lua `io` files in functionality.
  * With deference mainly in:
- *  - files are in binary `b` mode by default.
+ *  - files are always in binary `b` mode.
  *  - `file:read` only accepts bytes count.
  *  - `file:lines` is not implemented.
  *  - possibly some difference in error messages.
@@ -20,7 +20,7 @@ export default class FileStream implements StandardModules.Storage.FileStream {
     constructor(
         protected storage: Storage,
         protected file: File,
-        mode: TextFileMode
+        mode: FileMode
     ) {
         // Check `modules/storage/docs/std-io-notes.md` for how those were determined. (allowed operations section).
 

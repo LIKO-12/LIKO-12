@@ -72,11 +72,9 @@ export interface StorageOptions {
     basePath: string,
 }
 
-export type TextFileMode = 'r' | 'w' | 'a' | 'r+' | 'w+' | 'a+';
-export type BinaryFileMode = 'rb' | 'wb' | 'ab' | 'rb+' | 'wb+' | 'ab+';
-export type FileMode = TextFileMode | BinaryFileMode;
+export type FileMode = 'r' | 'w' | 'a' | 'r+' | 'w+' | 'a+';
 
-const validFileModes = 'r,w,a,r+,w+,a+,rb,wb,ab,rb+,wb+,ab+'.split(',');
+const validFileModes = 'r,w,a,r+,w+,a+'.split(',');
 
 export interface FileInfo {
     type: 'file' | 'directory' | 'other',
@@ -134,7 +132,7 @@ export default class Storage extends MachineModule {
 
                 try {
                     assert(file.open(mode[0] as LoveFileMode));
-                    const fileStream = new FileStream(this, file, mode.replaceAll('b', '') as TextFileMode);
+                    const fileStream = new FileStream(this, file, mode);
                     return proxy(fileStream);
                 } catch (message) {
                     error(string.gsub(tostring(message), `^${this.basePath}`, '')[0], 2);

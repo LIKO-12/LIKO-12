@@ -1,8 +1,6 @@
 declare namespace StandardModules {
     export namespace Storage {
-        type TextFileMode = 'r' | 'w' | 'a' | 'r+' | 'w+' | 'a+';
-        type BinaryFileMode = 'rb' | 'wb' | 'ab' | 'rb+' | 'wb+' | 'ab+';
-        export type FileMode = TextFileMode | BinaryFileMode;
+        export type FileMode = 'r' | 'w' | 'a' | 'r+' | 'w+' | 'a+';
 
         export type FileInfo = {
             /**
