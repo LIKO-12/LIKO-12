@@ -75,10 +75,10 @@ describe("liko 'storage' module", () => {
         }
 
         // delete the file.
-        storage.delete(path)
+        storage.removeFile(path)
 
         // deleting a non-existing file should fail.
-        expect(() => storage.delete(path)).to.fail();
+        expect(() => storage.removeFile(path)).to.fail();
     });
 
     it('directory operations', () => {
@@ -104,20 +104,20 @@ describe("liko 'storage' module", () => {
         expect(content).to.equal([path]);
 
         // deleting a directory using the normal file deletion should fail.
-        expect(() => storage.delete(`${path}/${path}`)).to.fail();
+        expect(() => storage.removeFile(`${path}/${path}`)).to.fail();
 
         // deleting a non-empty directory should fail.
-        expect(() => storage.deleteDirectory(path)).to.fail();
+        expect(() => storage.removeDirectory(path)).to.fail();
 
         // remove the created directories properly.
-        storage.deleteDirectory(`${path}/${path}`);
-        storage.deleteDirectory(path);
-        
+        storage.removeDirectory(`${path}/${path}`);
+        storage.removeDirectory(path);
+
         // getting file info of non-existing ones should fail.
         expect(() => storage.getInfo(path)).to.fail();
-        
+
         // deleting a non-existing directory.
-        expect(() => storage.deleteDirectory(path)).to.fail();
+        expect(() => storage.removeDirectory(path)).to.fail();
     });
 
     it('valid space usage metrics', () => {

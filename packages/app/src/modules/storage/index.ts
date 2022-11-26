@@ -155,7 +155,7 @@ export default class Storage extends MachineModule {
                 }
             },
 
-            delete: (path: string) => {
+            removeFile: (path: string) => {
                 validateParameters();
                 path = `${this.basePath}${assertAndResolvePath(path)}`;
 
@@ -185,7 +185,7 @@ export default class Storage extends MachineModule {
                 }
             },
 
-            deleteDirectory: (path: string) => {
+            removeDirectory: (path: string) => {
                 validateParameters();
                 path = `${this.basePath}${assertAndResolvePath(path)}`;
 

@@ -103,14 +103,14 @@ declare namespace StandardModules {
 
         getInfo(this: void, path: string): Storage.FileInfo;
 
-        delete(this: void, path: string): void;
+        removeFile(this: void, path: string): void;
 
         /**
          * Creates a directory and any parent directories needed.
          */
         createDirectory(this: void, path: string): void;
 
-        deleteDirectory(this: void, path: string): void;
+        removeDirectory(this: void, path: string): void;
 
         readDirectory(this: void, path: string): string[];
     }
