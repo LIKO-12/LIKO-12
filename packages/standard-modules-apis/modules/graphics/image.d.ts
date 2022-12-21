@@ -34,6 +34,8 @@ declare namespace StandardModules {
              * Updates the image's content from the ImageData used to create the image.
              */
             refresh(this: Image): Image;
+
+            // TODO: toImageData, get back the imagedata of an image.
         }
     }
 }

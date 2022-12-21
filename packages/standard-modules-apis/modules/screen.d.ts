@@ -18,6 +18,7 @@ declare namespace StandardModules {
         flip(this: void): void;
 
         // TODO: take screenshot imagedata
+        // TODO: add a method to query about the number of supported palette colors
 
         /**
          * Set the RGB values of a palette color.
