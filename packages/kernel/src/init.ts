@@ -1,4 +1,5 @@
 import 'tests/storage.test';
+import 'tests/font.test';
 
 function pullEvents(): LuaIterable<LuaMultiReturn<[string, ...any]>> {
     const { events } = liko;
