@@ -63,12 +63,58 @@ export class MonospaceFont implements Font {
         this.image.draw(x, y, 0, 1, 1, srcX, srcY, srcWidth, srcHeight);
     }
 
+    // TODO: Support the LF (line feed (new line)) character in both `printNoWrap` and `printWrap`.
+
     /**
-     * Print a single line of text with now line breaking/word wrapping.
+     * Print a single line of text without any line breaking/word wrapping.
      */
     printNoWrap(text: string, x: number, y: number): void {
         const length = text.length;
         for (let position = 0; position < length; position++)
             this.drawCharacter(text[position], x, y), x += this.characterWidth;
     }
+    
+    // TODO: Separate the wrapping logic from the drawing logic so it can be tested and used without actually drawing.
+
+    printWrap(text: string, x: number, y: number, width: number): void {
+        const maxLineLength = Math.floor(width / this.characterWidth);
+
+        const words = text.split(' ');
+        const lines: string[][] = [];
+
+        let currentLineLength = maxLineLength;
+        for (let word of words) {
+            let wordLength = word.length;
+
+            // The word has to be braked 
+            if (wordLength > maxLineLength) {
+                const firstPiece = word.substring(0, maxLineLength - currentLineLength - 1);
+                word = word.substring(firstPiece.length), wordLength = word.length;
+
+                lines[lines.length - 1].push(firstPiece), currentLineLength = maxLineLength;
+
+                while (wordLength !== 0) {
+                    const piece = word.substring(0, maxLineLength), pieceLength = piece.length;
+
+                    word = word.substring(pieceLength), wordLength = word.length;
+
+                    lines.push([piece]), currentLineLength = pieceLength;
+                }
+
+                continue;
+            }
+
+            if (currentLineLength + 1 + wordLength > maxLineLength)
+                lines.push([word]), currentLineLength = wordLength
+            else
+                lines[lines.length - 1].push(word), currentLineLength += 1 + wordLength
+        }
+
+        lines.map(line => line.join(' ')).forEach(line => {
+            this.printNoWrap(line, x, y), y += this.characterHeight;
+        });
+    }
+
+    // TODO: Split into Font and Printer.
+    // Resource: https://en.wikipedia.org/wiki/Line_wrap_and_word_wrap (has an algo)
 }
