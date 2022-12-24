@@ -1,0 +1,81 @@
+-- Dankey Kang Mini Game
+
+-- Set up variables and constants
+local player = Character.getPlayer()
+local barrels = {}
+local score = 0
+local lives = 3
+local level = 1
+local maxLevel = 5
+local gameOver = false
+
+-- Set up the game screen
+Screen.setSize(800, 600)
+Screen.setTitle("Donkey Kong")
+
+-- Set up the player character
+player.setSprite("mario_stand.png")
+player.setPosition(100, 500)
+
+-- Set up the donkey kong character
+local donkeyKong = Character.new("donkey_kong.png")
+donkeyKong.setPosition(700, 0)
+
+-- Set up the ladder
+local ladder1 = Object.new("ladder.png")
+ladder1.setPosition(400, 400)
+
+-- Set up the platform
+local platform = Object.new("platform.png")
+platform.setPosition(400, 500)
+
+-- Set up the score display
+local scoreText = Text.new("Score: 0", "sans_serif", "20px")
+scoreText.setPosition(10, 10)
+scoreText.setColor(0, 0, 0)
+
+-- Set up the lives display
+local livesText = Text.new("Lives: 3", "sans_serif", "20px")
+livesText.setPosition(700, 10)
+livesText.setColor(0, 0, 0)
+
+-- Set up the level display
+local levelText = Text.new("Level: 1", "sans_serif", "20px")
+levelText.setPosition(360, 10)
+levelText.setColor(0, 0, 0)
+
+-- Set up the game over text
+local gameOverText = Text.new("Game Over", "sans_serif", "40px")
+gameOverText.setPosition(300, 250)
+gameOverText.setColor(255, 0, 0)
+gameOverText.setVisible(false)
+
+-- Set up the function to add barrels to the game
+function addBarrel(delay)
+  Timer.add(delay, function()
+    local barrel = Object.new("barrel.png")
+    barrel.setPosition(donkeyKong.getX(), donkeyKong.getY() + 60)
+    table.insert(barrels, barrel)
+  end)
+end
+
+-- Set up the main game loop
+while not gameOver do
+  -- Update the player's position based on keyboard input
+  if Keyboard.isDown("left") then
+    player.setX(player.getX() - 5)
+  elseif Keyboard.isDown("right") then
+    player.setX(player.getX() + 5)
+  end
+  
+  -- Update the player's position based on collisions with the ladder
+  if player.collidesWith(ladder1) then
+    if Keyboard.isDown("up") then
+      player.setY(player.getY() - 5)
+    elseif Keyboard.isDown("down") then
+      player.setY(player.getY() + 5)
+    end
+  end
+  
+  -- Update the player's position based on collisions with the platform
+  if player.coll
