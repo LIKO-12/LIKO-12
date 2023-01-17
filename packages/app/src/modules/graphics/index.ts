@@ -1,6 +1,6 @@
 import { Machine } from "core/machine";
 import { MachineModule } from "core/machine-module";
-import { proxy } from "core/object-proxy";
+import { proxy, unproxy } from "core/object-proxy";
 import { clamp, validateParameters } from "core/utilities";
 
 import Screen from "../screen";
@@ -202,6 +202,10 @@ export default class Graphics extends MachineModule {
             importImageData: (data: string): ImageData => {
                 validateParameters();
                 return proxy(ImageData._importImageData(this, data));
+            },
+            
+            isImageData: (value: unknown): value is ImageData => {
+                return unproxy(value) instanceof ImageData;
             },
         };
     }

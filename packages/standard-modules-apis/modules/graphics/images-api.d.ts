@@ -13,6 +13,12 @@ declare namespace StandardModules {
              * @param data The binary representation of the PNG image to import.
              */
             importImageData(this: void, data: string): ImageData;
+
+            /**
+             * Checks a value if it's an ImageData or not.
+             * @param value The value to check.
+             */
+            isImageData(this: void, value: unknown): value is ImageData;
         }
     }
 }
