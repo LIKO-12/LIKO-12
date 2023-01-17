@@ -44,7 +44,7 @@ function lust.it(name, fn)
   local label = success and 'PASS' or 'FAIL'
   print(indent() .. color .. label .. normal .. ' ' .. name)
   if err then
-    print(indent(lust.level + 1) .. red .. err .. normal)
+    print(indent(lust.level + 1) .. red .. tostring(err) .. normal)
   end
 
   for level = 1, lust.level do
