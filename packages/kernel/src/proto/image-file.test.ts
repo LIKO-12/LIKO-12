@@ -21,7 +21,7 @@ const testingImages: TestingImage[] = [
             [0, 8],
             [8, 0],
         ],
-        rawData: 'LIKO-12;IMAGE_BIN;2x2;16-color;\r\n08\r\n80;',
+        rawData: 'LIKO-12;IMAGE;V1;2x2;16-color;\r\n08\r\n80;',
     }
 ];
 

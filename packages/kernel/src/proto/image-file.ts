@@ -37,8 +37,8 @@ export function loadFile(rawData: string): SupportedTypes[keyof SupportedTypes]
 export function loadFile(rawData: string, fileType?: keyof SupportedTypes): SupportedTypes[keyof SupportedTypes] {
     if (rawData.substring(0, 5) === 'LK12;') throw new LegacyFileException();
 
-    const rawFileType: string | undefined = string.match(rawData, "^LIKO%-12;([A-Z_]+);")[0];
-    if (!rawFileType) throw new NonStandardFileException();
+    const [rawFileType, versionNumber] = string.match(rawData, "^LIKO%-12;([A-Z_]+);V(%d+);");
+    if (!rawFileType || versionNumber !== '1') throw new NonStandardFileException();
 
     const isBinary = rawFileType.endsWith('_BIN');
     const detectedFileType = isBinary ? rawFileType.substring(0, rawFileType.length - 4) : rawFileType;
