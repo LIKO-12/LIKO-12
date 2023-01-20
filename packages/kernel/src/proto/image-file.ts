@@ -5,9 +5,12 @@ type SupportedTypes = {
     'palette': [r: number, g: number, b: number][],
 }
 
+//#region Tokenizer
+
 export interface Token {
     line: number,
     column: number,
+    fileName: string,
     content: string,
 }
 
@@ -31,10 +34,11 @@ export class SemicolonTokenizer {
     private dead = false;
 
     constructor(
+        private fileName: string,
         private rawData: string,
     ) { }
 
-    getNextToken(): Token | null {
+    next(): Token | null {
         if (this.dead) return null;
 
         const previousIndex = this.index;
@@ -48,11 +52,25 @@ export class SemicolonTokenizer {
         const token: Token = {
             line: this.line,
             column: this.column,
+            fileName: this.fileName,
             content: this.rawData.substring(previousIndex, this.index - 1),
         };
 
         this.updateLastSemicolonLocation(token);
         return token;
+    }
+
+    /**
+     * Create a token with dummy content, with the expected location of the next token.
+     * Without modifying the tokenizer state in any way.
+     */
+    tell(): Token {
+        return {
+            line: this.line,
+            column: this.column,
+            fileName: this.fileName,
+            content: '<DUMMY TOKEN created by "peek()">',
+        };
     }
 
     private updateLastSemicolonLocation({ content }: Token) {
@@ -78,50 +96,100 @@ export class SemicolonTokenizer {
     }
 }
 
+//#endregion
+
 //#region Exceptions
 
 /**
  * Thrown when a `.lk12` file is rejected because it's in legacy format.
  */
 export class LegacyFileException extends Error {
-    constructor() {
-        super("Legacy .lk12 files are currently unsupported."); // TODO: Support legacy .lk12 files more properly.
+    constructor(public readonly fileName: string) {
+        super(`${fileName}: Legacy .lk12 files are currently unsupported.`); // TODO: Support legacy .lk12 files more properly.
+        this.name = 'LegacyFileException';
     }
 }
 
 /**
- * Thrown when the given file doesn't contain the standard `.lk12` file header.
+ * Thrown when the given file doesn't start with "LIKO-12;".
  */
-export class NonStandardFileException extends Error {
-    constructor() {
-        super("This is not a standard .lk12 file.");
+export class InvalidMagicTagException extends Error {
+    constructor(public readonly fileName: string) {
+        super(`${fileName}: This is not a standard .lk12 file.`);
+        this.name = 'InvalidMagicTagException';
+    }
+}
+
+export class TokenError extends Error {
+    public readonly line: number;
+    public readonly column: number;
+    public readonly fileName: string;
+    public readonly plainMessage: string;
+
+    constructor({ line, column, fileName }: Token, message: string) {
+        super(`${fileName}:${line}:${column}: ${message}`);
+        this.name = 'TokenError';
+
+        this.line = line, this.column = column, this.fileName = fileName;
+        this.plainMessage = message;
+    }
+}
+
+export class MissingTokenException extends TokenError {
+    /**
+     * @param tokenDescriptor A string explaining what the expected token would be. (ex: `'file type'`).
+     */
+    constructor(
+        tokenizer: SemicolonTokenizer,
+        tokenDescriptor: string,
+    ) {
+        super(tokenizer.tell(), `Expected ${tokenDescriptor} (found nothing instead).`);
+        this.name = 'MissingTokenException';
     }
 }
 
 /**
  * Thrown when the give file doesn't contain the requested content type.
  */
-export class UnMatchingFileTypeException extends Error {
-    constructor(detectedType: string, expectedType: string) {
-        super(`The file doesn't contain '${expectedType}' data (found '${detectedType.toLowerCase()}' instead).`);
+export class UnMatchingFileTypeException extends TokenError {
+    constructor(
+        token: Token,
+        public readonly detectedType: string,
+        public readonly expectedType: string,
+    ) {
+        super(token, `Expected '${expectedType}' content type (found '${detectedType.toLowerCase()}' instead).`);
+        this.name = 'UnMatchingFileTypeException';
     }
 }
 
 //#endregion
 
-export function loadFile<T extends keyof SupportedTypes>(rawData: string, fileType: T): SupportedTypes[T];
-export function loadFile(rawData: string): SupportedTypes[keyof SupportedTypes]
-export function loadFile(rawData: string, fileType?: keyof SupportedTypes): SupportedTypes[keyof SupportedTypes] {
-    if (rawData.substring(0, 5) === 'LK12;') throw new LegacyFileException();
+export function loadFile<T extends keyof SupportedTypes>(fileName: string, rawData: string, fileType: T): SupportedTypes[T];
+export function loadFile(fileName: string, rawData: string): SupportedTypes[keyof SupportedTypes]
+export function loadFile(fileName: string, rawData: string, fileType?: keyof SupportedTypes): SupportedTypes[keyof SupportedTypes] {
+    if (rawData.substring(0, 5) === 'LK12;') throw new LegacyFileException(fileName);
 
-    const [rawFileType, versionNumber] = string.match(rawData, "^LIKO%-12;([A-Z_]+);V(%d+);");
-    if (!rawFileType || versionNumber !== '1') throw new NonStandardFileException();
+    if (!rawData.startsWith("LIKO-12;")) throw new InvalidMagicTagException(fileName);
+
+    const tokenizer = new SemicolonTokenizer(fileName, rawData);
+    if (tokenizer.next()?.content !== 'LIKO-12') throw new InvalidMagicTagException(fileName);
+    
+    const fileTypeToken = tokenizer.next();
+    if (!fileTypeToken) throw new MissingTokenException(tokenizer, 'file type'); // FIXME: next() should not return null, but instead throw this error.
+    const rawFileType = fileTypeToken.content;
+
+    const versionNumberToken = tokenizer.next();
+    if (!versionNumberToken) throw new MissingTokenException(tokenizer, 'version number');
+    const versionNumber = versionNumberToken.content;
+
+    // const [rawFileType, versionNumber] = string.match(rawData, "^LIKO%-12;([A-Z_]+);V(%d+);");
+    // if (!rawFileType || versionNumber !== 'V1') throw new InvalidMagicTagException(fileName);
 
     const isBinary = rawFileType.endsWith('_BIN');
     const detectedFileType = isBinary ? rawFileType.substring(0, rawFileType.length - 4) : rawFileType;
 
     if (fileType !== undefined && fileType.toUpperCase() !== detectedFileType)
-        throw new UnMatchingFileTypeException(detectedFileType, fileType);
+        throw new UnMatchingFileTypeException(fileTypeToken, detectedFileType, fileType);
 
     throw "unimplemented"; // FIXME: Implement this.
 }
