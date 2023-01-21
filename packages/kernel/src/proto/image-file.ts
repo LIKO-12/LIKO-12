@@ -213,8 +213,50 @@ export function loadFile(fileName: string, rawData: string, fileType?: keyof Sup
     if (versionToken.content !== 'V1') throw new UnsupportedVersionException(versionToken);
 
     if (detectedFileType === 'IMAGE') {
+        const { graphics } = liko;
+        if (!graphics) throw 'Can\'t load image files. The graphics module is not loaded!';
+
         if (!isBinary) {
             const [resolutionToken, colorModeToken, pixelDataToken] = tokenizer.next(3);
+            const [rawWidth, rawHeight] = string.match(resolutionToken.content, '^(%d+)x(%d+)$');
+            if (rawWidth === undefined || rawHeight === undefined) throw new InvalidTokenException(resolutionToken,
+                `Invalid resolution '${resolutionToken.content}' (expected to be in 'NUMxNUM' format).`);
+            
+            const width = parseInt(rawWidth, 10), height = parseInt(rawHeight, 10);
+            if (width === 0 || height === 0) throw new InvalidTokenException(resolutionToken,
+                `Neither width nor height can be a zero (found ${width}x${height}).`);
+            
+            const [colorMode] = string.match(colorModeToken.content, '^(%d+)%-color$');
+            if (colorMode === undefined) throw new InvalidTokenException(colorModeToken,
+                `Invalid color mode '${colorModeToken.content}' (expected to be in 'NUM-color' format).`);
+            
+            if (colorMode !== '16' && colorMode !== '256') throw new InvalidTokenException(colorModeToken,
+                `Unsupported color mode '${colorMode}-color' (only 16 & 256 are accepted).`);
+
+            const imageData = graphics.newImageData(width, height);
+            
+            {
+                let line = pixelDataToken.line, column = pixelDataToken.column;
+                let x = 0, y = 0;
+
+                let lastNibble = 0;
+
+                for (const [char] of string.gmatch(pixelDataToken.content, '.')) {
+                    if (char === '\n') line++, column = 1;
+                    if (char === '\r' || char === '\n') continue;
+
+                    const nibble = parseInt(char, 16);
+                    if (isNaN(nibble)) throw new InvalidTokenException({
+                        line, column, fileName, content: char,
+                    }, `Invalid hexadecimal digit '${char}'.`);
+
+                    print(`${line}:${column}: ${nibble}`); //FIXME: Implement pixel set value logic.
+
+                    column++, lastNibble = nibble;
+                }
+            }
+
+            return imageData;
         }
     }
 

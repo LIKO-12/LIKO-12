@@ -159,5 +159,8 @@ describe("kernel prototype lib 'image-file'", () => {
     it("testing image #0 loads", () => {
         const imageData = loadFile(testingImages[0].fileName, testingImages[0].rawData, 'image');
         expect(graphics.isImageData(imageData)).to.be(true);
+        //FIXME: verify the content of the loaded image.
     });
+
+    //FIXME: test invalid digits exceptions and their reported location information.
 });
