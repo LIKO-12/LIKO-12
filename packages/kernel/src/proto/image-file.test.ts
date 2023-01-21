@@ -1,9 +1,11 @@
 import { describe, expect, it } from '@liko-12/lust';
-import { loadFile, LegacyFileException, InvalidMagicTagException, UnMatchingFileTypeException, SemicolonTokenizer } from './image-file';
+import { loadFile, LegacyFileException, InvalidMagicTagException, UnMatchingFileTypeException, SemicolonTokenizer, InvalidTokenException, UnsupportedVersionException } from './image-file';
 
 const testingSamples = {
     legacyImage: 'LK12;GPUIMG;2x2;\r\n08\r\n80',
     invalidFile: 'THIS IS JUST RANDOM TEXT',
+    invalidFileType: 'LIKO-12;meheh-hehehe;V0;',
+    invalidVersion: 'LIKO-12;IMAGE;V0;',
 };
 
 interface TestingImage {
@@ -134,10 +136,17 @@ describe("kernel prototype lib 'image-file'", () => {
     });
 
     it("files with invalid header are rejected", () => {
-        const [ok, err] = pcall(() => loadFile('invalid.lk12', testingSamples.invalidFile));
+        const [ok1, err1] = pcall(() => loadFile('invalid_01.lk12', testingSamples.invalidFile));
+        expect(ok1).to.be(false);
+        expect(err1 instanceof InvalidMagicTagException).to.be(true);
 
-        expect(ok).to.be(false);
-        expect(err instanceof InvalidMagicTagException).to.be(true);
+        const [ok2, err2] = pcall(() => loadFile('invalid_02.lk12', testingSamples.invalidFileType));
+        expect(ok2).to.be(false);
+        expect(err2 instanceof InvalidTokenException).to.be(true);
+
+        const [ok3, err3] = pcall(() => loadFile('invalid_03.lk12', testingSamples.invalidVersion));
+        expect(ok3).to.be(false);
+        expect(err3 instanceof UnsupportedVersionException).to.be(true);
     });
 
     it("loading an image as a palette is rejected", () => {

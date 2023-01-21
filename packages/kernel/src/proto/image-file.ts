@@ -1,10 +1,5 @@
 type ImageData = StandardModules.Graphics.ImageData;
 
-type SupportedTypes = {
-    'image': ImageData,
-    'palette': [r: number, g: number, b: number][],
-}
-
 //#region Tokenizer
 
 export interface Token {
@@ -12,6 +7,28 @@ export interface Token {
     column: number,
     fileName: string,
     content: string,
+}
+
+export class TokenError extends Error {
+    public readonly line: number;
+    public readonly column: number;
+    public readonly fileName: string;
+    public readonly plainMessage: string;
+
+    constructor({ line, column, fileName }: Token, message: string) {
+        super(`${fileName}:${line}:${column}: ${message}`);
+        this.name = 'TokenError';
+
+        this.line = line, this.column = column, this.fileName = fileName;
+        this.plainMessage = message;
+    }
+}
+
+export class MissingTokenException extends TokenError {
+    constructor(fileName: string, line: number, column: number) {
+        super({ fileName, line, column, content: '<INTERNAL>' }, 'Expected a following token terminated with a semicolon (;).');
+        this.name = 'MissingTokenException';
+    }
 }
 
 /**
@@ -31,15 +48,28 @@ export class SemicolonTokenizer {
      */
     private column = 1;
 
-    private dead = false;
+    private reachedEnd = false;
 
     constructor(
         private fileName: string,
         private rawData: string,
     ) { }
 
-    next(): Token | null {
-        if (this.dead) return null;
+    /**
+     * Get a next token optionally. Get `null` if there are no more tokens available.
+     */
+    next(): Token | null
+    /**
+     * Get a specific count of tokens explicity.
+     * @throws `MissingTokenException` if there are not enough tokens available.
+     */
+    next(count: number): Token[]
+    next(count?: number): Token[] | Token | null {
+        return (count === undefined) ? this.nextToken() : this.nextTokens(count);
+    }
+
+    private nextToken(): Token | null {
+        if (this.reachedEnd) return null;
 
         const previousIndex = this.index;
         this.index = this.rawData.indexOf(';', previousIndex) + 1;
@@ -61,16 +91,19 @@ export class SemicolonTokenizer {
     }
 
     /**
-     * Create a token with dummy content, with the expected location of the next token.
-     * Without modifying the tokenizer state in any way.
+     * @throws `MissingTokenException`.
      */
-    tell(): Token {
-        return {
-            line: this.line,
-            column: this.column,
-            fileName: this.fileName,
-            content: '<DUMMY TOKEN created by "peek()">',
-        };
+    private nextTokens(count: number): Token[] {
+        const tokens: Token[] = [];
+
+        while (count > 0) {
+            const token = this.nextToken();
+            if (token === null) throw new MissingTokenException(this.fileName, this.line, this.column);
+            tokens.push(token);
+            count--;
+        }
+
+        return tokens;
     }
 
     private updateLastSemicolonLocation({ content }: Token) {
@@ -92,7 +125,7 @@ export class SemicolonTokenizer {
         // Clear the 'rawData' field so it can free some memory.
         this.rawData = '';
 
-        this.dead = true;
+        this.reachedEnd = true;
     }
 }
 
@@ -120,38 +153,17 @@ export class InvalidMagicTagException extends Error {
     }
 }
 
-export class TokenError extends Error {
-    public readonly line: number;
-    public readonly column: number;
-    public readonly fileName: string;
-    public readonly plainMessage: string;
-
-    constructor({ line, column, fileName }: Token, message: string) {
-        super(`${fileName}:${line}:${column}: ${message}`);
-        this.name = 'TokenError';
-
-        this.line = line, this.column = column, this.fileName = fileName;
-        this.plainMessage = message;
-    }
-}
-
-export class MissingTokenException extends TokenError {
-    /**
-     * @param tokenDescriptor A string explaining what the expected token would be. (ex: `'file type'`).
-     */
-    constructor(
-        tokenizer: SemicolonTokenizer,
-        tokenDescriptor: string,
-    ) {
-        super(tokenizer.tell(), `Expected ${tokenDescriptor} (found nothing instead).`);
-        this.name = 'MissingTokenException';
+export class InvalidTokenException extends TokenError {
+    constructor(token: Token, message: string) {
+        super(token, message);
+        this.name = 'InvalidTokenException';
     }
 }
 
 /**
  * Thrown when the give file doesn't contain the requested content type.
  */
-export class UnMatchingFileTypeException extends TokenError {
+export class UnMatchingFileTypeException extends InvalidTokenException {
     constructor(
         token: Token,
         public readonly detectedType: string,
@@ -162,7 +174,19 @@ export class UnMatchingFileTypeException extends TokenError {
     }
 }
 
+export class UnsupportedVersionException extends InvalidTokenException {
+    constructor(token: Token) {
+        super(token, `Unsupported file version '${token.content}'.`);
+        this.name = 'UnsupportedVersionException';
+    }
+}
+
 //#endregion
+
+type SupportedTypes = {
+    'image': ImageData,
+    'palette': [r: number, g: number, b: number][],
+}
 
 export function loadFile<T extends keyof SupportedTypes>(fileName: string, rawData: string, fileType: T): SupportedTypes[T];
 export function loadFile(fileName: string, rawData: string): SupportedTypes[keyof SupportedTypes]
@@ -172,24 +196,27 @@ export function loadFile(fileName: string, rawData: string, fileType?: keyof Sup
     if (!rawData.startsWith("LIKO-12;")) throw new InvalidMagicTagException(fileName);
 
     const tokenizer = new SemicolonTokenizer(fileName, rawData);
-    if (tokenizer.next()?.content !== 'LIKO-12') throw new InvalidMagicTagException(fileName);
-    
-    const fileTypeToken = tokenizer.next();
-    if (!fileTypeToken) throw new MissingTokenException(tokenizer, 'file type'); // FIXME: next() should not return null, but instead throw this error.
+    if (tokenizer.next(1)[0].content !== 'LIKO-12') throw new InvalidMagicTagException(fileName);
+
+    const [fileTypeToken, versionToken] = tokenizer.next(2);
     const rawFileType = fileTypeToken.content;
 
-    const versionNumberToken = tokenizer.next();
-    if (!versionNumberToken) throw new MissingTokenException(tokenizer, 'version number');
-    const versionNumber = versionNumberToken.content;
-
-    // const [rawFileType, versionNumber] = string.match(rawData, "^LIKO%-12;([A-Z_]+);V(%d+);");
-    // if (!rawFileType || versionNumber !== 'V1') throw new InvalidMagicTagException(fileName);
+    if (!string.match(rawFileType, '^[A-Z_]+$')[0]) throw new InvalidTokenException(fileTypeToken,
+        `File type ('${fileTypeToken.content}') should only contain (A-Z) characters and the underscore (_) character.`);
 
     const isBinary = rawFileType.endsWith('_BIN');
     const detectedFileType = isBinary ? rawFileType.substring(0, rawFileType.length - 4) : rawFileType;
 
     if (fileType !== undefined && fileType.toUpperCase() !== detectedFileType)
         throw new UnMatchingFileTypeException(fileTypeToken, detectedFileType, fileType);
+
+    if (versionToken.content !== 'V1') throw new UnsupportedVersionException(versionToken);
+
+    if (detectedFileType === 'IMAGE') {
+        if (!isBinary) {
+            const [resolutionToken, colorModeToken, pixelDataToken] = tokenizer.next(3);
+        }
+    }
 
     throw "unimplemented"; // FIXME: Implement this.
 }
