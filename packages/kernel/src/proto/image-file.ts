@@ -188,6 +188,8 @@ type SupportedTypes = {
     'palette': [r: number, g: number, b: number][],
 }
 
+//FIXME: Review this code.
+
 export function loadFile<T extends keyof SupportedTypes>(fileName: string, rawData: string, fileType: T): SupportedTypes[T];
 export function loadFile(fileName: string, rawData: string): SupportedTypes[keyof SupportedTypes]
 export function loadFile(fileName: string, rawData: string, fileType?: keyof SupportedTypes): SupportedTypes[keyof SupportedTypes] {
@@ -221,45 +223,76 @@ export function loadFile(fileName: string, rawData: string, fileType?: keyof Sup
             const [rawWidth, rawHeight] = string.match(resolutionToken.content, '^(%d+)x(%d+)$');
             if (rawWidth === undefined || rawHeight === undefined) throw new InvalidTokenException(resolutionToken,
                 `Invalid resolution '${resolutionToken.content}' (expected to be in 'NUMxNUM' format).`);
-            
+
             const width = parseInt(rawWidth, 10), height = parseInt(rawHeight, 10);
             if (width === 0 || height === 0) throw new InvalidTokenException(resolutionToken,
                 `Neither width nor height can be a zero (found ${width}x${height}).`);
-            
+
             const [colorMode] = string.match(colorModeToken.content, '^(%d+)%-color$');
             if (colorMode === undefined) throw new InvalidTokenException(colorModeToken,
                 `Invalid color mode '${colorModeToken.content}' (expected to be in 'NUM-color' format).`);
-            
+
             if (colorMode !== '16' && colorMode !== '256') throw new InvalidTokenException(colorModeToken,
                 `Unsupported color mode '${colorMode}-color' (only 16 & 256 are accepted).`);
+            
+            // TODO: Check if the configured instance of the graphics module supports 256 colors or not.
 
             const imageData = graphics.newImageData(width, height);
-            
+
             {
                 let line = pixelDataToken.line, column = pixelDataToken.column;
                 let x = 0, y = 0;
 
-                let lastNibble = 0;
+                // Used for 256-colors mode.
+                let lastNibble: number | undefined;
 
                 for (const [char] of string.gmatch(pixelDataToken.content, '.')) {
                     if (char === '\n') line++, column = 1;
                     if (char === '\r' || char === '\n') continue;
+
+                    if (y >= height) throw new InvalidTokenException({
+                        line, column, fileName, content: char,
+                    }, `Expected end of token ';' (found '${char}').`);
 
                     const nibble = parseInt(char, 16);
                     if (isNaN(nibble)) throw new InvalidTokenException({
                         line, column, fileName, content: char,
                     }, `Invalid hexadecimal digit '${char}'.`);
 
-                    print(`${line}:${column}: ${nibble}`); //FIXME: Implement pixel set value logic.
+                    // Takes a value when a pixel value has been parsed.
+                    // (That happens in every iteration for 16-colors mode,
+                    // and in every 2 iterations for 256-colors mode).
+                    let color: number | undefined;
 
-                    column++, lastNibble = nibble;
+                    if (colorMode === '16') {
+                        color = nibble;
+                    } else if (colorMode === '256') {
+                        if (lastNibble === undefined) lastNibble = nibble;
+                        else {
+                            color = lastNibble * 16 + nibble;
+                            lastNibble = undefined;
+                        }
+                    }
+
+                    if (color !== undefined) {
+                        imageData.setPixel(x++, y, color);
+                        if (x >= width) x = 0, y++;
+                    }
+
+                    column++;
                 }
+
+                if (y < height) throw new InvalidTokenException({
+                    line, column, fileName, content: '',
+                }, `Unexpected end of token (expected the rest of pixels data).`);
             }
 
             return imageData;
         }
+
+        // TODO: Add binary images support in a later incrimination.
     }
 
-    throw "unimplemented"; // FIXME: Implement this.
+    throw "unsupported"; // FIXME: Handle this more properly.
 }
 

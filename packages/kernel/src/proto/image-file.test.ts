@@ -157,9 +157,22 @@ describe("kernel prototype lib 'image-file'", () => {
     });
 
     it("testing image #0 loads", () => {
-        const imageData = loadFile(testingImages[0].fileName, testingImages[0].rawData, 'image');
+        const { fileName, rawData, width, height, pixelData } = testingImages[0];
+        const imageData = loadFile(fileName, rawData, 'image');
         expect(graphics.isImageData(imageData)).to.be(true);
-        //FIXME: verify the content of the loaded image.
+
+        expect(imageData.getWidth()).to.equal(width);
+        expect(imageData.getHeight()).to.equal(height);
+
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const loadedValue = imageData.getPixel(x, y);
+                const expectedValue = pixelData[y][x];
+
+                if (loadedValue !== expectedValue)
+                    throw `Expected pixel (${x}, ${y}) to be ${expectedValue} (found ${loadedValue}).`;
+            }
+        }
     });
 
     //FIXME: test invalid digits exceptions and their reported location information.
