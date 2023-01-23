@@ -1,5 +1,8 @@
 type ImageData = StandardModules.Graphics.ImageData;
 
+// FIXME: break this file into multiple files.
+// FIXME: abstract the loadFile method so other filetypes can be implemented in their own functions.
+
 //#region Tokenizer
 
 export interface Token {
