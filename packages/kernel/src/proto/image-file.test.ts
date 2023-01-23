@@ -19,14 +19,26 @@ interface TestingImage {
 const testingImages: TestingImage[] = [
     {
         width: 2,
-        height: 2,
+        height: 3,
         pixelData: [
-            [0, 8],
-            [8, 0],
+            [0, 12],
+            [10, 5],
+            [12, 0],
         ],
-        fileName: 'image_01.lk12',
-        rawData: 'LIKO-12;IMAGE;V1;2x2;16-color;\r\n08\r\n80;',
-    }
+        fileName: 'image 2x3 16-color CRLF - 00.lk12',
+        rawData: 'LIKO-12;IMAGE;V1;2x3;16-color;\r\n0C\r\nA5\r\nC0\r\n;',
+    },
+    {
+        width: 2,
+        height: 3,
+        pixelData: [
+            [0, 213],
+            [14, 5],
+            [213, 0],
+        ],
+        fileName: 'image 256-color CRLF - 01.lk12',
+        rawData: 'LIKO-12;IMAGE;V1;2x3;256-color;\r\n00D5\r\n0E05\r\nD500\r\n;',
+    },
 ];
 
 describe("kernel prototype lib 'image-file'", () => {
@@ -156,24 +168,30 @@ describe("kernel prototype lib 'image-file'", () => {
         expect(err instanceof UnMatchingFileTypeException).to.be(true);
     });
 
-    it("testing image #0 loads", () => {
-        const { fileName, rawData, width, height, pixelData } = testingImages[0];
-        const imageData = loadFile(fileName, rawData, 'image');
-        expect(graphics.isImageData(imageData)).to.be(true);
+    {
+        let imageIndex = 0;
 
-        expect(imageData.getWidth()).to.equal(width);
-        expect(imageData.getHeight()).to.equal(height);
+        for (const testingImage of testingImages) {
+            it(`testing image #${imageIndex++} '${testingImage.fileName}' loads`, () => {
+                const { fileName, rawData, width, height, pixelData } = testingImage;
+                const imageData = loadFile(fileName, rawData, 'image');
+                expect(graphics.isImageData(imageData)).to.be(true);
 
-        for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) {
-                const loadedValue = imageData.getPixel(x, y);
-                const expectedValue = pixelData[y][x];
+                expect(imageData.getWidth()).to.equal(width);
+                expect(imageData.getHeight()).to.equal(height);
 
-                if (loadedValue !== expectedValue)
-                    throw `Expected pixel (${x}, ${y}) to be ${expectedValue} (found ${loadedValue}).`;
-            }
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const loadedValue = imageData.getPixel(x, y);
+                        const expectedValue = pixelData[y][x];
+
+                        if (loadedValue !== expectedValue)
+                            throw `Expected pixel (${x}, ${y}) to be ${expectedValue} (found ${loadedValue}).`;
+                    }
+                }
+            });
         }
-    });
+    }
 
-    //FIXME: test invalid digits exceptions and their reported location information.
+    //FIXME: test images invalid token exceptions and their reported location information.
 });
