@@ -1,0 +1,8 @@
+{
+  "name": "@liko-12/utf8",
+  "version": "1.0.0",
+  "description": "The declarations for the standard utf-8 module included with LÖVE.",
+  "types": "utf8",
+  "license": "MIT",
+  "private": true
+}
