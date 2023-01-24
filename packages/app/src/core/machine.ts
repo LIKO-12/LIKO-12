@@ -1,5 +1,6 @@
+import { EnvironmentBox } from "@liko-12/environment-box";
+
 import { EventsEmitter } from "core/events-emitter";
-import { EnvironmentBox } from "./environment-box";
 import { MachineModule } from "./machine-module";
 
 export interface MachineOptions {

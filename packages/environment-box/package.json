@@ -1,0 +1,16 @@
+{
+  "name": "@liko-12/environment-box",
+  "version": "1.0.0",
+  "description": "A pure Lua library for executing Lua functions in a sandboxed environment.",
+  "main": "out/environment-box",
+  "types": "out/environment-box",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tstl",
+    "dev": "tstl --watch"
+  },
+  "devDependencies": {
+    "@liko-12/utf8": "*"
+  }
+}

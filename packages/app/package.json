@@ -10,6 +10,9 @@
     "build": "tstl",
     "dev": "tstl --watch"
   },
+  "dependencies": {
+    "@liko-12/environment-box": "*"
+  },
   "devDependencies": {
     "@rami-sabbagh/ts-inject-parameters-metadata": "^1.1.0",
     "@liko-12/standard-modules-apis": "*",

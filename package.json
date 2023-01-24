@@ -13,10 +13,13 @@
     "install": "yarn --cwd packages/app symlink",
     "symlink": "yarn --cwd packages/app symlink",
 
-    "build": "yarn build:kernel && yarn build:app",
+    "build": "yarn build:environment-box && yarn build:kernel && yarn build:app",
 
     "build:app": "yarn --cwd packages/app build",
     "dev:app": "yarn --cwd packages/app dev",
+
+    "build:environment-box": "yarn --cwd packages/environment-box build",
+    "dev:environment-box": "yarn --cwd packages/environment-box dev",
 
     "build:kernel": "yarn --cwd packages/kernel build",
     "dev:kernel": "yarn --cwd packages/kernel dev"
