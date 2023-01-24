@@ -7,6 +7,7 @@
   "types": ".",
   "dependencies": {
     "@liko-12/standard-modules-apis": "*",
+    "@liko-12/utf8": "*",
     "lua-types": "^2.13.0"
   }
 }

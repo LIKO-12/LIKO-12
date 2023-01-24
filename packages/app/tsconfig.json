@@ -12,7 +12,7 @@
           "love-typescript-definitions",
           "@typescript-to-lua/language-extensions",
           "@liko-12/standard-modules-apis",
-          "@liko-12/utf8",
+          "@liko-12/utf8/module",
           "lua-types/jit",
       ],
 

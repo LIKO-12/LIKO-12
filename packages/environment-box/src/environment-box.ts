@@ -1,5 +1,3 @@
-import * as utf8 from 'utf8';
-
 // Protect the standard string metatable.
 (getmetatable('') ?? {}).__metatable = {};
 

@@ -1,6 +1,7 @@
 io.stdout.setvbuf('no');
 love.filesystem.setRequirePath(`${love.filesystem.getRequirePath()};?/index.lua`);
 
+import 'core/utf8-adapter';
 import 'core/json-adapter';
 import 'core/error-handler';
 import { options } from 'core/options';

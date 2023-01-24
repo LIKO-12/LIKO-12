@@ -10,27 +10,25 @@
  * parameter assume that the given position is either the start of a byte
  * sequence or one plus the length of the subject string. As in the string
  * library, negative indices count from the end of the string.
- * @noSelf
- * @noResolution
  * @link [utf8](https://www.lua.org/manual/5.3/manual.html#6.5)
  */
-declare module "utf8" {
+interface UTF8 {
     /**
      * Receives zero or more integers, converts each one to its corresponding UTF-8
      * byte sequence and returns a string with the concatenation of all these
      * sequences
      * @link [utf.char](https://www.lua.org/manual/5.3/manual.html#pdf-utf8.char)
      */
-    function char(...args: Array<number>): string;
-  
+    char(this: void, ...args: Array<number>): string;
+
     /**
      * The pattern (a string, not a function) "[\0-\x7F\xC2-\xF4][\x80-\xBF]*" (see
      * §6.4.1), which matches exactly one UTF-8 byte sequence, assuming that the
      * subject is a valid UTF-8 string.
      * @link [utf.charpattern](https://www.lua.org/manual/5.3/manual.html#pdf-utf8.charpattern)
      */
-    var charpattern: string;
-  
+    charpattern: string;
+
     /**
      * Returns values so that the construction
      *
@@ -41,16 +39,16 @@ declare module "utf8" {
      * any invalid byte sequence.
      * @link [utf.codes](https://www.lua.org/manual/5.3/manual.html#pdf-utf8.codes)
      */
-    function codes(s: string): any;
-  
+    codes(this: void, s: string): any;
+
     /**
      * Returns the codepoints (as integers) from all characters in s that start between
      * byte position i and j (both included). The default for i is 1 and for j is i.
      * It raises an error if it meets any invalid byte sequence.
      * @link [utf.codepoint](https://www.lua.org/manual/5.3/manual.html#pdf-utf8.codepoint)
      */
-    function codepoint(s: string, i?: number, j?: number): any;
-  
+    codepoint(this: void, s: string, i?: number, j?: number): any;
+
     /**
      * Returns the number of UTF-8 characters in string s that start between positions
      * i and j (both inclusive). The default for i is 1 and for j is -1. If it finds
@@ -58,8 +56,8 @@ declare module "utf8" {
      * invalid byte.
      * @link [utf.len](https://www.lua.org/manual/5.3/manual.html#pdf-utf8.len)
      */
-    function len(s: string, i?: number, j?: number): number;
-  
+    len(this: void, s: string, i?: number, j?: number): number;
+
     /**
      * Returns the position (in bytes) where the encoding of the n-th character of s
      * (counting from position i) starts. A negative n gets characters before position
@@ -74,5 +72,7 @@ declare module "utf8" {
      * This function assumes that s is a valid UTF-8 string.
      * @link [utf.offset](https://www.lua.org/manual/5.3/manual.html#pdf-utf8.offset)
      */
-    function offset(s: string, n?: number, i?: number): number | null;
-  }
+    offset(this: void, s: string, n?: number, i?: number): number | null;
+}
+
+declare var utf8: UTF8;
