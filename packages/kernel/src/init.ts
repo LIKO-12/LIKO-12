@@ -3,6 +3,8 @@ import 'tests/font.test';
 
 import 'proto/image-file.test';
 
+import 'proto/game';
+
 function pullEvents(): LuaIterable<LuaMultiReturn<[string, ...any]>> {
     const { events } = liko;
     if (!events) throw 'events module is not loaded!';

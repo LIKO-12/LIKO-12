@@ -9,7 +9,8 @@
     "dev": "tstl --watch"
   },
   "dependencies": {
-    "@liko-12/lust": "*"
+    "@liko-12/lust": "*",
+    "@liko-12/environment-box": "*"
   },
   "devDependencies": {
     "@liko-12/standard-machine-env": "*",
