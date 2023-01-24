@@ -219,6 +219,26 @@ export class EnvironmentBox {
             return result;
         }
 
+        const patchedLoad = (func: any, chunkName: any) => {
+            // Disallow loading untrusted Lua bytecode.
+            // And set the environment of the loaded code.
+            let firstChunk = true;
+            const wrappedFunc = (...args: any[]) => {
+                const [chunk] = ecall(func, ...args);
+
+                if (firstChunk && typeof chunk === 'string') {
+                    if (chunk.length !== 0) firstChunk = false;
+                    if (isBytecode(chunk)) return error('(binary): cannot load bytecode');
+                }
+
+                return chunk;
+            }
+
+            const [chunk, err] = ecall(load, wrappedFunc, chunkName);
+            if (chunk) setfenv(chunk, this._G);
+            return $multi(chunk, err);
+        };
+
         this.expose({
             getfenv: (func: any) => {
                 // Disallow access to protected environments.
@@ -237,29 +257,12 @@ export class EnvironmentBox {
                 // Disallow loading untrusted Lua bytecode.
                 // And set the environment of the loaded code.
                 if (isBytecode(data)) return error('(binary): cannot load bytecode');
-                const [chunk, err] = ecall(loadstring, data, chunkName);
+                const loader = typeof data === 'string' ? loadstring : patchedLoad;
+                const [chunk, err] = ecall(loader, data, chunkName);
                 if (chunk) setfenv(chunk, this._G);
                 return $multi(chunk, err);
             },
-            load: (func: any, chunkName: any) => {
-                // Disallow loading untrusted Lua bytecode.
-                // And set the environment of the loaded code.
-                let firstChunk = true;
-                const wrappedFunc = (...args: any[]) => {
-                    const [chunk] = ecall(func, ...args);
-
-                    if (firstChunk && typeof chunk === 'string') {
-                        if (chunk.length !== 0) firstChunk = false;
-                        if (isBytecode(chunk)) return error('(binary): cannot load bytecode');
-                    }
-
-                    return chunk;
-                }
-
-                const [chunk, err] = ecall(load, wrappedFunc, chunkName);
-                if (chunk) setfenv(chunk, this._G);
-                return $multi(chunk, err);
-            },
+            load: patchedLoad,
             coroutine: {
                 create: coroutine.create,
                 status: coroutine.status,
