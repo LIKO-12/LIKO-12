@@ -8,7 +8,7 @@ const testingSamples = {
     invalidVersion: 'LIKO-12;IMAGE;V0;',
 };
 
-interface TestingImage {
+interface ValidImage {
     width: number,
     height: number,
     pixelData: number[][],
@@ -16,7 +16,7 @@ interface TestingImage {
     rawData: string,
 }
 
-const testingImages: TestingImage[] = [
+const validImages: ValidImage[] = [
     {
         width: 2,
         height: 3,
@@ -41,20 +41,21 @@ const testingImages: TestingImage[] = [
     },
 ];
 
-const invalidImages: string[] = [
-    /*  0 */ 'LIKO-12;IMAGE;V1;;;;',
-    /*  1 */ 'LIKO-12;IMAGE;V1;-15x-14;2-color;;',
-    /*  2 */ 'LIKO-12;IMAGE;V1;0x1;16-color;;',
-    /*  3 */ 'LIKO-12;IMAGE;V1;1x0;16-color;;',
-    /*  4 */ 'LIKO-12;IMAGE;V1;1x1;0-color;0;',
-    /*  5 */ 'LIKO-12;IMAGE;V1;1x1;8-color;0;',
-    /*  6 */ 'LIKO-12;IMAGE;V1;2x1;16-color;0;',
-    /*  7 */ 'LIKO-12;IMAGE;V1;2x1;256-color;0;',
-    /*  8 */ 'LIKO-12;IMAGE;V1;2x1;256-color;00;',
-    /*  9 */ 'LIKO-12;IMAGE;V1;2x1;256-color;001;',
-    /* 10 */ 'LIKO-12;IMAGE;V1;2x1;16-color;010;',
-    /* 11 */ 'LIKO-12;IMAGE;V1;2x1;256-color;00100;',
-    /* 12 */ 'LIKO-12;IMAGE;V1;2x1;256-color;001000;',
+const invalidImages: [fileData: string, expectedMessage: string][] = [
+    /*  0 */['LIKO-12;IMAGE;V1;;;;', "invalid_image_0.lk12:1:18: Invalid resolution '' (expected to be in 'NUMxNUM' format)."],
+    /*  1 */['LIKO-12;IMAGE;V1;-15x-14;2-color;;', "invalid_image_1.lk12:1:18: Invalid resolution '-15x-14' (expected to be in 'NUMxNUM' format)."],
+    /*  2 */['LIKO-12;IMAGE;V1;0x1;16-color;;', 'invalid_image_2.lk12:1:18: Neither width nor height can be a zero (found 0x1).'],
+    /*  3 */['LIKO-12;IMAGE;V1;1x0;16-color;;', 'invalid_image_3.lk12:1:18: Neither width nor height can be a zero (found 1x0).'],
+    /*  4 */['LIKO-12;IMAGE;V1;1x1;0-color;0;', "invalid_image_4.lk12:1:22: Unsupported color mode '0-color' (only 16 & 256 are accepted)."],
+    /*  5 */['LIKO-12;IMAGE;V1;1x1;8-color;0;', "invalid_image_5.lk12:1:22: Unsupported color mode '8-color' (only 16 & 256 are accepted)."],
+    /*  6 */['LIKO-12;IMAGE;V1;2x1;16-color;0;', 'invalid_image_6.lk12:1:32: Unexpected end of token (expected the rest of pixels data).'],
+    /*  7 */['LIKO-12;IMAGE;V1;2x1;256-color;0;', 'invalid_image_7.lk12:1:33: Unexpected end of token (expected the rest of pixels data).'],
+    /*  8 */['LIKO-12;IMAGE;V1;2x1;256-color;00;', 'invalid_image_8.lk12:1:34: Unexpected end of token (expected the rest of pixels data).'],
+    /*  9 */['LIKO-12;IMAGE;V1;2x1;256-color;001;', 'invalid_image_9.lk12:1:35: Unexpected end of token (expected the rest of pixels data).'],
+    /* 10 */['LIKO-12;IMAGE;V1;2x1;16-color;010;', "invalid_image_10.lk12:1:33: Expected end of token ';' (found '0')."],
+    /* 11 */['LIKO-12;IMAGE;V1;2x1;256-color;00100;', "invalid_image_11.lk12:1:36: Expected end of token ';' (found '0')."],
+    /* 12 */['LIKO-12;IMAGE;V1;2x1;256-color;001000;', "invalid_image_12.lk12:1:36: Expected end of token ';' (found '0')."],
+    /* 13 */['LIKO-12;IMAGE;V1;1x1;16-color;X;', "invalid_image_13.lk12:1:31: Invalid hexadecimal digit 'X'."],
 ];
 
 describe("kernel prototype lib 'image-file'", () => {
@@ -178,7 +179,7 @@ describe("kernel prototype lib 'image-file'", () => {
     });
 
     it("loading an image as a palette is rejected", () => {
-        const [ok, err] = pcall(() => loadFile(testingImages[0].fileName, testingImages[0].rawData, 'palette'));
+        const [ok, err] = pcall(() => loadFile(validImages[0].fileName, validImages[0].rawData, 'palette'));
 
         expect(ok).to.be(false);
         expect(err instanceof UnMatchingFileTypeException).to.be(true);
@@ -187,20 +188,25 @@ describe("kernel prototype lib 'image-file'", () => {
     describe('invalid images', () => {
         let imageIndex = 0;
 
-        for (const invalidImage of invalidImages) {
-            it(`invalid image #${imageIndex++} throws InvalidTokenException when loaded`, () => {
+        for (const [invalidImage, expectedMessage] of invalidImages) {
+            it(`#${imageIndex} throws "${expectedMessage}"`, () => {
                 const [ok, err] = pcall(loadFile, `invalid_image_${imageIndex}.lk12`, invalidImage, 'image');
                 expect(ok).to.be(false);
-                expect(err instanceof InvalidTokenException).to.be(true);
+
+                if (err instanceof InvalidTokenException) {
+                    expect(err.message).to.equal(expectedMessage);
+                } else throw "Expected an InvalidTokenException."
             });
+
+            imageIndex++;
         }
     });
 
     describe('valid images', () => {
         let imageIndex = 0;
 
-        for (const testingImage of testingImages) {
-            it(`testing image #${imageIndex++} '${testingImage.fileName}' loads`, () => {
+        for (const testingImage of validImages) {
+            it(`#${imageIndex++} '${testingImage.fileName}' loads with matching content`, () => {
                 const { fileName, rawData, width, height, pixelData } = testingImage;
                 const imageData = loadFile(fileName, rawData, 'image');
                 expect(graphics.isImageData(imageData)).to.be(true);
