@@ -54,7 +54,8 @@ export default class Keyboard extends MachineModule {
             },
 
             isDown: (...keys: KeyConstant[]): boolean => {
-                validateParameters();
+                // FIXME: IMPORTANT fix varargs validation.
+                // validateParameters();
                 return love.keyboard.isDown(...keys);
             },
 
