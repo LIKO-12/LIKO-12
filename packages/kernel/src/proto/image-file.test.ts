@@ -41,6 +41,22 @@ const testingImages: TestingImage[] = [
     },
 ];
 
+const invalidImages: string[] = [
+    /*  0 */ 'LIKO-12;IMAGE;V1;;;;',
+    /*  1 */ 'LIKO-12;IMAGE;V1;-15x-14;2-color;;',
+    /*  2 */ 'LIKO-12;IMAGE;V1;0x1;16-color;;',
+    /*  3 */ 'LIKO-12;IMAGE;V1;1x0;16-color;;',
+    /*  4 */ 'LIKO-12;IMAGE;V1;1x1;0-color;0;',
+    /*  5 */ 'LIKO-12;IMAGE;V1;1x1;8-color;0;',
+    /*  6 */ 'LIKO-12;IMAGE;V1;2x1;16-color;0;',
+    /*  7 */ 'LIKO-12;IMAGE;V1;2x1;256-color;0;',
+    /*  8 */ 'LIKO-12;IMAGE;V1;2x1;256-color;00;',
+    /*  9 */ 'LIKO-12;IMAGE;V1;2x1;256-color;001;',
+    /* 10 */ 'LIKO-12;IMAGE;V1;2x1;16-color;010;',
+    /* 11 */ 'LIKO-12;IMAGE;V1;2x1;256-color;00100;',
+    /* 12 */ 'LIKO-12;IMAGE;V1;2x1;256-color;001000;',
+];
+
 describe("kernel prototype lib 'image-file'", () => {
     const { graphics } = liko;
     if (!graphics) throw 'graphics module is not loaded!';
@@ -168,7 +184,19 @@ describe("kernel prototype lib 'image-file'", () => {
         expect(err instanceof UnMatchingFileTypeException).to.be(true);
     });
 
-    {
+    describe('invalid images', () => {
+        let imageIndex = 0;
+
+        for (const invalidImage of invalidImages) {
+            it(`invalid image #${imageIndex++} throws InvalidTokenException when loaded`, () => {
+                const [ok, err] = pcall(loadFile, `invalid_image_${imageIndex}.lk12`, invalidImage, 'image');
+                expect(ok).to.be(false);
+                expect(err instanceof InvalidTokenException).to.be(true);
+            });
+        }
+    });
+
+    describe('valid images', () => {
         let imageIndex = 0;
 
         for (const testingImage of testingImages) {
@@ -191,7 +219,5 @@ describe("kernel prototype lib 'image-file'", () => {
                 }
             });
         }
-    }
-
-    //FIXME: test images invalid token exceptions and their reported location information.
+    });
 });
