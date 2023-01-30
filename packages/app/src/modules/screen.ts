@@ -5,6 +5,7 @@ import { Machine } from "core/machine";
 import { MachineModule } from "core/machine-module";
 import { assertOption, clamp, validateParameters } from "core/utilities";
 
+import Events from 'modules/events';
 
 export interface ScreenOptions {
     width: number,
@@ -43,6 +44,8 @@ export interface ScreenOptions {
 }
 
 export default class Screen extends MachineModule {
+    protected readonly events: Events;
+
     protected readonly framebuffer: Canvas;
     protected readonly palette: [r: number, g: number, b: number, a: number][] = [];
 
@@ -60,6 +63,8 @@ export default class Screen extends MachineModule {
 
     constructor(private machine: Machine, options: ScreenOptions) {
         super(machine, options);
+
+        this.events = machine.resolveModule<Events>('events')!;
 
         this.shouldFitToWindow = assertOption(options.fitToWindow ?? true, 'fitToWindow', 'boolean');
         this.pixelPerfect = assertOption(options.pixelPerfect ?? false, 'pixelPerfect', 'boolean');
@@ -103,6 +108,8 @@ export default class Screen extends MachineModule {
         love.graphics.draw(framebuffer, x, y, undefined, scaleX, scaleY);
 
         love.graphics.setShader();
+
+        this.events.pushEvent('draw');
 
         if (this.resumeWhenFlipped) {
             this.resumeWhenFlipped = false;
