@@ -12,16 +12,16 @@ function createGameBox(): EnvironmentBox {
     return box;
 }
 
+function pullEvents(): LuaIterable<LuaMultiReturn<[string, ...any]>> {
+    const events = liko.events;
+    if (!events) throw 'events module is not loaded!';
+
+    return (() => events.pull()) as any;
+}
+
 function createEventLoop() {
     return () => {
-        const events = liko.events!;
-        if (!events) throw 'events module is not loaded!';
-
-        const screen = liko.screen!;
-        if (!screen) throw 'screen module is not loaded!';
-
-        while (true) {
-            let [name, a, b, c, d, e, f] = events.pull();
+        for (const [name, a, b, c, d, e, f] of pullEvents()) {
             if (name === 'keypressed' && a === 'escape') break;
 
             // FIXME: Remove the debugging print.
