@@ -21,18 +21,16 @@ function createEventLoop() {
         if (!screen) throw 'screen module is not loaded!';
 
         while (true) {
-            let [name, a, b, c, d, e, f] = events.pullPassively();
+            let [name, a, b, c, d, e, f] = events.pull();
             if (name === 'keypressed' && a === 'escape') break;
-            name = name ?? 'draw';
 
-            if (name !== 'draw') print('GAME', name, a, b, c, d, e, f);
+            // FIXME: Remove the debugging print.
+            if (name !== 'draw' && name !== 'update') print('GAME', name, a, b, c, d, e, f);
 
             const callbackName = `_${name}`;
             const callback = (_G as any)[callbackName];
 
             if (typeof callback === 'function') callback(a, b, c, d, e, f);
-
-            if (name === 'draw') screen.flip();
         }
     };
 }

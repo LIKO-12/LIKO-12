@@ -13,6 +13,7 @@ function pullEvents(): LuaIterable<LuaMultiReturn<[string, ...any]>> {
 }
 
 for (const [event, a, b, c, d, e, f] of pullEvents()) {
-    print(event, a, b, c, d, e, f);
+    if (event !== 'draw' && event !== 'update')
+        print(event, a, b, c, d, e, f);
 }
 
