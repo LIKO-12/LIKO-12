@@ -1,3 +1,4 @@
+import { loveEvents } from 'core/love-events';
 import { Machine } from "core/machine";
 import { MachineModule } from "core/machine-module";
 import { Queue } from "core/queue";
@@ -6,8 +7,8 @@ export default class Events extends MachineModule {
     private machineListening = false;
     private eventsQueue = new Queue<[eventName: string, ...args: any[]]>();
 
-    constructor(private machine: Machine, options: Record<string, any>) {
-        super(machine, options)
+    constructor(private machine: Machine, options: {}) {
+        super(machine, options);
     }
 
     pushEvent(eventName: string, ...args: any[]) {
