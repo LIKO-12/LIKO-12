@@ -18,6 +18,7 @@
     },
     "modules": [
         "events",
+        "timer",
         "screen",
         "graphics",
         "storage",

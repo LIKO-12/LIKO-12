@@ -2,7 +2,7 @@ import { ScreenOptions } from 'modules/screen';
 import { StorageOptions } from 'modules/storage';
 import * as rawOptions from 'options.json';
 
-type KnownModules = 'events' | 'storage' | 'screen';
+type KnownModules = 'events' | 'timer' | 'storage' | 'screen' | 'graphics' | 'keyboard';
 
 interface Options {
     window: {
