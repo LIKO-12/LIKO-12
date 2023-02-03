@@ -149,7 +149,7 @@ interface TCPServer {
      * If a timeout condition is met, the method returns nil followed by the error string 'timeout'.
      * Other errors are reported by nil followed by a message describing the error.
      */
-    accept(): LuaMultiReturn<[1 | undefined, string]>;
+    accept(): LuaMultiReturn<[TCPSocket | undefined, string]>;
 }
 
 interface TCPServerClient {
@@ -196,6 +196,9 @@ interface TCPServerClient {
 
 type TCPSocket = TCPMaster & TCPClient & TCPServer & TCPShared & TCPServerClient;
 
+/**
+ * @noResolution
+ */
 declare module 'socket' {
     /**
      * The current LuaSocket version.
