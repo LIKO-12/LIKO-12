@@ -9,6 +9,15 @@ function decodeLittleEndian(data: string): number {
     return number;
 }
 
+function encodeLittleEndian(value: number, length: number): string {
+    const bytes = [];
+    for (let i = 0; i <= length; i++) {
+        bytes[i] = value & 0xFF;
+        value >>= 8;
+    }
+    return string.char(...bytes);
+}
+
 function parseHeader(data: string) {
     const [firstByte, secondByte] = string.byte(data, 1, 2);
 
@@ -35,7 +44,7 @@ function parseExtendedHeader(data: string) {
     return { payloadLength, maskingKey };
 }
 
-function applyXORMask(data: string, mask: number[]) {
+function applyXORMask(data: string, mask: readonly number[]) {
     return data.split('')
         .map((char, index) => string.char(string.byte(char) ^ mask[index % 4]))
         .join('');
@@ -73,5 +82,39 @@ export class DataFrame {
         const payload = mask ? applyXORMask(rawPayload, maskingKey) : rawPayload;
 
         return new DataFrame(fin, rsv1, rsv2, rsv3, opcode, maskingKey, payload);
+    }
+
+    encode(): string {
+        const header = this.encodeHeader();
+        const extendedHeader = this.encodeExtendedHeader();
+        const payload = (this.maskingKey !== undefined) ? applyXORMask(this.payload, this.maskingKey) : this.payload;
+
+        return `${header}${extendedHeader}${payload}`;
+    }
+
+    private encodeHeader(): string {
+        let firstByte = 0, secondByte = 0;
+
+        if (this.fin) firstByte |= 0b1000_0000;
+        if (this.rsv1) firstByte |= 0b0100_0000;
+        if (this.rsv2) firstByte |= 0b0010_0000;
+        if (this.rsv3) firstByte |= 0b0001_0000;
+        firstByte |= this.opcode;
+
+        if (this.maskingKey !== undefined) secondByte |= 0b1000_0000;
+
+        if (this.payload.length > 0b1111_1111_1111_1111) secondByte |= 127;
+        else secondByte |= Math.min(this.payload.length, 126);
+
+        return string.char(firstByte, secondByte);
+    }
+
+    private encodeExtendedHeader(): string {
+        const mask = (this.maskingKey !== undefined) ? string.char(...this.maskingKey) : '';
+        const payloadLength = (this.payload.length >= 126) ? encodeLittleEndian(this.payload.length,
+            this.payload.length > 0b1111_1111_1111_1111 ? 8 : 2
+        ) : '';
+
+        return `${mask}${payloadLength}`;
     }
 }
