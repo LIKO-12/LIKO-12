@@ -12,10 +12,10 @@ function decodeLittleEndian(data: string): number {
 function parseHeader(data: string) {
     const [firstByte, secondByte] = string.byte(data, 1, 2);
 
-    const fin = (firstByte & 0b1000_000) !== 0;
-    const rsv1 = (firstByte & 0b0100_000) !== 0;
-    const rsv2 = (firstByte & 0b0010_000) !== 0;
-    const rsv3 = (firstByte & 0b0001_000) !== 0;
+    const fin = (firstByte & 0b1000_0000) !== 0;
+    const rsv1 = (firstByte & 0b0100_0000) !== 0;
+    const rsv2 = (firstByte & 0b0010_0000) !== 0;
+    const rsv3 = (firstByte & 0b0001_0000) !== 0;
     const opcode = firstByte & 0xF;
 
     const mask = (secondByte & 0b1000_0000) !== 0;
