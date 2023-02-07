@@ -1,12 +1,18 @@
+import { Queue } from 'core/queue';
 import { addJob } from './async-jobs-worker';
 import { DataFrame } from './dataframe';
 import { WebSocketHandshake } from './handshake';
+import { Notification } from './notifier';
 
 export enum WebSocketStatus {
     Initializing,
     Ready,
     Closed,
 }
+
+// TODO: Auto-close connection on quit event.
+// TODO: Send proper close codes when failure happens.
+// FIXME: Handle the received close frames.
 
 export class WebSocketConnection {
     private handshake: WebSocketHandshake | undefined;
@@ -22,27 +28,58 @@ export class WebSocketConnection {
         private readonly client: TCPSocket,
     ) {
         client.settimeout(0);
-
-        print('Got a connection!');
-        print('Sock info:', ...client.getsockname());
-        print('Peer info:', ...client.getpeername());
-
         this.run().catch(error);
     }
 
+    private sendNotification?: Notification;
+
+    private controlFramesSendQueue = new Queue<DataFrame>();
+    private dataFramesSendQueue = new Queue<DataFrame>();
+
     private async run() {
         this.handshake = await WebSocketHandshake.perform(this.client);
-        await this.receive();
 
-        const testingFrame = new DataFrame(true, false, false, false, 1, undefined, 'Hello from Server!');
-        await this.sendRawData(testingFrame.encode());
+        this.runReceiverLoop().catch(error);
+        this.runSenderLoop().catch(error);
 
-        this.client.close();
+        this.dataFramesSendQueue.push(DataFrame.createTextFrame('Hello from server!'));
+        this.dataFramesSendQueue.push(DataFrame.createTextFrame('Hello from server2!'));
+        DataFrame.createBinaryFrames('Fragmented Data', 5).forEach((frame) =>
+            this.dataFramesSendQueue.push(frame));
+        
+        this.controlFramesSendQueue.push(DataFrame.createPingFrame('Ping!'));
+
+        this.sendNotification?.trigger();
     }
+
+    private async runReceiverLoop() {
+        while (true) {
+            const frame = await this.receiveFrame();
+            print('Received:', frame.payload);
+        }
+    }
+
+    private async runSenderLoop() {
+        while (true) {
+            while (!this.controlFramesSendQueue.isEmpty() || !this.dataFramesSendQueue.isEmpty()) {
+                const controlFrame = this.controlFramesSendQueue.pop();
+                if (controlFrame !== undefined) await this.sendFrame(controlFrame);
+
+                const dataFrame = this.dataFramesSendQueue.pop();
+                if (dataFrame !== undefined) await this.sendFrame(dataFrame);
+            }
+
+            const notification = new Notification();
+            this.sendNotification = notification;
+            await notification.promise;
+        }
+    }
+
+    //#region Raw I/O
 
     private ongoingRawReceive = false;
 
-    receiveRawData(count: number): Promise<string> {
+    private receiveRawData(count: number): Promise<string> {
         if (this.state !== WebSocketStatus.Ready) throw 'The connection is not ready!';
 
         if (this.ongoingRawReceive) throw 'The connection is busy with another receive operation.';
@@ -52,7 +89,7 @@ export class WebSocketConnection {
             addJob(() => {
                 const [bytes, err] = this.client.receive(count);
                 if (err === 'timeout') return false;
-                
+
                 this.ongoingRawReceive = false;
 
                 if (bytes === undefined) reject(err);
@@ -66,7 +103,7 @@ export class WebSocketConnection {
 
     private ongoingRawSend = false;
 
-    sendRawData(data: string): Promise<void> {
+    private sendRawData(data: string): Promise<void> {
         if (this.state !== WebSocketStatus.Ready) throw 'The connection is busy with another send operation.';
 
         if (this.ongoingRawSend) throw 'The connection is busy with another send operation.';
@@ -81,7 +118,7 @@ export class WebSocketConnection {
                     return false;
                 }
 
-                this.ongoingRawSend  = false;
+                this.ongoingRawSend = false;
 
                 if (bytesSent === undefined) reject(err);
                 else if (bytesSent !== data.length) reject('bytes count did not match!');
@@ -92,13 +129,13 @@ export class WebSocketConnection {
         });
     }
 
-    async receive() {
-        const frame = await DataFrame.receiveFrame(this);
+    //#endregion
 
-        print('Received a frame!');
-        print('fin', frame.fin, 'rsv1', frame.rsv1, 'rsv2', frame.rsv2, 'rsv3', frame.rsv3);
-        print('opcode', frame.opcode);
-        if (frame.maskingKey !== undefined) print('masking key', ...frame.maskingKey);
-        print('payload', frame.payload);
+    private receiveFrame(): Promise<DataFrame> {
+        return DataFrame.parse((length) => this.receiveRawData(length));
+    }
+
+    private sendFrame(frame: DataFrame): Promise<void> {
+        return this.sendRawData(frame.encode());
     }
 }
