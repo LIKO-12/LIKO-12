@@ -1,3 +1,4 @@
+import { RemoteOptions } from 'modules/remote';
 import { ScreenOptions } from 'modules/screen';
 import { StorageOptions } from 'modules/storage';
 import * as rawOptions from 'options.json';
@@ -24,6 +25,7 @@ interface Options {
     options: {
         screen?: ScreenOptions,
         storage?: StorageOptions,
+        remote?: RemoteOptions,
 
         [key: string]: Record<string, any> | undefined,
     }

@@ -61,8 +61,8 @@ export class DataFrame {
         public readonly payload: string,
     ) {}
 
-    static receiveFrame(connection: WebSocketConnection): DataFrame {
-        const header = connection.readBytes(2);
+    static async receiveFrame(connection: WebSocketConnection): Promise<DataFrame> {
+        const header = await connection.readBytes(2);
 
         const {
             fin, rsv1, rsv2, rsv3, opcode,
@@ -73,12 +73,12 @@ export class DataFrame {
         if (basePayloadLength === 126) extendedHeaderLength += 2;
         if (basePayloadLength === 127) extendedHeaderLength += 8;
 
-        const extendedHeader = connection.readBytes(extendedHeaderLength);
+        const extendedHeader = await connection.readBytes(extendedHeaderLength);
         const { payloadLength: extendedPayloadLength, maskingKey } = parseExtendedHeader(extendedHeader);
 
         const payloadLength = (basePayloadLength < 126) ? basePayloadLength : extendedPayloadLength;
 
-        const rawPayload = connection.readBytes(payloadLength);
+        const rawPayload = await connection.readBytes(payloadLength);
         const payload = mask ? applyXORMask(rawPayload, maskingKey) : rawPayload;
 
         return new DataFrame(fin, rsv1, rsv2, rsv3, opcode, maskingKey, payload);

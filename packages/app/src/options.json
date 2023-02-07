@@ -22,7 +22,8 @@
         "screen",
         "graphics",
         "storage",
-        "keyboard"
+        "keyboard",
+        "remote"
     ],
     "options": {
         "storage": {
@@ -34,6 +35,10 @@
             "height": 128,
             "palette": "res/palette.png",
             "pixelPerfect": true
+        },
+        "remote": {
+            "listenAddress": "127.0.0.1",
+            "listenPort": 50000
         }
     }
 }
