@@ -2,8 +2,21 @@ import { addJob } from './async-jobs-worker';
 import { DataFrame } from './dataframe';
 import { WebSocketHandshake } from './handshake';
 
+export enum WebSocketStatus {
+    Initializing,
+    Ready,
+    Closed,
+}
+
 export class WebSocketConnection {
     private handshake: WebSocketHandshake | undefined;
+    private dead = false;
+
+    get state(): WebSocketStatus {
+        if (this.dead) return WebSocketStatus.Closed;
+        if (this.handshake) return WebSocketStatus.Ready;
+        return WebSocketStatus.Initializing;
+    }
 
     constructor(
         private readonly client: TCPSocket,
@@ -27,11 +40,20 @@ export class WebSocketConnection {
         this.client.close();
     }
 
-    readRawData(count: number): Promise<string> {
+    private ongoingRawReceive = false;
+
+    receiveRawData(count: number): Promise<string> {
+        if (this.state !== WebSocketStatus.Ready) throw 'The connection is not ready!';
+
+        if (this.ongoingRawReceive) throw 'The connection is busy with another receive operation.';
+        this.ongoingRawReceive = true;
+
         return new Promise((resolve, reject) => {
             addJob(() => {
                 const [bytes, err] = this.client.receive(count);
                 if (err === 'timeout') return false;
+                
+                this.ongoingRawReceive = false;
 
                 if (bytes === undefined) reject(err);
                 else if (bytes.length !== count) reject("received content doesn't match the requested length");
@@ -42,7 +64,14 @@ export class WebSocketConnection {
         });
     }
 
+    private ongoingRawSend = false;
+
     sendRawData(data: string): Promise<void> {
+        if (this.state !== WebSocketStatus.Ready) throw 'The connection is busy with another send operation.';
+
+        if (this.ongoingRawSend) throw 'The connection is busy with another send operation.';
+        this.ongoingRawSend = true;
+
         let lastByteSent = 0;
         return new Promise((resolve, reject) => {
             addJob(() => {
@@ -51,6 +80,8 @@ export class WebSocketConnection {
                     lastByteSent = fragmentSent;
                     return false;
                 }
+
+                this.ongoingRawSend  = false;
 
                 if (bytesSent === undefined) reject(err);
                 else if (bytesSent !== data.length) reject('bytes count did not match!');
