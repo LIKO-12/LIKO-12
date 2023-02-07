@@ -20,10 +20,14 @@ export class WebSocketConnection {
     private async run() {
         this.handshake = await WebSocketHandshake.perform(this.client);
         await this.receive();
+
+        const testingFrame = new DataFrame(true, false, false, false, 1, undefined, 'Hello from Server!');
+        await this.sendRawData(testingFrame.encode());
+
         this.client.close();
     }
 
-    readBytes(count: number): Promise<string> {
+    readRawData(count: number): Promise<string> {
         return new Promise((resolve, reject) => {
             addJob(() => {
                 const [bytes, err] = this.client.receive(count);
@@ -32,6 +36,25 @@ export class WebSocketConnection {
                 if (bytes === undefined) reject(err);
                 else if (bytes.length !== count) reject("received content doesn't match the requested length");
                 else resolve(bytes);
+
+                return true;
+            });
+        });
+    }
+
+    sendRawData(data: string): Promise<void> {
+        let lastByteSent = 0;
+        return new Promise((resolve, reject) => {
+            addJob(() => {
+                const [bytesSent, err, fragmentSent] = this.client.send(data, lastByteSent + 1);
+                if (err === 'timeout') {
+                    lastByteSent = fragmentSent;
+                    return false;
+                }
+
+                if (bytesSent === undefined) reject(err);
+                else if (bytesSent !== data.length) reject('bytes count did not match!');
+                else resolve();
 
                 return true;
             });

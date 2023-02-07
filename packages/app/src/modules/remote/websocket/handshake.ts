@@ -132,7 +132,7 @@ export class WebSocketHandshake {
             }
 
             if (bytesSent === undefined) reject(err);
-            else if (bytesSent !== line.length + 2) reject('bytes count has not matched!');
+            else if (bytesSent !== line.length + 2) reject('bytes count did not matched!');
             else resolve();
 
             return true;
