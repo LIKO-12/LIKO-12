@@ -129,7 +129,7 @@ interface TCPClient {
      * You might want to try again from the byte following that.
      * The error message can be 'closed' in case the connection was closed before the transmission was completed or the string 'timeout' in case there was a timeout during the operation.
      */
-    send(data: string, i?: number, j?: number): LuaMultiReturn<[number | undefined, string]>;
+    send(data: string, i?: number, j?: number): LuaMultiReturn<[number | undefined, string, number]>;
 
     /**
      * (client) Shuts down part of a full-duplex connection.
