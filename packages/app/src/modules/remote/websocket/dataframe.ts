@@ -1,17 +1,15 @@
 type ConnectionReader = (length: number) => Promise<string>;
 
-function decodeLittleEndian(data: string): number {
-    data = string.reverse(data);
-
+function decodeBigEndian(data: string): number {
     let number = 0;
     for (let i = 0; i <= data.length; i++)
         number = (number << 8) | string.byte(data, i);
     return number;
 }
 
-function encodeLittleEndian(value: number, length: number): string {
+function encodeBigEndian(value: number, length: number): string {
     const bytes = [];
-    for (let i = 0; i <= length; i++) {
+    for (let i = length-1; i >= 0; i--) {
         bytes[i] = value & 0xFF;
         value >>= 8;
     }
@@ -38,7 +36,7 @@ function parseExtendedHeader(data: string) {
     const rawPayloadLength = data.substring(0, data.length - (hasMask ? 4 : 0));
     const rawMaskingKey = data.substring(rawPayloadLength.length);
 
-    const payloadLength = decodeLittleEndian(rawPayloadLength);
+    const payloadLength = decodeBigEndian(rawPayloadLength);
     const maskingKey = string.byte(rawMaskingKey, 1, 4);
 
     return { payloadLength, maskingKey };
@@ -114,7 +112,7 @@ export class DataFrame {
     get closeCode() {
         if (this.opcode !== OpCode.Close) return -1;
         if (this.payload === '') return CloseCode.Normal;
-        return decodeLittleEndian(this.payload.substring(0, 2));
+        return decodeBigEndian(this.payload.substring(0, 2));
     }
 
     encode(): string {
@@ -144,11 +142,11 @@ export class DataFrame {
 
     private encodeExtendedHeader(): string {
         const mask = (this.maskingKey !== undefined) ? string.char(...this.maskingKey) : '';
-        const payloadLength = (this.payload.length >= 126) ? encodeLittleEndian(this.payload.length,
+        const payloadLength = (this.payload.length >= 126) ? encodeBigEndian(this.payload.length,
             this.payload.length > 0b1111_1111_1111_1111 ? 8 : 2
         ) : '';
 
-        return `${mask}${payloadLength}`;
+        return `${payloadLength}${mask}`;
     }
 
     static async parse(reader: ConnectionReader): Promise<DataFrame> {
@@ -204,7 +202,7 @@ export class DataFrame {
         return new DataFrame(
             true, false, false, false,
             OpCode.Close, undefined,
-            `${encodeLittleEndian(code, 2)}${reason ?? ''}`,
+            `${encodeBigEndian(code, 2)}${reason ?? ''}`,
         );
     }
 
