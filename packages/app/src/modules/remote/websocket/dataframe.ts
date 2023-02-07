@@ -1,4 +1,4 @@
-import { WebSocketConnection } from './connection';
+type ConnectionReader = (length: number) => Promise<string>;
 
 function decodeLittleEndian(data: string): number {
     data = string.reverse(data);
@@ -50,38 +50,71 @@ function applyXORMask(data: string, mask: readonly number[]) {
         .join('');
 }
 
+export enum OpCode {
+    /* -- Data Frames -- */
+    Continuation = 0x0,
+    Text = 0x1,
+    Binary = 0x2,
+
+    /* -- Control Frames -- */
+    Close = 0x8,
+    Ping = 0x9,
+    Pong = 0xA,
+}
+
+export enum CloseCode {
+    /**
+     * 1000 indicates a normal closure, meaning that the purpose for
+     * which the connection was established has been fulfilled.
+     */
+    Normal = 1000,
+    /**
+     * 1001 indicates that an endpoint is "going away", such as a server
+     * going down or a browser having navigated away from a page.
+     */
+    GoingAway = 1001,
+    /**
+     * 1002 indicates that an endpoint is terminating the connection due
+     * to a protocol error.
+     */
+    ProtocolError = 1002,
+    /**
+     * 1003 indicates that an endpoint is terminating the connection
+     * because it has received a type of data it cannot accept (e.g., an
+     * endpoint that understands only text data MAY send this if it
+     * receives a binary message).
+     */
+    UnsupportedFrame = 1003,
+
+    // TODO: Add the rest of code from section 7.4.1 of RFC6455.
+}
+
 export class DataFrame {
     constructor(
         public readonly fin: boolean,
         public readonly rsv1: boolean,
         public readonly rsv2: boolean,
         public readonly rsv3: boolean,
-        public readonly opcode: number,
+        public readonly opcode: OpCode,
         public readonly maskingKey: readonly number[] | undefined,
         public readonly payload: string,
-    ) { }
+    ) {
+        // 450_359_9627_370_500 = 2^52
+        if (payload.length >= 450_359_9627_370_500) throw 'payload too large.';
+    }
 
-    static async receiveFrame(connection: WebSocketConnection): Promise<DataFrame> {
-        const header = await connection.receiveRawData(2);
+    get isControl() { return (this.opcode & 0x8) !== 0 }
 
-        const {
-            fin, rsv1, rsv2, rsv3, opcode,
-            mask, payloadLength: basePayloadLength
-        } = parseHeader(header);
+    get isText() { return this.opcode === OpCode.Text }
+    get isBinary() { return this.opcode === OpCode.Binary }
+    get isClose() { return this.opcode === OpCode.Close }
+    get isPing() { return this.opcode === OpCode.Ping }
+    get isPong() { return this.opcode === OpCode.Pong }
 
-        let extendedHeaderLength = mask ? 4 : 0;
-        if (basePayloadLength === 126) extendedHeaderLength += 2;
-        if (basePayloadLength === 127) extendedHeaderLength += 8;
-
-        const extendedHeader = await connection.receiveRawData(extendedHeaderLength);
-        const { payloadLength: extendedPayloadLength, maskingKey } = parseExtendedHeader(extendedHeader);
-
-        const payloadLength = (basePayloadLength < 126) ? basePayloadLength : extendedPayloadLength;
-
-        const rawPayload = await connection.receiveRawData(payloadLength);
-        const payload = mask ? applyXORMask(rawPayload, maskingKey) : rawPayload;
-
-        return new DataFrame(fin, rsv1, rsv2, rsv3, opcode, maskingKey, payload);
+    get closeCode() {
+        if (this.opcode !== OpCode.Close) return -1;
+        if (this.payload === '') return CloseCode.Normal;
+        return decodeLittleEndian(this.payload.substring(0, 2));
     }
 
     encode(): string {
@@ -116,5 +149,78 @@ export class DataFrame {
         ) : '';
 
         return `${mask}${payloadLength}`;
+    }
+
+    static async parse(reader: ConnectionReader): Promise<DataFrame> {
+        const header = await reader(2);
+
+        const {
+            fin, rsv1, rsv2, rsv3, opcode,
+            mask, payloadLength: basePayloadLength
+        } = parseHeader(header);
+
+        let extendedHeaderLength = mask ? 4 : 0;
+        if (basePayloadLength === 126) extendedHeaderLength += 2;
+        if (basePayloadLength === 127) extendedHeaderLength += 8;
+
+        const extendedHeader = await reader(extendedHeaderLength);
+        const { payloadLength: extendedPayloadLength, maskingKey } = parseExtendedHeader(extendedHeader);
+
+        const payloadLength = (basePayloadLength < 126) ? basePayloadLength : extendedPayloadLength;
+
+        const rawPayload = await reader(payloadLength);
+        const payload = mask ? applyXORMask(rawPayload, maskingKey) : rawPayload;
+
+        return new DataFrame(fin, rsv1, rsv2, rsv3, opcode, maskingKey, payload);
+    }
+
+    static createTextFrame(data: string): DataFrame {
+        return new DataFrame(
+            true, false, false, false,
+            OpCode.Text, undefined, data,
+        );
+    }
+
+    // 450_359_9627_370_500 = 2^52
+    static createBinaryFrames(data: string, fragmentLength = 450_359_9627_370_500): DataFrame[] {
+        const frames: DataFrame[] = [];
+
+        const dataLength = data.length;
+        const framesCount = Math.ceil(dataLength / fragmentLength);
+        const lastFrameId = Math.max(framesCount - 1, 0);
+
+        for (let frameId = 0; frameId < framesCount; frameId++)
+            frames.push(new DataFrame(
+                frameId === lastFrameId, false, false, false,
+                frameId === 0 ? OpCode.Binary : OpCode.Continuation,
+                undefined,
+                data.substring(frameId * fragmentLength, (frameId + 1) * fragmentLength),
+            ));
+
+        return frames;
+    }
+
+    static createCloseFrame(code: CloseCode = CloseCode.Normal, reason?: string): DataFrame {
+        return new DataFrame(
+            true, false, false, false,
+            OpCode.Close, undefined,
+            `${encodeLittleEndian(code, 2)}${reason ?? ''}`,
+        );
+    }
+
+    static createPingFrame(data?: string) {
+        return new DataFrame(
+            true, false, false, false,
+            OpCode.Ping, undefined,
+            data ?? '',
+        );
+    }
+
+    static createPongFrame(data?: string) {
+        return new DataFrame(
+            true, false, false, false,
+            OpCode.Pong, undefined,
+            data ?? '',
+        );
     }
 }
