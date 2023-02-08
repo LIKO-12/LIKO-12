@@ -32,7 +32,7 @@ function parseHeader(data: string) {
 }
 
 function parseExtendedHeader(data: string) {
-    let hasMask = (data.length === 4 || data.length === 6 || data.length === 10);
+    let hasMask = (data.length === 4 || data.length === 6 || data.length === 12);
     const rawPayloadLength = data.substring(0, data.length - (hasMask ? 4 : 0));
     const rawMaskingKey = data.substring(rawPayloadLength.length);
 
@@ -134,7 +134,7 @@ export class DataFrame {
 
         if (this.maskingKey !== undefined) secondByte |= 0b1000_0000;
 
-        if (this.payload.length > 0b1111_1111_1111_1111) secondByte |= 127;
+        if (this.payload.length > 0xFFFF) secondByte |= 127;
         else secondByte |= Math.min(this.payload.length, 126);
 
         return string.char(firstByte, secondByte);
@@ -143,7 +143,7 @@ export class DataFrame {
     private encodeExtendedHeader(): string {
         const mask = (this.maskingKey !== undefined) ? string.char(...this.maskingKey) : '';
         const payloadLength = (this.payload.length >= 126) ? encodeBigEndian(this.payload.length,
-            this.payload.length > 0b1111_1111_1111_1111 ? 8 : 2
+            this.payload.length > 0xFFFF ? 8 : 2
         ) : '';
 
         return `${payloadLength}${mask}`;
