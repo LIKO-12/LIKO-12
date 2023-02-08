@@ -10,7 +10,6 @@ export enum WebSocketStatus {
     Closed,
 }
 
-// TODO: Buffer the fragments received frames and join them.
 // TODO: Create an events system.
 // TODO: Handle connection close triggered by client.
 // TODO: Implement clean close triggered by server.
