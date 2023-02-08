@@ -10,6 +10,7 @@ export enum WebSocketStatus {
     Closed,
 }
 
+// TODO: Add methods for sending messages.
 // TODO: Create an events system.
 // TODO: Handle connection close triggered by client.
 // TODO: Implement clean close triggered by server.
