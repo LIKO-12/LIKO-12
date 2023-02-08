@@ -1,6 +1,6 @@
 import { Queue } from 'core/queue';
 import { addJob } from './async-jobs-worker';
-import { DataFrame } from './dataframe';
+import { DataFrame, OpCode } from './dataframe';
 import { WebSocketHandshake } from './handshake';
 import { Notification } from './notifier';
 
@@ -10,9 +10,18 @@ export enum WebSocketStatus {
     Closed,
 }
 
-// TODO: Auto-close connection on quit event.
-// TODO: Send proper close codes when failure happens.
-// FIXME: Handle the received close frames.
+// TODO: Buffer the fragments received frames and join them.
+// TODO: Create an events system.
+// TODO: Handle connection close triggered by client.
+// TODO: Implement clean close triggered by server.
+// TODO: Gracefully close the server.
+// TODO: Implement automatic pong for any ping.
+// TODO: Implement a heartbeat to check the client and auto-close a zombie connection.
+// TODO: Clean close the connection with proper code when a failure happens.
+// TODO: Add configuration for the default fragmentation of sent messages.
+// TODO: Handle unknown frames (possibly close the connection).
+
+// NOTE: Control frames can't be fragmented (as mentioned in the specification).
 
 export class WebSocketConnection {
     private handshake: WebSocketHandshake | undefined;
@@ -30,6 +39,8 @@ export class WebSocketConnection {
         client.settimeout(0);
         this.run().catch(error);
     }
+    
+    //#region I/O Loops
 
     private sendNotification?: Notification;
 
@@ -41,21 +52,40 @@ export class WebSocketConnection {
 
         this.runReceiverLoop().catch(error);
         this.runSenderLoop().catch(error);
-
-        this.dataFramesSendQueue.push(DataFrame.createTextFrame('Hello from server!'));
-        this.dataFramesSendQueue.push(DataFrame.createTextFrame('Hello from server2!'));
-        DataFrame.createBinaryFrames('Fragmented Data', 5).forEach((frame) =>
-            this.dataFramesSendQueue.push(frame));
-        
-        this.controlFramesSendQueue.push(DataFrame.createPingFrame('Ping!'));
-
-        this.sendNotification?.trigger();
     }
 
     private async runReceiverLoop() {
+        let fragmentsBuffer: DataFrame[] = [];
+
         while (true) {
-            const frame = await this.receiveFrame();
-            print('Received:', frame.payload);
+            const frame = await DataFrame.parse((length) => this.receiveRawData(length));;
+
+            if (frame.isControl) {
+                if (!frame.fin) throw "invalid frame. control frames can't be fragmented.";
+                this.processControlFrame(frame);
+
+            } else {
+                if (fragmentsBuffer.length === 0 && frame.fin) {
+                    // consume the non-fragmented frame.
+                    this.processDataFrame(frame.opcode, frame.payload);
+                    
+                } else {
+                    if (fragmentsBuffer.length === 0 && frame.opcode === OpCode.Continuation) throw 'invalid frame.';
+                    else if (fragmentsBuffer.length !== 0 && frame.opcode !== OpCode.Continuation) throw 'invalid frame.';
+
+                    fragmentsBuffer.push(frame);
+
+                    // The end of the fragmented message.
+                    if (frame.fin) {
+                        this.processDataFrame(
+                            fragmentsBuffer[0].opcode,
+                            fragmentsBuffer.map(frame => frame.payload).join(''),
+                        );
+
+                        fragmentsBuffer = [];
+                    }
+                }
+            }
         }
     }
 
@@ -63,16 +93,46 @@ export class WebSocketConnection {
         while (true) {
             while (!this.controlFramesSendQueue.isEmpty() || !this.dataFramesSendQueue.isEmpty()) {
                 const controlFrame = this.controlFramesSendQueue.pop();
-                if (controlFrame !== undefined) await this.sendFrame(controlFrame);
+                if (controlFrame !== undefined) await this.sendRawData(controlFrame.encode());
 
                 const dataFrame = this.dataFramesSendQueue.pop();
-                if (dataFrame !== undefined) await this.sendFrame(dataFrame);
+                if (dataFrame !== undefined) await this.sendRawData(dataFrame.encode());
             }
 
             const notification = new Notification();
             this.sendNotification = notification;
             await notification.promise;
         }
+    }
+
+    //#endregion
+
+    /**
+     * Process a received control frame.
+     */
+    private processControlFrame(frame: DataFrame): void {
+        if (frame.opcode === OpCode.Ping) {
+            // TODO: Send the response.
+        }
+
+        if (frame.opcode === OpCode.Pong) {
+            // TODO: Reset the termination timer.
+        }
+
+        if (frame.opcode === OpCode.Close) {
+            // TODO: Clean close the connection.
+        }
+    }
+
+    /**
+     * Process a received data frame.
+     * 
+     * The frame object is not passed here because a message can be fragmented over multiple frames.
+     * And for simplicity that detail has been abstracted out and thus this method should handle the general case. 
+     */
+    private processDataFrame(opcode: OpCode, content: string): void {
+        if (opcode === OpCode.Text) print(`Received text message of ${content.length} characters.`);
+        if (opcode === OpCode.Binary) print(`Received binary message of ${content.length} bytes.`);
     }
 
     //#region Raw I/O
@@ -131,11 +191,4 @@ export class WebSocketConnection {
 
     //#endregion
 
-    private receiveFrame(): Promise<DataFrame> {
-        return DataFrame.parse((length) => this.receiveRawData(length));
-    }
-
-    private sendFrame(frame: DataFrame): Promise<void> {
-        return this.sendRawData(frame.encode());
-    }
 }
