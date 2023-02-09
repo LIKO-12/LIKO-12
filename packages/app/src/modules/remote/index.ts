@@ -28,7 +28,13 @@ export default class Remote extends MachineModule {
             });
 
             connection.on('message', (message: string, binary: boolean) => {
+                if (message.length >= 20) return;
                 connection.send(`S${message}`, binary);
+            });
+
+            connection.on('close', (code: number | undefined, reason: string | undefined) => {
+                if (code === undefined) print('Connection closed in a dirty state.');
+                else print(`Connection closed with code (${code}) and message "${reason ?? ''}"`);
             });
         });
     }

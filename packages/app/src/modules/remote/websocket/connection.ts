@@ -23,6 +23,10 @@ export enum WebSocketStatus {
 
 export type OpenEventHandler = () => void;
 export type MessageEventHandler = (message: string, binary: boolean) => void;
+/**
+ * `code` is `undefined` when the connection is closed a dirty (non-clean) state.
+ */
+export type CloseEventHandler = (code: number | undefined, reason: string | undefined) => void;
 
 export class WebSocketConnection extends EventsEmitter {
     private handshake: WebSocketHandshake | undefined;
@@ -32,7 +36,7 @@ export class WebSocketConnection extends EventsEmitter {
         private readonly client: TCPSocket,
     ) {
         super();
-        this.run().catch((err) => deferError(new Error(`in WebSocketConnection.run: ${err}`)));
+        this.run().catch((err) => deferError(`in WebSocketConnection.run: ${err}`));
     }
 
     //#region Public API
@@ -74,8 +78,11 @@ export class WebSocketConnection extends EventsEmitter {
     private async run() {
         this.handshake = await WebSocketHandshake.perform(this.client);
 
-        this.runReceiverLoop().catch((err) => deferError(new Error(`in WebSocketConnection.runReceiverLoop(): ${err}`)));
-        this.runSenderLoop().catch((err) => deferError(new Error(`in WebSocketConnection.runSenderLoop(): ${err}`)));
+        this.runReceiverLoop().catch((err) => deferError(`in WebSocketConnection.runReceiverLoop(): ${err}`));
+        this.runSenderLoop().catch((err) => {
+            if (err === 'closed') return;
+            deferError(`in WebSocketConnection.runSenderLoop(): ${err}`);
+        });
 
         this.emit('open');
     }
@@ -84,7 +91,16 @@ export class WebSocketConnection extends EventsEmitter {
         let fragmentsBuffer: DataFrame[] = [];
 
         while (true) {
-            const frame = await DataFrame.parse((length) => this.receiveRawData(length));;
+            let frame: DataFrame | undefined;
+
+            try {
+                frame = await DataFrame.parse((length) => this.receiveRawData(length));
+            } catch (err: unknown) {
+                if (err === 'closed') this.emit('close');
+                else throw err;
+            }
+
+            if (!frame) return;
 
             if (frame.isControl) {
                 if (!frame.fin) throw "invalid frame. control frames can't be fragmented.";
