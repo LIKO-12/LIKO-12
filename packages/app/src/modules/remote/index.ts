@@ -34,7 +34,7 @@ export default class Remote extends MachineModule {
 
             connection.on('close', (code: number | undefined, reason: string | undefined) => {
                 if (code === undefined) print('Connection closed in a dirty state.');
-                else print(`Connection closed with code (${code}) and message "${reason ?? ''}"`);
+                else print(`Connection closed with code (${code})`, reason ? `and message "${reason}"` : '');
             });
         });
     }

@@ -11,7 +11,6 @@ export enum WebSocketStatus {
     Closed,
 }
 
-// TODO: Handle connection close triggered by client.
 // TODO: Implement clean close triggered by server.
 // TODO: Gracefully close the server.
 // TODO: Implement a heartbeat to check the client and auto-close a zombie connection.
@@ -36,6 +35,12 @@ export class WebSocketConnection extends EventsEmitter {
         private readonly client: TCPSocket,
     ) {
         super();
+
+        this.on('close', () => {
+            this.dead = true;
+            this.client.close();
+        });
+
         this.run().catch((err) => deferError(`in WebSocketConnection.run: ${err}`));
     }
 
@@ -106,6 +111,7 @@ export class WebSocketConnection extends EventsEmitter {
                 if (!frame.fin) throw "invalid frame. control frames can't be fragmented.";
                 this.processControlFrame(frame);
 
+                if (frame.opcode === OpCode.Close) break;
             } else {
                 if (fragmentsBuffer.length === 0 && frame.fin) {
                     // consume the non-fragmented frame.
@@ -160,7 +166,8 @@ export class WebSocketConnection extends EventsEmitter {
         }
 
         if (frame.opcode === OpCode.Close) {
-            // FIXME: Clean close the connection.
+            const reason = frame.payload.substring(2);
+            this.emit('close', frame.closeCode, reason === '' ? undefined : reason)
         }
     }
 
