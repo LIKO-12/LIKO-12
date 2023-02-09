@@ -1,6 +1,6 @@
 import { Queue } from 'core/queue';
 import { addJob } from './async-jobs-worker';
-import { DataFrame, OpCode } from './dataframe';
+import { CloseCode, DataFrame, OpCode } from './dataframe';
 import { WebSocketHandshake } from './handshake';
 import { Notification } from './notifier';
 
@@ -10,12 +10,10 @@ export enum WebSocketStatus {
     Closed,
 }
 
-// TODO: Add methods for sending messages.
 // TODO: Create an events system.
 // TODO: Handle connection close triggered by client.
 // TODO: Implement clean close triggered by server.
 // TODO: Gracefully close the server.
-// TODO: Implement automatic pong for any ping.
 // TODO: Implement a heartbeat to check the client and auto-close a zombie connection.
 // TODO: Clean close the connection with proper code when a failure happens.
 // TODO: Add configuration for the default fragmentation of sent messages.
@@ -27,19 +25,42 @@ export class WebSocketConnection {
     private handshake: WebSocketHandshake | undefined;
     private dead = false;
 
-    get state(): WebSocketStatus {
-        if (this.dead) return WebSocketStatus.Closed;
-        if (this.handshake) return WebSocketStatus.Ready;
-        return WebSocketStatus.Initializing;
-    }
-
     constructor(
         private readonly client: TCPSocket,
     ) {
         client.settimeout(0);
         this.run().catch(error);
     }
-    
+
+    //#region Public API
+
+    get state(): WebSocketStatus {
+        if (this.dead) return WebSocketStatus.Closed;
+        if (this.handshake) return WebSocketStatus.Ready;
+        return WebSocketStatus.Initializing;
+    }
+
+    /**
+     * Enqueues data to be transmitted.
+     */
+    send(message: string, binary = false): void {
+        if (this.dead) throw 'the connection is closed.';
+        if (!this.handshake) throw 'the connection is not ready.';
+
+        DataFrame.createDataFrames(message, binary, 70_000)
+            .forEach((frame) => this.sendFrame(frame));
+    }
+
+    /**
+     * Initiates the close of this connection.
+     */
+    close(code?: CloseCode, reason?: string): void {
+        if ((reason?.length ?? 0) > 123) throw "reason can't be longer than 123 bytes.";
+        if (!this.dead) this.sendFrame(DataFrame.createCloseFrame(code, reason));
+    }
+
+    //#endregion
+
     //#region I/O Loops
 
     private sendNotification?: Notification;
@@ -68,7 +89,7 @@ export class WebSocketConnection {
                 if (fragmentsBuffer.length === 0 && frame.fin) {
                     // consume the non-fragmented frame.
                     this.processDataFrame(frame.opcode, frame.payload);
-                    
+
                 } else {
                     if (fragmentsBuffer.length === 0 && frame.opcode === OpCode.Continuation) throw 'invalid frame.';
                     else if (fragmentsBuffer.length !== 0 && frame.opcode !== OpCode.Continuation) throw 'invalid frame.';
@@ -111,16 +132,14 @@ export class WebSocketConnection {
      * Process a received control frame.
      */
     private processControlFrame(frame: DataFrame): void {
-        if (frame.opcode === OpCode.Ping) {
-            // TODO: Send the response.
-        }
+        if (frame.opcode === OpCode.Ping) this.sendFrame(DataFrame.createPongFrame(frame.payload));
 
         if (frame.opcode === OpCode.Pong) {
-            // TODO: Reset the termination timer.
+            // FIXME: Reset the termination timer.
         }
 
         if (frame.opcode === OpCode.Close) {
-            // TODO: Clean close the connection.
+            // FIXME: Clean close the connection.
         }
     }
 
@@ -191,4 +210,13 @@ export class WebSocketConnection {
 
     //#endregion
 
+    /**
+     * Enqueues a frame to be sent to the connected client.
+     */
+    private sendFrame(frame: DataFrame): void {
+        if (frame.isControl) this.controlFramesSendQueue.push(frame);
+        else this.dataFramesSendQueue.push(frame);
+
+        this.sendNotification?.trigger();
+    }
 }

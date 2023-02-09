@@ -179,8 +179,11 @@ export class DataFrame {
         );
     }
 
-    // 450_359_9627_370_500 = 2^52
-    static createBinaryFrames(data: string, fragmentLength = 450_359_9627_370_500): DataFrame[] {
+    /**
+     * @param binary Whether to send as binary data or UTF-8 text.
+     * @param fragmentLength (Maximum length: 450_359_9627_370_500 = 2^52).
+     */
+    static createDataFrames(data: string, binary: boolean, fragmentLength = 450_359_9627_370_500): DataFrame[] {
         const frames: DataFrame[] = [];
 
         const dataLength = data.length;
@@ -190,7 +193,7 @@ export class DataFrame {
         for (let frameId = 0; frameId < framesCount; frameId++)
             frames.push(new DataFrame(
                 frameId === lastFrameId, false, false, false,
-                frameId === 0 ? OpCode.Binary : OpCode.Continuation,
+                frameId === 0 ? (binary ? OpCode.Binary : OpCode.Text) : OpCode.Continuation,
                 undefined,
                 data.substring(frameId * fragmentLength, (frameId + 1) * fragmentLength),
             ));
