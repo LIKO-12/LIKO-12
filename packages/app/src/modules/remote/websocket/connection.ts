@@ -1,3 +1,4 @@
+import { EventsEmitter } from 'core/events-emitter';
 import { Queue } from 'core/queue';
 import { addJob } from './async-jobs-worker';
 import { CloseCode, DataFrame, OpCode } from './dataframe';
@@ -10,7 +11,6 @@ export enum WebSocketStatus {
     Closed,
 }
 
-// TODO: Create an events system.
 // TODO: Handle connection close triggered by client.
 // TODO: Implement clean close triggered by server.
 // TODO: Gracefully close the server.
@@ -21,14 +21,17 @@ export enum WebSocketStatus {
 
 // NOTE: Control frames can't be fragmented (as mentioned in the specification).
 
-export class WebSocketConnection {
+export type OpenEventHandler = () => void;
+export type MessageEventHandler = (message: string, binary: boolean) => void;
+
+export class WebSocketConnection extends EventsEmitter {
     private handshake: WebSocketHandshake | undefined;
     private dead = false;
 
     constructor(
         private readonly client: TCPSocket,
     ) {
-        client.settimeout(0);
+        super();
         this.run().catch(error);
     }
 
@@ -73,6 +76,8 @@ export class WebSocketConnection {
 
         this.runReceiverLoop().catch(error);
         this.runSenderLoop().catch(error);
+
+        this.emit('open');
     }
 
     private async runReceiverLoop() {
@@ -150,8 +155,7 @@ export class WebSocketConnection {
      * And for simplicity that detail has been abstracted out and thus this method should handle the general case. 
      */
     private processDataFrame(opcode: OpCode, content: string): void {
-        if (opcode === OpCode.Text) print(`Received text message of ${content.length} characters.`);
-        if (opcode === OpCode.Binary) print(`Received binary message of ${content.length} bytes.`);
+        this.emit('message', content, opcode === OpCode.Binary);
     }
 
     //#region Raw I/O

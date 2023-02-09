@@ -1,14 +1,19 @@
+import { EventsEmitter } from 'core/events-emitter';
 import * as socket from 'socket';
 import { addJob } from './async-jobs-worker';
 import { WebSocketConnection } from './connection';
 
-export class WebSocketServer {
+export type ConnectionEventHandler = (connection: WebSocketConnection) => void;
+
+export class WebSocketServer extends EventsEmitter {
     private server: TCPSocket | undefined;
 
     constructor(
         public readonly address: string,
         public readonly port: number,
-    ) { }
+    ) {
+        super();
+    }
 
     start(): void {
         if (this.server) throw 'The server is already running.';
@@ -21,7 +26,6 @@ export class WebSocketServer {
         this.server = server;
 
         this.loop().catch((err) => {
-            print('failure', err);
             server.close();
             throw err;
         });
@@ -34,7 +38,7 @@ export class WebSocketServer {
     }
 
     private async loop() {
-        while (true) new WebSocketConnection(await this.accept());
+        while (true) this.emit('connection', new WebSocketConnection(await this.accept()));
     }
 
     private accept(): Promise<TCPSocket> {
@@ -45,6 +49,8 @@ export class WebSocketServer {
             addJob(() => {
                 const [client, clientError] = server.accept();
                 if (clientError === 'timeout') return false;
+
+                client?.settimeout(0);
 
                 if (client) resolve(client);
                 else reject(clientError);
