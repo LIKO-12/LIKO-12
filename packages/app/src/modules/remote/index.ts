@@ -28,7 +28,7 @@ export default class Remote extends MachineModule {
             });
 
             connection.on('message', (message: string, binary: boolean) => {
-                if (message.length >= 20) return;
+                if (message.length >= 20) connection.close(1000, 'ENOUGH');
                 connection.send(`S${message}`, binary);
             });
 

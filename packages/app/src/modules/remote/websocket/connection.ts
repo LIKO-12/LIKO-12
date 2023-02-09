@@ -11,7 +11,6 @@ export enum WebSocketStatus {
     Closed,
 }
 
-// TODO: Implement clean close triggered by server.
 // TODO: Gracefully close the server.
 // TODO: Implement a heartbeat to check the client and auto-close a zombie connection.
 // TODO: Clean close the connection with proper code when a failure happens.
@@ -37,8 +36,8 @@ export class WebSocketConnection extends EventsEmitter {
         super();
 
         this.on('close', () => {
-            this.dead = true;
             this.client.close();
+            this.dead = true;
         });
 
         this.run().catch((err) => deferError(`in WebSocketConnection.run: ${err}`));
@@ -101,8 +100,9 @@ export class WebSocketConnection extends EventsEmitter {
             try {
                 frame = await DataFrame.parse((length) => this.receiveRawData(length));
             } catch (err: unknown) {
-                if (err === 'closed') this.emit('close');
-                else throw err;
+                if (err === 'closed') {
+                    if (!this.dead) this.emit('close');
+                } else throw err;
             }
 
             if (!frame) return;
@@ -111,7 +111,7 @@ export class WebSocketConnection extends EventsEmitter {
                 if (!frame.fin) throw "invalid frame. control frames can't be fragmented.";
                 this.processControlFrame(frame);
 
-                if (frame.opcode === OpCode.Close) break;
+                if (frame.opcode === OpCode.Close) return;
             } else {
                 if (fragmentsBuffer.length === 0 && frame.fin) {
                     // consume the non-fragmented frame.
@@ -142,6 +142,11 @@ export class WebSocketConnection extends EventsEmitter {
             while (!this.controlFramesSendQueue.isEmpty() || !this.dataFramesSendQueue.isEmpty()) {
                 const controlFrame = this.controlFramesSendQueue.pop();
                 if (controlFrame !== undefined) await this.sendRawData(controlFrame.encode());
+                if (controlFrame?.isClose) {
+                    this.client.close();
+                    this.dead = true;
+                    return;
+                }
 
                 const dataFrame = this.dataFramesSendQueue.pop();
                 if (dataFrame !== undefined) await this.sendRawData(dataFrame.encode());
