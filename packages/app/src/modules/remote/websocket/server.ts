@@ -1,6 +1,6 @@
 import { EventsEmitter } from 'core/events-emitter';
 import * as socket from 'socket';
-import { addJob } from './async-jobs-worker';
+import { addJob, deferError } from './async-jobs-worker';
 import { WebSocketConnection } from './connection';
 
 export type ConnectionEventHandler = (connection: WebSocketConnection) => void;
@@ -27,7 +27,7 @@ export class WebSocketServer extends EventsEmitter {
 
         this.loop().catch((err) => {
             server.close();
-            throw err;
+            deferError(`in WebSocketServer.loop(): ${err}`);
         });
     }
 

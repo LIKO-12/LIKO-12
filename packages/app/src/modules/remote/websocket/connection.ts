@@ -1,6 +1,6 @@
 import { EventsEmitter } from 'core/events-emitter';
 import { Queue } from 'core/queue';
-import { addJob } from './async-jobs-worker';
+import { addJob, deferError } from './async-jobs-worker';
 import { CloseCode, DataFrame, OpCode } from './dataframe';
 import { WebSocketHandshake } from './handshake';
 import { Notification } from './notifier';
@@ -32,7 +32,7 @@ export class WebSocketConnection extends EventsEmitter {
         private readonly client: TCPSocket,
     ) {
         super();
-        this.run().catch(error);
+        this.run().catch((err) => deferError(new Error(`in WebSocketConnection.run: ${err}`)));
     }
 
     //#region Public API
@@ -50,7 +50,7 @@ export class WebSocketConnection extends EventsEmitter {
         if (this.dead) throw 'the connection is closed.';
         if (!this.handshake) throw 'the connection is not ready.';
 
-        DataFrame.createDataFrames(message, binary, 70_000)
+        DataFrame.createDataFrames(message, binary, 200)
             .forEach((frame) => this.sendFrame(frame));
     }
 
@@ -74,8 +74,8 @@ export class WebSocketConnection extends EventsEmitter {
     private async run() {
         this.handshake = await WebSocketHandshake.perform(this.client);
 
-        this.runReceiverLoop().catch(error);
-        this.runSenderLoop().catch(error);
+        this.runReceiverLoop().catch((err) => deferError(new Error(`in WebSocketConnection.runReceiverLoop(): ${err}`)));
+        this.runSenderLoop().catch((err) => deferError(new Error(`in WebSocketConnection.runSenderLoop(): ${err}`)));
 
         this.emit('open');
     }
