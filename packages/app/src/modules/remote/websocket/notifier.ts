@@ -10,14 +10,11 @@ export class Notification {
     readonly promise = new Promise<void>((resolve) => this.resolver = resolve);
 
     /**
-     * Can be only used once then the notifier has to be replaced.
+     * Only effective the first call.
      */
     trigger(): void {
-        const resolver = this.resolver;
+        this.resolver?.();
         this.resolver = undefined;
-
-        if (!resolver) throw 'already notified.';
-        resolver();
     }
 
     /**
