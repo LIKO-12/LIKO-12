@@ -3,15 +3,16 @@
   "version": "2.0.0",
   "description": "The core of LIKO-12 which provides the virtual machine.",
   "private": true,
-  "main": "out/index",
-  "types": "out/index",
+  "main": "out",
+  "types": "out",
   "scripts": {
     "symlink": "node scripts/setup-symlinks.js",
     "build": "tstl",
     "dev": "tstl --watch"
   },
   "dependencies": {
-    "@liko-12/environment-box": "*"
+    "@liko-12/environment-box": "*",
+    "@liko-12/tstl-json-rpc": "*"
   },
   "devDependencies": {
     "@liko-12/standard-modules-apis": "*",
