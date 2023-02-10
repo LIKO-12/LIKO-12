@@ -8,11 +8,12 @@ function loadScript(data: string): () => unknown {
 }
 
 for (const [event, a, b, c, d, e, f] of pullEvents()) {
-    if (event === 'remote_message') {
+    if (event === 'run') {
         print('Loading the received script...');
         const script = loadScript(a);
         print('Executing the received script...');
         runGameScript(script);
+        print('Resuming listening to the server...');
         continue;
     }
 
