@@ -17,6 +17,19 @@
             },
         },
         {
+            "label": "Build [tstl-json-rpc-2.0]",
+            "type": "npm",
+            "script": "build:tstl-json-rpc-2.0",
+            "problemMatcher": "$tsc",
+            "isBackground": false,
+            "presentation": {
+                "echo": false,
+                "reveal": "never",
+                "panel": "shared",
+                "clear": true
+            },
+        },
+        {
             "label": "Build [app] and watch for changes",
             "type": "npm",
             "script": "dev:app",
@@ -64,7 +77,6 @@
                 "clear": true
             },
             "dependsOn": [
-                "Build [environment-box]",
                 "Build [app] and watch for changes",
                 "Build [kernel] and watch for changes",
             ]
