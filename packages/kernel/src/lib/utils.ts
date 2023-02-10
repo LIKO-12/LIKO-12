@@ -7,3 +7,10 @@ export function assert(value: unknown, message: unknown): unknown {
     if (value === undefined || value === false) throw new Error(tostring(message ?? 'assertion failed'));
     return value;
 }
+
+export function pullEvents(): LuaIterable<LuaMultiReturn<[string, ...any]>> {
+    const events = liko.events;
+    if (!events) throw 'events module is not loaded!';
+
+    return (() => events.pull()) as any;
+}

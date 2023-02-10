@@ -1,4 +1,5 @@
 import { EnvironmentBox } from '@liko-12/environment-box';
+import { pullEvents } from 'lib/utils';
 
 const storage = liko.storage!;
 if (!storage) throw 'storage module is not loaded!';
@@ -10,13 +11,6 @@ function createGameBox(): EnvironmentBox {
     box.expose({ liko });
 
     return box;
-}
-
-function pullEvents(): LuaIterable<LuaMultiReturn<[string, ...any]>> {
-    const events = liko.events;
-    if (!events) throw 'events module is not loaded!';
-
-    return (() => events.pull()) as any;
 }
 
 function createEventLoop() {
@@ -35,22 +29,22 @@ function createEventLoop() {
     };
 }
 
-function loadGame() {
-    const scriptFile = storage.open('game.lua', 'r');
-    const scriptContent = scriptFile.read();
-    scriptFile.close();
-
-    if (scriptContent === undefined) throw 'failed to read script!';
-
-    const [scriptChunk, err] = loadstring(scriptContent, 'game.lua');
-    if (!scriptChunk) throw err;
-
+export function runGameScript(gameScript: () => unknown) {
     const eventLoop = createEventLoop();
-
-    createGameBox().apply(scriptChunk).apply(eventLoop);
-
-    scriptChunk();
+    createGameBox().apply(gameScript).apply(eventLoop);
+    gameScript();
     eventLoop();
 }
 
-loadGame();
+// export function loadGame() {
+//     const scriptFile = storage.open('game.lua', 'r');
+//     const scriptContent = scriptFile.read();
+//     scriptFile.close();
+
+//     if (scriptContent === undefined) throw 'failed to read script!';
+
+//     const [scriptChunk, err] = loadstring(scriptContent, 'game.lua');
+//     if (!scriptChunk) throw err;
+
+//     runGameScript(scriptChunk);
+// }
