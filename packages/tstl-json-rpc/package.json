@@ -1,8 +1,9 @@
 {
-  "name": "@liko-12/json-rpc-2.0",
+  "name": "@liko-12/tstl-json-rpc",
   "version": "1.4.2",
   "description": "A TSTL port of json-rpc-2.0 by Shogo Wada. A JSON-RPC 2.0 client and server.",
-  "main": "index.js",
+  "main": "out/index",
+  "types": "out/index",
   "repository": "https://github.com/shogowada/json-rpc-2.0",
   "keywords": [
     "json-rpc",
