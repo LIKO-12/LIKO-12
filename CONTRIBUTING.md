@@ -3,6 +3,8 @@
 
 <!-- TODO: Update the contribution guide -->
 <!-- TODO: Setup commits linter https://commitlint.js.org/#/ -->
+<!-- To build the TS rewrite: install deps, run manual build for the first time, then use vscode tasks.
+specific packages need a manual build call -->
 
 ## Building LIKO-12
 
