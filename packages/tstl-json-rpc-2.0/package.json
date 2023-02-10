@@ -1,0 +1,28 @@
+{
+  "name": "@liko-12/json-rpc-2.0",
+  "version": "1.4.2",
+  "description": "A TSTL port of json-rpc-2.0 by Shogo Wada. A JSON-RPC 2.0 client and server.",
+  "main": "index.js",
+  "repository": "https://github.com/shogowada/json-rpc-2.0",
+  "keywords": [
+    "json-rpc",
+    "typescript",
+    "tstl",
+    "lua"
+  ],
+  "author": "Shogo Wada <https://github.com/shogowada>",
+  "contributors": [
+    "Rami Sabbagh <rami.sab07@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tstl",
+    "dev": "tstl --watch"
+  },
+  "devDependencies": {
+    "lua-types": "^2.13.0",
+    "typescript": "^4.8.4",
+    "typescript-to-lua": "^1.10.1"
+  }
+}
