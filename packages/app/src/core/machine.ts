@@ -95,6 +95,13 @@ export class Machine {
     }
 
     /**
+     * Applies the machine's environment on a function.
+     */
+    applyEnvironment(method: (args: unknown[]) => unknown): void {
+        this._environmentBox.apply(method);
+    }
+
+    /**
      * @throws if a program is loaded into the machine.
      */
     resetEnvironment() {

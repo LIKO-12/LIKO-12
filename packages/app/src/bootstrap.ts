@@ -21,34 +21,61 @@ import { WebSocketConnection } from 'core/websocket/connection';
 
 math.randomseed(os.time());
 
-function wrapRPCMethod(method: (...args: any[]) => any): JSONRPCMethod {
-    return (request) => {
-        try {
-            return Promise.resolve<JSONRPCSuccessResponse>({
-                jsonrpc: JSONRPC,
-                id: request.id ?? null,
-                result: method(...(request.params ?? [])) ?? NULL,
-            });
-        } catch (err) {
-            return Promise.resolve<JSONRPCErrorResponse>({
-                jsonrpc: JSONRPC,
-                id: request.id ?? null,
-                error: {
-                    code: 0,
-                    message: tostring(err),
-                },
-            });
+class GameRuntime {
+    private readonly machine: Machine;
+
+    constructor(machineOptions?: MachineOptions) {
+        this.machine = new Machine(options.modules, options.options, machineOptions);
+    }
+
+    run(script: string): void {
+        if (!this.machine.isDead()) {
+            this.machine.unload();
+            print('Terminated already running game.');
         }
-    };
+
+        print('Loading & Running the received game.');
+
+        const [gameProgram, compileError] = loadstring(script, 'game.lua');
+        if (!gameProgram) {
+            print('Failed to compile:', compileError);
+            return;
+        }
+
+        this.machine.applyEnvironment(gameProgram);
+
+        const kernelProgram = GameRuntime.loadKernel();
+        this.machine.applyEnvironment(kernelProgram);
+
+        const program = () => {
+            kernelProgram();
+            gameProgram();
+
+            const eventLoop = (_G as any)['_eventLoop'] as unknown;
+            if (typeof eventLoop === 'function') eventLoop();
+        };
+
+        this.machine.load(program).resume();
+    }
+
+    private static loadKernel(): () => unknown {
+        const [kernelScript, errorMessage] = love.filesystem.read('res/kernel/init.lua');
+        if (!kernelScript) throw new Error(`Failed to read kernel script: ${errorMessage}`);
+
+        const [kernel, compileError] = loadstring(kernelScript, 'kernel.lua');
+        if (!kernel) throw new Error(`Failed to compile kernel script: ${compileError}`);
+
+        return kernel;
+    }
 }
 
-class AgentMachine {
-    private readonly machine: Machine;
+class GameRuntimeServer {
+    private readonly runtime: GameRuntime;
     private readonly socket: WebSocketServer;
     private readonly rpc: JSONRPCServer;
 
     constructor(machineOptions: MachineOptions) {
-        this.machine = new Machine(options.modules, options.options, machineOptions);
+        this.runtime = new GameRuntime(machineOptions);
         this.socket = new WebSocketServer('127.0.0.1', 50_000);
         this.rpc = new JSONRPCServer();
 
@@ -62,24 +89,14 @@ class AgentMachine {
     }
 
     run(script: string): void {
-        if (!this.machine.isDead()) {
-            this.machine.unload();
-            print('Terminated already running game.');
-        }
-
-        print('Loading & Running the received game.');
-
-        const [program, compileError] = loadstring(script, 'game.lua');
-        if (!program) print('Failed to compile:', compileError);
-
-        if (program) this.machine.load(program).resume();
+        this.runtime.run(script);
         love.window.requestAttention(true);
     }
 
     private registerRPCMethods() {
-        this.rpc.addMethodAdvanced('echo', wrapRPCMethod((text: string) => text));
-        this.rpc.addMethodAdvanced('log', wrapRPCMethod((message: string) => print('Message from RPC:', message)));
-        this.rpc.addMethodAdvanced('run', wrapRPCMethod((script: string) => this.run(script)));
+        this.addRPCMethod('echo', (text: string) => text);
+        this.addRPCMethod('log', (message: string) => print('Message from RPC:', message));
+        this.addRPCMethod('run', (script: string) => this.run(script));
     }
 
     private registerSocketListeners() {
@@ -100,12 +117,37 @@ class AgentMachine {
             });
         });
     }
+
+    private addRPCMethod(name: string, method: (...args: any[]) => any): void {
+        this.rpc.addMethodAdvanced(name, GameRuntimeServer.wrapRPCMethod(method));
+    }
+
+    private static wrapRPCMethod(method: (...args: any[]) => any): JSONRPCMethod {
+        return (request) => {
+            try {
+                return Promise.resolve<JSONRPCSuccessResponse>({
+                    jsonrpc: JSONRPC,
+                    id: request.id ?? null,
+                    result: method(...(request.params ?? [])) ?? NULL,
+                });
+            } catch (err) {
+                return Promise.resolve<JSONRPCErrorResponse>({
+                    jsonrpc: JSONRPC,
+                    id: request.id ?? null,
+                    error: {
+                        code: 0,
+                        message: tostring(err),
+                    },
+                });
+            }
+        };
+    }
 }
 
 loveEvents.on('load', (args: string[]) => {
     io.write('\x1B[2J\x1B[3J\x1B[1;1H'); // reset the terminal using ANSI escape sequence.
 
-    new AgentMachine({
+    new GameRuntimeServer({
         debugMode: args.includes('--debug')
     });
 });

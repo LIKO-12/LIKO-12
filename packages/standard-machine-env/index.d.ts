@@ -30,3 +30,15 @@ interface LikoAPIs {
 }
 
 declare var liko: LikoAPIs;
+
+/**
+ * Starts and runs the main game loop.
+ * Which is responsible for receiving the events and calling the appropriate callback function if defined.
+ *  
+ * A standard implementation is already provided by default.
+ * 
+ * Can be set to `nil`/`undefined` to prevent it from executing.
+ * 
+ * The function is called directly after executing the game's script.
+ */
+declare var _eventLoop: undefined | (() => void);
