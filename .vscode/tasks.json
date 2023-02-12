@@ -78,7 +78,6 @@
             },
             "dependsOn": [
                 "Build [app] and watch for changes",
-                "Build [kernel] and watch for changes",
             ]
         }
     ]
