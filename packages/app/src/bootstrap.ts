@@ -5,10 +5,10 @@
 import { options } from 'core/options';
 import { loveEvents } from 'core/love-events';
 import { Machine, MachineOptions } from 'core/machine';
-import { WebSocketServer } from 'modules/remote/websocket/server';
+import { WebSocketServer } from 'core/websocket/server';
 import { JSONRPC, JSONRPCErrorResponse, JSONRPCMethod, JSONRPCServer, JSONRPCSuccessResponse } from '@liko-12/tstl-json-rpc/out';
 import { NULL } from 'core/json-adapter';
-import { WebSocketConnection } from 'modules/remote/websocket/connection';
+import { WebSocketConnection } from 'core/websocket/connection';
 
 // TODO: Setup eslint for the project.
 // TODO: Create eslint rule to warn about missing "validateParameters" call.

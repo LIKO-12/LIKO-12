@@ -5,8 +5,8 @@ import { Machine } from 'core/machine';
 import { MachineModule } from 'core/machine-module';
 import { assertOption } from 'core/utilities';
 import Events from 'modules/events';
-import { WebSocketConnection } from './websocket/connection';
-import { WebSocketServer } from './websocket/server';
+import { WebSocketConnection } from '../../core/websocket/connection';
+import { WebSocketServer } from '../../core/websocket/server';
 
 export interface RemoteOptions {
     listenAddress?: string,
@@ -37,7 +37,7 @@ function wrapRPCMethod(method: (...args: any[]) => any): JSONRPCMethod {
 export default class Remote extends MachineModule {
     constructor(private machine: Machine, options: RemoteOptions) {
         super(machine, options);
-        
+
         const events = machine.resolveModule<Events>('events')!;
 
         const server = new WebSocketServer(
