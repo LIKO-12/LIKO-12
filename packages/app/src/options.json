@@ -21,8 +21,7 @@
         "timer",
         "screen",
         "graphics",
-        "keyboard",
-        "remote"
+        "keyboard"
     ],
     "options": {
         "storage": {
