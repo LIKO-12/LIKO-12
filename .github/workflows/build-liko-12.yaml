@@ -1,0 +1,19 @@
+name: Build LIKO-12
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      
+      - name: Install the dependencies
+        run: yarn
+      
+      - name: Transpile the project
+        run: yarn build
