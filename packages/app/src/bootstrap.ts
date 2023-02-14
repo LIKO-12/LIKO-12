@@ -25,7 +25,7 @@ class GameRuntime {
     private readonly machine: Machine;
 
     constructor(machineOptions?: MachineOptions) {
-        this.machine = new Machine(options.modules, options.options, machineOptions);
+        this.machine = new Machine(options.modules, options.options, options.globals, machineOptions);
     }
 
     run(script: string): void {

@@ -22,6 +22,7 @@ interface Options {
         fullscreenType: string,
     },
     modules: (KnownModules | string)[],
+    globals: (KnownModules | string)[],
     options: {
         screen?: ScreenOptions,
         storage?: StorageOptions,

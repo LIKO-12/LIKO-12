@@ -23,6 +23,10 @@
         "graphics",
         "keyboard"
     ],
+    "globals": [
+        "graphics",
+        "screen"
+    ],
     "options": {
         "storage": {
             "capacity": 10485760,

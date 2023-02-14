@@ -27,6 +27,7 @@ export class Machine {
     constructor(
         modulesNames: string[],
         modulesOptions: Record<string, any>,
+        private globalModules: string[],
         private machineOptions: MachineOptions = {},
     ) {
         this._loadModules(modulesNames, modulesOptions);
@@ -191,10 +192,19 @@ export class Machine {
 
     private _exposeModulesAPIs() {
         const apis: Record<string, Record<string, any> | undefined> = {};
+        const globals: Record<string, any> = { liko: apis };
 
-        for (const moduleName in this._modules)
-            apis[moduleName] = this._modules[moduleName].createAPI(this);
+        for (const moduleName in this._modules) {
+            const api = this._modules[moduleName].createAPI(this);
+            apis[moduleName] = api;
 
-        this._environmentBox.expose({ liko: apis });
+            if (!this.globalModules.includes(moduleName)) continue;
+            for (const name in api) {
+                if (globals[name] !== undefined) throw new Error(`Multiple global modules define the entry '${name}'`);
+                globals[name] = api[name];
+            }
+        }
+
+        this._environmentBox.expose(globals);
     }
 }
