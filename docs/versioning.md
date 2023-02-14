@@ -42,9 +42,8 @@ The suggested pattern for the pre-release id is `alpha.01`, `alpha.02`, `beta.01
 
 Provided to allow rapid development while not being constrained with backwards compatibility.
 
-- It's expected for the release to be "stable" (functional).
+- It's expected for the release to be functional.
 - It's completely expected to introduce breaking changes very often.
-- But major breaking changes better not happen very often in-order to not restrain users from using them.
 - The `CCC` in the pattern is an incremental counter that has to be incremented for every release.
 - Once 1000 is reached, the counter would overflow back to `0` (will it ever reach that?).
 
