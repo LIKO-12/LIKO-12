@@ -1,13 +1,21 @@
 {
-  "name": "@liko-12/standard-machine-env",
+  "name": "@liko-12/game-types",
   "version": "2.0.0",
   "description": "The declarations for the global environment available for the LIKO-12 system without any modifications.",
   "license": "MIT",
   "private": true,
-  "types": ".",
+  "types": "environment",
+  "scripts": {
+    "build": "ttsc",
+    "dev": "ttsc --watch"
+  },
   "dependencies": {
     "@liko-12/standard-modules-apis": "*",
     "@liko-12/utf8": "*",
     "lua-types": "^2.13.0"
+  },
+  "devDependencies": {
+    "ttypescript": "^1.5.15",
+    "typescript": "^4.8.4"
   }
 }

@@ -1,12 +1,8 @@
-/// <reference types="@liko-12/standard-modules-apis" />
-/// <reference types="@liko-12/utf8" />
-/// <reference types="lua-types/jit" />
-
 interface LikoAPIs {
     /**
      * The screen module API if loaded.
      */
-    screen?: StandardModules.ScreenAPI;
+    screen: StandardModules.ScreenAPI;
 
     /**
      * The keyboard module API if loaded.
@@ -16,7 +12,7 @@ interface LikoAPIs {
     /**
      * The events module API if loaded.
      */
-    events?: StandardModules.EventsAPI;
+    events: StandardModules.EventsAPI;
 
     /**
      * The storage module API if loaded.
@@ -26,7 +22,7 @@ interface LikoAPIs {
     /**
      * The graphics module API if loaded.
      */
-    graphics?: StandardModules.GraphicsAPI;
+    graphics: StandardModules.GraphicsAPI;
 }
 
 declare var liko: LikoAPIs;

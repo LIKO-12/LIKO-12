@@ -1,6 +1,0 @@
-// Necessary for muting some errors displayed in vscode while viewing the declaration files.
-{
-    "compilerOptions": {
-        "lib": []
-    }
-}
