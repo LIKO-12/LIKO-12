@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e;
 
+# FIXME: Update the Android build script to the new project structure.
+
 # TODO: Don't override them when already set.
 LOVE_VERSION='11.4';
 LIKO_VERSION='2.0.0';
