@@ -13,7 +13,7 @@
     "install": "yarn --cwd packages/app symlink",
     "symlink": "yarn --cwd packages/app symlink",
 
-    "build": "yarn build:environment-box && yarn build:tstl-json-rpc-2.0 && yarn build:kernel && yarn build:app",
+    "build": "yarn build:environment-box && yarn build:tstl-json-rpc && yarn build:ts-globalize && yarn build:game-types && yarn build:kernel && yarn build:app",
 
     "build:app": "yarn --cwd packages/app build",
     "dev:app": "yarn --cwd packages/app dev",
@@ -21,8 +21,14 @@
     "build:environment-box": "yarn --cwd packages/environment-box build",
     "dev:environment-box": "yarn --cwd packages/environment-box dev",
 
-    "build:tstl-json-rpc-2.0": "yarn --cwd packages/tstl-json-rpc-2.0 build",
-    "dev:tstl-json-rpc-2.0": "yarn --cwd packages/tstl-json-rpc-2.0 dev",
+    "build:tstl-json-rpc": "yarn --cwd packages/tstl-json-rpc build",
+    "dev:tstl-json-rpc": "yarn --cwd packages/tstl-json-rpc dev",
+
+    "build:ts-globalize": "yarn --cwd packages/ts-globalize build",
+    "dev:ts-globalize": "yarn --cwd packages/ts-globalize dev",
+
+    "build:game-types": "yarn --cwd packages/game-types build",
+    "dev": "yarn --cwd packages/game-types dev",
 
     "build:kernel": "yarn --cwd packages/kernel build",
     "dev:kernel": "yarn --cwd packages/kernel dev"
