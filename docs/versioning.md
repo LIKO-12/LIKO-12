@@ -9,7 +9,7 @@ It's decided that there will be 3 releases channels with 2 other non-releases pa
 |--------------|--------------------------------------------|----------------------------------------------------------|
 | Release      | `(major).(minor).(patch)`                  | `^(%d+)%.(%d+)%.(%d+)$`                                  |
 | Pre-Release  | `(major).(minor).(patch)-(pre-release id)` | `^(%d+)%.(%d+)%.(%d+)\-(.*)$`                            |
-| Experimental | `experimental-YYYYMMDD-CCC`                | `^experimental%-(%d+)%-(%d+)$` and length should be `25` |
+| Experimental | `experimental-YYYYMMDD-X`                | `^experimental%-(%d+)%-([ABCDEF])$` and length should be 23 |
 | Development  | `(git commit id)`                          | `^%x$` and length should be `40`                         |
 | Custom       | `(any)`                                    | `.*`                                                     |
 
@@ -44,9 +44,9 @@ Provided to allow rapid development while not being constrained with backwards c
 
 - It's expected for the release to be functional.
 - It's completely expected to introduce breaking changes very often.
-- The `CCC` in the pattern is an incremental counter that has to be incremented for every release.
-- Once 1000 is reached, the counter would overflow back to `0` (will it ever reach that?).
-
+- `X` is `A`,`B`,`C`,`D`,`E` or `F` and is used to differentiate experimental releases when multiple happen on the same day.
+    - It's incremented from `A` to `F` in the order specified.
+    - It's reset whenever the date changes.
 ### Development
 
 Used to represent untagged releases with git info accessible (when the source-code is directly executed).
