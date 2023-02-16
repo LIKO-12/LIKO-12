@@ -29,5 +29,7 @@ jobs:
       # ${VAR^^} substitutes the value and makes it uppercase.
       - name: Upload the universal build
         run: |
-          cp './dist/out/liko_universal.love' "./dist/out/LIKO-12_${GITHUB_REF_NAME^^}_Universal.love"
-          gh release upload $GITHUB_REF_NAME "./dist/out/LIKO-12_${GITHUB_REF_NAME^^}_Universal.love" --clobber
+          cp './dist/out/liko_universal.love' "./dist/out/LIKO-12_${GITHUB_REF_NAME^^}_Universal.love";
+          gh release upload $GITHUB_REF_NAME "./dist/out/LIKO-12_${GITHUB_REF_NAME^^}_Universal.love" --clobber;
+        env:
+          GH_TOKEN: ${{ github.token }}
