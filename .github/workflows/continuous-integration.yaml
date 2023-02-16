@@ -15,5 +15,5 @@ jobs:
       - name: Install the dependencies
         run: yarn
       
-      - name: Transpile the project
+      - name: Build the project
         run: yarn build
