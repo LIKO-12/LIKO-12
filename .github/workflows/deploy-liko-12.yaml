@@ -20,7 +20,7 @@ jobs:
       - name: Tag the build
         run: echo $GITHUB_REF_NAME > ./packages/app/res/version.txt
 
-      - name: Transpile the project
+      - name: Build the project
         run: yarn build
 
       - name: Package the universal build
