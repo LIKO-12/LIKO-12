@@ -1,7 +1,7 @@
 name: Build & Deploy LIKO-12
 on:
   release:
-    types: [created, prereleased]
+    types: [published]
 
 jobs:
   build-and-deploy:
