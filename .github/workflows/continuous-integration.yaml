@@ -1,4 +1,4 @@
-name: Build LIKO-12
+name: Continuous Integration
 on: [push]
 
 jobs:
