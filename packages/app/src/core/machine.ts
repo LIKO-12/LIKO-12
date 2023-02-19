@@ -59,6 +59,7 @@ export class Machine {
         assert(ok, message);
         this.events.emit('suspended');
 
+        if (coroutine.status(this._thread) === 'dead') this.unload();
         // TODO: Execute a BSOD program with the same environment. This would allow doing crash dumps and saving user data.
     }
 
