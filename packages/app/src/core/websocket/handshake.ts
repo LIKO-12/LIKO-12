@@ -28,6 +28,13 @@ export class WebSocketHandshake {
     private _requestLine?: RequestLine;
     get requestLine(): Readonly<RequestLine> { return this._requestLine!; }
 
+    // TODO: Allow configuring the origins whitelist in options.json
+
+    private readonly whitelistedOrigins = [
+        'http://localhost:8080',
+        'https://liko-12.github.io',
+    ];
+
     private constructor(
         private readonly client: TCPSocket,
     ) { }
@@ -102,8 +109,10 @@ export class WebSocketHandshake {
     }
 
     private _verifyHeaders(): void {
+        const origin = this._requestHeaders['origin'] ?? '';
+
         if (this._requestHeaders['host'] !== 'localhost:50000') throw new HTTPError('non-whitelisted host', 403); // http 403 forbidden
-        if (this._requestHeaders['origin'] !== 'http://localhost:8080') throw new HTTPError('non-whitelisted origin', 403); // http 403 forbidden
+        if (!this.whitelistedOrigins.includes(origin)) throw new HTTPError(`non-whitelisted origin: ${origin}`, 403); // http 403 forbidden
 
         if (this._requestHeaders['upgrade']?.toLowerCase() !== 'websocket') throw new HTTPError("invalid/missing 'Upgrade' header");
         if (this._requestHeaders['connection']?.toLowerCase() !== 'upgrade') throw new HTTPError("invalid/missing 'Connection' header");
