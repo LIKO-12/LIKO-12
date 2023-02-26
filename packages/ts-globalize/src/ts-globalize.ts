@@ -47,7 +47,7 @@ export default function factory(program: ts.Program, { }: PluginOptions) {
 
                             replacement.push(
                                 f.createFunctionDeclaration(
-                                    [f.createToken(ts.SyntaxKind.DeclareKeyword)],
+                                    undefined,
                                     undefined,
                                     f.createIdentifier(signature.name.getText()),
                                     signature.typeParameters?.map(param => cloneNode(param, { factory: f })),

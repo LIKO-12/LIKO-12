@@ -15,7 +15,7 @@
     "@liko-12/tstl-json-rpc": "*"
   },
   "devDependencies": {
-    "@liko-12/standard-modules-apis": "*",
+    "@liko-12/game-types": "*",
     "@liko-12/utf8": "*",
     "@rami-sabbagh/ts-inject-parameters-metadata": "^1.1.0",
     "love-typescript-definitions": "^0.24.3",
