@@ -1,8 +1,8 @@
-import type { Image } from './image';
+/// <reference path="./image.ts" />
 
-export type PixelFunction = (this: void, x: number, y: number, color: number) => number;
+declare type PixelFunction = (this: void, x: number, y: number, color: number) => number;
 
-export interface ImageData {
+declare interface ImageData {
     /**
      * Gets the width of the imageData.
      *

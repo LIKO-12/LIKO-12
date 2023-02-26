@@ -3,7 +3,7 @@
  * keyboard or system.
  * @link [KeyConstant](https://love2d.org/wiki/KeyConstant)
  */
-export type KeyConstant =
+declare type KeyConstant =
     | "a"
     | "b"
     | "c"

@@ -16,7 +16,7 @@
  * the final symbols that were generated.
  * @link [Scancode](https://love2d.org/wiki/Scancode)
  */
-export type Scancode =
+declare type Scancode =
     | "a"
     | "b"
     | "c"

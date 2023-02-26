@@ -1,9 +1,6 @@
-import type { KeyConstant } from './keys';
-import type { Scancode } from './scancodes';
+/// <reference path="./keys.ts" />
+/// <reference path="./scancodes.ts" />
 
-export * from './keys';
-export * from './scancodes';
-    
 export interface KeyboardAPI {
     /**
      * Enable or disable text input events.

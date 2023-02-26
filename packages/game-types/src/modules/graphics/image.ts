@@ -1,4 +1,4 @@
-export interface Image {
+declare interface Image {
     /**
      * Gets the width of the image.
      *

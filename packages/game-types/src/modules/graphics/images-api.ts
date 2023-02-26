@@ -1,7 +1,5 @@
-import type { ImageData } from './image-data';
-
-export * from './image-data';
-export * from './image';
+/// <reference path="./image.ts" />
+/// <reference path="./image-data.ts" />
 
 export interface ImagesAPI {
     /**
