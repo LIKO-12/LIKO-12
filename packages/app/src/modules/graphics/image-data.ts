@@ -3,13 +3,13 @@ import { clamp, validateParameters } from 'core/utilities';
 import { ImageData as LoveImageData } from 'love.image';
 
 import Graphics from ".";
-import { Image } from './image';
+import { _Image } from './image';
 
 export type LovePixelFunction = (x: number, y: number, r: number, g: number, b: number, a: number) => LuaMultiReturn<[r: number, g: number, b: number, a: number]>;
 
 // TODO: palette soft-limit
 
-export class ImageData implements StandardModules.Graphics.ImageData {
+export class _ImageData implements ImageData {
     constructor(
         protected readonly graphics: Graphics,
         protected readonly imageData: LoveImageData,
@@ -45,7 +45,7 @@ export class ImageData implements StandardModules.Graphics.ImageData {
         return this;
     }
 
-    mapPixels(mapper: StandardModules.Graphics.PixelFunction): ImageData {
+    mapPixels(mapper: PixelFunction): ImageData {
         validateParameters();
 
         this.imageData.mapPixel((x: number, y: number, r: number) => {
@@ -62,7 +62,7 @@ export class ImageData implements StandardModules.Graphics.ImageData {
     }
 
     toImage(): Image {
-        const image = new Image(this.imageData);
+        const image = new _Image(this.imageData);
         return proxy(image);
     }
 
@@ -77,8 +77,8 @@ export class ImageData implements StandardModules.Graphics.ImageData {
 
     static _newImageData(graphics: Graphics, width: number, height: number): ImageData {
         const imageData = love.image.newImageData(width, height);
-        imageData.mapPixel(ImageData._initializeEmptyImage);
-        return new ImageData(graphics, imageData);
+        imageData.mapPixel(_ImageData._initializeEmptyImage);
+        return new _ImageData(graphics, imageData);
     }
 
     static _importImageData(graphics: Graphics, data: string): ImageData {
@@ -86,7 +86,7 @@ export class ImageData implements StandardModules.Graphics.ImageData {
             const fileData = love.filesystem.newFileData(data, 'image.png');
             const imageData = love.image.newImageData(fileData);
             imageData.mapPixel(graphics.mapImportedImageColors);
-            return new ImageData(graphics, imageData);
+            return new _ImageData(graphics, imageData);
         } catch (err: any) {
             error(err, 3);
         }

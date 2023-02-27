@@ -3,7 +3,7 @@ import { validateParameters } from 'core/utilities';
 import { Image as LoveImage, Quad } from 'love.graphics';
 import { ImageData as LoveImageData } from 'love.image';
 
-export class Image implements StandardModules.Graphics.Image {
+export class _Image implements Image {
     protected readonly image: LoveImage;
     protected readonly quad: Quad;
 

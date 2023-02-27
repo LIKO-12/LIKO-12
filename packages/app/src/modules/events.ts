@@ -2,6 +2,8 @@ import { Machine } from "core/machine";
 import { MachineModule } from "core/machine-module";
 import { Queue } from "core/queue";
 
+import type { EventsAPI } from '@liko-12/game-types';
+
 export default class Events extends MachineModule {
     private machineListening = false;
     private eventsQueue = new Queue<[eventName: string, ...args: any[]]>();
@@ -19,7 +21,7 @@ export default class Events extends MachineModule {
         return this.machineListening;
     }
 
-    createAPI(_machine: Machine): StandardModules.EventsAPI {
+    createAPI(_machine: Machine): EventsAPI {
         return {
             pull: () => {
                 if (this.eventsQueue.isEmpty()) {

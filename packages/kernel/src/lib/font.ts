@@ -1,6 +1,3 @@
-
-type Image = StandardModules.Graphics.Image;
-
 export interface Font {
     /**
      * The set of characters included in the font.

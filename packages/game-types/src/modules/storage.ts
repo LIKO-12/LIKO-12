@@ -1,76 +1,80 @@
-export type FileMode = 'r' | 'w' | 'a' | 'r+' | 'w+' | 'a+';
+declare global {
+    namespace Storage {
 
-export type FileInfo = {
-    /**
-     * The file type of the object at the path.
-     */
-    type: "file" | "directory" | "symlink" | "other";
+        export type FileMode = 'r' | 'w' | 'a' | 'r+' | 'w+' | 'a+';
 
-    /**
-     * The size in bytes of the file.
-     */
-    size?: number;
+        export type FileInfo = {
+            /**
+             * The file type of the object at the path.
+             */
+            type: "file" | "directory" | "symlink" | "other";
 
-    /**
-     * The file's last modification time in seconds since the unix epoch.
-     */
-    modtime?: number;
-};
+            /**
+             * The size in bytes of the file.
+             */
+            size?: number;
 
-/**
- * The methods provided by this API can fail and throw errors.
- */
-export interface FileStream {
-    /**
-     * @param byteCount (defaults to all).
-     * @returns The data read or `undefined` when the end is reached.
-     */
-    read(this: FileStream, byteCount?: number): string | undefined;
+            /**
+             * The file's last modification time in seconds since the unix epoch.
+             */
+            modtime?: number;
+        };
 
-    /**
-     * @return the file itself. (allows chained methods calls).
-     */
-    write(this: FileStream, ...values: (string | number)[]): FileStream;
+        /**
+         * The methods provided by this API can fail and throw errors.
+         */
+        export interface FileStream {
+            /**
+             * @param byteCount (defaults to all).
+             * @returns The data read or `undefined` when the end is reached.
+             */
+            read(this: FileStream, byteCount?: number): string | undefined;
 
-    /**
-     * Sets and gets the file position, measured from the beginning of the file,
-     * to the position given by offset plus a base specified by the string whence, as follows:
-     * 
-     * - `set`: base is position 0 (beginning of the file).
-     * - `cur`: base is current position.
-     * - `end`: base is end of file.
-     * 
-     * @param whence defaults to `'cur'`.
-     * @param offset defaults to `0`.
-     * @return Position (relative to the start) after seeking.
-     */
-    seek(this: FileStream, whence?: 'set' | 'cur' | 'end', offset?: number): number;
+            /**
+             * @return the file itself. (allows chained methods calls).
+             */
+            write(this: FileStream, ...values: (string | number)[]): FileStream;
 
-    /**
-     * Sets the buffering mode for an output file. There are three available modes:
-     * 
-     * - `no`: no buffering; the result of any output operation appears immediately.
-     * - `full`: full buffering; output operation is performed only when the buffer is full
-     * (or when you explicitly flush the file (see io.flush)).
-     * - `line`: line buffering; output is buffered until a newline is output or there is any input
-     * from some special files (such as a terminal device).
-     * 
-     * For the last two cases, size specifies the size of the buffer, in bytes. The default is an appropriate size.
-     */
-    setvbuff(this: FileStream, mode: 'no' | 'full' | 'line', size?: number): void;
+            /**
+             * Sets and gets the file position, measured from the beginning of the file,
+             * to the position given by offset plus a base specified by the string whence, as follows:
+             * 
+             * - `set`: base is position 0 (beginning of the file).
+             * - `cur`: base is current position.
+             * - `end`: base is end of file.
+             * 
+             * @param whence defaults to `'cur'`.
+             * @param offset defaults to `0`.
+             * @return Position (relative to the start) after seeking.
+             */
+            seek(this: FileStream, whence?: 'set' | 'cur' | 'end', offset?: number): number;
 
-    /**
-     * Flushes any buffered written data in the file to the disk.
-     */
-    flush(this: FileStream): void;
+            /**
+             * Sets the buffering mode for an output file. There are three available modes:
+             * 
+             * - `no`: no buffering; the result of any output operation appears immediately.
+             * - `full`: full buffering; output operation is performed only when the buffer is full
+             * (or when you explicitly flush the file (see io.flush)).
+             * - `line`: line buffering; output is buffered until a newline is output or there is any input
+             * from some special files (such as a terminal device).
+             * 
+             * For the last two cases, size specifies the size of the buffer, in bytes. The default is an appropriate size.
+             */
+            setvbuff(this: FileStream, mode: 'no' | 'full' | 'line', size?: number): void;
 
-    /**
-     * Note that files are automatically closed when their handles are garbage collected,
-     * but that takes an unpredictable amount of time to happen.
-     */
-    close(this: FileStream): void;
+            /**
+             * Flushes any buffered written data in the file to the disk.
+             */
+            flush(this: FileStream): void;
+
+            /**
+             * Note that files are automatically closed when their handles are garbage collected,
+             * but that takes an unpredictable amount of time to happen.
+             */
+            close(this: FileStream): void;
+        }
+    }
 }
-
 
 /**
  * The methods provided by this API can fail and throw errors.
@@ -94,9 +98,9 @@ export interface StorageAPI {
     /**
      * @param mode defaults to `'r'`.
      */
-    open(this: void, path: string, mode?: FileMode): FileStream;
+    open(this: void, path: string, mode?: Storage.FileMode): Storage.FileStream;
 
-    getInfo(this: void, path: string): FileInfo;
+    getInfo(this: void, path: string): Storage.FileInfo;
 
     removeFile(this: void, path: string): void;
 

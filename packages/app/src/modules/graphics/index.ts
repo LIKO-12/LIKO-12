@@ -4,7 +4,9 @@ import { proxy, unproxy } from "core/object-proxy";
 import { clamp, validateParameters } from "core/utilities";
 
 import Screen from "../screen";
-import { ImageData, LovePixelFunction } from "./image-data";
+import { _ImageData, LovePixelFunction } from "./image-data";
+
+import type { GraphicsAPI, ShapesAPI, ImagesAPI, EffectsAPI } from '@liko-12/game-types';
 
 // TODO: palette soft-limit
 // TODO: automatic offset detection
@@ -68,7 +70,7 @@ export default class Graphics extends MachineModule {
         love.graphics.setColor(color / 255.0, 1, 1, 1);
     }
 
-    createAPI(_machine: Machine): StandardModules.GraphicsAPI {
+    createAPI(_machine: Machine): GraphicsAPI {
         return {
             ...this.createShapesAPI(),
             ...this.createEffectsAPI(),
@@ -79,7 +81,7 @@ export default class Graphics extends MachineModule {
     /**
      * For drawing shapes on the screen.
      */
-    createShapesAPI(): StandardModules.Graphics.ShapesAPI {
+    createShapesAPI(): ShapesAPI {
         return {
             color: (color = this.activeColor): number => {
                 validateParameters();
@@ -163,7 +165,7 @@ export default class Graphics extends MachineModule {
     /**
      * For applying some graphics effects.
      */
-    createEffectsAPI(): StandardModules.Graphics.EffectsAPI {
+    createEffectsAPI(): EffectsAPI {
         return {
             remapColor: (from: number, to: number): void => {
                 validateParameters();
@@ -188,7 +190,7 @@ export default class Graphics extends MachineModule {
         };
     }
 
-    createImagesAPI(): StandardModules.Graphics.ImagesAPI {
+    createImagesAPI(): ImagesAPI {
         return {
             newImageData: (width: number, height: number): ImageData => {
                 validateParameters();
@@ -196,16 +198,16 @@ export default class Graphics extends MachineModule {
                 width = Math.floor(Math.max(width, 0));
                 height = Math.floor(Math.max(height, 0));
 
-                return proxy(ImageData._newImageData(this, width, height));
+                return proxy(_ImageData._newImageData(this, width, height));
             },
 
             importImageData: (data: string): ImageData => {
                 validateParameters();
-                return proxy(ImageData._importImageData(this, data));
+                return proxy(_ImageData._importImageData(this, data));
             },
             
             isImageData: (value: unknown): value is ImageData => {
-                return unproxy(value) instanceof ImageData;
+                return unproxy(value) instanceof _ImageData;
             },
         };
     }

@@ -1,7 +1,5 @@
 import { describe, it, expect } from '@liko-12/lust';
-import { Font, MonospaceFont } from 'lib/font';
-
-type Image = StandardModules.Graphics.Image;
+import { MonospaceFont } from 'lib/font';
 
 const testingFontRawPixelData = `
  ..  ...   ... ...       .... 

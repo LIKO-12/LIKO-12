@@ -1,9 +1,7 @@
 /// <reference types="@liko-12/utf8" />
 /// <reference types="lua-types/jit" />
 
-/// <reference path="./out/globalized.d.ts" />
-
-import type { ScreenAPI, KeyboardAPI, EventsAPI, StorageAPI, GraphicsAPI } from './out/modules';
+import type { ScreenAPI, KeyboardAPI, EventsAPI, StorageAPI, GraphicsAPI } from '.';
 
 declare global {
     /**
@@ -35,6 +33,11 @@ declare global {
          */
         graphics: GraphicsAPI;
     };
+
+    /**
+     * @transformer_globalize Hint for the 'ts-globalize' transformer to take action on this interface.
+     */
+    interface LIKO_GLOBAL extends GraphicsAPI, ScreenAPI { }
 
     /**
      * Starts and runs the main game loop.

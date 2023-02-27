@@ -1,7 +1,5 @@
 import { describe, it, expect } from '@liko-12/lust';
 
-type FileMode = StandardModules.Storage.FileMode;
-
 // TODO: Further more extensive unit tests for the storage module.
 
 describe("liko 'storage' module", () => {

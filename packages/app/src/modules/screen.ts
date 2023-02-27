@@ -7,6 +7,8 @@ import { assertOption, clamp, validateParameters } from "core/utilities";
 
 import Events from 'modules/events';
 
+import type { ScreenAPI } from '@liko-12/game-types';
+
 export interface ScreenOptions {
     width: number,
     height: number,
@@ -131,7 +133,7 @@ export default class Screen extends MachineModule {
         return color === -1 ? 0 : color;
     }
 
-    createAPI(_machine: Machine): StandardModules.ScreenAPI {
+    createAPI(_machine: Machine): ScreenAPI {
         return {
             getWidth: (): number => this.framebuffer.getWidth(),
             getHeight: (): number => this.framebuffer.getHeight(),

@@ -4,7 +4,8 @@
   "description": "The declarations for the global environment available for the LIKO-12 system without any modifications.",
   "license": "MIT",
   "private": true,
-  "types": "environment",
+  "types": "out",
+  "main": "out",
   "scripts": {
     "build": "ttsc",
     "dev": "ttsc --watch"

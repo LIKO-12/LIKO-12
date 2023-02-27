@@ -7,6 +7,8 @@ import { escapedCall, validateParameters } from "core/utilities";
 
 import Events from "modules/events";
 
+import type { KeyboardAPI } from '@liko-12/game-types';
+
 export default class Keyboard extends MachineModule {
     constructor(machine: Machine, options: {}) {
         super(machine, options);
@@ -28,7 +30,7 @@ export default class Keyboard extends MachineModule {
         });
     }
 
-    createAPI(_machine: Machine): StandardModules.KeyboardAPI {
+    createAPI(_machine: Machine): KeyboardAPI {
         // Keep the implementation referencing the `KeyConstant` and `Scancode` of LÖVE,
         // that way we're taking advantage of the typescript compiler that
         // it makes sure LIKO-12's constants and LÖVE's one are in sync.

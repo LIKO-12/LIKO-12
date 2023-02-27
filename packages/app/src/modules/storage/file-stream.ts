@@ -12,7 +12,7 @@ import Storage, { FileMode } from ".";
  *  - `file:lines` is not implemented.
  *  - possibly some difference in error messages.
  */
-export default class FileStream implements StandardModules.Storage.FileStream {
+export default class FileStream implements Storage.FileStream {
     protected readonly readAllowed: boolean;
     protected readonly writeAllowed: boolean;
     protected readonly appendMode: boolean;

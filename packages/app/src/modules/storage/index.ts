@@ -7,6 +7,8 @@ import { assertOption, validateParameters } from "core/utilities";
 
 import FileStream from "./file-stream";
 
+import type { StorageAPI } from '@liko-12/game-types';
+
 const lf = love.filesystem;
 
 // TODO: Review the 'storage' module:
@@ -108,7 +110,7 @@ export default class Storage extends MachineModule {
         this.refreshSpaceUsage();
     }
 
-    createAPI(): StandardModules.StorageAPI {
+    createAPI(): StorageAPI {
         return {
             getTotalSpace: () => {
                 return this.totalSpace;
