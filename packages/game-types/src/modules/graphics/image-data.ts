@@ -60,7 +60,7 @@ declare interface ImageData {
 
     /**
      * Creates a drawable Image from this ImageData.
-     * The content of the created Image can be updated using {@code Image.refresh()}.
+     * The content of the created Image can be updated using `Image.refresh()`.
      *
      * @return The created drawable Image.
      */
