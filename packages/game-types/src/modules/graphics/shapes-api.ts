@@ -11,7 +11,8 @@ export interface ShapesAPI {
     color(this: void, color?: number): number;
 
     /**
-     * Clear the screen and fill it with a specific color.
+     * Clear the screen and fills it with a specific color,
+     * useful when clearing the screen for a new frame.
      * 
      * @param color The color to use. Defaults to the active color.
      */
@@ -69,6 +70,8 @@ export interface ShapesAPI {
     /**
      * Draw a polygon on the screen.
      * 
+     * @param vertices The coordinates of the polygon vertices,
+     * **must contain an even number of elements and 3 vertices at least.**
      * @param filled Whether to fill or only outline. Defaults to false (outline).
      * @param color The color to use. Defaults to the active color.
      */
