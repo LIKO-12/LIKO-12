@@ -12,6 +12,8 @@ export default class Events extends MachineModule {
         super(machine, options);
     }
 
+    // FIXME: CRITICAL: Discard the events if the machine is not loaded.
+
     pushEvent(eventName: string, ...args: any[]) {
         this.eventsQueue.push([eventName, ...args]);
         if (this.machineListening) this.machine.resume();
