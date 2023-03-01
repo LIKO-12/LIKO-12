@@ -35,6 +35,7 @@ function isInRectangle(x: number, y: number, rectangle: Rectangle) {
  * Responsible for displaying the status of the server.
  */
 export class GameRuntimeServerOverlay {
+    private readonly logoPosition: Point = { x: 0, y: 0 };
     private readonly titlePosition: Point = { x: 0, y: 0 };
     private readonly subTitlePosition: Point = { x: 0, y: 0 };
 
@@ -46,9 +47,12 @@ export class GameRuntimeServerOverlay {
     private readonly normalCursor = love.mouse.getSystemCursor('arrow');
     private readonly linkCursor = love.mouse.getSystemCursor('hand');
 
+    private readonly logoImage = love.graphics.newImage('res/icon.png');
+
     private linkHovered = false;
 
     constructor() {
+        this.logoImage.setFilter('nearest', 'nearest');
         this.updateLayout();
 
         loveEvents.on('resize', () => this.updateLayout());
@@ -77,7 +81,10 @@ export class GameRuntimeServerOverlay {
 
     private updateLayout() {
         const [windowWidth, windowHeight] = love.graphics.getDimensions();
-        const anchorX = windowWidth * .5, anchorY = windowHeight * .48;
+        const anchorX = windowWidth * .5, anchorY = windowHeight * .5 + 70;
+
+        this.logoPosition.x = anchorX;
+        this.logoPosition.y = anchorY - 100;
 
         const primaryFontHeight = this.primaryFont.getHeight();
         const secondaryFontHeight = this.secondaryFont.getHeight();
@@ -103,6 +110,9 @@ export class GameRuntimeServerOverlay {
 
         love.graphics.setColor(0x0A / 255, 0x0A / 255, 0x0A / 255, 1);
         love.graphics.rectangle('fill', 0, 0, windowWidth, windowHeight);
+
+        love.graphics.setColor(1, 1, 1, 1);
+        love.graphics.draw(this.logoImage, this.logoPosition.x, this.logoPosition.y, 0, 7, 7, 8, 8);
 
         love.graphics.setColor(1, 1, 1, 1);
 
