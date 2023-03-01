@@ -163,7 +163,7 @@ export class GameRuntimeServerOverlay {
         love.graphics.setColor(1, .2, .2, 1);
         love.graphics.setFont(this.noticeFont);
         love.graphics.printf(
-            'Experimental release: always backup your code and expect breaking changes & instability.',
+            'Experimental release: always backup your code, expect breaking changes and instability.',
             7, windowHeight - 20, windowWidth - 20, 'left');
     }
 }
