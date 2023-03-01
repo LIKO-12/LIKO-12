@@ -3,15 +3,34 @@ import { ColouredText } from 'love.graphics';
 
 const IDE_URL = 'https://liko-12.github.io/LIKO-IDE/';
 
-const TITLE_TEXT = 'Waiting for LIKO-IDE to connect';
-const SUBTITLE_TEXT = [
-    [0xF5 / 255, 0xF5 / 255, 0xF5 / 255, 1],
-    'Open ',
-    [0xFA / 255, 0xA2 / 255, 0x1B / 255, 1],
-    IDE_URL,
-    [0xF5 / 255, 0xF5 / 255, 0xF5 / 255, 1],
-    '\nin your browser to get started',
-]satisfies ColouredText;
+interface Dialog {
+    title: string,
+    subTitle: string | ColouredText,
+}
+
+const DISCONNECTED_DIALOG: Readonly<Dialog> = {
+    title: 'Waiting for LIKO-IDE to connect',
+    subTitle: [
+        [0xF5 / 255, 0xF5 / 255, 0xF5 / 255, 1],
+        'Open ',
+        [0xFA / 255, 0xA2 / 255, 0x1B / 255, 1],
+        IDE_URL,
+        [0xF5 / 255, 0xF5 / 255, 0xF5 / 255, 1],
+        '\nin your browser to get started',
+    ],
+};
+
+const CONNECTED_DIALOG: Readonly<Dialog> = {
+    title: 'LIKO-IDE connected',
+    subTitle: [
+        [0xF5 / 255, 0xF5 / 255, 0xF5 / 255, 1],
+        'Press ',
+        [0xFA / 255, 0xA2 / 255, 0x1B / 255, 1],
+        '"Run Game"',
+        [0xF5 / 255, 0xF5 / 255, 0xF5 / 255, 1],
+        ' from the bottom bar\nto have your game playing.'
+    ],
+}
 
 interface Point {
     x: number,
@@ -35,6 +54,8 @@ function isInRectangle(x: number, y: number, rectangle: Rectangle) {
  * Responsible for displaying the status of the server.
  */
 export class GameRuntimeServerOverlay {
+    private activeDialog: Dialog = DISCONNECTED_DIALOG;
+
     private readonly logoPosition: Point = { x: 0, y: 0 };
     private readonly titlePosition: Point = { x: 0, y: 0 };
     private readonly subTitlePosition: Point = { x: 0, y: 0 };
@@ -43,6 +64,7 @@ export class GameRuntimeServerOverlay {
 
     private readonly primaryFont = love.graphics.newFont('res/fonts/Roboto-Regular.ttf', 24);
     private readonly secondaryFont = love.graphics.newFont('res/fonts/Roboto-Regular.ttf', 16);
+    private readonly noticeFont = love.graphics.newFont('res/fonts/Roboto-Regular.ttf', 12);
 
     private readonly normalCursor = love.mouse.getSystemCursor('arrow');
     private readonly linkCursor = love.mouse.getSystemCursor('hand');
@@ -89,20 +111,31 @@ export class GameRuntimeServerOverlay {
         const primaryFontHeight = this.primaryFont.getHeight();
         const secondaryFontHeight = this.secondaryFont.getHeight();
 
-        const titleWidth = this.primaryFont.getWidth(TITLE_TEXT);
-        const openSegmentWidth = this.secondaryFont.getWidth('Open ');
-        const linkSegmentWidth = this.secondaryFont.getWidth(IDE_URL);
+        const titleWidth = this.primaryFont.getWidth(this.activeDialog.title);
 
         this.titlePosition.x = anchorX - titleWidth * .5;
         this.titlePosition.y = anchorY - primaryFontHeight;
 
-        this.subTitlePosition.x = anchorX - (openSegmentWidth + linkSegmentWidth) * .5;
         this.subTitlePosition.y = anchorY + secondaryFontHeight * .25;
 
-        this.linkArea.x = this.subTitlePosition.x + openSegmentWidth;
-        this.linkArea.y = this.subTitlePosition.y;
-        this.linkArea.width = linkSegmentWidth;
-        this.linkArea.height = secondaryFontHeight;
+        if (this.activeDialog === DISCONNECTED_DIALOG) {
+            const openSegmentWidth = this.secondaryFont.getWidth('Open ');
+            const linkSegmentWidth = this.secondaryFont.getWidth(IDE_URL);
+
+            this.subTitlePosition.x = anchorX - (openSegmentWidth + linkSegmentWidth) * .5;
+
+            this.linkArea.x = this.subTitlePosition.x + openSegmentWidth;
+            this.linkArea.y = this.subTitlePosition.y;
+            this.linkArea.width = linkSegmentWidth;
+            this.linkArea.height = secondaryFontHeight;
+        } else {
+            this.subTitlePosition.x = 0;
+
+            this.linkArea.x = -1;
+            this.linkArea.y = -1;
+            this.linkArea.width = 0;
+            this.linkArea.height = 0;
+        }
     }
 
     private renderOverlay() {
@@ -117,14 +150,20 @@ export class GameRuntimeServerOverlay {
         love.graphics.setColor(1, 1, 1, 1);
 
         love.graphics.setFont(this.primaryFont);
-        love.graphics.printf(TITLE_TEXT, 0, this.titlePosition.y, windowWidth, 'center');
+        love.graphics.printf(this.activeDialog.title, 0, this.titlePosition.y, windowWidth, 'center');
 
         love.graphics.setFont(this.secondaryFont);
-        love.graphics.printf(SUBTITLE_TEXT, 0, this.subTitlePosition.y, windowWidth, 'center');
+        love.graphics.printf(this.activeDialog.subTitle, 0, this.subTitlePosition.y, windowWidth, 'center');
 
         love.graphics.setColor(0xFA / 255, 0xA2 / 255, 0x1B / 255, 1);
         love.graphics.rectangle('fill',
             this.linkArea.x, this.linkArea.y + this.linkArea.height - 3,
             this.linkArea.width - 1, 1);
+
+        love.graphics.setColor(1, .2, .2, 1);
+        love.graphics.setFont(this.noticeFont);
+        love.graphics.printf(
+            'Experimental release: always backup your code and expect breaking changes & instability.',
+            7, windowHeight - 20, windowWidth - 20, 'left');
     }
 }
