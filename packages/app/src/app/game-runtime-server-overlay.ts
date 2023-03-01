@@ -104,7 +104,7 @@ export class GameRuntimeServerOverlay {
         love.graphics.setColor(0x0A / 255, 0x0A / 255, 0x0A / 255, 1);
         love.graphics.rectangle('fill', 0, 0, windowWidth, windowHeight);
 
-        love.graphics.setColor(0xF5 / 255, 0xF5 / 255, 0xF5 / 255, 1);
+        love.graphics.setColor(1, 1, 1, 1);
 
         love.graphics.setFont(this.primaryFont);
         love.graphics.printf(TITLE_TEXT, 0, this.titlePosition.y, windowWidth, 'center');
