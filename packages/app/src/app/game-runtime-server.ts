@@ -8,7 +8,7 @@ import { WebSocketConnection } from 'core/websocket/connection';
 import { WebSocketServer } from 'core/websocket/server';
 
 import { GameRuntime } from './game-runtime';
-import { GameRuntimeServerOverlay } from './game-runtime-server-overlay';
+import { GameRuntimeServerOverlay, OverlayState } from './game-runtime-server-overlay';
 
 export class GameRuntimeServer {
     private readonly runtime: GameRuntime;
@@ -35,6 +35,7 @@ export class GameRuntimeServer {
     run(script: string): void {
         this.runtime.run(script);
         love.window.requestAttention(true);
+        this.overlay.setState(OverlayState.HIDDEN);
     }
 
     private registerRPCMethods() {
@@ -44,9 +45,12 @@ export class GameRuntimeServer {
     }
 
     private registerSocketListeners() {
+        // FIXME: Have a single active connection.
+
         this.socket.on('connection', (connection: WebSocketConnection) => {
             connection.on('open', () => {
                 print('Received a new connection.');
+                this.overlay.setState(OverlayState.CONNECTED);
             });
 
             connection.on('message', (message: string, _binary: boolean) => {
@@ -58,6 +62,7 @@ export class GameRuntimeServer {
             connection.on('close', (code: number | undefined, reason: string | undefined) => {
                 if (code === undefined) print('Connection closed in a dirty state.');
                 else print(`Connection closed with code (${code})`, reason ? `and message "${reason}"` : '');
+                this.overlay.setState(OverlayState.DISCONNECTED);
             });
         });
     }

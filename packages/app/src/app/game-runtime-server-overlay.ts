@@ -3,6 +3,12 @@ import { ColouredText } from 'love.graphics';
 
 const IDE_URL = 'https://liko-12.github.io/LIKO-IDE/';
 
+export enum OverlayState {
+    DISCONNECTED = 'DISCONNECTED',
+    CONNECTED = 'CONNECTED',
+    HIDDEN = 'HIDDEN',
+}
+
 interface Dialog {
     title: string,
     subTitle: string | ColouredText,
@@ -54,7 +60,7 @@ function isInRectangle(x: number, y: number, rectangle: Rectangle) {
  * Responsible for displaying the status of the server.
  */
 export class GameRuntimeServerOverlay {
-    private activeDialog: Dialog = DISCONNECTED_DIALOG;
+    private activeDialog?: Dialog = DISCONNECTED_DIALOG;
 
     private readonly logoPosition: Point = { x: 0, y: 0 };
     private readonly titlePosition: Point = { x: 0, y: 0 };
@@ -83,6 +89,16 @@ export class GameRuntimeServerOverlay {
         loveEvents.on('mousepressed', (x: number, y: number, button: number) => this.onMousePressed(x, y, button));
     }
 
+    setState(state: OverlayState): void {
+        if (state === OverlayState.HIDDEN) this.activeDialog = undefined;
+        else if (state === OverlayState.CONNECTED) this.activeDialog = CONNECTED_DIALOG;
+        else if (state === OverlayState.DISCONNECTED) this.activeDialog = DISCONNECTED_DIALOG;
+        else throw new Error(`Unsupported state: ${state}`);
+
+        this.updateLayout();
+        this.updateCursor();
+    }
+
     private onMousePressed(x: number, y: number, button: number): void {
         if (button !== 1) return;
         if (isInRectangle(x, y, this.linkArea)) {
@@ -102,6 +118,7 @@ export class GameRuntimeServerOverlay {
     }
 
     private updateLayout() {
+        if (!this.activeDialog) return;
         const [windowWidth, windowHeight] = love.graphics.getDimensions();
         const anchorX = windowWidth * .5, anchorY = windowHeight * .5 + 70;
 
@@ -139,6 +156,7 @@ export class GameRuntimeServerOverlay {
     }
 
     private renderOverlay() {
+        if (!this.activeDialog) return;
         const [windowWidth, windowHeight] = love.graphics.getDimensions();
 
         love.graphics.setColor(0x0A / 255, 0x0A / 255, 0x0A / 255, 1);
