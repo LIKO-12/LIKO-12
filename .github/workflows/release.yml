@@ -1,0 +1,51 @@
+name: release
+
+on: 
+  push:
+    tags:
+    - '[0-9]*.[0-9]*.[0-9]*'
+
+jobs:
+  check:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - uses: LIKO-12/LIKO-12/packages/love_build
+      with:
+        path: LIKO-12
+        excluded-files: "README.md CODE_OF_CONDUCT.md CONTRIBUTING.md PULL_REQUEST_TEMPLATE.md .travis.yml .gitattributes .gitignore .nomedia"
+        name: LIKO-12
+        excluded-dirs: ".git .github .vscode Travis snap"
+        
+    - name: Upload android artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: LIKO-12_Android
+        path: BuildUtils/LIKO-12_Android.apk
+    - name: Upload macos artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: LIKO-12_macos
+        path: BuildUtils/LIKO-12_macos.zip
+    - name: Upload windows i686 artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: LIKO-12_i686_Windows
+        path: BuildUtils/LIKO-12_i686_Windows.zip
+    - name: Upload windows x86_64 artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: LIKO-12_x86_64_Windows
+        path: BuildUtils/LIKO-12_x86_64_Windows.zip
+    - name: Upload linux artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: LIKO-12_x86_64
+        path: BuildUtils/LIKO-12_x86_64.appimage
+    - name: Upload universal artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: LIKO-12_Universal
+        path: BuildUtils/LIKO-12_Universal.love

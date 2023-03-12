@@ -1,0 +1,21 @@
+name: 'Love2d Build'
+description: 'Builds Love2d program for differant platforms'
+author: 'Liko-12'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+inputs:
+  path:
+    description: 'Path to directory containing source code'
+    required: true
+  excluded-files:
+    description: 'Space seperated list of source files to ignore'
+    required: false
+    default: ''
+  excluded-dirs:
+    description: 'Space seperated list of source directories to ignore'
+    required: false
+    default: ''
+  name:
+    description: 'Name of the built files'
+    required: true
