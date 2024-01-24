@@ -31,11 +31,11 @@ The created games and programs are saved as disk files that can be easily shared
 - **[TIC-80:](https://tic80.com/)** An open-source PICO-8 clone that does have it's own feel and community. It's in a _finished/stable_ state and supports multiple programming languages. Could be also a good choice, but it also has a paid PRO version to support the developer.
 - There's a whole list of other fantasy consoles [here](https://github.com/paladin-t/fantasy).
 
-## Gallary
+## Gallery
 
-| BIOS POST Screen       | DiskOS Installer              | Commandline Prompt              | Code Edittor              | Sprite Edittor              | Map Edittor              | WIP Edittor              |
-|------------------------|-------------------------------|---------------------------------|---------------------------|-----------------------------|--------------------------|--------------------------|
-| ![BIOS POST][IMAGE_01] | ![DiskOS Installer][IMAGE_02] | ![Commandline Prompt][IMAGE_03] | ![Code Edittor][IMAGE_04] | ![Sprite Edittor][IMAGE_05] | ![Map Edittor][IMAGE_06] | ![WIP Edittor][IMAGE_07] |
+| BIOS POST Screen       | DiskOS Installer              | Command-line Prompt              | Code Editor              | Sprite Editor              | Map Editor              | WIP Editor              |
+|------------------------|-------------------------------|----------------------------------|--------------------------|----------------------------|-------------------------|-------------------------|
+| ![BIOS POST][IMAGE_01] | ![DiskOS Installer][IMAGE_02] | ![Command-line Prompt][IMAGE_03] | ![Code Editor][IMAGE_04] | ![Sprite Editor][IMAGE_05] | ![Map Editor][IMAGE_06] | ![WIP Editor][IMAGE_07] |
 
 [IMAGE_01]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/BIOS_POST.png
 [IMAGE_02]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/DiskOS_Installer.png
@@ -57,7 +57,7 @@ The documentation is scattered and available over multiple places:
 
 The demos and games included could be used as a last resort before reading the source-code.
 
-## Sourcecode Overview
+## Source-code Overview
 
 LIKO-12 was made using the awesome [LÖVE Framework](https://love2d.org) and written purely in Lua.
 
@@ -69,7 +69,7 @@ As the project has grew over the years, it has been split into multiple reposito
 
 ## Project Status
 
-I've (Rami) returned to working on this project on my very scarce free time, perhaps with some slow development LIKO-12 can see the light of the day again. 
+The project is unfortunately no longer developed nor maintained.
 
 ## Thanks to the LÖVE Community
 
