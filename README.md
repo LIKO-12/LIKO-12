@@ -31,11 +31,11 @@ The created games and programs are saved as disk files that can be easily shared
 - **[TIC-80:](https://tic80.com/)** An open-source PICO-8 clone that does have it's own feel and community. It's in a _finished/stable_ state and supports multiple programming languages. Could be also a good choice, but it also has a paid PRO version to support the developer.
 - There's a whole list of other fantasy consoles [here](https://github.com/paladin-t/fantasy).
 
-## Gallary
+## Gallery
 
-| BIOS POST Screen       | DiskOS Installer              | Commandline Prompt              | Code Edittor              | Sprite Edittor              | Map Edittor              | WIP Edittor              |
-|------------------------|-------------------------------|---------------------------------|---------------------------|-----------------------------|--------------------------|--------------------------|
-| ![BIOS POST][IMAGE_01] | ![DiskOS Installer][IMAGE_02] | ![Commandline Prompt][IMAGE_03] | ![Code Edittor][IMAGE_04] | ![Sprite Edittor][IMAGE_05] | ![Map Edittor][IMAGE_06] | ![WIP Edittor][IMAGE_07] |
+| BIOS POST Screen       | DiskOS Installer              | Command-line Prompt              | Code Editor              | Sprite Editor              | Map Editor              | WIP Editor              |
+|------------------------|-------------------------------|----------------------------------|--------------------------|----------------------------|-------------------------|-------------------------|
+| ![BIOS POST][IMAGE_01] | ![DiskOS Installer][IMAGE_02] | ![Command-line Prompt][IMAGE_03] | ![Code Editor][IMAGE_04] | ![Sprite Editor][IMAGE_05] | ![Map Editor][IMAGE_06] | ![WIP Editor][IMAGE_07] |
 
 [IMAGE_01]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/BIOS_POST.png
 [IMAGE_02]: https://raw.githubusercontent.com/LIKO-12/extras/main/Readme-Screenshots/DiskOS_Installer.png
