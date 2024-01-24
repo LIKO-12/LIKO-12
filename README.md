@@ -1,3 +1,4 @@
+> ⚠️ **The project is unfortunately no longer developed nor maintained.**
 
 # ![LIKO-12](https://github.com/LIKO-12/extras/raw/main/Readme-Screenshots/Header_Logo.png)
 
