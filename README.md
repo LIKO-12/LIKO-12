@@ -57,7 +57,7 @@ The documentation is scattered and available over multiple places:
 
 The demos and games included could be used as a last resort before reading the source-code.
 
-## Sourcecode Overview
+## Source-code Overview
 
 LIKO-12 was made using the awesome [LÖVE Framework](https://love2d.org) and written purely in Lua.
 
@@ -69,7 +69,7 @@ As the project has grew over the years, it has been split into multiple reposito
 
 ## Project Status
 
-I've (Rami) returned to working on this project on my very scarce free time, perhaps with some slow development LIKO-12 can see the light of the day again. 
+The project is unfortunately no longer developed nor maintained.
 
 ## Thanks to the LÖVE Community
 
